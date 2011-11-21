@@ -531,7 +531,6 @@ class AthleticsWebModule extends WebModule {
                 if ($scheduleFeed = $this->getScheduleFeed($sport)) {
                     $schedules = $scheduleFeed->items();
                     
-                    
                     $rangeSchedule = $this->getRangeSchedule($schedules, time());
                     $recent = array();
                     $next = array();

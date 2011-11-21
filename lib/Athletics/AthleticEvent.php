@@ -24,6 +24,9 @@ class AthleticEvent implements KurogoObject {
                     return  (stripos($this->getSportFullName(), $value)!==FALSE) ||
                     (stripos($this->getOpponent(), $value)!==FALSE);
                     break;
+                case 'sport':
+                    return strtolower($this->getSport()) === strtolower($value);
+                    break;
             }
         }   
         

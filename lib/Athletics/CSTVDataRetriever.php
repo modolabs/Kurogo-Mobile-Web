@@ -3,6 +3,7 @@
 class CSTVDataRetriever extends URLDataRetriever
 {
     protected $sport;
+    
     protected $DEFAULT_PARSER_CLASS='CSTVDataParser';
     
     protected function initResponse() {
@@ -18,6 +19,7 @@ class CSTVDataRetriever extends URLDataRetriever
         }
         $this->sport = $args['SPORT'];
     }
+
 }
 
 class CSTVDataParser extends XMLDataParser {
@@ -43,11 +45,19 @@ class CSTVDataParser extends XMLDataParser {
     protected function shouldHandleEndElement($name) {
         return in_array($name, self::$endElements);
     }
-
+    
     protected function handleEndElement($name, $element, $parent) {
         switch ($name) {
             case 'EVENT':
-                $this->items[] = $this->parseEntry($element);
+                $filters = array();
+                if ($sport = $this->response->getContext('sport')) {
+                    $filters['sport'] = $sport;
+                }
+
+                $event = $this->parseEntry($element);
+                if ($event->filterItem($filters)) {
+                    $this->items[] = $event;
+                }
                 break;
         }
     }
