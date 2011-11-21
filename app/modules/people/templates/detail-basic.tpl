@@ -10,17 +10,15 @@
     
       {block name="detail"}
         <tr valign="top">
-          <td><span class="dllabel">{$item['label']}</span>&nbsp;</td>
-          <td>
-            <span class="value">
-              {if isset($item['url'])}
-                <a href="{$item['url']}" class="{$item['class']|default:''}">
-              {/if}
-                  {$item['title']}
-              {if isset($item['url'])}
-                </a>
-              {/if}
-            </span>
+          <td align="right" class="label">{$item['label']}&nbsp;</td>
+          <td class="value">
+            {if isset($item['url'])}
+              <a href="{$item['url']}" class="{$item['class']|default:''}">
+            {/if}
+                {$item['title']}
+            {if isset($item['url'])}
+              </a>
+            {/if}
           </td>
         </tr>
       {/block}

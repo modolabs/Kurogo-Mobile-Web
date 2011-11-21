@@ -1,6 +1,7 @@
 body {
 	background-color: #eee; 
-	text-align: center
+	text-align: center;
+	margin: 0;
 }
 body, select, input, option, textarea {
 	font: 13px/1.333em 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -119,12 +120,12 @@ nav a {
 }
 nav a:hover {
 	color: #000;
-	background: url(/modules/admin/images/nav-bullet-hover.png) 14px no-repeat;
+	background: url(/modules/admin/images/nav-bullet-hover.png) no-repeat 14px center;
 }
 nav a.current {
 	color: #000;
 	font-weight: bold;
-	background: url(/modules/admin/images/nav-bullet.png) 14px no-repeat;
+	background: url(/modules/admin/images/nav-bullet.png) no-repeat 14px center;
 }
 nav ul ul a {
 	padding-top: 6px;
@@ -158,12 +159,12 @@ fieldset {
 	padding: 0;
 	border: none;
 }
-ul.formfields {
+.formfields {
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
 }
-ul.formfields li {
+.formfields .formfield {
 	margin: 1.67em 0;
 	padding: 0;
 	position: relative;
@@ -175,6 +176,11 @@ input[type="text"], input[type="email"], input[type="url"], input[type="password
 	width: 440px;
 	color: #333;
 }
+
+#newModuleID {
+    width: auto;
+}
+
 input#adminCancel {
 	background-color: #a22;
 	float: right;
@@ -251,7 +257,7 @@ ul.sublist {
     padding: 0;
 }
 
-ul.sublist>li {
+ul.sublist>li.formfield {
     border: 1px solid #e0e0e0;
     border-top: none;
     list-style:none;
@@ -261,6 +267,7 @@ ul.sublist>li {
     min-height: 36px;
 }
 
+ul.ui-sortable li.ui-sortable-helper,
 ul.sublist>li:first-child {
     border-top: 1px solid #e0e0e0;
 }
@@ -422,7 +429,7 @@ td:first-child {
 table.subtable td:first-child {
 	padding-left: 5px;
 }
-table.subtable ul.formfields li {
+table.subtable .formfields .formfield {
 	margin: 6px 0 12px 0;
 }
 table.subtable label {
@@ -730,6 +737,10 @@ h1 img {
 /*    display: none; */
 }
 
+#adminFields li.hidden {
+    margin: 0;
+    visibility: hidden;
+}
 
 #adminSections li a {
     text-decoration:none;
@@ -776,3 +787,74 @@ a.formbutton div {
 	background-position: left;
 	text-decoration: none;
 }
+
+fieldset {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    margin-bottom: 1.5em;
+    padding: 0;
+}
+
+fieldset.collapsable {
+    border: none;
+}
+
+.fieldgroup-legend {
+    padding: 4px 6px;
+    font-weight: bold;
+    font-size: 110%;
+}
+
+
+.fieldgroup {
+}
+
+.fieldgroup-legend {
+}
+
+.collapsable .fieldgroup-legend {
+    cursor: pointer;
+	display: inline-block;
+	text-align: center;
+	min-width: 50px;
+	margin: 2px;
+	padding: 4px 6px;
+	line-height: 1.2em;
+	text-decoration: none;
+	border: 1px solid #ddd;
+	background-color: #f6f6f6;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	margin-left: 150px;
+    font-size: 100%;
+    font-weight: normal;
+}
+
+.fieldgroup-description {
+	margin-left: 6px;		/* same as width plus padding-right of label */
+	display: block;
+	padding: 2px 0 0 0px;
+	font-size: 85%;
+	line-height: 1.33em;
+	color: #777;
+}
+
+.collapsable .fieldgroup-description {
+	margin-left: 150px;		/* same as width plus padding-right of label */
+}
+
+p.blurb	{
+	font-size: 20px;
+	line-height: 26px;
+	color: #898989;
+	}
+
+input.admin-button	{
+float: left;
+width: 150px;
+margin-right: 20px;
+}
+
+

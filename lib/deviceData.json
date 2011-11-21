@@ -1,0 +1,1564 @@
+{
+    "devices": [
+        {
+            "groupName": "Windows Phone OS 7",
+            "description": "Windows Phone OS 7",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "winphone7",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winphone7",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Windows Phone OS 7.",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "annoying bots that are neither search engines nor user-invoked command line tools",
+            "description": "annoying bots that are neither search engines nor user-invoked command line tools",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "spider",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "spider",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "(Boopsie|Kratylos|MiniRedir|Jumpbot)",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "iPhone",
+            "description": "iPhone",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "iphone",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "iphone",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "iPhone",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "iPod Touch",
+            "description": "iPod Touch",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "iphone",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "iphone",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "iPod",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "iPad",
+            "description": "iPad",
+            "classification": {
+                "2": {
+                    "pagetype": "tablet",
+                    "platform": "iphone",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "iphone",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "iPad",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "iPhone simulator",
+            "description": "iPhone simulator",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "iphone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "iphone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Aspen Simulator",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Blackberry PlayBook",
+            "description": "Blackberry PlayBook",
+            "classification": {
+                "2": {
+                    "pagetype": "tablet",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "PlayBook.+RIM Tablet",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Android Honeycomb",
+            "description": "Android Honeycomb",
+            "classification": {
+                "2": {
+                    "pagetype": "tablet",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "android",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Android 3\\.\\d",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Android",
+            "description": "Android",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "android",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Android",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Palm Pre",
+            "description": "Palm Pre",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "webos",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "webos",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "webOS",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Touchscreen BlackBerry (9500, 9530, 9550, 9800)",
+            "description": "Touchscreen BlackBerry (9500, 9530, 9550, 9800)",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BlackBerry\\s*95",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "BlackBerry Torch",
+            "description": "BlackBerry Torch",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "webos",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "webos",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BlackBerry\\s*98",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Advanced BlackBerry (8900, 9000, 9630, 9650, 9700)",
+            "description": "Advanced BlackBerry (8900, 9000, 9630, 9650, 9700)",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "bbplus",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "bbplus",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BlackBerry\\s*(89|90|96|97)",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "BlackBerry Pearl",
+            "description": "BlackBerry Pearl",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BlackBerry8100",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "All other BlackBerries",
+            "description": "All other BlackBerries",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BlackBerry",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "T-Mobile Dash",
+            "description": "T-Mobile Dash",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "Dash",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch Pro 2 (T-Mobile) with Opera",
+            "description": "HTC Touch Pro 2 (T-Mobile) with Opera",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Opera.*T\\-Mobile\\_Rhodium",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch Pro 2 (T-Mobile)",
+            "description": "HTC Touch Pro 2 (T-Mobile)",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "T\\-Mobile\\_Rhodium",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Mogul, Touch Pro (Sprint)",
+            "description": "HTC Mogul, Touch Pro (Sprint)",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "PPC68[05]0",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch Diamond (Sprint)",
+            "description": "HTC Touch Diamond (Sprint)",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "MP6950",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch, Diamond, Elf (IE)",
+            "description": "HTC Touch, Diamond, Elf (IE)",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "HTC[_ ](Touch|Diamond|Elf).+IEMobile|IEMobile.+HTC[_ ](Touch|Diamond|Elf)",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch, Diamond, Elf",
+            "description": "HTC Touch, Diamond, Elf",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "HTC[_ ](Touch|Diamond|Elf)",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC P series (incl. Touch Diamond, Pro, Cruise, Color)",
+            "description": "HTC P series (incl. Touch Diamond, Pro, Cruise, Color)",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "HTC[\\-_ ]P\\d{4}",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC P series",
+            "description": "HTC P series",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "dopod [A-Z]?8",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC T series (incl. Touch Viva, 3G, Cruise, Pro, HD)",
+            "description": "HTC T series (incl. Touch Viva, 3G, Cruise, Pro, HD)",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "HTC[\\-_ ]T",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Tilt",
+            "description": "HTC Tilt",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "8900.+IEMobile",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC S series",
+            "description": "HTC S series",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "HTC[\\-_ ]S\\d{3}",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "T-Mobile Wing",
+            "description": "T-Mobile Wing",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "T-Mobile_Atlas",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch Diamond (vzw)",
+            "description": "HTC Touch Diamond (vzw)",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "XV6950",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch Pro 2 (vzw) with Opera",
+            "description": "HTC Touch Pro 2 (vzw) with Opera",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "Opera.*XV6875",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch Pro 2 (vzw)",
+            "description": "HTC Touch Pro 2 (vzw)",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "XV6875",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Touch Pro 2 (Sprint)",
+            "description": "HTC Touch Pro 2 (Sprint)",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "\\sT7380",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "HTC Pure",
+            "description": "HTC Pure",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "HTC[\\-_ ]ST",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Samsung Omnia (Opera)",
+            "description": "Samsung Omnia (Opera)",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Opera.+S[CG]H\\-i9",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Samsung Glyde",
+            "description": "Samsung Glyde",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "SCH-U940",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Samsung Instinct",
+            "description": "Samsung Instinct",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "SPH-M800",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Samsung Instinct",
+            "description": "Samsung Instinct",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Teleca/Q05A/INT",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Samsung Omnia, Epix, Saga",
+            "description": "Samsung Omnia, Epix, Saga",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "S[CG]H\\-i[79]",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Samsung BlackJack, Jack",
+            "description": "Samsung BlackJack, Jack",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "S[CG]H\\-i6",
+                    "options": {
+                        "CASE_INSENSITIVE": true 
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Samsung 240x400 devices",
+            "description": "Samsung 240x400 devices",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "(SAMSUNG|GT|S[CGP]H)\\-(M7600|M8800|A8[67]7|T9[12]9|R8[012]0|S5230|S8300)",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Other Samsung devices",
+            "description": "Other Samsung devices",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "(SAMSUNG|GT|S[CGP]H)\\-(\\w?\\d+)",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "LG Dare, Versa, Xenon, Calisto",
+            "description": "LG Dare, Versa, Xenon, Calisto",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "LGE?[\\- ][A-Z]+\\d+.+Teleca|Teleca.+LGE?[\\- ][A-Z]+\\d+",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "LG Voyager",
+            "description": "LG Voyager",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "VX10(000|k)",
+                    "options": {
+                        "CASE_INSENSITIVE": true
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "LG Vu",
+            "description": "LG Vu",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "LG-CU9",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Other LG devices",
+            "description": "Other LG devices",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "\\bLGE?[\\- ][A-Z]*\\d+",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "UTStar-XV6800 (vzw)",
+            "description": "UTStar-XV6800 (vzw)",
+            "classification": {
+                "2": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "UTStar-XV6800",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Motorola Q series",
+            "description": "Motorola Q series",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "MOTO?(|rola)\\-?Q",
+                    "options": {
+                        "CASE_INSENSITIVE": true
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Palm Centro, Treo 700p, Treo 750p",
+            "description": "Palm Centro, Treo 700p, Treo 750p",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "palmos",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "palmos",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Palm-D0",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Motorola Q series alternative",
+            "description": "Motorola Q series alternative",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "240x320.+Opera",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Motorola Q series alternative",
+            "description": "Motorola Q series alternative",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "320x240.+Opera",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "",
+            "description": "",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "(Smartphone|SP|PPC); 176x",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Palm Treo 750x, 750w, HTC Wing",
+            "description": "Palm Treo 750x, 750w, HTC Wing",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "(Smartphone|SP|PPC); 240x",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Palm Treo 800",
+            "description": "Palm Treo 800",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "(Smartphone|SP|PPC); 320x",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Symbian",
+            "description": "Symbian",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "symbian",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "symbian",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Symbian",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Other Palm",
+            "description": "Other Palm",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "palmos",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "palmos",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Palm",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Other IEMobile (Windows Mobile) devices",
+            "description": "Other IEMobile (Windows Mobile) devices",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "IEMobile",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Opera Mobi (Windows Mobile) devices",
+            "description": "Opera Mobi (Windows Mobile) devices",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Opera Mobi",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Other Windows Mobile devices",
+            "description": "Other Windows Mobile devices",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "winmo",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Windows CE.+Opera",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Vendors of many feature phones",
+            "description": "Vendors of many feature phones",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Nokia|SonyEricsson|Motorola|\\bMOT|DoCoMo",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Feature phone browsers",
+            "description": "Feature phone browsers",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Opera Mini|NetFront|Novarra|UP.Browser|Blazer|Fennec",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Feature phone PLATFORMs",
+            "description": "Feature phone PLATFORMs",
+            "classification": {
+                "2": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "featurephone",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BREW|hiptop|Maemo|J2ME",
+                    "options": {
+                        "CASE_INSENSITIVE": true
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Robots",
+            "description": "Robots",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "spider",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "spider",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "[Cc]rawle?r?|[Ss]pider|\\b\\w*[Bb]ot",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Google, Yahoo, Python, Perl, command line tools",
+            "description": "Google, Yahoo, Python, Perl, command line tools",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "spider",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "spider",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Google Wireless Transcoder|Yahoo!|urllib|libwww|Wget|curl|integrity|internetVista|DownScout",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Browsers",
+            "description": "Browsers",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "computer",
+                    "supports_certificate": true
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "computer",
+                    "supports_certificate": true
+                }
+            },
+            "match": [
+                {
+                    "regex": "MSIE|Firefox|Safari",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "Browsers",
+            "description": "Browsers",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "computer",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "basic",
+                    "platform": "computer",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Opera",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        }
+    ]
+}

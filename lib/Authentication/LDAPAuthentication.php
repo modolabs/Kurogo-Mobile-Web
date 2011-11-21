@@ -45,12 +45,23 @@ class LDAPAuthentication extends AuthenticationAuthority
                 ldap_set_option($this->ldapResource, LDAP_OPT_PROTOCOL_VERSION, 3);
                 ldap_set_option($this->ldapResource, LDAP_OPT_REFERRALS, 0);
             } else {
-                error_log("Error connecting to LDAP Server $this->ldadServer using port $this->ldapPort");
+                Kurogo::log(LOG_WARNING, "Error connecting to LDAP Server $this->ldadServer using port $this->ldapPort", 'auth');
                 return false;
             }
         }
         
         return $this->ldapResource;
+    }
+    
+    protected function bindAdmin() {
+        $ldap = $this->connectToServer();
+        if ($this->ldapAdminDN) {
+            if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
+                Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap), 'auth');
+                return false;
+            }
+        }
+        return true;
     }
 
     protected function validUserLogins()
@@ -77,6 +88,26 @@ class LDAPAuthentication extends AuthenticationAuthority
         } else {
             return AUTH_FAILED;
         }
+    }
+
+    public function getAdminPassword() {
+        return $this->ldapAdminPassword;
+    }
+    
+    public function getAdminUser() {
+        $ldap = $this->connectToServer();
+        if (!$this->bindAdmin()) {
+            return false;
+        }
+
+        $user = false;
+        if ($sr = ldap_read($ldap, $this->ldapAdminDN, "(objectclass=*)", array($this->getField('uid')))) {
+            if ($entries = ldap_get_entries($ldap, $sr)) {
+                $user = $entries[0][$this->getField('uid')][0];
+            }
+        }
+        
+        return $this->getUser($user);
     }
     
     public function getField($field)
@@ -117,12 +148,12 @@ class LDAPAuthentication extends AuthenticationAuthority
                 $this->ldapSearchBase = $result[0]['namingcontexts'][0];
                 return $this->ldapSearchBase;
             } else {
-                error_log("Unable to determine search base for LDAP Server $this->ldapServer: " . ldap_error($ldap));
+                Kurogo::log(LOG_WARNING, "Unable to determine search base for LDAP Server $this->ldapServer: " . ldap_error($ldap), 'auth');
                 return false;
             }
             
         } else {
-            error_log("Error discovering search base for LDAP Server $this->ldapServer: " . ldap_error($ldap));
+            Kurogo::log(LOG_WARNING, "Error discovering search base for LDAP Server $this->ldapServer: " . ldap_error($ldap), 'auth');
             return false;
         }
     }
@@ -139,11 +170,8 @@ class LDAPAuthentication extends AuthenticationAuthority
              Note: it does not, and should not be an account with administrative privilages. 
                     Usually a regular service account will suffice
         */
-        if ($this->ldapAdminDN) {
-            if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
-                error_log("Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap));
-                return array();
-            }
+        if (!$this->bindAdmin()) {
+            return array();
         }
         
         $search = ldap_search($ldap, $this->ldapSearchBase('user'), $filter);
@@ -175,7 +203,7 @@ class LDAPAuthentication extends AuthenticationAuthority
             }
 
         } else {
-            error_log("Error searching LDAP Server $this->ldapServer for $filter");
+            Kurogo::log(LOG_WARNING, "Error searching LDAP Server $this->ldapServer for $filter", 'auth');
         }
         
         return $users;
@@ -197,21 +225,18 @@ class LDAPAuthentication extends AuthenticationAuthority
         if (!$ldap) {
             return false;
         }
-        
+                
         /*
             some servers don't permit anonymous searches so we need to bind as a valid user 
              Note: it does not, and should not be an account with administrative privilages. 
                     Usually a regular service account will suffice
         */
-        if ($this->ldapAdminDN) {
-            if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
-                error_log("Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap));
-                return false;
-            }
+        if (!$this->bindAdmin()) {
+            return false;
         }
         
         if (!$this->getField('uid')) {
-            throw new Exception('LDAP uid field not specified');
+            throw new KurogoConfigurationException('LDAP uid field not specified');
         }
         
         /* dn searches don't work so we have to get the uid value */
@@ -264,7 +289,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                 return AUTH_USER_NOT_FOUND; // not sure which one is correct yet
             }
         } else {
-            error_log("Error searching LDAP Server $this->ldapServer for uid=$login: " . ldap_error($ldap));
+            Kurogo::log(LOG_WARNING, "Error searching LDAP Server $this->ldapServer for uid=$login: " . ldap_error($ldap), 'auth');
             return false;
         }
     }
@@ -286,19 +311,16 @@ class LDAPAuthentication extends AuthenticationAuthority
              Note: it does not, and should not be an account with administrative privilages. 
                     Usually a regular service account will suffice
         */
-        if ($this->ldapAdminDN) {
-            if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
-                error_log("Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap));
-                return false;
-            }
+        if (!$this->bindAdmin()) {
+            return false;
         }
 
         if (!$this->getField('groupname')) {
-            throw new Exception('LDAP group name field not specified');
+            throw new KurogoConfigurationException('LDAP group name field not specified');
         }
 
         if (!$this->getField('members')) {
-            throw new Exception('LDAP group members field not specified');
+            throw new KurogoConfigurationException('LDAP group members field not specified');
         }
         
         $searchStr = array(
@@ -335,7 +357,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                 return false;
             }
         } else {
-            error_log("Error searching LDAP Server $this->ldapServer for group=$group: " . ldap_error($ldap));
+            Kurogo::log(LOG_WARNING,"Error searching LDAP Server $this->ldapServer for group=$group: " . ldap_error($ldap),'auth');
             return false;
         }
     }
@@ -379,11 +401,11 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
         
         if ( empty($this->ldapServer)) {
-            throw new Exception("Invalid LDAP Server");
+            throw new KurogoConfigurationException("Invalid LDAP Server");
         }
         
         if ( empty($this->ldapPort)) {
-            throw new Exception("Invalid LDAP Port");
+            throw new KurogoConfigurationException("Invalid LDAP Port");
         }
     }
     

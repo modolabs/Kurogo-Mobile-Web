@@ -36,7 +36,7 @@ function newsPaneResizeHandler() {
 }
 
 function newsPaneSwitchStory(elem, direction) {
-  if (elem.className.match(/disabled/)) { return false; }
+  if (hasClass(elem, 'disabled')) { return false; }
 
   var stories = document.getElementById('newsStories').childNodes;
   
@@ -45,18 +45,26 @@ function newsPaneSwitchStory(elem, direction) {
   var next = document.getElementById('newsStoryNext');
   
   for (var i = 0; i < stories.length; i++) {
-    if (stories[i].className == 'current') {
+    if (hasClass(stories[i], 'current')) {
       var j = direction == 'next' ? i+1 : i-1;
       
       if (j >= 0 || j < stories.length) {
-        stories[i].className = '';
-        stories[j].className = 'current';
+        removeClass(stories[i], 'current');
+        addClass(stories[j], 'current');
         
-        dots[i].className = '';
-        dots[j].className = 'current';
+        removeClass(dots[i], 'current');
+        addClass(dots[j], 'current');
         
-        prev.className = (j == 0) ? 'disabled' : '';
-        next.className = (j == (stories.length-1)) ? 'disabled' : '';
+        if (j == 0) {
+          addClass(prev, 'disabled');
+        } else {
+          removeClass(prev, 'disabled');
+        }
+        if (j == (stories.length-1)) {
+          addClass(next, 'disabled');
+        } else {
+          removeClass(next, 'disabled');
+        }
         
         newsEllipsizer.refresh();
       }

@@ -20,6 +20,18 @@ function updateNavSlider() {
   document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
 }
 
+function navSliderScrollLeft() {
+  if (navScroller) {
+    navScroller.scrollTo(0, navScroller.y, 500);
+  }
+}
+
+function navSliderScrollRight() {
+  if (navScroller) {
+    navScroller.scrollTo(navScroller.maxScrollX, navScroller.y, 500);
+  }
+}
+
 // Change wrapper height based on device orientation.
 function setContainerWrapperHeight() {
   document.getElementById('container').style.height = 'auto';
@@ -48,11 +60,23 @@ function handleWindowResize(e) {
     }
     setContainerWrapperHeight();
   
-  setTimeout(updateNavSlider, 0);
-  
-  if (typeof moduleHandleWindowResize != 'undefined') {
-    moduleHandleWindowResize(e);
-  }
+    setTimeout(updateNavSlider, 0);
+    
+    if (typeof moduleHandleWindowResize != 'undefined') {
+        moduleHandleWindowResize(e);
+    }
+    if (navigator.userAgent.match(/(Android 3\.\d)/)) {
+        // Android 3 browsers don't reliably set client and offset heights
+        // before calling orientationchange or resize handlers.
+        var self = this;
+        setTimeout(function() {
+            setContainerWrapperHeight();
+            setTimeout(updateNavSlider, 0);
+            if (typeof moduleHandleWindowResize != 'undefined') {
+                moduleHandleWindowResize(e);
+            }
+        }, 600); // approx. how long after the event before the offsetHeights are correct
+    }
 } 
 
 function tabletInit() {
@@ -69,7 +93,7 @@ function tabletInit() {
   var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
   window.addEventListener(resizeEvent, function() {setTimeout(handleWindowResize,0)}, false);
 
-  document.addEventListener('touchmove', function(e) { e.preventDefault(); });
+  document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
   
   containerScroller = new iScroll('wrapper', { 
     checkDOMChanges: false, 
@@ -228,7 +252,9 @@ function scrollToTop() {
                     }
                     
                     self.detailScroller.refresh();
-                    moduleHandleWindowResize();
+                    if (typeof moduleHandleWindowResize != 'undefined') {
+                        moduleHandleWindowResize(e);
+                    }
                 }
             }
             showLoadingMsg(this.options.content);
@@ -245,6 +271,9 @@ function scrollToTop() {
                     if (this.orientation != getOrientation()) {
                         this.orientation = getOrientation();
                         this.updateListScroller();
+                        if (typeof moduleHandleWindowResize != 'undefined') {
+                            moduleHandleWindowResize(e);
+                        }
                     }
                     break;
             }
@@ -281,10 +310,18 @@ function scrollToTop() {
                     }
                 },0);
                 return;
+            } else {
+              this.listScroller = new iScroll(this.options.list, options);
             }
-            
-            this.listScroller = new iScroll(this.options.list, options);
-        }
+        },
+        refreshScrollers: function () {
+            if (self.detailScroller) {
+                self.detailScroller.refresh();
+            }
+            if (self.listScroller) {
+                self.listScroller.refresh();
+            }
+        },
     }
     
     function removeBreadcrumbParameter(url) {
@@ -300,3 +337,61 @@ function scrollToTop() {
     window.splitView = splitView;
 
 })(window)
+
+// Used by news and video modules for news article listings
+function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId, detailId) {
+    var aSplitView = null;
+
+    moduleHandleWindowResize = function () {
+        var listWrapper = document.getElementById(listWrapperId);
+        var detailWrapper = document.getElementById(detailWrapperId);
+        if (!detailWrapper) {
+          return;  // can happen for searches with no results or when feed is down
+        }
+        detailWrapper.style.height = 'auto';
+        
+        var wrapperHeight = document.getElementById('wrapper').offsetHeight;
+        var headerHeight = document.getElementById(headerId).offsetHeight;
+        var contentHeight = wrapperHeight - headerHeight;
+        
+        switch (getOrientation()) {
+            case 'landscape':
+                listWrapper.style.height = contentHeight + 'px';
+                detailWrapper.style.height = contentHeight + 'px';
+                var list = listWrapper.getElementsByTagName('li')[0].parentNode;
+                list.style.width = '';
+                break;
+            
+            case 'portrait':
+                listWrapper.style.height = '';
+                // this is a hack because for some reason the width isn't being properly set
+                var width = 0;
+                var listItems = listWrapper.getElementsByTagName('li');
+                var list;
+                for (var i = 0; i < listItems.length; i++) {
+                    list = listItems[i].parentNode;
+                    width+=listItems[i].offsetWidth;
+                }
+                list.style.width = width+'px';
+                
+                var listWrapperHeight = listWrapper.offsetHeight;
+                detailWrapper.style.height = (contentHeight - listWrapperHeight) + 'px';
+                break;
+        }
+        
+        if (aSplitView) {
+            aSplitView.refreshScrollers();
+        }
+    }
+    
+    containerScroller.destroy();
+    containerScroller = null;
+    
+    moduleHandleWindowResize();
+    
+    aSplitView = new splitView({
+        list: listWrapperId,
+        detail: detailWrapperId,
+        content: detailId
+    });
+}

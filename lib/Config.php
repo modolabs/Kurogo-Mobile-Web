@@ -1,4 +1,7 @@
 <?php
+
+require('Config/ConfigFile.php');
+require('Config/ConfigGroup.php');
 /**
  * Config
  * @package Config
@@ -39,7 +42,7 @@ abstract class Config {
     
     public function setSection($section, $values) {
         if (!is_array($values)) {
-            throw new Exception("Invalid values for section $section");
+            throw new KurogoConfigurationException("Invalid values for section $section");
         }
         
         $this->sectionVars[$section] = $values;
@@ -89,7 +92,7 @@ abstract class Config {
     
     public function setSectionOrder($order, &$changed) {
         if (!is_array($order)) {
-            throw new Exception("Invalid order array");
+            throw new KurogoConfigurationException("Invalid order array");
         }
         
         if (array_keys($this->sectionVars)==$order) {
@@ -106,7 +109,7 @@ abstract class Config {
                 $id = $numeric ? $i : $section;
                 $sections[$id] = $this->sectionVars[$section];
             } else {
-                throw new Exception("Can't find section $section");
+                throw new KurogoConfigurationException("Can't find section $section");
             }
             $i++;
         }
@@ -128,7 +131,7 @@ abstract class Config {
         foreach ($sectionVars as $var=>$value) {
         
             if (!is_array($value)) {
-                throw new Exception("Found value $var = $value that wasn't in a section. Config needs to be updated");
+                throw new KurogoConfigurationException("Found value $var = $value that wasn't in a section. Config needs to be updated");
             }
             
             if ($merge) {
@@ -167,7 +170,7 @@ abstract class Config {
         if (isset($this->sectionVars[$key])) {
             return $this->sectionVars[$key];
         } else {
-            throw new Exception("Config section '$key' not set");
+            throw new KurogoConfigurationException("Config section '$key' not set");
         }
     }
 
@@ -176,7 +179,7 @@ abstract class Config {
         try {
             $section = $this->getSection($key);
             return $section;
-        } catch (Exception $e) {
+        } catch (KurogoConfigurationException $e) {
             return array();
         }
     }
@@ -198,7 +201,7 @@ abstract class Config {
         try {
             $value = $this->getVar($key, $section, $opts);
             return $value;
-        } catch (Exception $e) {
+        } catch (KurogoConfigurationException $e) {
             return $default;
         }
     }
@@ -209,12 +212,12 @@ abstract class Config {
             if (isset($this->sectionVars[$section][$key])) {
                 $value = $this->sectionVars[$section][$key];
             } else {
-                throw new Exception("Config variable '$key' not set in section $section");
+                throw new KurogoConfigurationException("Config variable '$key' not set in section $section");
             }
         } elseif (isset($this->vars[$key])) {
             $value = $this->vars[$key];
         } else {
-            throw new Exception("Config variable '$key' not set");
+            throw new KurogoConfigurationException("Config variable '$key' not set");
         }
 
         if ($opts & Config::EXPAND_VALUE) {

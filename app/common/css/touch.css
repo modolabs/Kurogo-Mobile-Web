@@ -177,7 +177,7 @@ html>body .submitbutton {
   width: 6.5em;
 }
 .formlist .formelement input {
-  width: 9em;
+  width: 9.5em;
   padding-left: .25em;
   padding-right: .25em;
   line-height: 26px;
@@ -362,7 +362,7 @@ a.module img {
 
 .nav li.icon {
   padding: 0 11px;
-  min-height: 54px;
+  min-height: 72px;
 }
 
 .nav li.icon img {
@@ -377,7 +377,11 @@ a.module img {
   position: relative;
   margin: 0 -7px 0 0;
   padding: 11px 4px 11px 57px;
-  line-height: 30px;
+  min-height: 50px;
+}
+
+.nav li.icon a img {
+  top: 11px;
 }
 
 .nav h2, .nav h3 {
@@ -875,6 +879,7 @@ h2.icon {
 	margin-top: 2px;
 }
 
+.tabstrip ,
 #tabstrip {
 	list-style-type: none;
 	height: 32px;
@@ -884,6 +889,7 @@ h2.icon {
 	overflow: hidden;
 }
 
+.tabstrip li ,
 #tabstrip li {
 	float: left;
 	margin: 0;
@@ -891,6 +897,7 @@ h2.icon {
 	height: 33px;
 }
 
+.tabstrip a ,
 #tabstrip a {
 	display: block;
 	height: 32px;
@@ -898,9 +905,10 @@ h2.icon {
 	text-decoration: none;
 	color: #fff;
 	background: url(/common/images/tabstrip.jpg) repeat-x;
-	border-right: 1px solid #9fb8d3;
+	border-right: 1px solid #999;
 }	
 
+.tabstrip li.active a ,
 #tabstrip li.active a {
 	background-image: url(/common/images/tabstrip-active.jpg);
 }

@@ -93,9 +93,12 @@
     $options = array(
       "http" => array(
           "method" => "GET",
-          "user_agent" => $_SERVER["HTTP_USER_AGENT"],
-          "header" => ("Accepts-Language: " . $_SERVER["HTTP_ACCEPT_LANGUAGE"]))
+          "user_agent" => $_SERVER["HTTP_USER_AGENT"]
+      )
     );
+    if (isset($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
+      $options["http"]["header"] = "Accepts-Language: " . $_SERVER["HTTP_ACCEPT_LANGUAGE"];
+    }
     if (!empty($_GET["utmdebug"])) {
       $data = file_get_contents(
           $utmUrl, false, stream_context_create($options));
@@ -140,9 +143,18 @@
     // Try and get visitor cookie from the request.
     $cookie = isset($_COOKIE[COOKIE_NAME]) ? $_COOKIE[COOKIE_NAME] : '';
 
-    $dcmguid = isset($_SERVER["HTTP_X_DCMGUID"]) ? $_SERVER["HTTP_X_DCMGUID"] : '';
-    $visitorId = getVisitorId(
-        $dcmguid, $account, $userAgent, $cookie);
+    $guidHeader = isset($_SERVER["HTTP_X_DCMGUID"]) ? $_SERVER["HTTP_X_DCMGUID"] : '';
+    if (empty($guidHeader) && isset($_SERVER["HTTP_X_UP_SUBNO"])) {
+      $guidHeader = $_SERVER["HTTP_X_UP_SUBNO"];
+    }
+    if (empty($guidHeader) && isset($_SERVER["HTTP_X_JPHONE_UID"])) {
+      $guidHeader = $_SERVER["HTTP_X_JPHONE_UID"];
+    }
+    if (empty($guidHeader) && isset($_SERVER["HTTP_X_EM_UID"])) {
+      $guidHeader = $_SERVER["HTTP_X_EM_UID"];
+    }
+
+    $visitorId = getVisitorId($guidHeader, $account, $userAgent, $cookie);
 
     // Always try and add the cookie to the response.
     setrawcookie(

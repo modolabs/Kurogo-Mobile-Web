@@ -20,6 +20,10 @@ abstract class User
     
     protected $attributes=array();
     
+    public function __toString() {
+        return $this->getAuthenticationAuthorityIndex() . ':' . $this->getUserID();
+    }
+    
     public function getUserID()
     {
         return $this->userID;
@@ -150,6 +154,26 @@ abstract class User
     
     private function getUserDataFile() {
         return $this->getUserDataFolder() . "/" . $this->getUserHash();
+    }
+    
+    public function setCredentials($credentials) {
+        try {
+            $value = Kurogo::encrypt($credentials);
+        } catch (KurogoException $e) {
+            $value = $credentials;
+        }
+    
+        $this->setUserData('KurogoCredentialsCache', $value);
+    }
+    
+    public function getCredentials() {
+        $value = $this->getUserData('KurogoCredentialsCache');
+        try {
+            $credentials = Kurogo::decrypt($value);
+        } catch (KurogoException $e) {
+            $credentials = $value;
+        }
+        return $credentials;
     }
     
     public function setUserData($key, $value) {

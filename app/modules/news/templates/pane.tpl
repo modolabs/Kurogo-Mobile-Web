@@ -9,12 +9,12 @@
     </a>
   {/foreach}
 </div>
-<div id="newsPager">
+<div id="newsPager" class="panepager">
   <div id="newsPagerDots" class="dots">
     {foreach $stories as $story} 
       <div id="newsDot_{$story@index}"{if $story@first} class="current"{/if}></div>
     {/foreach}
   </div>
-  <a id="newsStoryPrev" onclick="javascript:return newsPaneSwitchStory(this, 'prev');" class="disabled"></a>
-  <a id="newsStoryNext" onclick="javascript:return newsPaneSwitchStory(this, 'next');"></a>
+  <a id="newsStoryPrev" onclick="javascript:return newsPaneSwitchStory(this, 'prev');" class="prev disabled"></a>
+  <a id="newsStoryNext" onclick="javascript:return newsPaneSwitchStory(this, 'next');" class="next"></a>
 </div>

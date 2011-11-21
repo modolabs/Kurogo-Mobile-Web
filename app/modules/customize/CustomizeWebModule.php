@@ -10,7 +10,8 @@
   */
 class CustomizeWebModule extends WebModule {
     protected $id = 'customize';
-
+    protected $canBeHidden = false;
+    
     private function getModuleCustomizeList() {    
         $navModules = $this->getAllModuleNavigationData(self::INCLUDE_DISABLED_MODULES);
         return $navModules['primary'];
@@ -57,7 +58,7 @@ class CustomizeWebModule extends WebModule {
           break;
         
         default:
-          error_log(__FUNCTION__."(): Unknown action '{$_REQUEST['action']}'");
+          Kurogo::log(LOG_WARNING,__FUNCTION__."(): Unknown action '{$_REQUEST['action']}'",'module');
           break;
       }
     }

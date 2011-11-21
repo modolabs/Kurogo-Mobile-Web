@@ -3,24 +3,24 @@
 <input type="hidden" name="startOver" value="1" />
 {if $authority}
 {if !$message}
-<p class="nonfocal">{if $moduleStrings.LOGIN_DIRECT_MESSAGE}{$moduleStrings.LOGIN_DIRECT_MESSAGE}{else}To access {$strings.SITE_NAME}, please sign in.{/if}</p>
+<p class="nonfocal">{$LOGIN_DIRECT_MESSAGE}</p>
 {/if}
 <input type="hidden" name="authority" value="{$authority}" />
 <div class="focal">
     {if $message}<p>{$message}</p>{/if}
     <p><label for="loginUser">{$moduleStrings.LOGIN_LABEL|default:'login'}:</label> <input type="text" name="loginUser" id="loginUser" class="loginFormInput" /></p>
     <p><label for="loginPassword">{$moduleStrings.PASSWORD_LABEL|default:'password'}:</label> <input type="password" name="loginPassword" id="loginPassword" class="loginFormInput" /> </p>
-    {if $allowRemainLoggedIn}<p class="checkitem"><input type="checkbox" id="remember" name="remainLoggedIn"{if $remainLoggedIn} checked{/if} /> <label for="remember">Remember me</label></p>{/if}
+    {if $allowRemainLoggedIn}<p class="checkitem"><input type="checkbox" id="remember" name="remainLoggedIn"{if $remainLoggedIn} checked{/if} /> <label for="remember">{"REMEMBER_ME"|getLocalizedString}</label></p>{/if}
 
     <div class="formbuttons">
-      {include file="findInclude:common/templates/formButtonSubmit.tpl" buttonTitle="Sign in"}
+      {include file="findInclude:common/templates/formButtonSubmit.tpl" buttonTitle="SIGN_IN"|getLocalizedString}
     </div>   
 </div>
-{if $FORGET_PASSWORD_URL}<p class="nonfocal smallprint"><a href="{$FORGET_PASSWORD_URL}">{$moduleStrings.FORGET_PASSWORD_TEXT|default:'Forgot your password?'|escape}</a></p>{/if}
+{if $FORGET_PASSWORD_URL}<p class="nonfocal smallprint"><a href="{$FORGET_PASSWORD_URL}">{$FORGET_PASSWORD_TEXT}</a></p>{/if}
 {else}
 {if $authenticationAuthorities.direct}
 {if $authenticationAuthorities.indirect}
-    <h3 class="nonfocal">Sign in directly</h3>
+    <h3 class="nonfocal">{"LOGIN_DIRECTLY"|getLocalizedString}</h3>
 {/if}
 
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$authenticationAuthorities.direct navlistClass="loginbuttons" navlistID="directList"}
@@ -29,16 +29,16 @@
 {/if}
 {if $authenticationAuthorities.indirect}
 {if $authenticationAuthorities.direct}
-<p class="nonfocal">or</p>
-<h3 class="nonfocal">Use your account with an external service</h3>
+<p class="nonfocal">{"LOGIN_SEPARATOR"|getLocalizedString}</p>
+<h3 class="nonfocal">{"LOGIN_INDIRECT_HEADER"|getLocalizedString}</h3>
 {/if}
-<p class="smallprint nonfocal">{if $moduleStrings.LOGIN_INDIRECT_MESSAGE}{$moduleStrings.LOGIN_INDIRECT_MESSAGE}{else}Once you've signed in, you'll be returned to {$strings.SITE_NAME}.{/if}</p>
+<p class="smallprint nonfocal">{$LOGIN_INDIRECT_MESSAGE}</p>
 
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$authenticationAuthorities.indirect  navlistClass="loginbuttons" navlistID="indirectList"}
 {/if}
 
 {if $allowRemainLoggedIn}
-    <p class="nonfocal" id="rememberme"><input type="checkbox" id="remember" name="remainLoggedIn" onclick="toggleRememberMe()" /> <label for="remember">Remember this choice</label></p>
+    <p class="nonfocal" id="rememberme"><input type="checkbox" id="remember" name="remainLoggedIn" onclick="toggleRememberMe()" /> <label for="remember">{"REMEMBER_CHOICE"|getLocalizedString}</label></p>
 {/if}
 {/if}
 </form>

@@ -1,8 +1,8 @@
-<ul class="results">
+<ul class="results"{if $resultsID} id="{$resultsID}"{/if}>
   {$ellipsisCount=0}
   {if $previousURL}
     <li class="pagerlink">
-      <a href="{$previousURL}">Previous {$maxPerPage} videos...</a>
+      <a href="{$previousURL}">{"PREVIOUS_VIDEO_TEXT"|getLocalizedString:$maxPerPage}</a>
     </li>
   {/if}
   {foreach $results as $item}
@@ -16,12 +16,12 @@
   {/foreach}
   {if count($results) == 0}
     {block name="noResults"}
-      <li>{$noResultsText|default:"No results found"}</li>
+      <li>{"NO_RESULTS"|getLocalizedString}</li>
     {/block}
   {/if}
   {if $nextURL}
     <li class="pagerlink">
-      <a href="{$nextURL}">Next {$maxPerPage} videos...</a>
+      <a href="{$nextURL}">{"NEXT_VIDEO_TEXT"|getLocalizedString:$maxPerPage}</a>
     </li>
   {/if}
 </ul>

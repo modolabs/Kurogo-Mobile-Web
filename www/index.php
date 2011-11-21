@@ -20,6 +20,7 @@ $path = isset($_GET['_path']) ? $_GET['_path'] : '';
 $Kurogo->initialize($path); 
 
 function _phpFile($_file) {
+    Kurogo::log(LOG_DEBUG, "Output php file $_file", 'kurogo');
     if ($file = realpath_exists($_file)) {
         require_once $file;
         exit;
@@ -29,7 +30,8 @@ function _phpFile($_file) {
 }
 
 function _outputFile($_file) {
-    if ($file = realpath_exists($_file)) {
+    Kurogo::log(LOG_DEBUG, "Output file $_file", 'kurogo');
+    if ($file = Watchdog::safePath($_file)) {
         CacheHeaders($file);
         header('Content-type: '.mime_type($file));
         readfile($file);
@@ -73,16 +75,7 @@ function _outputTypeFile($matches) {
 }
 
 function _outputFileLoaderFile($matches) {
-  $fullPath = FileLoader::load($matches[1]);
-  
-  if ($fullPath) {
-    CacheHeaders($fullPath);    
-    header('Content-type: '.mime_type($fullPath));
-    echo file_get_contents($fullPath);
-    exit;
-  }
-
-  _404();
+  _outputFile(FileLoader::load($matches[1]));
 }
 
 /**
@@ -91,6 +84,7 @@ function _outputFileLoaderFile($matches) {
 function _404() {
     header("HTTP/1.1 404 Not Found");
     $url = $_SERVER['REQUEST_URI'];
+    Kurogo::log(LOG_WARNING, "URL $url not found", 'kurogo');
     echo <<<html
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
@@ -110,15 +104,33 @@ html;
   */
 function CacheHeaders($file)
 {
-    $mtime = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
-    if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-        if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] == $mtime) {
-            header('HTTP/1.1 304 Not Modified');
-            exit();
+    $fs = stat($file);
+    $mtime = gmdate('D, d M Y H:i:s', $fs['mtime']) . ' GMT';
+
+    //if we have inode then use etag. Windows does not have inodes.
+    if (isset($fs['ino']) && $fs['ino'] > 0) {
+        //use apache style etag 
+        $etag = sprintf('%x-%x-%s', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16));
+        if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
+            if (str_replace('"','', $_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
+                header('HTTP/1.1 304 Not Modified');
+                exit();
+            }
         }
-    }
     
-    header("Last-Modified: $mtime");
+        header("ETag: \"$etag\"");
+
+    } else {
+
+        if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+            if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] == $mtime) {
+                header('HTTP/1.1 304 Not Modified');
+                exit();
+            }
+        }
+        
+        header("Last-Modified: $mtime");
+    }    
     return;
 }
 
@@ -206,13 +218,13 @@ if ($parts[0]==API_URL_PREFIX) {
     switch (count($parts))
     {
         case 1:
-            throw new Exception("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
+            throw new KurogoUserException("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
 
         case 2: 
             $id = 'core';
             $command = $parts[1];
             if (!$module = CoreAPIModule::factory($id, $command, $args)) {
-                throw new Exception("Module $id cannot be loaded");
+                throw new KurogoException("Module $id cannot be loaded");
             }
             break;
             
@@ -220,20 +232,26 @@ if ($parts[0]==API_URL_PREFIX) {
             $id = isset($parts[1]) ? $parts[1] : '';
             $command = isset($parts[2]) ? $parts[2] : '';
             if (!$module = APIModule::factory($id, $command, $args)) {
-                throw new Exception("Module $id cannot be loaded");
+                throw new KurogoException("Module $id cannot be loaded");
             }
             break;
 
         default:
-            throw new Exception("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
+            throw new KurogoUserException("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
             break;
     }    
 
-    /* log the api call */
-    PageViews::log_api($id, Kurogo::deviceClassifier()->getPlatform());
+    $Kurogo->setCurrentModule($module);
     $module->executeCommand();
 
-    
+} elseif ($parts[0]=='min') { //used when minify is loaded when multi-site is on
+    for ($i=1; $i<count($parts);$i++) {
+        if (preg_match("^([a-z])=(.*)^", $parts[$i], $bits)) {
+            $_GET[$bits[1]] = $bits[2];
+        }
+    }
+
+    include('min/index.php');
 } else {
     $id = $parts[0];
     $page = 'index';
@@ -250,6 +268,7 @@ if ($parts[0]==API_URL_PREFIX) {
           	$url .= "?" . http_build_query($args);
           }
         }
+        Kurogo::log(LOG_NOTICE, "Redirecting to $url", 'kurogo');
         header("Location: " . $url);
         exit;
       }
@@ -267,13 +286,13 @@ if ($parts[0]==API_URL_PREFIX) {
       exit;
     }
 
+    $Kurogo->setRequest($id, $page, $args);
+
     if ($module = WebModule::factory($id, $page, $args)) {
-        /* log this page view */
-        PageViews::increment($id, Kurogo::deviceClassifier()->getPlatform());
-        
+        $Kurogo->setCurrentModule($module);
         $module->displayPage();
     } else {
-        throw new Exception("Module $id cannot be loaded");
+        throw new KurogoException("Module $id cannot be loaded");
     }
 }
 exit;

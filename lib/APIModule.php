@@ -96,6 +96,7 @@ abstract class APIModule extends Module
         $this->setResponseVersion(0);
     }
     $this->response->display();
+    exit();
   }
 
   protected function redirectTo($command, $args=array()) {
@@ -131,7 +132,7 @@ abstract class APIModule extends Module
 
     protected function getAPIConfig($name, $opts=0) {
         $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
-        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts);
+        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts, $this);
         return $config;
     }
 
@@ -139,24 +140,31 @@ abstract class APIModule extends Module
         $config = $this->getAPIConfig($name);
         return $config->getSectionVars(Config::EXPAND_VALUE);
     }
+
+    protected function getModuleNavigationIDs() {
+        $moduleNavConfig = $this->getModuleNavigationConfig();
+        
+        $modules = array(
+            'primary'  => array_keys($moduleNavConfig->getOptionalSection('primary_modules')),
+            'secondary'=> array_keys($moduleNavConfig->getOptionalSection('secondary_modules'))
+        );
+
+        return $modules;
+    }
    
     public static function getAllModules() {
-        $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
-        $modules = array('core'=>CoreAPIModule::factory());
-        foreach ($dirs as $dir) {
-            if (is_dir($dir)) {
-                $d = dir($dir);
-                while (false !== ($entry = $d->read())) {
-                    if ($entry[0]!='.' && is_dir(sprintf("%s/%s", $dir, $entry))) {
-                        try {
-                            if ($module = APIModule::factory($entry)) {
-                                $modules[$entry] = $module;
-                            }
-                        } catch (Exception $e) {
-                        }
+        $configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
+        $modules = array();
+    
+        foreach ($configFiles as $file) {
+            if (preg_match("#" . preg_quote(SITE_CONFIG_DIR,"#") . "/([^/]+)/module.ini$#", $file, $bits)) {
+                $id = $bits[1];
+                try {
+                    if ($module = APIModule::factory($id)) {
+                       $modules[$id] = $module;
                     }
+                } catch (KurogoException $e) {
                 }
-                $d->close();
             }
         }
         ksort($modules);    
@@ -234,13 +242,25 @@ abstract class APIModule extends Module
    */
   public function executeCommand() {
     if (empty($this->command)) {
-        throw new Exception("Command not specified");
+        throw new KurogoException("Command not specified");
     }
     $this->loadResponseIfNeeded();
     $this->loadSiteConfigFile('strings');
 
     $this->initializeForCommand();
-    $this->response->display();
+
+    $json = $this->response->getJSONOutput();
+    $size = strlen($json);
+    if ($this->logView) {
+        $this->logCommand($size);
+    }
+    header("Content-Length: " . $size);
+    echo $json;
+    exit();
+  }
+  
+  protected function logCommand($size=null) {
+	  KurogoStats::logView('api', $this->configModule, $this->command, $this->logData, $this->logDataLabel, $size);
   }
     
  /**

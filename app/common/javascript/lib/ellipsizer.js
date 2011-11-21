@@ -156,6 +156,7 @@ function refreshElement(element) {
     var lastTestLoc = -1;
     var lower = lastNodeClose > 0 ? lastNodeClose + 1 : 0;
     var upper = element.originalInnerHTML.length;
+    var initialLower = lower; // If we clip here we don't want to append an ellipsis
 
     for (var i = 0; i < 20 && lower < upper; i++) {
       var testLoc = Math.floor((lower + upper) / 2);
@@ -165,7 +166,10 @@ function refreshElement(element) {
         lastTestLoc = testLoc;
       }
       
-      copy.innerHTML = element.originalInnerHTML.substr(0, testLoc)+'&hellip;';
+      // only append an ellipsis if we are showing some of the text
+      var suffix = testLoc > initialLower ? '&hellip;' : '';
+       
+      copy.innerHTML = element.originalInnerHTML.substr(0, testLoc)+suffix;
       if (copy.offsetHeight > clipHeight) {
         upper = testLoc;
         

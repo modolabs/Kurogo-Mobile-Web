@@ -5,12 +5,15 @@ class ContentAPIModule extends APIModule {
     protected $id = 'content';
     protected $vmin = 1;
     protected $vmax = 1;
+	protected static $defaultModel = 'ContentDataModel';
 
 
     // From ContentWebModule.php
     protected function getContent($feedData) {
 
         $content_type = isset($feedData['CONTENT_TYPE']) ? $feedData['CONTENT_TYPE'] : '';
+        $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+
         switch ($content_type)
         {
             case 'html':
@@ -21,10 +24,12 @@ class ContentAPIModule extends APIModule {
                 return $content;
                 break;
             case 'html_url':
-                if (!isset($feedData['CONTROLLER_CLASS'])) {
-                    $feedData['CONTROLLER_CLASS'] = 'HTMLDataController';
+                if (!isset($feedData['PARSER_CLASS'])) {
+                    $feedData['PARSER_CLASS'] = 'DOMDataParser';
                 }
-                $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                
+                $controller = ContentDataModel::factory($modelClass, $feedData);
+
                 if (isset($feedData['HTML_ID']) && strlen($feedData['HTML_ID'])>0) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
                 } elseif (isset($feedData['HTML_TAG']) && strlen($feedData['HTML_TAG'])>0) {
@@ -36,10 +41,11 @@ class ContentAPIModule extends APIModule {
                 return $content;
                 break;
             case 'rss':
-                if (!isset($feedData['CONTROLLER_CLASS'])) {
-                    $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
+                if (!isset($feedData['PARSER_CLASS'])) {
+                    $feedData['PARSER_CLASS'] = 'RSSDataParser';
                 }
-                $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+                $controller = ContentDataModel::factory($controllerClass, $feedData);
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
                 }
@@ -47,7 +53,7 @@ class ContentAPIModule extends APIModule {
                 return '';
                 break;
             default:
-                throw new Exception("Invalid content type $content_type");
+                throw new KurogoConfigurationException("Invalid content type $content_type");
         }
     }
 
@@ -58,48 +64,23 @@ class ContentAPIModule extends APIModule {
         }
 
         switch ($this->command) {
-            case 'feeds':
+            case 'feeds': // pre 1.0
+            case 'pages': // 1.0
                 $pages = array();
 
-                $feedCounter = 0;
                 foreach ($feeds as $page => $feedData) {
-                    reset($feeds);
-                    $count = 0;
-
-                    while ($count < $feedCounter) {
-                        next($feeds);
-                        $count++;
-                    }
-                    
                     $pages[] = array(
-                        'key' => key($feeds),
+                        'key' => $page,
                         'title' => $feedData['TITLE'],
                         'subtitle' => isset($feedData['SUBTITLE']) ? $feedData['SUBTITLE'] : '',
-                        'url' => isset($feedData['BASE_URL']) ? $feedData['BASE_URL'] : ''//$this->buildBreadCrumbURL($page, array())
+                        'showTitle' => isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : false,
+                        //'url' => isset($feedData['BASE_URL']) ? $feedData['BASE_URL'] : ''//$this->buildBreadCrumbURL($page, array())
                     );
-
-                    $feedCounter++;
-                }
-
-                $feedCount = count($feeds);
-
-                $feedToReturn = array();
-                if ($feedCount != 1) {
-                    // do nothing
-                } else {
-
-                    $feedToReturn['title'] = $feedData['TITLE'];
-                    $showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
-
-                    $feedToReturn['showTitle'] = $showTitle;
-                    $feedToReturn['contentBody'] = $this->getContent($feedData);
-
                 }
 
                 $response = array(
-                    'totalFeeds' => $feedCount,
+                    'totalFeeds' => count($feeds),
                     'pages' => $pages,
-                    'feedData' => $feedToReturn
                 );
 
                 $this->setResponse($response);
@@ -107,21 +88,15 @@ class ContentAPIModule extends APIModule {
 
                 break;
 
-            case 'getFeed':
+            case 'page': // 1.0
+            case 'getFeed': // pre 1.0
 
-                if ($filter = $this->getArg('key')) {
-
+                $filter = $this->getArg('key');
+                if ($filter) {
                     $feedData = $feeds[$filter];
+                    $feedBody = $this->getContent($feedData);
 
-                    $feedToReturn['title'] = $feedData['TITLE'];
-                    $showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
-
-                    $feedToReturn['showTitle'] = $showTitle;
-                    $feedToReturn['contentBody'] = $this->getContent($feedData);
-
-                    $response = array ('feedData' => $feedToReturn);
-
-                    $this->setResponse($response);
+                    $this->setResponse($feedBody);
                     $this->setResponseVersion(1);
                 }
                 else {

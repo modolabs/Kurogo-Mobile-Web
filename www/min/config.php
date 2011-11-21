@@ -6,12 +6,20 @@
 
 /**
   */
-require_once realpath(dirname(__FILE__).'/../../lib/Kurogo.php');
-$Kurogo = Kurogo::sharedInstance();
+if (!isset($Kurogo)) {
+    require_once realpath(dirname(__FILE__).'/../../lib/Kurogo.php');
+    $Kurogo = Kurogo::sharedInstance();
+    
+    // Configure web application
+    $path = $_SERVER['REQUEST_URI'];
+    $Kurogo->initialize($path);
+}
 
-// Configure web application
-$path = $_SERVER['REQUEST_URI'];
-$Kurogo->initialize($path);
+// Minify cache ids for groups contain the list of source files, not the group id.
+// However Minify's cache ids do contain a serialized copy of the 'minifierOptions' field.
+// Use this to make sure there is a unique cache entry for each device class
+// allowing us to put device-specific content inside javascript and css files
+$min_serveOptions['minifierOptions']['kurogo']['device'] = Kurogo::deviceClassifier()->getDevice();
 
 require_once LIB_DIR.'/minify.php';
 

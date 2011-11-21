@@ -2,7 +2,7 @@
 
 {block name="customize"}
   <div class="nonfocal smallprint"> 
-    Use the arrow buttons to customize the order of icons on your homepage, and the checkboxes to toggle visibility. Your changes will be automatically saved.
+{"CUSTOMIZE_INSTRUCTIONS_TABLET"|getLocalizedString}
   </div> 
   
   <ul class="nav iconic" id="homepageList">
@@ -12,16 +12,16 @@
           <input type="checkbox" onclick="toggle(this);"{if !$info['disabled']} checked="checked"{/if} />
         {/if}
         <span class="nolinkbuttons"> 
-          <a href="#" onclick="moveUp(this); return false;" class="moveup"><img src="/modules/{$moduleID}/images/button-up.png" border="0" alt="Up"></a>
-          <a href="#" onclick="moveDown(this); return false;" class="movedown"><img src="/modules/{$moduleID}/images/button-down.png" border="0" alt="Down"></a> 
+          <a href="#" onclick="moveUp(this); return false;" class="moveup"><img src="/modules/{$moduleID}/images/button-up.png" border="0" alt="Up" /></a>
+          <a href="#" onclick="moveDown(this); return false;" class="movedown"><img src="/modules/{$moduleID}/images/button-down.png" border="0" alt="Down" /></a> 
         </span> 
         <span class="nolink">
-          <img src="/modules/home/images/{$id}.png" width="30" height="30" class="homeicon">{$info['title']}
+          <img src="/modules/home/images/{$id}{$customize_icon_suffix}.png" width="30" height="30" class="homeicon" />{$info['title']}
         </span>                   
       </li>
     {/foreach}
   </ul>
   <div class="formbuttons">
-    {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="Return to Home" buttonURL="../home/"}
+    {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="RETURN_HOME"|getLocalizedString buttonURL="../home/"}
   </div>
 {/block}

@@ -9,83 +9,84 @@ class AboutAPIModule extends APIModule {
         return array(1);
     }
 
-     protected function initializeForCommand()  {
+    protected function getSiteAboutHTML() {
+        $paragraphs = $this->getOptionalModuleVar('SITE_ABOUT_HTML', false, 'strings', 'api-about_site');
+        if (!$paragraphs) {
+            $paragraphs = $this->getModuleVar('SITE_ABOUT_HTML', 'strings');
+        }
+        return $paragraphs;
+    }
+
+    protected function getAboutHTML() {
+        $paragraphs = $this->getOptionalModuleVar('ABOUT_HTML', false, 'strings', 'api-about_site');
+        if (!$paragraphs) {
+            $paragraphs = $this->getModuleVar('ABOUT_HTML', 'strings');
+        }
+        return $paragraphs;
+    }
+
+    protected function getCreditsHTML() {
+        $module = WebModule::factory($this->configModule, 'credits_html');
+        return $module->fetchPage();
+    }
+
+    protected function initializeForCommand()  {
 
         // retrieve all Data for the About screen
-         $stringArray = ($this->getModuleArray('strings'));
-         $textArray['siteAboutHTML'] = $stringArray[0]['SITE_ABOUT_HTML'];
-         $textArray['aboutHTML'] = $stringArray[0]['ABOUT_HTML'];
-         $textArray['orgName'] = Kurogo::getSiteString('ORGANIZATION_NAME');
-         $textArray['email'] = Kurogo::getSiteString('FEEDBACK_EMAIL');
-         $textArray['website'] = Kurogo::getSiteString('COPYRIGHT_LINK');
-         $textArray['copyright'] = Kurogo::getSiteString('COPYRIGHT_NOTICE');
-         $textArray['credits'] = file_get_contents(MODULES_DIR . "/{$this->id}/templates/credits_html.tpl");
+        $stringArray = ($this->getModuleArray('strings'));
+        $textArray = array(
+            'orgtext'       => $this->getSiteAboutHTML(),
+            'abouttext'     => $this->getAboutHTML(),
+            'orgname'       => Kurogo::getSiteString('ORGANIZATION_NAME'),
+            'email'         => Kurogo::getSiteString('FEEDBACK_EMAIL'),
+            'website'       => Kurogo::getSiteString('COPYRIGHT_LINK'),
+            'copyright'     => Kurogo::getSiteString('COPYRIGHT_NOTICE'),
+        );
          
         switch ($this->command) {
 
             case 'index':
-                $response = $this->getModuleSections('api-index');
+                $dictionaryOfSections = $this->getModuleSections('api-index');
+                $response = array();
+                foreach ($dictionaryOfSections as $key => $value){
+                    $response[] = $value;
+                }
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
 
             case 'about_site':
-                $response = "<p>" . implode("</p><p>", $this->getModuleVar('SITE_ABOUT_HTML', 'strings')) . "</p>";
+                $response = '<p>' . implode('</p><p>', $textArray['orgtext']) . '</p>';
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
 
             case 'about':
-                $response = "<p>" . implode("</p><p>", $this->getModuleVar('ABOUT_HTML', 'strings')) . "</p>";
+                $response = '<p>' . implode('</p><p>', $textArray['abouttext']) . '</p>';
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
 
             case 'credits':
-                $response = file_get_contents(MODULES_DIR . "/{$this->id}/templates/credits_html.tpl");
+                $response = $this->getCreditsHTML();
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
 
             case 'orgname':
-                $response = array('orgName' => $textArray['orgName']);
-                //print_r($response);
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-                break;
-
             case 'orgtext':
-                $response = array('orgText' => $textArray['siteAboutHTML']);
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-                break;
-
             case 'abouttext':
-                $response = array('aboutText' => $textArray['aboutHTML']);
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-                break;
-
             case 'copyright':
-                $response = array('copyright' => $textArray['coyright']);
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-                break;
-
             case 'email':
-                $response = array('email' => $textArray['email']);
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-                break;
-
             case 'website':
-                $response = array('website' => $textArray['website']);
+                $response = array($this->command => $textArray[$this->command]);
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
 
             // Use 'alldata' to get everything in one API-CALL
             case 'alldata':
+                $textArray['credits'] = $this->getCreditsHTML();
                 $response = $textArray;
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
@@ -98,5 +99,3 @@ class AboutAPIModule extends APIModule {
         }
      }
 }
-
-?>

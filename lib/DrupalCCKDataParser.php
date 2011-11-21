@@ -52,7 +52,7 @@ abstract class DrupalCCKDataParser extends RSSDataParser
 
     protected static function getValue($xml, $tag) {
         if(!self::hasValue($xml, $tag)) {
-            throw new Exception("$tag is missing");
+            throw new KurogoDataException("$tag is missing");
         }
         return self::getChildNode($xml, $tag)->nodeValue;
     }
@@ -169,7 +169,7 @@ abstract class DrupalCCKDataParser extends RSSDataParser
         if($reflector->hasMethod($methodName)) {
             return $this->$methodName($fieldValueNode);
         } else {
-            throw new Exception("No method found to parse field of type $fieldType");
+            throw new KurogoDataException("No method found to parse field of type $fieldType");
         }
     }
 

@@ -1,1 +1,0 @@
-{extends file="findExtends:modules/news/templates/stories.tpl"}

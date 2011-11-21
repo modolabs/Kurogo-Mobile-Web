@@ -3,18 +3,21 @@ var KUROGO_LOCAL_VERSION;
 var KUROGO_CURRENT_VERSION;
 $(document).ready(function() {
 
+    getLocalizedString(['KUROGO_VERSION_TITLE']);
     reloadSection();    
     
     $('#adminForm').submit(function(e) {
+        var form = this;
         var params = { 'v':1, 'type':'site', 'section':adminSection, 'data':{}}
         var re;
 
         params.data[adminSection] = {};
         
         var data = {};
+        var uploads = false;
         
         $('#adminForm [section]').map(function() {
-            if ( !this.disabled &&  (this.type !='checkbox' || this.checked)) {
+            if ( !this.disabled &&  (this.type !='checkbox' || this.checked) && (this.type !='file')) {
 
                 if (re = $(this).attr('name').match(/(.*)\[(.*)\]/)) {
                     if (typeof data[re[1]]=='undefined') {
@@ -25,6 +28,10 @@ $(document).ready(function() {
                     data[$(this).attr('name')] = $(this).val();
                 }
             }
+
+            if (this.type == 'file' && this.value) {
+                uploads = true;
+            }
         });
 
         if (adminSubsection) {
@@ -34,11 +41,47 @@ $(document).ready(function() {
             params.data[adminSection] = data;
         }
         
-        makeAPICall('POST','admin','setconfigdata', params, function() { 
-            showMessage('Configuration saved');
-            reloadSection();
-        });
-        return false;
+        if (uploads) {
+            $('#uploadFrame').remove();
+            var iframeName = 'uploadFrame';
+            var iframe = $('<iframe id="uploadFrame" name="' + iframeName + '" style="position:absolute;top:-9999px" />').appendTo('body');
+            var oldaction = form.action;
+            var oldtarget = form.target;
+
+            iframe.load(function() {
+                form.action = oldaction;
+                form.target = oldtarget;
+                try {
+                    var data = $.parseJSON($(this).contents().text());
+                    if (data.error) {
+                        showMessage(data.error.message, true, 0);
+                        return;
+                    }
+                    
+                    makeAPICall('POST','admin','setconfigdata', params, function() { 
+                        showMessage(getLocalizedString('CONFIG_SAVED'));
+                        reloadSection();
+                    });
+                } catch (e) {
+                    showMessage("Error uploading file", true, 0);
+                    return;
+                }
+            });
+            
+            form.action = URL_BASE + 'rest/admin/upload';
+            form.target = iframeName;
+            showMessage('Uploading...', false, 0);
+            return true;
+        } else {
+            makeAPICall('POST','admin','setconfigdata', params, function() { 
+                showMessage(getLocalizedString('CONFIG_SAVED'));
+                reloadSection();
+            });
+        
+            e.preventDefault();        
+            return false;
+        }
+        
     });
     
     $('nav a[section]').click(function(e) {
@@ -61,15 +104,10 @@ function checkVersion() {
 function processCheckVersion(data) {
     KUROGO_LOCAL_VERSION = data.local;
     KUROGO_CURRENT_VERSION = data.current;
-    var upToDate = data.uptodate;
     
-    var li = $('<li />');
-    li.append('<label>Kurogo Version</label>');
-    if (upToDate) {
-        li.append('<div class="infotext">Your version of Kurogo (' + KUROGO_LOCAL_VERSION +') is up to date (' + KUROGO_CURRENT_VERSION +')</div>');
-    } else {
-        li.append('<div class="infotext error">Your version of Kurogo is not the most recent version. The most recent version is <b>' + KUROGO_CURRENT_VERSION +'</b>. Your version is <b>' + KUROGO_LOCAL_VERSION + '</b>. Please visit <a href="http://modolabs.com/kurogo">http://modolabs.com/kurogo</a>.</div>');
-    }
+    var li = $('<div />');
+    li.append('<label>'+ getLocalizedString('KUROGO_VERSION_TITLE') +'</label>');
+    li.append('<div class="infotext'+ (!data.uptodate ? ' error':'')+'">' + data.message + '</div>');
 
     $('#adminFields').append(li);
 }

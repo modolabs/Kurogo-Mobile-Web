@@ -1,48 +1,26 @@
-.thumbnail {
-    float:left;
-    padding:0 8px 0 0;
-    width: 5.5em;
-    height: 5.5em;
+body.VideoModule #navbar, .video {
+	/* Background color for video listing and detail; should be white in most cases */
+    background-color: #fff;
+}
+
+.video {
+    padding: 12px;
+}
+
+.splitview ul.results li.video .thumbnail {
+	width: 120px;
 }
 
 li.noimage {
     padding-left: .4em;
 }
 
-li.video {
-    height: 5.5em;
-    margin: 0;
-    padding: 1px;
-    overflow: hidden;
-    position: relative;
-}
-.results li.video a {
-    overflow: hidden;
-    position: relative;
-    margin: 0;
-    padding: 0;
-    height: 5.5em;
-}
-.results li.video a .ellipsis {
-    overflow: hidden;
-    margin: 0;
-    margin: .4em 25px .4em 0;
-    font-size: 82.35%;
-    line-height: 1.36em;
-    height: 5.9em;
-}
-
-.results li.video a .title {
-    font-size: 114.29%;
-	  color: #000;
-    padding: 0 0 .25em 0;
-}
-
-.videoplayer {
-	margin: 1em 0;
-}
-
-.videobuttons #share, .videobuttons #bookmarkContainer {
+.videobuttons {
 	float: right;
-	margin: 0 0 0 0.5em;
+	margin: -2px 2px 6px 12px;
+}
+
+.videobuttons #bookmarkContainer, .videobuttons #share {
+	float: right;
+	margin: 0 0 0 12px;
 }

@@ -10,24 +10,25 @@
   */
 class AdminWebModule extends WebModule {
     protected $id = 'admin';
+    protected $canBeRemoved = false;
   
     private function getNavSections() {
         $navSections = array(
             array(
                 'id'=>'site',
-                'title'=>'Site Configuration',
+                'title'=>$this->getLocalizedString('ADMIN_SITE_TITLE'),
                 'description'=>'',
                 'url'=>$this->buildURL('site',array()),
             ),
             array(
                 'id'=>'modules',
-                'title'=>'Module Configuration',
+                'title'=>$this->getLocalizedString('ADMIN_MODULES_TITLE'),
                 'description'=>'',
                 'url'=>$this->buildURL('modules',array()),
             ),
             array(
                 'id'=>'credits',
-                'title'=>'Credits and Licensing',
+                'title'=>$this->getLocalizedString('ADMIN_CREDITS_TITLE'),
                 'description'=>'',
                 'url'=>$this->buildURL('credits',array()),
             ),
@@ -35,29 +36,39 @@ class AdminWebModule extends WebModule {
         
         return $navSections;
     }
-    
-    private function getSiteAdminConfig() {
+
+    private function getSiteAdminConfig($type) {
         static $configData;
-        if (!$configData) {
-            $file = APP_DIR . "/common/config/admin-site.json";
-            if (!$configData = json_decode(file_get_contents($file), true)) {
-                throw new Exception("Error parsing $file");
+        if (!isset($configData[$type])) {
+            $files = array(
+                APP_DIR . "/common/config/admin-{$type}.json",
+                SITE_APP_DIR . "/common/config/admin-{$type}.json"
+            );
+            $data = array();
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    if ($json = json_decode(file_get_contents($file), true)) {
+                        $data = self::mergeConfigData($data, $json);
+                    } else {
+                        throw new KurogoDataException($this->getLocalizedString('ERROR_PARSING_FILE', $file));
+                    }
+                }
             }
-            
+            $configData[$type] = $data;
         }
         
-        return $configData;
+        return $configData[$type];
     }
     
     private function getSubNavSections($section) {
         $subNavSections = array();
         switch ($section) {
             case 'site':
-                $configData = $this->getSiteAdminConfig();
+                $configData = $this->getSiteAdminConfig($section);
                 foreach ($configData as $id=>$data) {
                     $subNavSections[$id] = array(
                         'id'=>$id,
-                        'title'=>$data['title'],
+                        'title'=>isset($data['titleKey']) ?$this->getLocalizedString($data['titleKey']) : $data['title'],
                         'url'=>$this->buildURL($section, array('section'=>$id))
                     );
                 }
@@ -67,12 +78,12 @@ class AdminWebModule extends WebModule {
             case 'modules':
                 $subNavSections['overview'] = array(
                     'id'=>'overview',
-                    'title'=>'Modules Overview',
+                    'title'=>$this->getLocalizedString('ADMIN_MODULES_OVERVIEW_TITLE'),
                     'url'=>$this->buildURL($section, array('section'=>'overview'))
                 );
                 $subNavSections['homescreen'] = array(
                     'id'=>'homescreen',
-                    'title'=>'Home Screen Layout',
+                    'title'=>$this->getLocalizedString("ADMIN_MODULES_HOMESCREEN_TITLE"),
                     'url'=>$this->buildURL($section, array('section'=>'homescreen'))
                 );
                 $modules = array();
@@ -80,9 +91,11 @@ class AdminWebModule extends WebModule {
                     $subNavSections[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
+                        'img'=>sprintf("/modules/home/images/%s%s", $module->getConfigModule(), $this->imageExt),
                         'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     $modules[$module->getConfigModule()] = array(
+                        'type'=>$module->getID(),
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
                         'home'=>$module->isOnHomeScreen(),
@@ -90,6 +103,8 @@ class AdminWebModule extends WebModule {
                         'protected'=>$module->getModuleVar('protected'),
                         'secure'=>$module->getModuleVar('secure'),
                         'search'=>$module->getModuleVar('search'),
+                        'canDisable'=>$module->canBeDisabled(), 
+                        'canRemove'=>$module->canBeRemoved(), 
                         'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     
@@ -173,16 +188,17 @@ class AdminWebModule extends WebModule {
                             $moduleSection = $this->getArg('section','general');
                             $this->assign('moduleSection',$moduleSection);
                         }
-                    } catch (Exception $e) {
+                    } catch (KurogoException $e) {
                         $this->redirectTo($this->page, array());
                     }
                 
                 } elseif ($section == $defaultSubNavSection) {
+                    $moduleClasses = WebModule::getAllModuleClasses();
+                    $this->assign('moduleClasses', $moduleClasses);
                     $this->setTemplatePage($section);
                 } elseif ($section == 'homescreen') {
                     $this->setTemplatePage($section);
                     
-                    $homeModule = WebModule::factory('home');
                     $modules = $this->getModules();
                     $this->assign('modules', $modules);                    
                     
@@ -209,12 +225,12 @@ class AdminWebModule extends WebModule {
                 $subNavSections =  array(
                     'credits'=>array(
                         'id'=>'credits',
-                        'title'=>'Credits',
+                        'title'=>$this->getLocalizedString("ADMIN_CREDITS_CREDITS_TITLE"),
                         'url'=>$this->buildURL($this->page, array('section'=>'credits'))
                     ),
                     'license'=>array(
                         'id'=>'license',
-                        'title'=>'License',
+                        'title'=>$this->getLocalizedString("ADMIN_CREDITS_LICENSE_TITLE"),
                         'url'=>$this->buildURL($this->page, array('section'=>'license'))
                     )
                 );

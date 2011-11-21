@@ -1,14 +1,15 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
-<form method="post" id="adminForm">
+<form method="post" id="adminForm" enctype="multipart/form-data">
+<input type="hidden" name="type" value="site" />
 <input type="hidden" name="section" id="section" value="{$section}" />
 <input type="hidden" name="subsection" id="subsection" value="{$subsection} /">
-<input name="submit" id="adminSubmit" type="submit" value="Save" />
+<input name="submit" id="adminSubmit" type="submit" value="{"BUTTON_SAVE"|getLocalizedString}" />
 <h1 id="sectionTitle">&nbsp;</h1>
 <ul id="adminSections"></ul>
 <p id="sectionDescription" class="preamble">&nbsp;</p>
-<ul id="adminFields" class="formfields">
+<div id="adminFields" class="formfields">
 
-</ul>
+</div>
 </form>
 <script type="text/javascript">
     var adminSection = '{$section}';

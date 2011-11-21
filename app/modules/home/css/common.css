@@ -1,0 +1,9 @@
+.focal .loading {
+  text-align: left;
+  margin: 0;
+  padding: 0 0 0 27px;
+  line-height: 21px;
+  background-image: url('/common/images/loading.gif');
+  background-position: left 50%;
+  background-repeat: no-repeat;
+}

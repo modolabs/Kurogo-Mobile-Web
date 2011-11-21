@@ -166,12 +166,13 @@ select {
 }
 
 .forminput {
-	height: 30px;
-	padding: 4px 6px;
+	height: 18px;
+	font-size: 88.24%; 
+	padding: 6px 0 6px 6px;
 	-webkit-appearance:textfield;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	background: white url(/common/images/action-search.png) no-repeat 50% right;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	background: white url(/common/images/search-button.png) no-repeat right;
 }
 
 *:first-child+html .forminput {
@@ -187,7 +188,7 @@ select {
 	height: 24px;
 	line-height: 24px;
 	vertical-align: top;
-	width: 90%;
+	width: 98%;
 }
 
 .inputcombo .hiddensubmit {
@@ -208,7 +209,7 @@ select {
 }
 
 .emphasized .forminput {
-	padding: 6px 4px 8px 7px;
+	padding: 6px 0 6px 6px;
 	height: 18px;
 }
 
@@ -258,7 +259,7 @@ select {
   width: 6.5em;
 }
 .formlist .formelement input {
-  width: 19em;
+  width: 19.5em;
   padding-left: .25em;
   padding-right: .25em;
   line-height: 26px;
@@ -315,7 +316,7 @@ input.formbutton {
 	background-color: transparent;
 	background-image: url(/common/images/button-sd-r.png);
 	background-repeat: no-repeat;
-	background-position: center right;
+	background-position: right center;
 	-webkit-border-radius: 0px;
 	border-radius: 0px;
 }
@@ -324,7 +325,7 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 	background-color: transparent;
 	background-image: url(/common/images/button-sd-l.png);
 	background-repeat: no-repeat;
-	background-position: center left;
+	background-position: left center;
 	padding: 0;
 	margin: 0;
 	margin-right: 7px; /* recenter */
@@ -373,7 +374,7 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
   padding: 0 22px 0 4px; 
   background-image: url(/common/images/drillup-r.png);
 	background-repeat: no-repeat;
-	background-position: top right;
+	background-position: right top;
 	text-decoration: none;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -577,7 +578,7 @@ a.module img {
 
 .nav li.icon {
   padding: 0 11px;
-  min-height: 54px;
+  min-height: 72px;
 }
 .nav li.icon img {
   position: absolute;
@@ -590,7 +591,10 @@ a.module img {
   position: relative;
   margin: 0 -7px 0 0;
   padding: 11px 4px 11px 57px;
-  line-height: 30px;
+  min-height: 50px;
+}
+.nav li.icon a img {
+  top: 11px;
 }
 
 .nav h2, .nav h3 {
@@ -623,6 +627,8 @@ ul.focal li:first-child {
 	border: none;
 	-webkit-border-bottom-right-radius: 8px;	
 	-webkit-border-bottom-left-radius: 8px;	
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
 }
 
 .tabbody .results {
@@ -791,12 +797,12 @@ ul.focal li:first-child {
 }
 a.sidenav-prev {
 	left: 0;
-	background-position: top left;
+	background-position: left top;
 	padding-left: 44px;
 }
 a.sidenav-next {
 	right: 0;
-	background-position: bottom right;
+	background-position: right bottom;
 	padding-right: 44px;
 }
 .sidenav3 {
@@ -1132,6 +1138,8 @@ h2.icon {
 	-webkit-border-top-right-radius: 7px;	
 	-webkit-border-top-left-radius: 7px;	
 	text-align: center;
+	border-top-right-radius: 7px;
+	border-top-left-radius: 7px;
 }
 
 #tabs li .badge {
@@ -1206,6 +1214,7 @@ h2.icon {
 	margin-top: 2px;
 }
 
+.tabstrip ,
 #tabstrip {
 	list-style-type: none;
 	height: 32px;
@@ -1216,6 +1225,7 @@ h2.icon {
 	overflow: hidden;
 }
 
+.tabstrip li ,
 #tabstrip li {
 	float: left;
 	margin: 0;
@@ -1223,6 +1233,7 @@ h2.icon {
 	height: 33px;
 }
 
+.tabstrip a ,
 #tabstrip a {
 	display: block;
 	height: 32px;
@@ -1230,20 +1241,25 @@ h2.icon {
 	text-decoration: none;
 	color: #fff;
 	background: url(/common/images/tabstrip.jpg) repeat-x;
-	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
-	border-right: 1px solid #9fb8d3;
+	-webkit-background-origin: padding-box; 
+	-webkit-background-clip: content-box; 
+	border-right: 1px solid #999;
 	-webkit-border-radius: 1px;	
+	border-radius: 1px;	
 }	
 
+.tabstrip li.active a ,
 #tabstrip li.active a {
 	background-image: url(/common/images/tabstrip-active.jpg);
 }
 
+.tabstrip li:first-child a ,
 #tabstrip li:first-child a {
 	-webkit-border-bottom-left-radius: 10px;	
 	-webkit-border-top-left-radius: 10px;	
 }
 
+.tabstrip li:last-child a ,
 #tabstrip li:last-child a {
 	-webkit-border-bottom-right-radius: 10px;	
 	-webkit-border-top-right-radius: 10px;	
@@ -1481,7 +1497,7 @@ html, body, #nonfooternav {
 #footernav {
   height: 75px;
   width: 100%;
-  background: transparent url(/common/images/footernav-bg.png) repeat-x top left;
+  background: transparent url(/common/images/footernav-bg.png) repeat-x left top;
   overflow: hidden;
   position: absolute;
   bottom: 0;
@@ -1509,7 +1525,7 @@ html, body, #nonfooternav {
   float: left;
   width: 83px;
   height: 75px;
-  background: transparent url(/common/images/footernav-spacer.png) no-repeat top left;
+  background: transparent url(/common/images/footernav-spacer.png) no-repeat left top;
   padding-left: 2px;
 }
 #footernav .module:first-child {
@@ -1553,17 +1569,16 @@ html, body, #nonfooternav {
   bottom: 0;
   width: 60px;
   height: 74px;
-  pointer-events: none;
 }
 
 #slideleft {
   left: -4px;
-  background: transparent url(/common/images/footernav-slideleft.png) no-repeat 50% left;  
+  background: transparent url(/common/images/footernav-slideleft.png) no-repeat left 50%;
 }
 
 #slideright {
   right: -4px;
-  background: transparent url(/common/images/footernav-slideright.png) no-repeat 50% right;
+  background: transparent url(/common/images/footernav-slideright.png) no-repeat right 50%;
 }
 
 .results .listSelected {
@@ -1662,6 +1677,11 @@ html, body, #nonfooternav {
 }
 
 
+
+#share {
+	margin-top: -2px;
+}
+
 #bookmarkContainer {
     float: right;
 	margin: -44px 0 0 8px;
@@ -1680,3 +1700,209 @@ html, body, #nonfooternav {
 #bookmark.pressed.on {
     background-position: -44px 1px;
 }
+#bookmarkscontainer {
+	width: 44px;
+	padding: 0.5em 0.5em 0 0;
+}
+#bookmarkscontainer #bookmarkslink div {
+width: 44px;
+height: 38px;
+background: url(/common/images/bookmark.png) no-repeat -44px -38px;
+}
+
+/* Tablet version of section-switcher + search control (e.g., News and Video) */
+
+table.section-search {
+  width: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+table.section-search fieldset {
+  display: block;
+  padding: 0;
+  margin: 0;
+  height: auto;
+}
+
+table.section-search tr td {
+  padding: 1em .5em 0 0;
+  height: 40px;
+  line-height: 40px;
+}
+
+table.section-search tr #categoryformcontainer {
+  width: 19em;
+  padding-left: .5em;
+}
+
+table.section-search #categoryformcontainer label {
+  padding-right: .25em;
+  font-size: 89%;
+}
+table.section-search #categoryformcontainer select {
+  width: auto;
+  min-width: 250px;
+}
+
+table.section-search tr #searchformcontainer form,
+table.section-search #searchformcontainer fieldset {
+  height: 40px;
+  width: 100%;
+  position: relative;
+}
+table.section-search #searchformcontainer fieldset .forminput {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 89%;
+}
+
+table.section-search form {
+	margin: -8px 0 0 0;
+	padding: 0;
+}
+
+#category-switcher .formlabel {
+	width: 62px;
+    text-align: right;
+	font-size: 89%;
+}
+
+
+
+
+/* Tablet split view */
+
+.splitview-header {
+    overflow: hidden;
+}
+
+.splitview ul.results {
+    margin: 0;
+}
+
+.splitview ul.results li {
+    height: 105px;
+	margin: 0;
+    padding: 1px;
+    overflow: hidden;
+    position: relative;
+}
+.splitview ul.results li a {
+    overflow: hidden;
+    position: relative;
+    margin: 0;
+    padding: 9px;
+    height: 87px;
+}
+.splitview ul.results .ellipsis {
+    overflow: hidden;
+    margin: 0;
+    margin: 4px 20px 4px 0;
+    font-size: 82.35%;
+    line-height: 19px;
+    height: 87px;
+}
+
+.splitview ul.results .title {
+    padding: 0 0 2px 0;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+.splitview ul.results li .thumbnail {
+    float:left;
+    margin: -3px 9px -3px -3px;
+    width: 93px;
+    height: 93px;
+}
+
+.splitview .listcontainer {
+    position: relative;
+    width: 342px;
+    border: 1px solid;
+    border-left: none;
+    border-bottom: none;
+}
+
+.splitview .results li.pagerlink a {
+  font-weight: bold;
+  background-image: none;
+  font-size: 90%;
+  height: auto;
+}
+
+.splitview-detailwrapper {
+    position: relative;
+}
+
+.portrait .splitview .listcontainer {
+    width: auto;
+    height: 107px;
+    white-space: nowrap;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+    border-right: none;
+}
+
+.portrait .splitview ul.results {
+    white-space: nowrap;
+    position: absolute;
+    overflow: visible;
+    width: auto;
+    height: 107px;
+    margin: 0;
+    top: 0;
+    left: 0;
+}
+
+.portrait .splitview ul.results li {
+    white-space: normal;
+    width: 200px;
+    display: block;
+    float: left;
+    border: none;
+    padding: 0;
+    border-right: 1px dotted;
+}
+
+.portrait .splitview ul.results .thumbnail {
+    display: none;
+}
+
+.portrait .splitview ul.results li a {
+    background-image: none;
+}
+
+.portrait .splitview ul.results .ellipsis {
+    margin: 4px;
+}
+
+.portrait .splitview ul.results li.pagerlink {
+	height: auto;
+	width: auto;
+	text-align: center;
+	padding: 36px 9px;
+}
+
+.landscape .splitview {
+    -webkit-box-orient: horizontal;
+    display: -webkit-box;
+    height: 400px;
+    position: relative;
+}
+
+.landscape .splitview-detailwrapper {
+    border-top: 1px solid;
+	-webkit-box-flex:1;
+}
+
+.landscape .splitview ul.results li.pagerlink {
+	height: auto;
+	padding: 12px 6px;
+}
+

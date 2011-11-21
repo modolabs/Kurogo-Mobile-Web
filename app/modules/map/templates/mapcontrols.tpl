@@ -8,6 +8,9 @@
   <a id="recenter">
     <img src="/common/images/blank.png" width="40" height="34" alt="Recenter" />
   </a>
+  <a id="locateMe">
+    <img src="/common/images/blank.png" width="40" height="34" alt="Locate Me " />
+  </a>
   {if $fullscreen}
   <a id="smallscreen" href="{$detailURL}">
     <img src="/common/images/blank.png" width="40" height="34" alt="Return to Detail" />

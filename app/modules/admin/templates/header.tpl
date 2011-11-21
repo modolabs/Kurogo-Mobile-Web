@@ -35,11 +35,11 @@
 <header>
 	<a href="{$smarty.const.URL_BASE}"><img src="/modules/admin/images/kurogo-logo.png" alt="Kurogo" width="90" height="90" id="logo" border="0" /></a>
 	<h1>	
-		Kurogo&trade; Adminstration Console: 
-		<span id="sitename">{$strings.SITE_NAME|escape}</span>
+		{"KUROGO_ADMIN_TITLE"|getLocalizedString}
+		<span id="sitename">{$strings.SITE_NAME}</span>
 	</h1>
 	<div id="utility">
-        {if $session_isLoggedIn}<div id="user">Signed in as <span id="username">{$session_fullName}.</span><a id="signout" href="{$session_logout_url}" onclick="confirmSignout();">Sign out</a>
+        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{"SIGN_OUT"|getLocalizedString}</a></div>
         {/if}
 	</div>
 </header>
@@ -49,10 +49,10 @@
 		<ul>
 		{foreach $navSections as $navSection}
         <li><a href="{$navSection.url}" title="{$navSection.description|escape}">{$navSection.title|escape}</a>
-        {if $page==$navSection.id}
+        {if $page==$navSection.id && $subNavSections}
         <ul>
 		{foreach $subNavSections as $subNavSection}
-            <li><a{if $subNavSection.id==$section} class="current"{/if} href="{$subNavSection.url}" section="{$subNavSection.id}">{$subNavSection.title|escape}</a></li>
+            <li><a{if $subNavSection.id==$section} class="current"{/if} href="{$subNavSection.url}" section="{$subNavSection.id}">{if $subNavSection.img}<img src="{$subNavSection.img}" height="16" /> {/if}{$subNavSection.title|escape}</a></li>
         {/foreach}
         </ul>
         {/if}

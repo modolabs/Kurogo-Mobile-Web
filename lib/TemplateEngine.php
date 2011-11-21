@@ -35,9 +35,7 @@ class TemplateEngine extends Smarty {
   
   private function extendsTrackerReset($templateToMatch=null) {
     if (!$templateToMatch || $this->extendsTrackerUsingTemplate($templateToMatch)) {
-      if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
-        error_log('**** RESETTING TRACKER'.($this->extendsTrackerCurrentInclude ? " (old include {$this->extendsTrackerCurrentInclude})" : ''));
-      }
+      Kurogo::log(LOG_DEBUG, 'RESETTING TRACKER'.($this->extendsTrackerCurrentInclude ? " (old include {$this->extendsTrackerCurrentInclude})" : ''), 'template');
       $this->extendsTrackerCurrentInclude = '';
       $this->extendsTrackerSeenFiles = array();
     }
@@ -45,9 +43,7 @@ class TemplateEngine extends Smarty {
   
   private function extendsTrackerCheckTemplate($template) {
     if ($template->resource_type == 'file' && !$this->extendsTrackerUsingTemplate($template)) {
-      if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
-        error_log("**** RESETTING TRACKER (new include {$template->resource_name})");
-      }
+      Kurogo::log(LOG_DEBUG, "RESETTING TRACKER (new include {$template->resource_name})", 'template');
       $this->extendsTrackerCurrentInclude = $template->resource_name;
       $this->extendsTrackerSeenFiles = array();
       
@@ -66,9 +62,7 @@ class TemplateEngine extends Smarty {
   }
   
   private function extendsTrackerAddFile($file) {
-    if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
-      error_log("**** ADDING TO TRACKER -- {$file}");
-    }
+    Kurogo::log(LOG_DEBUG, "ADDING TO TRACKER -- {$file}", 'template');
     $this->extendsTrackerSeenFiles[$file] = true;
   }
   
@@ -100,9 +94,7 @@ class TemplateEngine extends Smarty {
       foreach ($checkDirs as $type => $dir) {
         $test = realpath_exists("$dir/$file");
         if ($test) {
-          if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
-            error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file' for '$name'");
-          }
+          Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform) choosing '$type/$file' for '$name'", 'template');
           return addslashes($test);
         }
       }
@@ -127,9 +119,7 @@ class TemplateEngine extends Smarty {
     foreach ($checkDirs as $type => $dir) {
       $test = realpath_exists("$dir/$name");
       if ($test && !$template->smarty->extendsTrackerSeenFile($test)) {
-        if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
-          error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name' for '$name'");
-        }
+        Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform) choosing     '$type/$name' for '$name'", 'template');
         $template->smarty->extendsTrackerAddFile($test);
         return addslashes($test);
       }
@@ -171,11 +161,9 @@ class TemplateEngine extends Smarty {
         if ($path) {
           $search[] = $matches[0][$i];
           $replace[] = '="file:'.$path.'"';
-          if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
-            error_log(__FUNCTION__." replacing include $name with $path");
-          }
+          Kurogo::log(LOG_DEBUG, __FUNCTION__." replacing include $name with $path", 'template');
         } else {
-          trigger_error(__FUNCTION__." FAILED to find INCLUDE for $name", E_USER_ERROR);
+          Kurogo::log(LOG_WARNING, __FUNCTION__." FAILED to find INCLUDE for $name", 'template');
         }
       }
     }
@@ -185,16 +173,29 @@ class TemplateEngine extends Smarty {
         if ($path) {
           $search[] = $matches[0][$i];
           $replace[] = '="file:'.$path.'"';
-          if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
-            error_log(__FUNCTION__." replacing extends $name with $path");
-          }
+          Kurogo::log(LOG_DEBUG, __FUNCTION__." replacing extends $name with $path", 'template');
         } else {
-          trigger_error(__FUNCTION__." FAILED to find EXTENDS for $name", E_USER_ERROR);
+          Kurogo::log(LOG_WARNING, __FUNCTION__." FAILED to find EXTENDS for $name", 'template');
         }
       }
     }
     
     return $search ? str_replace($search, $replace, $source) : $source;
+  }
+  
+  //
+  // Filter to attempt to remove XSS injection attacks without removing HTML
+  //
+  public static function smartyModifierSanitizeHTML($string, $allowedTags='editor') {
+    return Sanitizer::sanitizeHTML($string, $allowedTags);
+  }
+  
+  //
+  // Filter to remove javascript from urls
+  // Assumes URL is dumped into href or src attr as-is
+  //
+  public static function smartyModifierSanitizeURL($string) {
+    return Sanitizer::sanitizeURL($string);
   }
   
   //
@@ -280,7 +281,7 @@ class TemplateEngine extends Smarty {
   
   public static function smartyBlockAccessKeyLink($params, $content, &$smarty, &$repeat) {
     if (empty($params['href'])) {
-      trigger_error("assign: missing 'href' parameter");
+      Kurogo::log(LOG_WARNING, "assign: missing 'href' parameter", 'template');
     }
     
     $html = '';
@@ -294,7 +295,7 @@ class TemplateEngine extends Smarty {
       if (isset($params['id'])) {
         $html .= " id=\"{$params['id']}\"";
       }
-      if (self::$accessKey < 10) {
+      if (self::$accessKey < 10 && Kurogo::deviceClassifier()->getPlatform() != "blackberry") {
         $html .= ' accesskey="'.self::$accessKey.'">'.self::$accessKey.': ';
         self::$accessKey++;
       } else {
@@ -307,7 +308,7 @@ class TemplateEngine extends Smarty {
   
   public static function smartyTemplateAccessKeyReset($params, &$smarty) {
     if (!isset($params['index'])) {
-        trigger_error("assign: missing 'index' parameter");
+        Kurogo::log(LOG_WARNING, "assign: missing 'index' parameter", 'template');
         return;
     }
     if (self::$accessKey == 0 || (isset($params['force']) && $params['force'])) {
@@ -339,6 +340,11 @@ class TemplateEngine extends Smarty {
     $this->setCompileDir (CACHE_DIR.'/smarty/templates');
     $this->setCacheDir   (CACHE_DIR.'/smarty/html');
     $this->setCompileId  ("$pagetype-$platform");
+    
+    $this->registerPlugin('modifier', 'sanitize_html', array('TemplateEngine',
+      'smartyModifierSanitizeHTML'));
+    $this->registerPlugin('modifier', 'sanitize_url', array('TemplateEngine',
+      'smartyModifierSanitizeURL'));
     
     $this->registerFilter('pre', array('TemplateEngine', 
       'smartyPrefilterHandleIncludeAndExtends'));

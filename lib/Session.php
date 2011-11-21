@@ -40,13 +40,14 @@ abstract class Session
         $args = is_array($args) ? $args : array();
 
         if (!class_exists($sessionClass)) {
-            throw new Exception("Session class $sessionClass not defined");
+            throw new KurogoConfigurationException("Session class $sessionClass not defined");
         }
         
+        Kurogo::log(LOG_DEBUG, "Initializing session class $sessionClass", 'session');
         $session = new $sessionClass;
         
         if (!$session instanceOf Session) {
-            throw new Exception("$sessionClass is not a subclass of Session");
+            throw new KurogoConfigurationException("$sessionClass is not a subclass of Session");
         }
 
         $session->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
@@ -85,6 +86,7 @@ abstract class Session
             
             // see if max idle time has been reached
             if ( $this->maxIdleTime && ($diff > $this->maxIdleTime)) {
+                Kurogo::log(LOG_NOTICE, "User was logged off after $diff seconds", 'session');
                 // right now the user is just logged off, but we could show and error if necessary.
             } else {
                 $ok = false;
@@ -96,7 +98,7 @@ abstract class Session
                             $users[] = $user;
                             $ok = true;
                         } else {
-                            error_log("Error trying to load user " . $userData['auth_userID']);
+                            Kurogo::log(LOG_WARNING, "Error trying to load user " . $userData['auth_userID'], 'session');
                         }
                     }
                 }
@@ -149,6 +151,7 @@ abstract class Session
             return;
         } elseif ($user instanceOf User) {
             if ($auth = $user->getAuthenticationAuthorityIndex()) {
+                Kurogo::log(LOG_DEBUG, "Setting user to $auth:".$user->getUserID(), 'session');
                 $this->users[$auth] = $user;
                 $this->setSessionVars();
             }
@@ -194,7 +197,7 @@ abstract class Session
         } elseif ($authority instanceOf AuthenticationAuthority) {
             $authority = $authority->getAuthorityIndex();
         } elseif (!is_scalar($authority)) {
-            throw new Exception("Invalid authority $authority");
+            throw new KurogoException("Invalid authority $authority");
         }
         
         // will check for the authority index or user or authority class. 
@@ -234,6 +237,7 @@ abstract class Session
       * @return User
       */
     public function login(User $user) {
+        Kurogo::log(LOG_NOTICE, sprintf("Logging in user %s:%s", $user->getAuthenticationAuthorityIndex(), $user->getUserID()), 'session');
         session_regenerate_id(true);
         $this->setUser($user);
         $this->setLoginCookie();
@@ -247,7 +251,9 @@ abstract class Session
         if (!$this->isLoggedIn($authority)) {
             return false;
         }
-        
+
+        $user = $this->getUser($authority);
+        Kurogo::log(LOG_NOTICE, sprintf("Logging out user %s:%s", $user->getAuthenticationAuthorityIndex(), $user->getUserID()), 'session');
         $authority->logout($this, $hard);
         unset($this->users[$authority->getAuthorityIndex()]);
         $this->setSessionVars();
@@ -303,7 +309,7 @@ abstract class Session
             
             // set the values and the cookies
 			$this->login_token = $new_login_token;
-			error_log("Setting login token to $new_login_token");
+			Kurogo::log(LOG_DEBUG, "Setting login token to $new_login_token", 'session');
 			setCookie(self::TOKEN_COOKIE, $this->login_token, $expires, $this->loginCookiePath);
 			setCookie(self::USERHASH_COOKIE, $this->getUserHash($data), $expires, $this->loginCookiePath);
 		} else {
@@ -345,10 +351,10 @@ abstract class Session
                                 $user->setSessionData($userData['data']);
                                 $users[] = $user;
                             } else {
-                                error_log("Unable to load user " . $userData['userID']  . " for " . $userData['auth']);
+                                Kurogo::log(LOG_WARNING,"Unable to load user " . $userData['userID']  . " for " . $userData['auth'], 'session');
                             }
                         } else {
-                            error_log("Unable to load authority ".  $userData['auth']);
+                            Kurogo::log(LOG_WARNING, "Unable to load authority ".  $userData['auth'], 'session');
                         }
                     }
                     

@@ -18,7 +18,9 @@
 {/block}
 
 {block name="photoPane"}
-  <p class="image">
-    <img src="{$photoURL}" width="{$photoWidth}" alt="Photo" />
-  </p>
+  {if $photoURL}
+    <p class="image">
+      <img src="{$photoURL}" width="{$photoWidth}" alt="Photo" />
+    </p>
+  {/if}
 {/block}
