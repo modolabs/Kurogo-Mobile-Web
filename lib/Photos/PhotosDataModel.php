@@ -47,8 +47,11 @@ class PhotosDataModel extends ItemListDataModel {
     }
     
     public function getDefaultPhoto(){
+    	$this->setStart(0);
+    	$this->setLimit(1);
     	$items = $this->items();
-    	return reset($this->limitItems($items, 0, 1));
+    	$this->clearInternalCache();
+    	return reset($items);
     }
 
     public function getPhoto($id) {

@@ -72,6 +72,7 @@ class PhotosWebModule extends WebModule {
                 $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
         	case 'album':
+        		$page = $this->getArg('page', 0);
         		$album = $this->getArg('id', $this->getDefaultSection());
         		$controller = $this->getFeed($album);
         		$items = $controller->items();
@@ -84,6 +85,9 @@ class PhotosWebModule extends WebModule {
                     $photos[] = $photo;
         		}
         		$this->assign('photos', $photos);
+
+        		$this->setPageTitles($controller->getTitle());
+        		$this->assign('springboardID', 'photoSpringboard');
         		break;
             case 'show':
             	$album = $this->getArg('album', null);
