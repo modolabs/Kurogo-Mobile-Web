@@ -421,7 +421,7 @@ function kgoEsriMapLoader(attribs) {
             'to': wkid
         };
         makeAPICall('GET', 'map', 'projectPoint', params, function(response) {
-            var point = new esri.geometry.Point(response["lon"], response["lat"], spatialRef);
+            var point = new esri.geometry.Point(response.lon, response.lat, spatialRef);
 
             if (typeof that.userLocationMarker == 'undefined') {
                 // TODO make these more customizable

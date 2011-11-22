@@ -629,12 +629,8 @@ class MapWebModule extends WebModule {
 
     protected function initializeForPage() {
 
+        $this->addJQuery();
         $this->featureIndex = $this->getArg('featureindex', null);
-
-        // pass the REST API URL to javascript so we can make queries
-        // TODO there should ba a cleaner way to do this
-        $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}";
-        $this->addInlineJavascript("\napiURL = '$apiURL';\n");
 
         switch ($this->page) {
             case 'help':
