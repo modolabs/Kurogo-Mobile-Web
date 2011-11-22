@@ -129,10 +129,30 @@ class CalendarDataModel extends ItemListDataModel
             $end = new DateTime();
             $end->setTime(23,59,59);
             $this->setEndDate($end);
+        } else {
+            $this->endDate = null;
+            $this->setOption('endDate', null);
         }
 
         $event = $this->getItemByIndex(0);
         return $event;
+    }
+
+    public function getPreviousEvent($todayOnly=false) {
+        $end = new DateTime();
+        $end->setTime(date('H'), floor(date('i')/5)*5, 0);
+        $this->setEndDate($end);
+        if ($todayOnly) {
+            $start = new DateTime();
+            $start->setTime(0,0,0);
+            $this->setStartDate($start);
+        } else {
+            $this->startDate = null;
+            $this->setOption('startDate', null);
+        }
+
+        $items = $this->items();
+        return end($items);
     }
     
     public function getItem($id, $time=null)
