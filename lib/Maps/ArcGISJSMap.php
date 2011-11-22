@@ -140,6 +140,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 '___FILL_COLOR___' => $fillColor,
                 '___STROKE_COLOR___' => $strokeColor,
                 '___STROKE_WEIGHT___' => $strokeWeight,
+                '___TITLE___' => json_encode($placemark->getTitle()),
+                '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
                 ));
         }
 
@@ -176,6 +178,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
             $templateValues = array(
                 '___POLYLINE_SPEC___' => json_encode($jsonObj),
+                '___TITLE___' => json_encode($placemark->getTitle()),
+                '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
                 );
 
             if ($style !== null) {
@@ -259,9 +263,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
             }
 
             // TODO use $placemark->getFields to populate Attributes
-            $templateValues['___TITLE___'] = $placemark->getTitle();
-            $subtitle = $placemark->getSubtitle();
-            $templateValues['___DESCRIPTION___'] = $subtitle ? $subtitle : "";
+            $templateValues['___TITLE___'] = json_encode($placemark->getTitle());
+            $templateValues['___SUBTITLE___'] = json_encode($placemark->getSubtitle());
             $templateValues['___IDENTIFIER___'] = count($this->markers);
 
             $template->appendValues($templateValues);

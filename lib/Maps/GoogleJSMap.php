@@ -89,17 +89,12 @@ class GoogleJSMap extends JavascriptMapImageController {
             // TODO: what fields should show on the index page?
             $fields = $marker->getFields();
 
-            $subtitle = $marker->getSubtitle();
-            if (!$subtitle) {
-                $subtitle = ''; // "null" will show up on screen
-            }
-
             $template->appendValues(array(
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
                 '___TITLE___' => json_encode($marker->getTitle()),
                 '___OPTIONS___' => $options,
-                '___SUBTITLE___' => json_encode($subtitle),
+                '___SUBTITLE___' => json_encode($polygon->getSubtitle()),
                 '___URL___' => $this->urlForPlacemark($marker),
                 ));
         }
@@ -133,11 +128,6 @@ class GoogleJSMap extends JavascriptMapImageController {
                 }
             }
 
-            $subtitle = $polygon->getSubtitle();
-            if (!$subtitle) {
-                $subtitle = ''; // "null" will show up on screen
-            }
-
             $coord = $polygon->getGeometry()->getCenterCoordinate();
             $template->appendValues(array(
                 '___LATITUDE___' => $coord['lat'],
@@ -145,7 +135,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 '___MULTIPATHSTRING___' => implode(',', $polyString),
                 '___TITLE___' => json_encode($polygon->getTitle()),
                 '___OPTIONS___' => implode(',', $options),
-                '___SUBTITLE___' => json_encode($subtitle),
+                '___SUBTITLE___' => json_encode($polygon->getSubtitle()),
                 '___URL___' => $this->urlForPlacemark($polygon),
                 ));
         }
@@ -184,7 +174,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 '___PATHSTRING___' => $coordString,
                 '___TITLE___' => json_encode($path->getTitle()),
                 '___OPTIONS___' => implode(',', $options),
-                '___SUBTITLE___' => json_encode($subtitle),
+                '___SUBTITLE___' => json_encode($polygon->getSubtitle()),
                 '___URL___' => $this->urlForPlacemark($path),
                 ));
         }

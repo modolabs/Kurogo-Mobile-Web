@@ -390,7 +390,10 @@ function kgoEsriMapLoader(attribs) {
     that.addOverlay = function(overlay, attribs) {
         map.graphics.add(overlay);
         that.placemarks.push(overlay);
-        // TODO: make callouts work
+        infoTemplate = new esri.InfoTemplate();
+        infoTemplate.setTitle(attribs["title"]);
+        infoTemplate.setContent(attribs["subtitle"]);
+        overlay.setInfoTemplate(infoTemplate);
     }
 
     that.clearMarkers = function() {}
