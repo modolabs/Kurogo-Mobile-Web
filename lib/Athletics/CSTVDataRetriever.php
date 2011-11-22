@@ -8,7 +8,7 @@ class CSTVDataRetriever extends URLDataRetriever
     
     protected function initResponse() {
         $response = parent::initResponse();
-        $response->setContext('sport', $this->sport);
+        //$response->setContext('sport', $this->sport);
         return $response;
     }
     
@@ -24,10 +24,18 @@ class CSTVDataRetriever extends URLDataRetriever
 
 class CSTVDataParser extends XMLDataParser {
 
+    protected $sport;
     protected $items=array();
-
+    
     protected static $startElements=array();
     protected static $endElements=array('EVENT');
+    
+    public function init($args) {
+        parent::init($args);
+        if (isset($args['SPORT'])) {
+            $this->sport = $args['SPORT'];
+        }
+    }
     
     public function items()
     {
@@ -50,12 +58,10 @@ class CSTVDataParser extends XMLDataParser {
         switch ($name) {
             case 'EVENT':
                 $event = $this->parseEntry($element);
-                
                 $filters = array();
-                if ($sport = $this->response->getContext('sport')) {
-                    $filters['sport'] = $sport;
+                if ($this->sport) {
+                    $filters['sport'] = $this->sport;
                 }
-                
                 if ($event->filterItem($filters)) {
                     $this->items[] = $event;
                 }

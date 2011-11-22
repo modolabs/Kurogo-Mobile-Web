@@ -83,19 +83,21 @@ class AthleticsWebModule extends WebModule {
         return $link;
     }
     
-    protected function timeText($event) {
+    protected function timeText(AthleticEvent $event) {
     
-        if ($dateTime = $event->getDateTime()) {
-            $timeText = $dateTime->format('m.d.Y \a\t ');
+        if ($datetime = $event->getDateTime()) {
+            $timeText = $datetime->format('m.d.Y \a\t ');
             if ($event->getAllDay()) {
                 $timeText .= $this->getLocalizedString('ALL_DAY');
             } elseif ($event->getTBA()) {
                 $timeText .= $this->getLocalizedString('TBA');
             } else {
-                $timeText .= $dateTime->format('g:i a');
+                $timeText .= $datetime->format('g:i a');
             }
             
             return $timeText;
+        } elseif (is_int($datetime)) {
+            return date('m.d.Y \a\t g:i a', $event);
         }
         
         return '';
@@ -115,27 +117,12 @@ class AthleticsWebModule extends WebModule {
         return $eventFields;
     }
     
-    protected function valueForType($type, $value) {
+    protected function valueForType($type, $value, $event = null) {
         $valueForType = $value;
   
         switch ($type) {
             case 'datetime':
-                if (is_array($value)) {
-                    $dateTime = $value[0];
-                    $allDay = $value[1];
-                    $isTba = $value[2];
-                    
-                    $valueForType = $dateTime->format('m.d.Y \a\t ');
-                    if ($allDay) {
-                        $valueForType .= $this->getLocalizedString('ALL_DAY');
-                    } elseif ($isTba) {
-                        $valueForType .= $this->getLocalizedString('TBA');
-                    } else {
-                        $valueForType .= $dateTime->format('g:i a');
-                    }
-                } else {
-                    $valueForType = $dateTime->format('m.d.Y at g:i a');
-                }
+                $valueForType = $this->timeText($event);
             break;
 
         case 'url':
@@ -144,18 +131,7 @@ class AthleticsWebModule extends WebModule {
                 $valueForType = 'http://'.$valueForType;
             }
             break;
-        
-        case 'phone':
-            $valueForType = PhoneFormatter::formatPhone($value);
-            break;
-      
-        case 'email':
-            $valueForType = str_replace('@', '@&shy;', $value);
-            break;
-        
-        case 'category':
-            $valueForType = $this->formatTitle($value);
-            break;
+
         }
         return $valueForType;
     }
@@ -187,26 +163,29 @@ class AthleticsWebModule extends WebModule {
         return $urlForType;
     }
     
-    protected function formatEventDetail(ICalEvent $event) {
-        $calendarFields = $this->getModuleSections('schedule-detail');
+    protected function formatScheduleDetail(AthleticEvent $event) {
+        $allFieldsValue  = $this->getFieldsForSechedule($event);
+        $showFields = $this->getModuleSections('schedule-detail');
         $fields = array();
 
-        foreach ($calendarFields as $key => $info) {
+        foreach ($showFields as $key => $info) {
             $field = array();
-            $value = $event->get_attribute($key);
-            if (!$value) {
+            if (!isset($allFieldsValue[$key]) || !$allFieldsValue[$key]) {
                 continue;
             }
+            $value = $allFieldsValue[$key];
+            
             if (isset($info['label'])) {
                 $field['label'] = $info['label'];
             }
-            
             if (isset($info['class'])) {
                 $field['class'] = $info['class'];
             }
             if (isset($info['type'])) {
-                $field['title'] = $this->valueForType($info['type'], $value);
+                $field['title'] = $this->valueForType($info['type'], $value, $event);
                 $field['url']   = $this->urlForType($info['type'], $value);
+            } elseif (isset($info['module'])) {
+                $field = array_merge($field, Kurogo::moduleLinkForValue($info['module'], $value, $this, $event));
             } else {
                 $field['title'] = nl2br($value);
             }
@@ -214,7 +193,7 @@ class AthleticsWebModule extends WebModule {
         }
         return $fields;
     }
-    
+
     protected function getFieldsForSechedule(AthleticEvent $event) {
     
         //check the event is pasted
@@ -270,13 +249,13 @@ class AthleticsWebModule extends WebModule {
         return $data;
         
     }
-    
+
     //get the schedule about most recent and next 
     protected function getRangeSchedule($schedules, $time = '') {
         $time = $time ? $time : time();
         
-        $previous = array();
-        $next   = array();
+        $previous = null;
+        $next   = null;
         foreach ($schedules as $key => $item) {
             if ((!$dateTime = $item->getDateTime()) || $item->getTBA()) {
                 continue;
@@ -291,14 +270,17 @@ class AthleticsWebModule extends WebModule {
         $result = array();
         if ($previous) {
             $previousIndex = end($previous);
-            $result['previous'] = isset($schedules[$previousIndex]) ? $schedules[$previousIndex] : null;
+            $previous = isset($schedules[$previousIndex]) ? $schedules[$previousIndex] : null;
         }
         if ($next) {
             $nextIndex = current($next);
-            $result['next'] = isset($schedules[$nextIndex]) ? $schedules[$nextIndex] : null;
+            $next = isset($schedules[$nextIndex]) ? $schedules[$nextIndex] : null;
         }
         
-        return $result;
+        return array(
+            'previous' => $previous,
+            'next'     => $next
+        );
     }
     
     protected function getScheduleFeed($sport) {
@@ -465,20 +447,21 @@ class AthleticsWebModule extends WebModule {
                 break;
              
             case 'schedule_detail':
-                $id = $this->getArg('id');
-                $section = $this->getArg('section');
-                $time = $this->getArg('time', time(), FILTER_VALIDATE_INT);
+                $sport = $this->getArg('sport', '');
+                $id = $this->getArg('id', '');
+                $sportData = $this->getSportData($sport);
                 
-                $feed = $this->getFeed($section, 'schedule');
-                if ($event = $feed->getItem($id, $time)) {
-                    $this->assign('event', $event);
+                $scheduleFeed = $this->getScheduleFeed($sport);
+                if ($schedule = $scheduleFeed->getItem($id)) {
+                    $this->assign('schedule', $schedule);
                 } else {
                     throw new KurogoDataException($this->getLocalizedString('ERROR_EVENT_NOT_FOUND'));
                 }
+                $this->setLogData($sport . ':' . $schedule->getID(), $schedule->getSport());
                 
-                $this->setLogData($section . ':' . $event->get_uid(), $event->get_summary());
-
-                $fields = $this->formatEventDetail($event);
+                $fields = $this->formatScheduleDetail($schedule);
+                $schedule = $this->getFieldsForSechedule($schedule);
+                $this->assign('schedule', $schedule);
                 $this->assign('fields', $fields);
                 break;
                 
@@ -490,19 +473,23 @@ class AthleticsWebModule extends WebModule {
                 $sportData = $this->getSportData($sport);
                 if ($scheduleFeed = $this->getScheduleFeed($sport)) {
                     $schedules = $scheduleFeed->items();
-                    
-                    $rangeSchedule = $this->getRangeSchedule($schedules, time());
-                    
-                    if ($rangeSchedule['previous']) {
-                        $previous = $this->linkForScheduleItem($rangeSchedule['previous'], array('sport' => $sport));
+
+                    if ($schedules) {
+                        $rangeSchedule = $this->getRangeSchedule($schedules, time());
+
+                        if ($rangeSchedule['previous']) {
+                            $previous = $this->linkForScheduleItem($rangeSchedule['previous'], array('sport' => $sport));
+                        }
+                        if ($rangeSchedule['next']) {
+                            $next = $this->linkForScheduleItem($rangeSchedule['next'], array('sport' => $sport));
+                        }
+                        $this->assign('sportTitle', $sportData['TITLE']);
+                        $this->assign('previous', $previous);
+                        $this->assign('next', $next);
                     }
-                    if ($rangeSchedule['next']) {
-                        $next = $this->linkForScheduleItem($rangeSchedule['next'], array('sport' => $sport));
-                    }
-                    $this->assign('sportTitle', $sportData['TITLE']);
-                    $this->assign('previous', $previous);
-                    $this->assign('next', $next);
+                    
                 }
+                $this->setPageTitles($sportData['TITLE']);
                 
                 if ($newsFeed = $this->getNewsFeed($sport)) {
                     $newsFeed->setLimit($this->maxPerPage);
@@ -531,14 +518,17 @@ class AthleticsWebModule extends WebModule {
                         'url'   => $this->buildBreadcrumbURL('schedule', array('sport' => $sport), true)
                     );
                 }
-                $this->assign('fullSchedule', $fullSchedule);
-                /*
-                $section = $this->getArg('section');
-                $sportData = $this->getSportData($section);
                 
-                $this->setPageTitles($sportData['TITLE']);
-                $this->assign('sportLinks', $this->getSportLinks($section));
-                */
+                // Bookmark
+                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $cookieParams = array(
+                        'sport'  => $sport
+                    );
+                  
+                    $cookieID = http_build_query($cookieParams);
+                    $this->generateBookmarkOptions($cookieID);
+                }
+                $this->assign('fullSchedule', $fullSchedule);
                 break;
 
             case "index":
@@ -584,12 +574,26 @@ class AthleticsWebModule extends WebModule {
                 }
                 
                 $bookmarkData = $this->getNavData('bookmarks');
-                /*
-                $bookmarks = $this->getBookmarks();
-                */
+                
+                //get bookmarks
+                $bookmarks = array();
+                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $bookmarksData = $this->getBookmarks();
+                    foreach ($bookmarksData as $bookmark) {
+                        parse_str(stripslashes($bookmark), $params);
+                        if (isset($params['sport']) && ($sportData = $this->getSportData($params['sport']))) {
+                            $bookmarks[] = array(
+                                'title' => $sportData['GENDER'] . '-' . $sportData['TITLE'],
+                                'url'   => $this->buildURL('sport', array('sport' => $params['sport']))
+                            );
+                        }
+                    }
+                }
+                
                 $tabs[] = $bookmarkData['TITLE'];
                 
                 $this->assign('bookmarksTitle', $bookmarkData['TITLE']);
+                $this->assign('bookmarks', $bookmarks);
                 $this->assign('tabs', $tabs);
                 $this->enableTabs($tabs);
                 

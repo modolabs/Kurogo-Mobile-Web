@@ -1,6 +1,7 @@
 {include file="findInclude:common/templates/header.tpl"}
 
 <h1 class="nonfocal">{$sportTitle}</h1>
+{include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
 
 {if $next}
 <div class="focal">
