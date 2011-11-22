@@ -30,6 +30,7 @@
 {block name="navheader"}
   <div class="nonfocal">
     <h2>{$fullTitle}</h2>
+    <p class="smallprint">{$albumcount} {if $albumcount == 1}picture{else}pictures{/if}</p>
   </div>
   {$sideNav}
 {/block}

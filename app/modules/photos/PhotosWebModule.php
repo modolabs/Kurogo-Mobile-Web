@@ -80,7 +80,7 @@ class PhotosWebModule extends WebModule {
 
         		
         		// make this changeable via url?
-			    $limit = 8;
+			    $limit = 4;
         		$page = $this->getArg('page', 0);
         		if($page < 0){
         		    $page = 0;
@@ -97,6 +97,7 @@ class PhotosWebModule extends WebModule {
                     $photos[] = $photo;
         		}
         		$this->assign('photos', $photos);
+        		$this->assign('albumcount', $totalItems);
         		
         		$this->assign('fullTitle', $pageTitle);
         		$this->assign('springboardID', 'photoSpringboard');
