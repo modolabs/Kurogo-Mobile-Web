@@ -35,6 +35,9 @@
     {if $item['type']}
     	<div class="smallprint">{$item['type']}</div>
 	{/if}
+	{if $item['albumcount']}
+    	<div class="smallprint">{$item['albumcount']}</div>
+	{/if}
   {if $item['url']}
     </a>
   {/if}

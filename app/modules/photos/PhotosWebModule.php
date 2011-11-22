@@ -62,6 +62,7 @@ class PhotosWebModule extends WebModule {
 
                     $photo['title'] = $controller->getTitle();
                     $photo['type'] = $defaultPhoto->getType();
+                    $photo['albumcount'] = $controller->getAlbumSize() . ' photos';
                     // use base64_encode to make sure it will not be blocked by GFW
                     $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
                     $photo['img'] = $defaultPhoto->getTUrl();

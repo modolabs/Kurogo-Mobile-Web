@@ -54,4 +54,8 @@ class PhotosDataModel extends ItemListDataModel {
     public function getPhoto($id) {
         return $this->getItem($id);
     }
+    
+    public function getAlbumSize(){
+		return count($this->getPhotos());
+    }
 }
