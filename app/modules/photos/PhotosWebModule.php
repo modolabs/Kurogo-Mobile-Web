@@ -72,10 +72,22 @@ class PhotosWebModule extends WebModule {
                 $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
         	case 'album':
-        		$page = $this->getArg('page', 0);
         		$album = $this->getArg('id', $this->getDefaultSection());
         		$controller = $this->getFeed($album);
-        		$items = $controller->items();
+        		$pageTitle = $controller->getTitle();
+        		$this->setBreadcrumbTitle($pageTitle);
+        		$this->setPageTitle($pageTitle);
+
+        		
+        		// make this changeable via url?
+			    $limit = 8;
+        		$page = $this->getArg('page', 0);
+        		if($page < 0){
+        		    $page = 0;
+        		}
+
+        		$items = $controller->getPhotosByPage($page, $limit);
+        		$totalItems = $controller->getTotalItems();
 
         		$photos = array();
         		foreach($items as $item){
@@ -86,8 +98,22 @@ class PhotosWebModule extends WebModule {
         		}
         		$this->assign('photos', $photos);
 
-        		$this->setPageTitles($controller->getTitle());
+        		;
+        		
+        		
+        		$this->assign('fullTitle', $pageTitle);
         		$this->assign('springboardID', 'photoSpringboard');
+        		$this->assign('page', $page + 1);
+        		$this->assign('totalPages', ceil($totalItems/$limit));
+
+        		if((($page * $limit) + $limit) < $totalItems){
+        			$this->assign('next', 'Next');
+        			$this->assign('nextURL', $this->buildBreadcrumbURL('album', array('id' => $this->getArg('id'), 'page' => $page+1), false));
+        		}
+        		if($page > 0){
+        			$this->assign('prev', 'Previous');
+        			$this->assign('prevURL', $this->buildBreadcrumbURL('album', array('id' => $this->getArg('id'), 'page' => $page-1), false));
+        		}
         		break;
             case 'show':
             	$album = $this->getArg('album', null);

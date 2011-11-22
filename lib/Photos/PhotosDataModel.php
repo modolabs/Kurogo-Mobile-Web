@@ -50,6 +50,7 @@ class PhotosDataModel extends ItemListDataModel {
     	$this->setStart(0);
     	$this->setLimit(1);
     	$items = $this->items();
+    	//clear cache so calls to subsequent albums don't return 1.
     	$this->clearInternalCache();
     	return reset($items);
     }
@@ -60,5 +61,12 @@ class PhotosDataModel extends ItemListDataModel {
     
     public function getAlbumSize(){
 		return count($this->getPhotos());
+    }
+    
+    public function getPhotosByPage($page, $limit){
+    	$start = $page * $limit;
+    	$this->setStart($start);
+    	$this->setLimit($limit);
+    	return $this->items();
     }
 }
