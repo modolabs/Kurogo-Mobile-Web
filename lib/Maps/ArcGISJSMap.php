@@ -99,9 +99,9 @@ class ArcGISJSMap extends JavascriptMapImageController {
     {
         $template = $this->prepareJavascriptTemplate('ArcGISPolygons', true);
 
-        foreach ($this->polygons as $polygon) {
+        foreach ($this->polygons as $placemark) {
 
-            $style = $polygon->getStyle();
+            $style = $placemark->getStyle();
             if ($style !== null) {
                 if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR)) !== null) {
                     $strokeColor = $this->dojoColorFromHex($color);
@@ -112,6 +112,16 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 if (($weight = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::WEIGHT)) !== null) {
                     $strokeWeight = $weight;
                 }
+            }
+
+            if (!isset($strokeColor)) {
+                $strokeColor = '[0, 0, 0]';
+            }
+            if (!isset($fillColor)) {
+                $fillColor = '[0, 0, 0, 0.5]';
+            }
+            if (!isset($strokeWeight)) {
+                $strokeWeight = 2;
             }
 
             $collapsedRings = array();
@@ -253,7 +263,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             $subtitle = $placemark->getSubtitle();
             $templateValues['___DESCRIPTION___'] = $subtitle ? $subtitle : "";
             $templateValues['___IDENTIFIER___'] = count($this->markers);
-            
+
             $template->appendValues($templateValues);
         }
 

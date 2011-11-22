@@ -4,13 +4,12 @@ class ArcGISFeature extends BasePlacemark
 {
     private $titleField;
     private $geometryType;
-    private $category;
     private $rawGeometry;
 
-    public function __construct($fields, $geometry, $index, $category)
+    public function __construct($fields, $geometry, $index, $categories)
     {
         $this->index = $index;
-        $this->category = $category;
+        $this->categories = $categories;
         $this->fields = $fields;
         $this->rawGeometry = $geometry;
     }

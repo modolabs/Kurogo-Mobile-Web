@@ -39,6 +39,8 @@ class ArcGISParser extends DataParser implements MapDataParser
         if (isset($args['ID_FIELD'])) {
             $this->idField = $args['ID_FIELD'];
         }
+
+        $this->category = array(mapIdForFeedData($args));
     }
 
     public function addSearchFilter($key, $value)
@@ -135,10 +137,6 @@ class ArcGISParser extends DataParser implements MapDataParser
     
     public function getTitle() {
         return $this->mapName;
-    }
-
-    public function setCategory($category) {
-        $this->category = $category;
     }
 
     public function getCategory() {

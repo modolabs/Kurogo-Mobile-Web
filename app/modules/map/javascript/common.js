@@ -388,8 +388,9 @@ function kgoEsriMapLoader(attribs) {
     }
 
     that.addOverlay = function(overlay, attribs) {
+        map.graphics.add(overlay);
         that.placemarks.push(overlay);
-        // TODO
+        // TODO: make callouts work
     }
 
     that.clearMarkers = function() {}
