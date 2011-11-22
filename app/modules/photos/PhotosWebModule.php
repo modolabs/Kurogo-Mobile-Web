@@ -97,9 +97,6 @@ class PhotosWebModule extends WebModule {
                     $photos[] = $photo;
         		}
         		$this->assign('photos', $photos);
-
-        		;
-        		
         		
         		$this->assign('fullTitle', $pageTitle);
         		$this->assign('springboardID', 'photoSpringboard');
