@@ -15,7 +15,7 @@
 {$categorySelect}
 
 {block name="navList"}
-  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$photos}
+  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$photos listItemTemplateFile="findInclude:modules/photos/templates/photoListItem.tpl"}
 {/block}
 
 {include file="findInclude:common/templates/footer.tpl"}
