@@ -583,7 +583,7 @@ class AthleticsWebModule extends WebModule {
                         parse_str(stripslashes($bookmark), $params);
                         if (isset($params['sport']) && ($sportData = $this->getSportData($params['sport']))) {
                             $bookmarks[] = array(
-                                'title' => $sportData['GENDER'] . '-' . $sportData['TITLE'],
+                                'title' => $sportData['TITLE'],
                                 'url'   => $this->buildURL('sport', array('sport' => $params['sport']))
                             );
                         }
