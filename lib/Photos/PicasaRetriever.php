@@ -74,6 +74,7 @@ class PicasaDataParser extends DataParser {
                 foreach($data->feed->entry as $entry) {
                     $photos[] = $this->parseEntry($entry);
                 }
+                $this->setTotalItems(count($photos));
                 return $photos;
             }
         }
