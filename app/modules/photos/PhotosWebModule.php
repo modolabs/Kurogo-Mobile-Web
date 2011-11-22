@@ -52,36 +52,44 @@ class PhotosWebModule extends WebModule {
         if (count($this->feeds) == 0) {
             throw new KurogoConfigurationException("No photo feeds configured");
         }
-    
-        $section = $this->getArg('section', $this->getDefaultSection());
-        if (!isset($this->feeds[$section])) {
-            $section = $this->getDefaultSection();
-        }
-
-        $this->assign('currentSection', $section);
-        /**
-         * get controller based on $section
-         */
-        $controller = $this->getFeed($section);
 
         switch($this->page) {
             case 'index':
-                $title = $controller->getTitle();
-                $this->setPageTitles($title);
-                $items = $controller->getPhotos();
-                $photos = array();
-                foreach($items as $item) {
-                    $photo = array();
-                    $photo['title'] = $item->getTitle();
+            	$photos = array();
+            	foreach($this->feeds as $feed){
+                    $controller = $this->getFeed($feed['INDEX']);
+                    $defaultPhoto = $controller->getDefaultPhoto();
+
+                    $photo['title'] = $controller->getTitle();
+                    $photo['type'] = $defaultPhoto->getType();
                     // use base64_encode to make sure it will not be blocked by GFW
-                    $photo['url'] = $this->buildBreadcrumbURL('show', array('id' => base64_encode($item->getID()), 'section' => $section), true);
-                    $photo['img'] = $item->getTUrl();
+                    $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
+                    $photo['img'] = $defaultPhoto->getTUrl();
                     $photos[] = $photo;
                 }
                 $this->assign('photos', $photos);
                 $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
+        	case 'album':
+        		$album = $this->getArg('id', $this->getDefaultSection());
+        		$controller = $this->getFeed($album);
+        		$items = $controller->items();
+
+        		$photos = array();
+        		foreach($items as $item){
+        			$photo['title'] = $item->getTitle();
+        			$photo['url'] = $this->buildBreadcrumbURL('show', array('id' => base64_encode($item->getID()), 'album' => $album), true);
+                    $photo['img'] = $item->getTUrl();
+                    $photos[] = $photo;
+        		}
+        		$this->assign('photos', $photos);
+        		break;
             case 'show':
+            	$album = $this->getArg('album', null);
+            	if(!isset($album)){
+            		throw new KurogoUserException("Invalid album specified");
+            	}
+            	$controller = $this->getFeed($album);
                 $id = base64_decode($this->getArg('id'));
                 $photo = $controller->getPhoto($id);
                 $this->setPageTitles($photo->getTitle());
