@@ -150,12 +150,18 @@ class MapWebModule extends WebModule {
             );
 
         if ($mapItem instanceof Placemark) {
-            $urlArgs = array_merge($urlArgs, shortArrayFromMapFeature($mapItem));
-            // for map driven UI we want placemarks to show up on the full screen map
-            if ($this->isMapDrivenUI() && $this->page != 'index') {
-                $result['url'] = $this->buildURL('index', $urlArgs);
+            if ($mapItem instanceof BasePlacemark && ($url = $mapItem->getURL())) {
+                // if url was set via setURL -- only applies to campus placemarks on worldmap
+                $result['url'] = $url;
+
             } else {
-                $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
+                $urlArgs = array_merge($urlArgs, shortArrayFromMapFeature($mapItem));
+                // for map driven UI we want placemarks to show up on the full screen map
+                if ($this->isMapDrivenUI() && $this->page != 'index') {
+                    $result['url'] = $this->buildURL('index', $urlArgs);
+                } else {
+                    $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
+                }
             }
 
             if (($distance = $mapItem->getField('distance')) && $this->getOptionalModuleVar('SHOW_DISTANCES', true)) {
@@ -289,6 +295,10 @@ class MapWebModule extends WebModule {
     }
 
     private function getMergedConfigData() {
+        if ($this->getArg('worldmap')) {
+            return array();
+        }
+
         // allow individual feeds to override values in the feed group
         if ($this->feedGroup === null) {
             // putting this to see if/when this happens
@@ -451,7 +461,7 @@ class MapWebModule extends WebModule {
     }
 
     // return true on success, false on failure
-    protected function generateTabForKey($tabKey, $feature, &$tabJavascripts) {
+    protected function generateTabForKey($tabKey, $features, &$tabJavascripts) {
         switch ($tabKey) {
             case 'map':
             {
@@ -464,7 +474,8 @@ class MapWebModule extends WebModule {
             }
             case 'nearby':
             {
-                if ($feature) {
+                if (count($features) == 1) {
+                    $feature = key($features);
                     $geometry = $feature->getGeometry();
                     $center = $geometry->getCenterCoordinate();
                     $currentId = $feature->getId();
@@ -512,9 +523,10 @@ class MapWebModule extends WebModule {
             }
             case 'info':
             {
-                if (!$feature) {
+                if (count($features) != 1) {
                     return false;
                 }
+                $feature = key($features);
 
                 // handle embedded photo
                 $photoURL = $feature->getField('PhotoURL'); // embedded photo url
@@ -557,7 +569,8 @@ class MapWebModule extends WebModule {
             case 'links':
             {
                 $externalLinks = array();
-                if ($feature) {
+                if (count($features) == 1) {
+                    $feature = key($features);
                     $geometry = $feature->getGeometry();
                     $center = $geometry->getCenterCoordinate();
                 } elseif (isset($this->args['lat'], $this->args['lon'])) {
@@ -641,8 +654,12 @@ class MapWebModule extends WebModule {
 
             case 'index':
 
-                if ($this->feedGroup !== null && $this->isMapDrivenUI()) {
+                if (($this->feedGroup !== null || $this->getArg('worldmap')) && $this->isMapDrivenUI()) {
                     $this->setTemplatePage('fullscreen');
+                    if ($this->getArg('worldmap')) {
+                        $this->feedGroup = null;
+                        $this->assign('browseURL', $this->buildURL('index'));
+                    }
                     $this->initializeDynamicMap();
 
                 } else {
@@ -684,8 +701,6 @@ class MapWebModule extends WebModule {
 
                 $searchTerms = $this->getArg('filter');
                 if ($searchTerms) {
-                    $this->feedGroup = null;
-
                     // TODO: redirect if there is one result
                     $args = array_merge($this->args, array('addBreadcrumb' => true));
 
@@ -748,30 +763,33 @@ class MapWebModule extends WebModule {
                 $tabKeys = array();
                 $tabJavascripts = array();
                 $features = $this->getSelectedPlacemarks();
-                $feature = end($features);
 
                 $title = '';
-                if ($this->getArg('title')) {
-                    $title = $this->getArg('title');
-                } elseif ($feature) {
+                if (count($features) == 1) {
+                    $feature = end($features);
                     $title = $feature->getTitle();
-                } elseif (isset($this->args['lat'], $this->args['lon'])) {
-                    $title = "$lat,$lon";
-                }
-                $this->assign('name', $title);
-                
-                if ($feature) {
-                    // prevent infinite loop in smarty_modifier_replace
-                    // TODO figure out why smarty gets in an infinite loop
                     $address = str_replace("\n", " ", $feature->getSubtitle());
+                    if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                        $this->generateBookmarkOptions($this->bookmarkIDForPlacemark($feature));
+                    }
+
                 } else {
+                    if ($this->getArg('worldmap')) {
+                        $title = $this->getLocalizedString('ALL_MAP_GROUPS');
+                    }
                     $address = $this->getArg('address');
                 }
+
+                if ($this->getArg('title')) {
+                    $title = $this->getArg('title');
+                }
+
+                $this->assign('name', $title);
                 $this->assign('address', $address);
 
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
                 foreach ($possibleTabs as $tabKey) {
-                    if ($this->generateTabForKey($tabKey, $feature, $dataController, $tabJavascripts)) {
+                    if ($this->generateTabForKey($tabKey, $features, $tabJavascripts)) {
                         $tabKeys[] = $tabKey;
                     }
                 }
@@ -779,23 +797,39 @@ class MapWebModule extends WebModule {
                 $this->assign('tabKeys', $tabKeys);
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
 
-                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                    $this->generateBookmarkOptions($this->bookmarkIDForPlacemark($feature));
-                }
-
                 break;
         }
     }
 
     protected function getSelectedPlacemarks()
     {
+        // all campuses
+        if ($this->getArg('worldmap')) {
+            $placemarks = array();
+            foreach ($this->feedGroups as $id => $groupData) {
+                $point = filterLatLon($groupData['center']);
+                $placemark = new BasePlacemark(
+                    new MapBasePoint(array(
+                        'lat' => $point['lat'],
+                        'lon' => $point['lon'],
+                        )));
+                $placemark->setTitle($groupData['title']);
+                $placemark->setURL($this->groupURL($id));
+                $placemarks[] = $placemark;
+            }
+            return $placemarks;
+        }
+
         // check if any placemarks were passed from another page
         if ($this->featureIndex !== null) {
             $dataModel = $this->getDataModel();
-            $a = $dataModel->selectPlacemark($this->featureIndex);
+            $dataModel->selectPlacemark($this->featureIndex);
+            return $dataModel->getSelectedPlacemarks();
 
-        } elseif (isset($this->args['lat'], $this->args['lon'])) {
-            $dataModel = $this->getDataModel();
+        }
+
+        // make the map display arbitrary locations that aren't in any feeds
+        if (isset($this->args['lat'], $this->args['lon'])) {
             $lat = $this->args['lat'];
             $lon = $this->args['lon'];
             $title = $this->getArg('title');
@@ -806,18 +840,14 @@ class MapWebModule extends WebModule {
                 new MapBasePoint(array(
                     'lat' => $lat,
                     'lon' => $lon,
-                    'title' => $title,
                     )));
-            // hacky
-            $dataModel->setSelectedPlacemarks(array($feature));
+            $feature->setTitle($title);
+            return array($feature);
         }
 
-        // TODO: add ways to show all bookmarks,
-        // all campuses, all placemarks within a category
+        // TODO: add ways to show all bookmarks in a campus,
+        // all placemarks within a category
 
-        if (isset($dataModel)) {
-            return $dataModel->getSelectedPlacemarks();
-        }
         return array();
     }
 
@@ -838,17 +868,28 @@ class MapWebModule extends WebModule {
             $this->assign('categories', $categories);
 
         } else if ($this->feedGroup === null) {
-            // show the list of groups
+            // bookmarks and view all section
+            $this->generateBookmarkLink();
+            $worldmapPage = $this->getMapDevice()->pageSupportsDynamicMap() ? 'index' : 'detail';
+            $worldmapLink = array(array(
+                'title' => $this->getLocalizedString('VIEW_ALL_GROUPS_ON_MAP'),
+                'url' => $this->buildURL($worldmapPage, array('worldmap' => true)),
+                ));
+            $this->assign('worldmapLink', $worldmapLink);
+
+            // feedgroups section
+            $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS');
+            $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
+
             foreach ($this->feedGroups as $id => $groupData) {
                 $categories[] = array(
+                    'id' => $id,
                     'title' => $groupData['title'],
                     'url' => $this->groupURL($id),
                     'listclass' => $id, // stupid way to sneak the id into the dom
                     );
             }
-
-            $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS_PLURAL');
-            $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
+            $this->assign('campuses', $categories);
             $this->assign('categories', $categories);
 
             $this->addOnLoad('sortGroupsByDistance();');
@@ -857,9 +898,11 @@ class MapWebModule extends WebModule {
 
     protected function initializeDynamicMap()
     {
-        $urlArgs = array('group' => $this->feedGroup);
-        $browseURL = $this->buildBreadcrumbURL('campus', $urlArgs, true);
-        $this->assign('browseURL', $browseURL); // browse button
+        if ($this->feedGroup) {
+            $urlArgs = array('group' => $this->feedGroup);
+            $browseURL = $this->buildBreadcrumbURL('campus', $urlArgs, true);
+            $this->assign('browseURL', $browseURL); // browse button
+        }
 
         // set up base map
         $baseMap = $this->getImageController();
@@ -872,6 +915,7 @@ class MapWebModule extends WebModule {
 
         // code for embedding base map
         $baseMap->setMapElement('mapimage');
+        $baseMap->prepareForOutput();
         foreach ($baseMap->getIncludeScripts() as $includeScript) {
             $this->addExternalJavascript($includeScript);
         }
@@ -888,11 +932,12 @@ class MapWebModule extends WebModule {
         foreach ($this->getSelectedPlacemarks() as $placemark) {
             $baseMap->addPlacemark($placemark);
         }
+        $baseMap->prepareForOutput();
         
         // override point for current zoom level
         if (isset($this->args['zoom'])) {
             $zoomLevel = $this->args['zoom'];
-        } else {
+        } elseif (!$this->getArg('worldmap')) {
             $zoomLevel = $this->getDataModel()->getDefaultZoomLevel();
         }
         

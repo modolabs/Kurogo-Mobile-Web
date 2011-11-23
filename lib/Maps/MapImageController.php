@@ -183,6 +183,23 @@ abstract class MapImageController
         if ($point['lon'] < $this->bufferBox['xmin']) {
             $this->bufferBox['xmin'] = $point['lon'];
         }
+    }
+
+    public function prepareForOutput()
+    {
+        $vRange = $this->bufferBox['ymax'] - $this->bufferBox['ymin'];
+        if ($vRange > 0) {
+            $vZoom = ceil(log(360 / $vRange, 2));
+        }
+
+        $hRange = $this->bufferBox['xmax'] - $this->bufferBox['xmin'];
+        if ($hRange > 0) {
+            $hZoom = ceil(log(180 / $hRange, 2));
+        }
+
+        if (isset($vZoom, $hZoom)) {
+            $this->setZoomLevel(min($vZoom, $hZoom));
+        }
 
         $this->setCenter(array(
             'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,

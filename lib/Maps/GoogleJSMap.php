@@ -94,7 +94,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 '___LONGITUDE___' => $coord['lon'],
                 '___TITLE___' => json_encode($marker->getTitle()),
                 '___OPTIONS___' => $options,
-                '___SUBTITLE___' => json_encode($polygon->getSubtitle()),
+                '___SUBTITLE___' => json_encode($marker->getSubtitle()),
                 '___URL___' => $this->urlForPlacemark($marker),
                 ));
         }

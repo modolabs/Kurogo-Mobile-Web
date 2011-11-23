@@ -1,20 +1,32 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{include file="findInclude:common/templates/search.tpl"
-         placeholder={"MAP_SEARCH_PLACEHOLDER"|getLocalizedString}
-         tip={"MAP_SEARCH_TIP"|getLocalizedString}}
-
-<div class="nonfocal">
-  <h3>{$browseHint}</h3>
-</div>
-
-{if $bookmarkStatus}
-{include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+{if $campuses}
+  {capture name="additionalInputs" assign="additionalInputs"}
+    <div id="campus-select">
+      <label for="group" class="formlabel">{"SEARCH_IN_GROUP"|getLocalizedString}</label>&nbsp;
+      <select name="group">
+      {foreach $campuses as $campus}
+        <option value="{$campus['id']}">{$campus['title']}</option>
+      {/foreach}
+      </select>
+    </div>
+  {/capture}
 {/if}
+
+{include file="findInclude:common/templates/search.tpl"
+         placeholder={"MAP_SEARCH_PLACEHOLDER"|getLocalizedString}}
 
 {if $hasBookmarks}
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
 {/if}
+
+{if $campuses}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$worldmapLink secondary=true}
+{/if}
+
+<div class="nonfocal">
+  <h3>{$browseHint}</h3>
+</div>
 
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories navlistID="categories"}
 

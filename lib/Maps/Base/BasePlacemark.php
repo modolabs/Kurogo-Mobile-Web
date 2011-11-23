@@ -3,6 +3,7 @@
 class BasePlacemark implements Placemark
 {
     protected $id;
+    protected $url;
     protected $title;
     protected $address;
     protected $subtitle; // defaults to address if not present
@@ -44,6 +45,10 @@ class BasePlacemark implements Placemark
     public function setGeometry(MapGeometry $geometry)
     {
         $this->geometry = $geometry;
+    }
+
+    public function getURL() {
+        return $this->url;
     }
     
     // MapListElement interface
@@ -113,5 +118,9 @@ class BasePlacemark implements Placemark
     
     public function setSubtitle($subtitle) {
         $this->subtitle = $subtitle;
+    }
+
+    public function setURL($url) {
+        $this->url = $url;
     }
 }
