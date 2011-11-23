@@ -1,7 +1,11 @@
 function submitMapSearch(form) {
-    if (form.filter.value.length > 0 && typeof mapLoader.addMarker == 'function') {
+    if (form.filter.value.length > 0) {
         mapLoader.clearMarkers();
-        makeAPICall('GET', 'map', 'search', {'q': form.filter.value}, function(response) {
+        params = {'q': form.filter.value};
+        if ('projection' in mapLoader) {
+            params['projection'] = mapLoader.projection;
+        }
+        makeAPICall('GET', 'map', 'search', params, function(response) {
             hideSearchFormButtons();
             // TODO: make the "browse" button bring up results in a list
             var minLat = 90;

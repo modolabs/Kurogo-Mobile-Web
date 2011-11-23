@@ -184,6 +184,9 @@ class MapWebModule extends WebModule {
             }
             $args['category'] = $category;
             $args['path'] = implode(MAP_CATEGORY_DELIMITER, $path);
+            if ($this->feedGroup) {
+                $args['group'] = $this->feedGroup;
+            }
         }
         return $this->buildBreadcrumbURL('category', $args, $addBreadcrumb);
     }
@@ -191,7 +194,7 @@ class MapWebModule extends WebModule {
     private function groupURL($group, $addBreadcrumb=false) {
         $args = $this->args;
         $args['group'] = $group;
-        $args['action'] = ($group == '') ? 'remove' : 'add';
+        //$args['action'] = ($group == '') ? 'remove' : 'add';
         return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
     }
   
@@ -199,6 +202,9 @@ class MapWebModule extends WebModule {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
             if ($this->isMapDrivenUI()) {
+                if ($this->feedGroup) {
+                    $params['group'] = $this->feedGroup;
+                }
                 return $this->buildURL('index', $params);
             }
             return $this->buildBreadcrumbURL('detail', $params, true);
@@ -632,8 +638,6 @@ class MapWebModule extends WebModule {
         $this->featureIndex = $this->getArg('featureindex', null);
 
         switch ($this->page) {
-            case 'help':
-                break;
 
             case 'index':
 
@@ -644,6 +648,12 @@ class MapWebModule extends WebModule {
                 } else {
                     $this->setupCampusPage();
                 }
+
+                break;
+            
+            case 'campus':
+                $this->setTemplatePage('index');
+                $this->setupCampusPage();
 
                 break;
             
@@ -724,10 +734,8 @@ class MapWebModule extends WebModule {
                     $this->assign('title',  $dataModel->getTitle());
                     $this->assign('places', $places);          
                     
-                    if ($this->numGroups > 1) {
-                        if (count($categories) == 1) {
-                            $this->assignClearLink();
-                        }
+                    if ($this->numGroups > 1 && count($categories) == 1) {
+                        $this->assignClearLink();
                     }
                   
                 } else {

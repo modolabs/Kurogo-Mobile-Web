@@ -15,6 +15,8 @@ class MapAPIModule extends APIModule
 
     protected $currentFeedData;
 
+    protected $mapProjector;
+
     protected function shortArrayFromPlacemark(Placemark $placemark)
     {
         $result = array(
@@ -27,6 +29,9 @@ class MapAPIModule extends APIModule
         $geometry = $placemark->getGeometry();
         if ($geometry) {
             $center = $geometry->getCenterCoordinate();
+            if (isset($this->mapProjector)) {
+                $center = $this->mapProjector->projectPoint($center);
+            }
 
             $result['lat'] = $center['lat'];
             $result['lon'] = $center['lon'];
@@ -292,6 +297,11 @@ class MapAPIModule extends APIModule
     }
 
     public function initializeForCommand() {
+
+        if (($projection = $this->getArg('projection'))) {
+            $this->mapProjector = new MapProjector();
+            $this->mapProjector->setDstProj($projection);
+        }
 
         switch ($this->command) {
             case 'index':

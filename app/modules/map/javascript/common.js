@@ -351,8 +351,12 @@ function kgoGoogleMapLoader(attribs) {
 function kgoEsriMapLoader(attribs) {
     var that = new kgoMapLoader(attribs);
 
-    var wkid = ("wkid" in attribs) ? attribs["wkid"] : 4326;
-    that.spatialRef = new esri.SpatialReference({ wkid: wkid });
+    if ("wkid" in attribs) {
+        that.projection = attribs['wkid'];
+        that.spatialRef = new esri.SpatialReference({ wkid: that.projection });
+    } else {
+        that.spatialRef = new esri.SpatialReference({ wkid: 4326 });
+    }
     that.userLocationMarkerOnMap = false;
 
     that.loadMap = function() {
@@ -397,7 +401,21 @@ function kgoEsriMapLoader(attribs) {
     }
 
     that.clearMarkers = function() {}
-    that.createMarker = function(title, subtitle, lat, lon, url) {}
+    that.createMarker = function(title, subtitle, lat, lon, url) {
+        that.addMarker(
+            new esri.Graphic(
+                new esri.geometry.Point(lon, lat, that.spatialRef),
+                new esri.symbol.SimpleMarkerSymbol( // add some styling because the default is a large empty black circle
+                    esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE,
+                    12,
+                    new esri.symbol.SimpleLineSymbol(),
+                    new dojo.Color([180, 0, 0]))),
+            {
+                title: title,
+                subtitle: subtitle
+            }
+        );
+    }
 
     // base map
 
