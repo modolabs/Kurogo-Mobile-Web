@@ -15,7 +15,6 @@ includePackage('DataModel');
 class CalendarDataModel extends ItemListDataModel
 {
     protected $DEFAULT_PARSER_CLASS='ICSDataParser';
-    const DEFAULT_EVENT_CLASS='ICalEvent';
     const START_TIME_LIMIT=-2147483647; 
     const END_TIME_LIMIT=2147483647; 
     protected $cacheFolder = 'Calendar';
@@ -117,7 +116,6 @@ class CalendarDataModel extends ItemListDataModel
     
     protected function init($args)
     {
-        $args['EVENT_CLASS'] = isset($args['EVENT_CLASS']) ? $args['EVENT_CLASS'] : self::DEFAULT_EVENT_CLASS;
         parent::init($args);
     }
     
