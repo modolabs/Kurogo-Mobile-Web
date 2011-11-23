@@ -115,7 +115,7 @@ class ICalAlarm extends ICalObject {
  * @package ExternalData
  * @subpackage Calendar
  */
-class ICalEvent extends ICalObject implements KurogoObject {
+class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
 
     protected $uid;
     protected $sequence;
@@ -190,6 +190,14 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
     public function get_recurid() {
         return $this->recurid;
+    }
+    
+    public function isAllDay() {
+        return $this->range instanceOf DayRange;
+    }
+
+    public function getRange() {
+        return $this->range;
     }
 
     public function get_range() {
@@ -832,7 +840,11 @@ class ICalendar extends ICalObject implements CalendarInterface {
     protected $eventStartTimes=array();
     protected $recurrence_exceptions = array();
 
-    public function add_event(ICalEvent $event) {
+    public function add_event(CalendarEvent $event) {
+        if (!$event instanceOf ICalEvent) {
+            throw new KurogoConfigurationException(gettype($event) . " must be a subclass of ICalEvent");
+        }
+        
         $uid = $event->get_uid();
         if (is_null($event->get_recurid())) {
             $this->events[$uid] = $event;

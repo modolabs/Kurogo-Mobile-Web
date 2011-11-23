@@ -26,8 +26,7 @@ class EmergencyNoticeDataModel extends DataModel
     public function getLatestEmergencyNotice()
     {
         $items = $this->getAllEmergencyNotices();
-        
-        return reset($items);
+        return count($items)>0 ? reset($items) : null;
     }
 
     public function getAllEmergencyNotices() {

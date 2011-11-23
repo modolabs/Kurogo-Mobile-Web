@@ -13,6 +13,7 @@
 class ICSDataParser extends DataParser
 {
     protected $eventClass='ICalEvent';
+    protected $calendarClass='ICalendar';
     protected function unfold($text) {
         return str_replace("\n ", "", $text);
     }
@@ -28,6 +29,10 @@ class ICSDataParser extends DataParser
 
         if (isset($args['EVENT_CLASS'])) {
             $this->setEventClass($args['EVENT_CLASS']);
+        }
+
+        if (isset($args['CALENDAR_CLASS'])) {
+            $this->setCalendarClass($args['CALENDAR_CLASS']);
         }
         
     }
@@ -64,11 +69,25 @@ class ICSDataParser extends DataParser
 			$this->eventClass = $eventClass;
 		}
     }
+
+    public function setCalendarClass($calendarClass)
+    {
+    	if ($calendarClass) {
+    		if (!class_exists($calendarClass)) {
+                throw new KurogoConfigurationException("Calendar class $calendarClass not defined");
+    		} 
+			$this->calendarClass = $calendarClass;
+		}
+    }
     
     public function parseData($contents)
     {
-        $calendar = new ICalendar();
+        $calendar = new $this->calendarClass;
+        if (!$calendar instanceOf CalendarInterface) {
+            throw new KurogoConfigurationException("Calendar $class $this->calendarClass not a CalendarInterface");
+        }
         $nesting = array();
+        $nestingType = array();
         $contents = str_replace("\r\n", "\n", $contents);
         $lines = explode("\n", $this->unfold($contents));
         foreach ($lines as $line) {
@@ -115,10 +134,13 @@ class ICSDataParser extends DataParser
                     }
                     break;
                 }
+                if (count($nesting)==count($nestingType)+1) {
+                    $nestingType[] = $value;
+                }
                 break;
             case 'END':
                 $last_object = array_pop($nesting);
-                $last_obj_name = $last_object->get_name();
+                $last_obj_name = array_pop($nestingType);
                 if ($last_obj_name != $value) {
                     if ($this->haltOnParseErrors) {
                         throw new ICalendarException("BEGIN $last_obj_name ended by END $value");
