@@ -7,7 +7,6 @@ class AthleticsWebModule extends WebModule {
     protected static $defaultEventModel = 'AthleticEventsDataModel';
     protected $feeds = array();
     protected $navFeeds = array();
-    protected $timezone;
     protected $maxPerPage = 10;
     protected $showImages = true;
     protected $showPubDate = false;
@@ -82,39 +81,26 @@ class AthleticsWebModule extends WebModule {
         }
         return $link;
     }
-    
-    protected function timeText(AthleticEvent $event) {
-    
-        if ($datetime = $event->getDateTime()) {
-            $timeText = $datetime->format('m.d.Y \a\t ');
-            if ($event->getAllDay()) {
-                $timeText .= $this->getLocalizedString('ALL_DAY');
-            } elseif ($event->getTBA()) {
-                $timeText .= $this->getLocalizedString('TBA');
-            } else {
-                $timeText .= $datetime->format('g:i a');
-            }
-            
-            return $timeText;
-        } elseif (is_int($datetime)) {
-            return date('m.d.Y \a\t g:i a', $event);
-        }
-        
-        return '';
+
+    protected function timeText(AthleticEvent $event, $timeOnly=false) {
+        return DateFormatter::formatDateRange($event->getRange(), DateFormatter::SHORT_STYLE, DateFormatter::SHORT_STYLE);
     }
     
     protected function linkForScheduleItem(KurogoObject $event, $data=null) {
     
-        $eventFields = $this->getFieldsForSechedule($event);
         $options = array(
-            'id'   => $event->getID(),
+            'id'   => $event->getID()
         );
+        
         if (isset($data['sport'])) {
             $options['sport'] = $data['sport'];
         }
-        $eventFields['url'] = $this->buildBreadcrumbURL('schedule_detail', $options, true);
-
-        return $eventFields;
+        
+        return array(
+            'title'=>$event->getTitle(),
+            'subtitle'=>sprintf("%s - %s", $this->timeText($event), $event->getLocation()),
+            'url'=> $this->buildBreadcrumbURL('schedule_detail', $options, true)
+        );
     }
     
     protected function valueForType($type, $value, $event = null) {
@@ -195,27 +181,16 @@ class AthleticsWebModule extends WebModule {
     }
 
     protected function getFieldsForSechedule(AthleticEvent $event) {
-    
-        //check the event is pasted
-        $pastStatus = true;
-        if ($eventTime = $event->getDateTime()) {
-            $pastStatus = $eventTime->format('U') > time() ? false : true;
-        }
-        
         return array(
+            'title'         => $event->getTitle(),
             'id'            => $event->getID(),
             'sport'         => $event->getSport(),
-            'sportFullName' => $event->getSportFullName(),
+            'sportName'     => $event->getSportName(),
             'gender'        => $event->getGender(),
-            'datetime'      => $event->getDateTime(),
-            'timeText'      => $this->timeText($event),
-            'pastStatus'    => $pastStatus,
-            'school'        => $event->getSchool(),
-            'opponent'      => $event->getOpponent(),
-            'homeAway'      => $event->getHomeAway(),
+            'start'         => $this->timeText($event),
+            'pastStatus'    => $event->getStartTime() > time() ? false : true,
             'location'      => $event->getLocation(),
-            'score'         => $event->getScore(),
-            'recap'         => $event->getLinkToRecap()
+            'link'          => $event->getLink()
         );
     }
     
@@ -250,39 +225,6 @@ class AthleticsWebModule extends WebModule {
         
     }
 
-    //get the schedule about most recent and next 
-    protected function getRangeSchedule($schedules, $time = '') {
-        $time = $time ? $time : time();
-        
-        $previous = null;
-        $next   = null;
-        foreach ($schedules as $key => $item) {
-            if ((!$dateTime = $item->getDateTime()) || $item->getTBA()) {
-                continue;
-            }
-            if ($dateTime->format('U') >= $time) {
-                $next[] = $key;
-            } else {
-                $previous[] = $key;
-            }
-        }
-        
-        $result = array();
-        if ($previous) {
-            $previousIndex = end($previous);
-            $previous = isset($schedules[$previousIndex]) ? $schedules[$previousIndex] : null;
-        }
-        if ($next) {
-            $nextIndex = current($next);
-            $next = isset($schedules[$nextIndex]) ? $schedules[$nextIndex] : null;
-        }
-        
-        return array(
-            'previous' => $previous,
-            'next'     => $next
-        );
-    }
-    
     protected function getScheduleFeed($sport) {
     
         if ($feedData = $this->getOptionalModuleSection($sport, 'schedule')) {
@@ -314,7 +256,6 @@ class AthleticsWebModule extends WebModule {
 
         $this->feeds = $this->loadFeedData();
         $this->navFeeds = $this->getModuleSections('page-index');
-        $this->timezone = Kurogo::siteTimezone();
         
     }    
 
@@ -358,6 +299,8 @@ class AthleticsWebModule extends WebModule {
                     $stories[] = $this->linkForNewsItem($story, $options);
                 }
                 */
+
+                KurogoDebug::debug($items, true);
                 
                 foreach ($items as $event) {
                     $subtitle = '';
@@ -432,18 +375,20 @@ class AthleticsWebModule extends WebModule {
                 $sport = $this->getArg('sport', '');
                 $sportData = $this->getSportData($sport);
                 
-                $schedules = array();
                 if ($scheduleFeed = $this->getScheduleFeed($sport)) {
+                    $scheduleItems = array();
                     $options = array(
                         'sport' => $sport
                     );
+
                     if ($events = $scheduleFeed->items()) {
                         foreach ($events as $event) {
-                            $schedules[] = $this->linkForScheduleItem($event, $options);
+                            $scheduleItems[] = $this->linkForScheduleItem($event, $options);
                         }
                     }
+
+                    $this->assign('scheduleItems', $scheduleItems);
                 }
-                $this->assign('schedules', $schedules);
                 break;
              
             case 'schedule_detail':
@@ -471,25 +416,29 @@ class AthleticsWebModule extends WebModule {
                 $previous = array();
                 $next = array();
                 $sportData = $this->getSportData($sport);
-                if ($scheduleFeed = $this->getScheduleFeed($sport)) {
-                    $schedules = $scheduleFeed->items();
-
-                    if ($schedules) {
-                        $rangeSchedule = $this->getRangeSchedule($schedules, time());
-
-                        if ($rangeSchedule['previous']) {
-                            $previous = $this->linkForScheduleItem($rangeSchedule['previous'], array('sport' => $sport));
-                        }
-                        if ($rangeSchedule['next']) {
-                            $next = $this->linkForScheduleItem($rangeSchedule['next'], array('sport' => $sport));
-                        }
-                        $this->assign('sportTitle', $sportData['TITLE']);
-                        $this->assign('previous', $previous);
-                        $this->assign('next', $next);
-                    }
-                    
-                }
+                $this->assign('sportTitle', $sportData['TITLE']);
                 $this->setPageTitles($sportData['TITLE']);
+
+                if ($scheduleFeed = $this->getScheduleFeed($sport)) {
+                    $scheduleItems = array();
+                    if ($previousEvent = $scheduleFeed->getPreviousEvent()) {
+                        $previous = $this->linkForScheduleItem($previousEvent, array('sport' => $sport));
+                        $scheduleItems[] = $previous;
+                    }
+
+                    if ($nextEvent = $scheduleFeed->getNextEvent()) {
+                        $next = $this->linkForScheduleItem($nextEvent, array('sport' => $sport));
+                        $this->assign('next', $next);
+                        $scheduleItems[] = $next;
+                    }
+
+                    $scheduleItems[] = array(
+                        'title' => $this->getLocalizedString('FULL_SCHEDULE_TEXT'),
+                        'url'   => $this->buildBreadcrumbURL('schedule', array('sport' => $sport), true)
+                    );
+
+                    $this->assign('scheduleItems', $scheduleItems);
+                }
                 
                 if ($newsFeed = $this->getNewsFeed($sport)) {
                     $newsFeed->setLimit($this->maxPerPage);
@@ -506,18 +455,6 @@ class AthleticsWebModule extends WebModule {
                     $this->assign('newsItems', $newsItems);
                 }
                 
-                $fullSchedule = array();
-                if (!$previous && !$next) {
-                    $fullSchedule[] = array(
-                        'title' => "Select to see the seasonÕs schedule",
-                        'url'   => $this->buildBreadcrumbURL('schedule', array('sport' => $sport), true)
-                    );
-                } else {
-                    $fullSchedule[] = array(
-                        'title' => "Full Schedule",
-                        'url'   => $this->buildBreadcrumbURL('schedule', array('sport' => $sport), true)
-                    );
-                }
                 
                 // Bookmark
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
@@ -528,7 +465,6 @@ class AthleticsWebModule extends WebModule {
                     $cookieID = http_build_query($cookieParams);
                     $this->generateBookmarkOptions($cookieID);
                 }
-                $this->assign('fullSchedule', $fullSchedule);
                 break;
 
             case "index":

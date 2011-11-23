@@ -1,11 +1,5 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{if $schedule}
-<div class="focal">
-{include file="findInclude:modules/athletics/templates/schedule_summary.tpl" schedule=$schedule}
-</div>
-{/if}
-
 {$firstField = array_shift($fields)}
 {$lastField = array_pop($fields)}
 

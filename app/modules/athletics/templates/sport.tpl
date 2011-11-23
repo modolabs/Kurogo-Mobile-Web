@@ -3,23 +3,12 @@
 <h1 class="nonfocal">{$sportTitle}</h1>
 {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
 
-{if $next}
-<div class="focal">
-  <p>{"NEXT_MATCH"|getLocalizedString}</p>
-  {include file="findInclude:modules/athletics/templates/schedule_summary.tpl" schedule=$next}
-</div>
+{if $scheduleItems}
+<h2 class="nonfocal">Schedule</h2>
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$scheduleItems subTitleNewline=true}
 {/if}
-
-{if $previous}
-<div class="focal"> 
-  <p>{"MOST_RECENT_MATCH"|getLocalizedString}</p>
-  {include file="findInclude:modules/athletics/templates/schedule_summary.tpl" schedule=$previous}
-</div>
-{/if}
-
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$fullSchedule}
-
 {if $newsItems}
+    <h2 class="nonfocal">News</h2>
     {include file="findInclude:common/templates/navlist.tpl" navlistItems=$newsItems}  
 {/if}
 

@@ -25,10 +25,14 @@ class CSTVDataRetriever extends URLDataRetriever
 class CSTVDataParser extends XMLDataParser {
 
     protected $sport;
-    protected $items=array();
     
     protected static $startElements=array();
     protected static $endElements=array('EVENT');
+
+    public function clearInternalCache() {
+        parent::clearInternalCache();
+        $this->items = new AthleticCalendar();
+    }
     
     public function init($args) {
         parent::init($args);
@@ -37,11 +41,6 @@ class CSTVDataParser extends XMLDataParser {
         }
     }
     
-    public function items()
-    {
-        return $this->items;
-    }
-
     protected function shouldHandleStartElement($name) {
         return in_array($name, self::$startElements);
     }
@@ -63,7 +62,7 @@ class CSTVDataParser extends XMLDataParser {
                     $filters['sport'] = $this->sport;
                 }
                 if ($event->filterItem($filters)) {
-                    $this->items[] = $event;
+                    $this->items->addEvent($event);
                 }
                 break;
         }
@@ -87,7 +86,7 @@ class CSTVDataParser extends XMLDataParser {
         static $eventNum;
         
         $eventNum++;
-        $event = new AthleticEvent();
+        $event = new CSTVAthleticEvent();
         if ($id = $entry->getAttrib('ID')) {
             $event->setID($id);
         } else {
@@ -95,14 +94,13 @@ class CSTVDataParser extends XMLDataParser {
         }
         
         $event->setSport($entry->getProperty('SPORT'));
-        $event->setSportFullName($entry->getProperty('SPORT_FULLNAME'));
+        $event->setSportName($entry->getProperty('SPORT_FULLNAME'));
         $event->setSchool($entry->getProperty('SCHOOL'));
         $event->setOpponent($entry->getProperty('OPPONENT'));
         $event->setHomeAway($entry->getProperty('HOME_VISITOR'));
         $event->setLocation($entry->getProperty('LOCATION'));
         $event->setScore($entry->getProperty('OUTCOME_SCORE'));
-        $event->setLinkToRecap($entry->getProperty('RECAP'));
-        
+        $event->setLink($entry->getProperty('RECAP'));
         //set the gender
         if ($sportName = $entry->getProperty('SPORT')) {
             $prefix = strtoupper(substr($sportName, 0, 1));
@@ -123,7 +121,7 @@ class CSTVDataParser extends XMLDataParser {
                     $time = '';
                     break;
                 case 'TBA':
-                    $event->setTBA(true);
+                    $event->setNoTime(true);
                     $time = '';
                     break;
             }
@@ -135,7 +133,8 @@ class CSTVDataParser extends XMLDataParser {
                 $timeZone = Kurogo::siteTimezone();;
             }
             //save the event time to datetime object
-            $event->setDateTime(new DateTime($strDate, $timeZone));
+            $event->setStartDate(new DateTime($strDate, $timeZone));
+
         }
         
         return $event;
@@ -151,5 +150,65 @@ class CSTVDataParser extends XMLDataParser {
         }
         
         return $strip_tags;
+    }
+}
+
+class CSTVAthleticEvent extends AthleticEvent
+{
+    protected $school;
+    protected $opponent;
+    protected $homeAway;
+    protected $score;
+    
+    public function getTitle() {
+        $title = '';
+        switch ($this->homeAway)
+        {
+            case 'V':
+                $title = sprintf("%s @ %s", $this->school, $this->opponent);
+                break;
+            case 'H':
+                $title =  sprintf("%s @ %s", $this->opponent, $this->school);
+            default:
+                $title =  sprintf("%s vs. %s", $this->school, $this->opponent);
+        }
+        
+        if ($this->score) {
+            $title .= " ($this->score)";
+        }
+        
+        return $title;
+    }
+    
+    public function setSchool($school) {
+        $this->school = $school;
+    }
+    
+    public function getSchool() {
+        return $this->school;
+    }
+    
+    public function setOpponent($opponent) {
+        $this->opponent = $opponent;
+    }
+    
+    public function getOpponent() {
+        return $this->opponent;
+    }
+    
+    public function setHomeAway($home_away) {
+        $this->homeAway = $home_away;
+    }
+    
+    public function getHomeAway() {
+        return $this->homeAway;
+    }
+    
+    public function setScore($score) {
+        $this->score = $score;
+    }
+    
+    public function getScore() {
+        return $this->score;
     }
 }

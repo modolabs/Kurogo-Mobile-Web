@@ -2,21 +2,88 @@
 
 class AthleticEvent implements KurogoObject {
 
-    protected $ID;
+    protected $id;
+    protected $title;
+    protected $description;
     protected $sport;
-    protected $sportFullName;
-    protected $gender;
-    protected $datetime;
-    protected $school;
-    protected $opponent;
-    protected $homeAway;
+    protected $sportName;
+    protected $startDate;
+    protected $allDay = false;
+    protected $noTime = false;
+    protected $range;
     protected $location;
-    protected $score;
-    protected $recap;
+    protected $link;
+    protected $gender;
     
-    protected $allday = false; //follow the time attrib
-    protected $tba = false; //follow the time attrib
+    public function setAllDay($allDay) {
+        $this->allDay = (bool) $allDay;
+    }
+
+    public function setNoTime($noTime) {
+        $this->noTime = (bool) $noTime;
+    }
+
+    public function setSport($sport) {
+        $this->sport = $sport;
+    }
     
+    public function getSport() {
+        return $this->sport;
+    }
+    
+    public function setSportName($name) {
+        $this->sportName = $name;
+    }
+    
+    public function getSportName() {
+        return $this->sportName;
+    }
+    
+    public function setGender($gender) {
+        $this->gender = $gender;
+    }
+    
+    public function getGender() {
+        return $this->gender;
+    }
+    
+   
+    public function getID() {
+        return $this->id;
+    }
+
+    public function setID($id) {
+        $this->id = $id;
+    }
+    
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+
+    public function getTitle() {
+        return $this->title;
+    }
+
+    public function setDescription($description) {
+        $this->description = $description;
+    }
+    
+    public function setLocation($location) {
+        $this->location = $location;
+    }
+    
+    public function getLocation() {
+        return $this->location;
+    }
+    
+    public function setLink($link) {
+        $this->link = $link;
+    }
+    
+    public function getLink() {
+        return $this->link;
+    }
+
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
             switch ($filter)
@@ -33,108 +100,33 @@ class AthleticEvent implements KurogoObject {
         
         return true;     
     }
+
+    public function setStartDate(DateTime $start) {
+        $this->startDate = $start;
+    }
+
+    public function getStartDate() {
+        return $this->startDate;
+    }
         
-    public function setID($id) {
-        $this->ID = $id;
+    public function getStartTime() {
+        if ($this->startDate) {
+            return $this->startDate->format('U');
+        }
     }
     
-    public function getID() {
-        return $this->ID;
+    public function getRange() {
+        if (!$this->range) {
+            if ($startTime = $this->getStartTime()) {
+                if ($this->allDay || $this->noTime) {
+                    $this->range = new DayRange($startTime);
+                } else {
+                    $this->range = new TimeRange($startTime);
+                }
+            }
+        }
+        
+        return $this->range;
     }
     
-    public function setSport($sport) {
-        $this->sport = $sport;
-    }
-    
-    public function getSport() {
-        return $this->sport;
-    }
-    
-    public function setSportFullName($fullName) {
-        $this->sportFullName = $fullName;
-    }
-    
-    public function getSportFullName() {
-        return $this->sportFullName;
-    }
-    
-    public function setGender($gender) {
-        $this->gender = $gender;
-    }
-    
-    public function getGender() {
-        return $this->gender;
-    }
-    
-    public function getDateTime() {
-        return $this->datetime;
-    }
-    
-    public function setDateTime(DateTime $time) {
-        $this->datetime = $time;
-    }
-    
-    public function setSchool($school) {
-        $this->school = $school;
-    }
-    
-    public function getSchool() {
-        return $this->school;
-    }
-    
-    public function setOpponent($opponent) {
-        $this->opponent = $opponent;
-    }
-    
-    public function getOpponent() {
-        return $this->opponent;
-    }
-    
-    public function setHomeAway($home_away) {
-        $this->homeAway = $home_away;
-    }
-    
-    public function getHomeAway() {
-        return $this->homeAway;
-    }
-    
-    public function setLocation($location) {
-        $this->location = $location;
-    }
-    
-    public function getLocation() {
-        return $this->location;
-    }
-    
-    public function setScore($score) {
-        $this->score = $score;
-    }
-    
-    public function getScore() {
-        return $this->score;
-    }
-    
-    public function setLinkToRecap($recap) {
-        $this->recap = $recap;
-    }
-    
-    public function getLinkToRecap() {
-        return $this->recap;
-    }
-    
-    public function setAllDay($result) {
-        $this->allday = $result;
-    }
-    
-    public function getAllDay() {
-        return $this->allday;
-    }
-    
-    public function setTBA($result) {
-        $this->tba = $result;
-    }
-    
-    public function getTBA() {
-        return $this->tba;
-    }
 }
