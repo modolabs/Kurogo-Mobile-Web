@@ -475,7 +475,7 @@ class MapWebModule extends WebModule {
             case 'nearby':
             {
                 if (count($features) == 1) {
-                    $feature = key($features);
+                    $feature = end($features);
                     $geometry = $feature->getGeometry();
                     $center = $geometry->getCenterCoordinate();
                     $currentId = $feature->getId();
@@ -526,7 +526,7 @@ class MapWebModule extends WebModule {
                 if (count($features) != 1) {
                     return false;
                 }
-                $feature = key($features);
+                $feature = end($features);
 
                 // handle embedded photo
                 $photoURL = $feature->getField('PhotoURL'); // embedded photo url
@@ -570,7 +570,7 @@ class MapWebModule extends WebModule {
             {
                 $externalLinks = array();
                 if (count($features) == 1) {
-                    $feature = key($features);
+                    $feature = end($features);
                     $geometry = $feature->getGeometry();
                     $center = $geometry->getCenterCoordinate();
                 } elseif (isset($this->args['lat'], $this->args['lon'])) {
@@ -825,7 +825,6 @@ class MapWebModule extends WebModule {
             $dataModel = $this->getDataModel();
             $dataModel->selectPlacemark($this->featureIndex);
             return $dataModel->getSelectedPlacemarks();
-
         }
 
         // make the map display arbitrary locations that aren't in any feeds
