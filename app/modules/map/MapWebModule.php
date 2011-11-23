@@ -171,23 +171,6 @@ class MapWebModule extends WebModule {
 
         return $result;
     }
-
-    protected function initialize() {
-        // this is in the wrong place
-        $this->feedGroup = $this->getArg('group', NULL);
-
-        $this->feedGroups = $this->getFeedGroups();
-        $this->numGroups = count($this->feedGroups);
-        
-        if ($this->numGroups === 1) {
-            $this->feedGroup = key($this->feedGroups);
-        }
-
-        // clear out invalid feed group argument
-        if ($this->feedGroup !== NULL && $this->getDataForGroup($this->feedGroup) === NULL) {
-            $this->feedGroup = NULL;
-        }
-    }
     
     ///////////// url builders
 
@@ -211,16 +194,6 @@ class MapWebModule extends WebModule {
         $args['action'] = ($group == '') ? 'remove' : 'add';
         return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
     }
-
-    /*
-    public function detailURLForLatLon(Array $coordinate, $object=null) {
-
-    }
-
-    public function detailURLForAddress($address) {
-
-    }
-    */
   
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -387,6 +360,15 @@ class MapWebModule extends WebModule {
         
         $this->assign('categories', $categories);
         return $categories;
+    }
+
+    protected function assignClearLink()
+    {
+        $clearLink = array(array(
+            'title' => $this->getLocalizedString('ALL_MAP_GROUPS'),
+            'url' => $this->groupURL(''),
+            ));
+        $this->assign('clearLink', $clearLink);
     }
 
     protected function getTitleForBookmark($aBookmark) {
@@ -627,6 +609,23 @@ class MapWebModule extends WebModule {
         return http_build_query($cookieParams);
     }
 
+    protected function initialize() {
+        // this is in the wrong place
+        $this->feedGroup = $this->getArg('group', NULL);
+
+        $this->feedGroups = $this->getFeedGroups();
+        $this->numGroups = count($this->feedGroups);
+        
+        if ($this->numGroups === 1) {
+            $this->feedGroup = key($this->feedGroups);
+        }
+
+        // clear out invalid feed group argument
+        if ($this->feedGroup !== NULL && $this->getDataForGroup($this->feedGroup) === NULL) {
+            $this->feedGroup = NULL;
+        }
+    }
+
     protected function initializeForPage() {
 
         $this->addJQuery();
@@ -638,65 +637,15 @@ class MapWebModule extends WebModule {
 
             case 'index':
 
-                if ($this->feedGroup !== null) {
+                if ($this->feedGroup !== null && $this->isMapDrivenUI()) {
+                    $this->setTemplatePage('fullscreen');
+                    $this->initializeDynamicMap();
 
-                    if ($this->isMapDrivenUI()) {
-                        $this->initializeDynamicMap();
-
-                    } else {
-                        $urlArgs = array('group' => $this->feedGroup);
-                        $this->redirectTo('campus', $urlArgs);
-                    }
-                }
-                elseif ($this->numGroups == 0) {
-                    $categories = array(array(
-                        'title' => $this->getLocalizedString('NO_MAPS_FOUND'),
-                        ));
-                    $this->assign('categories', $categories);
-
-                }
-                else if ($this->feedGroup === null && $this->numGroups > 1) {
-                    // show the list of groups
-                    foreach ($this->feedGroups as $id => $groupData) {
-                        $categories[] = array(
-                            'title' => $groupData['title'],
-                            'url' => $this->groupURL($id),
-                            'listclass' => $id, // stupid way to sneak the id into the dom
-                            );
-                    }
-
-                    $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS');
-                    $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
-                    $this->assign('categories', $categories);
-
-                    $this->addOnLoad('sortGroupsByDistance();');
-                    
-                }
-
-                $this->assign('placeholder', $this->getLocalizedString('MAP_SEARCH_PLACEHOLDER'));
-                $this->assign('tip', $this->getLocalizedString('MAP_SEARCH_TIP'));
-
-                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                    $this->generateBookmarkLink();
+                } else {
+                    $this->setupCampusPage();
                 }
 
                 break;
-            
-            case 'campus':
-                
-                $groupData = $this->getDataForGroup($this->feedGroup);
-                $this->assign('browseBy', $groupData['title']);
-                if ($this->numGroups > 1) {
-                    $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS_PLURAL');
-                    $clearLink = array(array(
-                        'title' => "All $groupAlias",
-                        'url' => $this->groupURL(''),
-                        ));
-                    $this->assign('clearLink', $clearLink);
-                }
-                
-                $categories = $this->assignCategories();
-                
             
             case 'bookmarks':
                 if (!$this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
@@ -740,7 +689,7 @@ class MapWebModule extends WebModule {
                     $this->assign('places',      $places);
                   
                 } else {
-                  $this->redirectTo('index');
+                    $this->redirectTo('index');
                 }
                 break;
             
@@ -749,7 +698,7 @@ class MapWebModule extends WebModule {
                 $category = $this->getCategory();
                 if ($category) {
                     // populate drop-down list at the bottom
-                    $this->assignCategories();
+                    $categories = $this->assignCategories();
                     // build the drill-down list
                     $dataModel = $this->getDataModel();
                     $listItems = $dataModel->getListItems();
@@ -768,7 +717,6 @@ class MapWebModule extends WebModule {
                         }
                     }
 
-
                     $places = array();
                     foreach ($listItems as $listItem) {
                         $places[] = $this->linkForItem($listItem);
@@ -777,20 +725,13 @@ class MapWebModule extends WebModule {
                     $this->assign('places', $places);          
                     
                     if ($this->numGroups > 1) {
-                        $categories = $this->assignCategories();
-                        if (count($categories)==1) {
-                            $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS_PLURAL');
-                            $clearLink = array(array(
-                                'title' => "All $groupAlias",
-                                'url' => $this->groupURL(''),
-                                ));
-                            $this->assign('clearLink', $clearLink);
+                        if (count($categories) == 1) {
+                            $this->assignClearLink();
                         }
                     }
-                    
                   
                 } else {
-                      $this->redirectTo('index');
+                    $this->redirectTo('index');
                 }
                 break;
           
@@ -809,6 +750,7 @@ class MapWebModule extends WebModule {
                 } elseif (isset($this->args['lat'], $this->args['lon'])) {
                     $title = "$lat,$lon";
                 }
+                $this->assign('name', $title);
                 
                 if ($feature) {
                     // prevent infinite loop in smarty_modifier_replace
@@ -817,13 +759,8 @@ class MapWebModule extends WebModule {
                 } else {
                     $address = $this->getArg('address');
                 }
-
-                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                    $this->generateBookmarkOptions($this->bookmarkIDForPlacemark($feature));
-                }
-
-                $this->assign('name', $title);
                 $this->assign('address', $address);
+
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
                 foreach ($possibleTabs as $tabKey) {
                     if ($this->generateTabForKey($tabKey, $feature, $dataController, $tabJavascripts)) {
@@ -833,6 +770,11 @@ class MapWebModule extends WebModule {
         
                 $this->assign('tabKeys', $tabKeys);
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
+
+                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $this->generateBookmarkOptions($this->bookmarkIDForPlacemark($feature));
+                }
+
                 break;
         }
     }
@@ -869,6 +811,40 @@ class MapWebModule extends WebModule {
             return $dataModel->getSelectedPlacemarks();
         }
         return array();
+    }
+
+    protected function setupCampusPage()
+    {
+        if ($this->feedGroup !== null) {
+            $groupData = $this->getDataForGroup($this->feedGroup);
+            $this->assign('browseHint', $groupData['title']);
+            if ($this->numGroups > 1) {
+                $this->assignClearLink();
+            }
+            $this->assignCategories();
+
+        } elseif ($this->numGroups == 0) {
+            $categories = array(array(
+                'title' => $this->getLocalizedString('NO_MAPS_FOUND'),
+                ));
+            $this->assign('categories', $categories);
+
+        } else if ($this->feedGroup === null) {
+            // show the list of groups
+            foreach ($this->feedGroups as $id => $groupData) {
+                $categories[] = array(
+                    'title' => $groupData['title'],
+                    'url' => $this->groupURL($id),
+                    'listclass' => $id, // stupid way to sneak the id into the dom
+                    );
+            }
+
+            $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS_PLURAL');
+            $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
+            $this->assign('categories', $categories);
+
+            $this->addOnLoad('sortGroupsByDistance();');
+        }
     }
 
     protected function initializeDynamicMap()

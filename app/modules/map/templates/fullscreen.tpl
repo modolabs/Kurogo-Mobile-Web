@@ -1,42 +1,33 @@
-{include file="findInclude:common/templates/header.tpl" customHeader="" scalable=false}
+{include file="findInclude:common/templates/header.tpl"}
 
-<div id="mapimage" class="fullmap">
-{if $isStatic}
-  {include file="findInclude:modules/map/templates/mapscrollers.tpl"}
-  <img id="staticmapimage" onload="hide('loadingimage'); scrollTo(0, 1);" alt="Map" />
-{/if}
-</div>
-{include file="findInclude:modules/map/templates/mapcontrols.tpl"}
-
-<!-- this section isn't being used currently, don't know if
-     we use cases to keep it around for -->
-<div id="options">
-  <form action="#" method="get" id="mapform" name="mapform">
-    <h2>Labels for Fullscreen Map</h2>
-    {foreach $labels as $label}
-      <p>
-        <label>
-          <input class="check" name="{$label['id']}" id="{$label['id']}" type="checkbox" value="{$label['value']}" checked="checked" />
-          {$label['title']}
-        </label>
-      </p>
-    {/foreach}
-    <div id="formbuttons">
-      <button type="button" id="submit" value="Apply" onclick="saveOptions('mapform')">Apply</button>
-      <button type="button" id="cancel" value="Cancel" onclick="cancelOptions('mapform')">Cancel</button>
+<div id="header">
+    <div id="searchbar" class="searchbar">
+        <form id="search-form" onsubmit="submitMapSearch(this);return false">
+            <input id="search_terms"
+                class="search-form"
+                type="text"
+                value=""
+                name="filter"
+                placeholder={"MAP_SEARCH_PLACEHOLDER"|getLocalizedString}
+                onfocus="androidPlaceholderFix(this);showSearchFormButtons();" />
+            <div id="searchFormButtons">
+                <input type="button" id="searchButton" onclick="submitMapSearch(this.form)" value="Search" />
+                <input type="button" id="clearButton" onclick="clearSearch(this.form)" value="Clear" />
+                <input type="button" id="cancelButton" onclick="hideSearchFormButtons()" value="Cancel" />
+            </div>
+        </form>
     </div>
-  </form>
-  <div id="scrim">&nbsp;</div>
+    <div id="searchBarButtons">
+        <div class="searchBarButton">
+            <a href="{$bookmarksURL}"><img src="/modules/map/images/map-button-favorites.png"/></a>
+        </div>
+        <div class="searchBarButton">
+            <a href="{$browseURL}"><img src="/modules/map/images/map-button-browse.png"/></a>
+        </div>
+    </div>
 </div>
 
-{* footer *}
+<div id="mapimage"></div>
 
-{foreach $inlineJavascriptFooterBlocks as $script}
-  <script type="text/javascript">
-    {$script} 
-  </script>
-{/foreach}
 
-</div>
-</body>
-</html>
+{include file="findInclude:common/templates/footer.tpl"}
