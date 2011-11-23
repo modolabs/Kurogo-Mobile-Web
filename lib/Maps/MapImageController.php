@@ -199,12 +199,12 @@ abstract class MapImageController
 
         if (isset($vZoom, $hZoom)) {
             $this->setZoomLevel(min($vZoom, $hZoom));
-        }
 
-        $this->setCenter(array(
-            'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
-            'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
-            ));
+            $this->setCenter(array(
+                'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
+                'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
+                ));
+        }
     }
 
     // overlays and annotations
