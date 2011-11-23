@@ -102,9 +102,6 @@ function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null
 }
 
 function mapIdForFeedData(Array $feedData) {
-    if (!$feedData['TITLE']) {
-        throw new Exception("asdf");
-    }
     $identifier = $feedData['TITLE'];
     if (isset($feedData['BASE_URL'])) {
         $identifier .= $feedData['BASE_URL'];
