@@ -40,6 +40,7 @@ class CoreAPIModule extends APIModule
                             'tag'       =>$module->getConfigModule(),
                             'title'     =>$module->getModuleVar('title','module'),
                             'access'    =>$module->getAccess(AccessControlList::RULE_TYPE_ACCESS),
+                            'payload'   =>$module->getPayload(),
                             'vmin'      =>$module->getVmin(),
                             'vmax'      =>$module->getVmax(),
                             'home'      =>$home

@@ -5,6 +5,15 @@ class UrlAPIModule extends APIModule {
     protected $vmin = 1;
     protected $vmax = 1;
   
+    public function getPayload() {
+        $url = $this->getModuleVar('url');
+        $payload = array(
+            'url'=>$url
+        );
+        
+        return $payload;
+    }
+
     protected function initializeForCommand() {
         
         switch ($this->command)

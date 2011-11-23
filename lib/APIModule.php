@@ -17,6 +17,10 @@ abstract class APIModule extends Module
     public function getVmax() {
         return $this->vmax;
     }
+    
+    public function getPayload() {
+        return null;
+    }
 
  /**
    * Set the command
