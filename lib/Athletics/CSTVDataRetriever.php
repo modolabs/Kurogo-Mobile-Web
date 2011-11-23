@@ -130,7 +130,7 @@ class CSTVDataParser extends XMLDataParser {
             if ($timeZoneData = $this->transformTimeZone($curtimeZone)) {
                 $timeZone = new DateTimeZone($timeZoneData);
             } else {
-                $timeZone = Kurogo::siteTimezone();;
+                $timeZone = Kurogo::siteTimezone();
             }
             //save the event time to datetime object
             $event->setStartDate(new DateTime($strDate, $timeZone));
