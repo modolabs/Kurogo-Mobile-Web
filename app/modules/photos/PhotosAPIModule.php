@@ -10,7 +10,7 @@ class PhotosAPIModule extends APIModule {
 
     protected function getFeed($feed) {
         if(!isset($this->feeds[$feed])) {
-            $this->setResponseError(new KurogoError(10, get_class($this), "Invalid Album id: $feed"));
+            throw new KurogoException(get_class($this) . ": Invalid Album id: $feed");
             return false;
         }
         $feedData = $this->feeds[$feed];
