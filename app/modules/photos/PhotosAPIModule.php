@@ -52,7 +52,8 @@ class PhotosAPIModule extends APIModule {
                 if($page > $totalPage) {
                     $page = $totalPage;
                 }
-                $items = $controller->getPhotosByPage($page, $limit);
+                $start = $page * $limit;
+                $items = $controller->getPhotosByIndex($start, $limit);
         		$photos = array();
         		foreach($items as $item){
         			$photo['id'] = $item->getID();

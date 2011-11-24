@@ -86,7 +86,8 @@ class PhotosWebModule extends WebModule {
         		    $page = 0;
         		}
 
-        		$items = $controller->getPhotosByPage($page, $limit);
+                $start = $limit * $page;
+        		$items = $controller->getPhotosByIndex($start, $limit);
         		$totalItems = $controller->getTotalItems();
 
         		$photos = array();

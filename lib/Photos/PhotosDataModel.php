@@ -59,12 +59,11 @@ class PhotosDataModel extends ItemListDataModel {
         return $this->getItem($id);
     }
     
-    public function getAlbumSize(){
+    public function getAlbumSize() {
 		return count($this->getPhotos());
     }
     
-    public function getPhotosByPage($page, $limit){
-    	$start = $page * $limit;
+    public function getPhotosByIndex($start, $limit) {
     	$this->setStart($start);
     	$this->setLimit($limit);
     	return $this->items();
