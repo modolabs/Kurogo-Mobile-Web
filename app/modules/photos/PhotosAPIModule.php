@@ -31,7 +31,7 @@ class PhotosAPIModule extends APIModule {
                 // get albums, output all available feeds
                 $albums = array();
                 foreach($this->feeds as $id => $feed) {
-                    $albums[$id] = $feed['TITLE'];
+                    $albums[$id]['title'] = $feed['TITLE'];
                 }
                 $this->setResponse($albums);
                 break;
