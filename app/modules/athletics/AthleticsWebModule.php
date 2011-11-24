@@ -36,7 +36,6 @@ class AthleticsWebModule extends WebModule {
     
     protected function getImageForStory($story) {
         if ($this->showImages) {
-            $image = $story->getImage();
             if ($image = $story->getImage()) {
                 return array(
                     'src'    => $image->getURL(),

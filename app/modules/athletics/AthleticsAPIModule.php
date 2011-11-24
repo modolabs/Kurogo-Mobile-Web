@@ -26,7 +26,12 @@ class AthleticsAPIModule extends APIModule
                 $gender = $this->getArg('gender');
                 
                 $tabData = $this->getNavData($gender);
-                $sports = $this->getSportsForGender($gender);
+                $sportsConfig = $this->getSportsForGender($gender);
+                
+                $sports = array();
+                foreach ($sportsConfig as $key => $sportData) {
+                    $sports[$key] = array('title' => $sportData['TITLE']);
+                }
                 
                 $response = array(
                     'sports' => $sports,
@@ -67,12 +72,7 @@ class AthleticsAPIModule extends APIModule
                 
                 $response = array(
                     'stories' => $stories,
-                    'sport'   => $sport,
-                    'sporttitle' => $sportData['TITLE'],
-                    'moreStories' => ($totalItems - $start - $limit),
-                    'totalItems'  => $totalItems,
-                    'limit' => $limit,
-                    'mode'  => $mode 
+                    'moreStories' => ($totalItems - $start - $limit)
                 );
 
                 $this->setResponse($response);
@@ -117,32 +117,30 @@ class AthleticsAPIModule extends APIModule
     }
     
     protected function getImageForStory($story) {
-            $image = $story->getImage();
-            if ($image = $story->getImage()) {
-                return array(
-                    'src'    => $image->getURL(),
-                    'width'  => $image->getProperty('width'),
-                    'height' => $image->getProperty('height'),
-                );
-            } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
-                return array(
-                    'src'    => $image->getAttrib('URL'),
-                    'width'  => $image->getAttrib('WIDTH'),
-                    'height' => $image->getAttrib('HEIGHT'),
-                );
-            }
+        if ($image = $story->getImage()) {
+            return array(
+                'src'    => $image->getURL(),
+                'width'  => $image->getProperty('width'),
+                'height' => $image->getProperty('height'),
+            );
+        } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
+            return array(
+                'src'    => $image->getAttrib('URL'),
+                'width'  => $image->getAttrib('WIDTH'),
+                'height' => $image->getAttrib('HEIGHT'),
+            );
+        }
+        
         return null;
     }
     
     protected function formatStory($story, $mode) {
-        $pubDate = strtotime($story->getPubDate());
         $item = array(
             'GUID'        => $story->getGUID(),
             'link'        => $story->getLink(),
             'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
-            'pubDate'     => strtotime($story->getPubDate()),
-            'author'      => $story->getAuthor()
+            'pubDate'     => strtotime($story->getPubDate())
         );
 
         // like in the web module we
@@ -163,7 +161,8 @@ class AthleticsAPIModule extends APIModule
         if ($image && $image['src']) {
             $item['image'] = $image;
         }
-
+        $item['author'] = $story->getAuthor() ? $story->getAuthor() : '';
+        
         return $item;
     }
     
