@@ -19,6 +19,7 @@ class AthleticsAPIModule extends APIModule
 
         $this->feeds = $this->loadFeedData();
         $this->navFeeds = $this->getModuleSections('page-index');
+        $responseVersion = $this->requestedVersion < 2 ? 1 : 2;
         
         switch ($this->command) {
             case 'sports':
@@ -92,19 +93,18 @@ class AthleticsAPIModule extends APIModule
                     if ($events = $scheduleFeed->items()) {
                         foreach ($events as $event) {
                             $count++;
-                            $scheduleItems[] = $this->formatSchedule($event);
+                            $scheduleItems[] = $this->formatSchedule($event, $responseVersion);
                         }
                     }
                 }
                 
                 $response = array(
-                    'schedules' => $scheduleItems,
-                    'sport'   => $sport,
-                    'sporttitle' => $sportData['TITLE'],
-                    'total' => $count,
-                    'return' => $count
+                    'total'        => $count,
+                    'returned'     => $count,
+                    'displayField' => 'title',
+                    'results' => $scheduleItems,
                 );
-                
+                    
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 
@@ -170,20 +170,68 @@ class AthleticsAPIModule extends APIModule
         return DateFormatter::formatDateRange($event->getRange(), DateFormatter::SHORT_STYLE, DateFormatter::SHORT_STYLE);
     }
     
-    protected function formatSchedule(KurogoObject $event) {
-        $item = array(
+    protected function getFiledDataForSchedule(KurogoObject $event) {
+        return array(
             'title'         => $event->getTitle(),
+            'description'   => $event->getDescription() ? $event->getDescription() : '',
             'id'            => $event->getID(),
             'sport'         => $event->getSport(),
             'sportName'     => $event->getSportName(),
             'gender'        => $event->getGender(),
-            'start'         => $this->timeText($event),
+            'start'         => $event->getStartTime(),
             'pastStatus'    => $event->getStartTime() > time() ? false : true,
             'location'      => $event->getLocation(),
-            'link'          => $event->getLink()
+            'link'          => $event->getLink(),
+            'allday'        => $event->isAllDay()
         );
+    }
+    
+    protected function formatSchedule(KurogoObject $event, $version) {
+    
+        $allFieldValue = $this->getFiledDataForSchedule($event);
+        $standardAttributes = array('id', 'title', 'description', 'start', 'allday', 'location', 'pastStatus');
         
-        return $item;
+        $result = array();
+        
+        foreach ($standardAttributes as $attrib) {
+            if (isset($allFieldValue[$attrib])) {
+                
+                $result[$attrib] = $allFieldValue[$attrib];
+            }
+        }
+        $result['locationLabel'] = '';
+        
+        $fieldConfig = $this->getAPIConfigData('schedule-detail');
+        foreach ($fieldConfig as $field => $fieldInfo) {
+            if (in_array($field, $standardAttributes) || !isset($allFieldValue[$field]) || !$allFieldValue[$field]) {
+                continue;
+            }
+            
+            $id      = self::argVal($fieldInfo, 'id', $field);
+            $title   = self::argVal($fieldInfo, 'label', $id);
+            $section = self::argVal($fieldInfo, 'section', '');
+            $type    = self::argVal($fieldInfo, 'type', '');
+            $value   = $allFieldValue[$field];
+            
+            if ($value) {
+                if ($version < 2) {
+                    $result[$title] = $value;
+                } else {
+                    if (!isset($result['field'])) {
+                        $result['field'] = array();
+                    }
+                    $result['field'][] = array(
+                        'id'      => $id,
+                        'section' => $section,
+                        'type'    => $type,
+                        'title'   => $title,
+                        'value'   => $value
+                    );
+                }
+            }
+        }
+        
+        return $result;
     }
     
     protected function getNavData($tab) {

@@ -23,6 +23,12 @@ class AthleticEvent implements KurogoObject {
         $this->noTime = (bool) $noTime;
     }
 
+    public function isAllDay() {
+        $range = $this->getRange();
+        
+        return $range instanceOf DayRange;
+    }
+    
     public function setSport($sport) {
         $this->sport = $sport;
     }
@@ -66,6 +72,10 @@ class AthleticEvent implements KurogoObject {
 
     public function setDescription($description) {
         $this->description = $description;
+    }
+    
+    public function getDescription() {
+        return $this->description;
     }
     
     public function setLocation($location) {
