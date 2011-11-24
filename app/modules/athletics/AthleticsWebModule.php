@@ -527,6 +527,7 @@ class AthleticsWebModule extends WebModule {
                 
                 $tabs[] = $bookmarkData['TITLE'];
                 
+                $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
                 $this->assign('bookmarksTitle', $bookmarkData['TITLE']);
                 $this->assign('bookmarks', $bookmarks);
                 $this->assign('tabs', $tabs);
