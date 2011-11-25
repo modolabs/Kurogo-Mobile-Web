@@ -69,9 +69,12 @@ class AthleticsWebModule extends WebModule {
         if ($storyID = $story->getGUID()) {
             $options = array(
                 'storyID'=>$storyID
-            );    
-            if (isset($data['section'])) {
-                $options['section'] = $data['section'];
+            );
+            
+            foreach (array('section', 'start', 'filter') as $field) {
+                if (isset($data[$field])) {
+                    $options[$field] = $data[$field];
+                }
             }
     
             $link['url'] = $this->buildBreadcrumbURL('news_detail', $options, true);
@@ -348,7 +351,7 @@ class AthleticsWebModule extends WebModule {
         
                 $pubDate = strtotime($story->getProperty("pubDate"));
                 $date = date("M d, Y", $pubDate);
-                
+
                 $this->enablePager($content, $this->newsFeed->getEncoding(), $storyPage);
                 $this->assign('date',   $date);
                 $this->assign('title',  $this->htmlEncodeFeedString($story->getTitle()));
@@ -357,7 +360,73 @@ class AthleticsWebModule extends WebModule {
                 $this->assign('link',   $story->getLink());
                 $this->assign('showLink', $this->showLink);
                 break;
+            
+            case 'search':
+                $searchTerms = $this->getArg('filter');
+                $start       = $this->getArg('start', 0);
+                $section = $this->getArg('section');
                 
+                if ($searchTerms) {
+                    $newsFeed = $this->getNewsFeed($section);
+                    
+                    $newsFeed->setStart($start);
+                    $newsFeed->setLimit($this->maxPerPage);
+                    
+                    $items = $newsFeed->search($searchTerms);
+                    $this->setLogData($searchTerms);
+                    $totalItems = $newsFeed->getTotalItems();
+                    
+                    $stories = array();
+
+                    $options = array(
+                        'start'  => $start,
+                        'filter' => $searchTerms,
+                        'section' => $section
+                    );
+
+                    foreach ($items as $story) {
+                        $stories[] = $this->linkForNewsItem($story, $options);
+                    }
+
+                    $previousURL = '';
+                    $nextURL = '';
+          
+                    if ($totalItems > $this->maxPerPage) {
+                        $args = $this->args;
+                        
+                        if ($start > 0) {
+                            $args['start'] = $start - $this->maxPerPage;
+                            $previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+                        }
+            
+                        if (($totalItems - $start) > $this->maxPerPage) {
+                            $args['start'] = $start + $this->maxPerPage;
+                            $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+                        }
+                    }
+          
+                    $extraArgs = array(
+                        'section' => $section
+                    );
+
+                    $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                    $this->addOnLoad('setupNewsListing();');
+
+                    $this->assign('maxPerPage',  $this->maxPerPage);
+                    $this->assign('extraArgs',   $extraArgs);
+                    $this->assign('searchTerms', $searchTerms);
+                    $this->assign('stories',     $stories);
+                    $this->assign('previousURL', $previousURL);
+                    $this->assign('nextURL',     $nextURL);
+                    $this->assign('showImages',  $this->showImages);
+                    $this->assign('showPubDate', $this->showPubDate);
+                    $this->assign('showAuthor',  $this->showAuthor);
+          
+                } else {
+                    $this->redirectTo('index'); // search was blank
+                }
+                
+                break;
             case 'schedule':
                 $sport = $this->getArg('sport', '');
                 $sportData = $this->getSportData($sport);
@@ -492,9 +561,14 @@ class AthleticsWebModule extends WebModule {
                         );
                     }
                     
+                    $extraArgs = array(
+                        'section' => 'topnews'
+                    );
+                    
                     $tabs[] = $newsFeedData['TITLE'];
                     $this->assign('topNewsTitle', $newsFeedData['TITLE']);
                     $this->assign('topNews', $topNews);
+                    $this->assign('extraArgs', $extraArgs);
                 }
                 
                 //get sports for each gender
