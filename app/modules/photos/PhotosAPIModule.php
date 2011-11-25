@@ -31,11 +31,21 @@ class PhotosAPIModule extends APIModule {
                 // get albums, output all available feeds
                 $albums = array();
                 foreach($this->feeds as $id => $feed) {
+                    $id = $feed['INDEX'];
                     $albums[$id]['title'] = $feed['TITLE'];
+                    $controller = $this->getFeed($id);
+                    $defaultPhoto = $controller->getDefaultPhoto();
+
+                    $photo = array();
+                    $photo['title'] = $controller->getTitle();
+                    $photo['type'] = $defaultPhoto->getType();
+                    $photo['album_count'] = $controller->getAlbumSize();
+                    $photo['img'] = $defaultPhoto->getTUrl();
+                    $albums['photos'][] = $photo;
                 }
                 $this->setResponse($albums);
                 break;
-            case 'list':
+            case 'photos':
                 // get photos list for an album..
                 $id = $this->getArg('id');
                 $controller = $this->getFeed($id);
@@ -59,7 +69,10 @@ class PhotosAPIModule extends APIModule {
         			$photo['id'] = $item->getID();
         			$photo['title'] = $item->getTitle();
         			$photo['album_id'] = $id;
-                    $photo['img'] = $item->getTUrl();
+                    $photo['m_img'] = $item->getMUrl();
+                    $photo['t_img'] = $item->getTUrl();
+                    $photo['l_img'] = $item->getLUrl();
+                    $photo['origin_img'] = $item->getPhotoUrl();
                     $photos[] = $photo;
         		}
                 $albumTitle = $controller->getTitle();
