@@ -1,7 +1,7 @@
 {include file="findInclude:common/templates/header.tpl" scalable=false}
 
 {block name="stories"}
-{include file="findInclude:modules/news/templates/stories.tpl"}
+{include file="findInclude:modules/athletics/templates/stories.tpl"}
 {/block}
 
 {block name="newsFooter"}

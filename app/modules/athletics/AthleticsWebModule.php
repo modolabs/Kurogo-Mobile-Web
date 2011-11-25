@@ -239,7 +239,9 @@ class AthleticsWebModule extends WebModule {
         if ($sport=='topnews') {
             $feedData = $this->getNavData('topnews');
         } else {
-            $feedData = $this->getOptionalModuleSection($sport, 'feeds');
+            if (!$feedData = $this->getOptionalModuleSection($sport, 'feeds')) {
+                throw new KurogoDataException('Unable to load data for sport '. $sport);
+            }
         }
         
         if (isset($feedData['DATA_RETRIEVER']) || isset($feedData['BASE_URL'])) {
@@ -257,22 +259,24 @@ class AthleticsWebModule extends WebModule {
         $this->navFeeds = $this->getModuleSections('page-index');
         
     }    
-
+        
     protected function initializeForPage() {
         
         switch($this->page) {
             case 'news':
-                $this->maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
-                $section = $this->getArg('section');
                 $start = $this->getArg('start', 0);
-                
-                $feed = $this->getFeed();
-                $feed->setStart($start);
-                $feed->setLimit($this->maxPerPage);
+                $section = $this->getArg('section');
 
-                $items = $feed->items();
-                $totalItems = $feed->getTotalItems();
-                $this->setLogData($section, $feed->getTitle());
+                $newsFeed = $this->getNewsFeed($section);
+                $newsFeed->setStart($start);
+                $newsFeed->setLimit($this->maxPerPage);
+                
+                $items = $newsFeed->items();
+                $totalItems = $newsFeed->getTotalItems();
+                $this->setLogData($section, $newsFeed->getTitle());
+                
+                $previousURL = null;
+                $nextURL = null;
                 
                 $previousURL = null;
                 $nextURL = null;
@@ -282,7 +286,7 @@ class AthleticsWebModule extends WebModule {
                         $args['start'] = $start - $this->maxPerPage;
                         $previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
                     }
-                  
+                    
                     if (($totalItems - $start) > $this->maxPerPage) {
                         $args['start'] = $start + $this->maxPerPage;
                         $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
@@ -292,40 +296,24 @@ class AthleticsWebModule extends WebModule {
                 $options = array(
                     'section' => $section
                 );
+                
                 $stories = array();
-                /*
                 foreach ($items as $story) {
                     $stories[] = $this->linkForNewsItem($story, $options);
-                }
-                */
-
-                KurogoDebug::debug($items, true);
-                
-                foreach ($items as $event) {
-                    $subtitle = '';
-                    $eventTime = $event->getDateTime();
-                    $subtitle .= $eventTime ? $eventTime->format('Y-n-j H:i:s') : '';
-                    $subtitle .= $event->getAllDay() ? ' All Day' : '';
-                    $subtitle .= $event->getTBA() ? ' TBA' : '';
-                    $subtitle .= $event->getLocation() ? ' | Location:' . $event->getLocation() : '';
-                    $stories[] = array(
-                        'title' => $event->getSport(),
-                        'subtitle' => $subtitle,
-                    );
                 }
                 
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                 $this->addOnLoad('setupNewsListing();');
-        
+
                 $this->assign('maxPerPage',     $this->maxPerPage);
                 $this->assign('stories',        $stories);
-                $this->assign('isHome',         true);
                 $this->assign('previousURL',    $previousURL);
                 $this->assign('nextURL',        $nextURL);
                 $this->assign('showImages',     $this->showImages);
                 $this->assign('showPubDate',    $this->showPubDate);
                 $this->assign('showAuthor',     $this->showAuthor);
                 break;
+                
             case 'news_detail':
                 
                 $section = $this->getArg('section');
@@ -445,8 +433,17 @@ class AthleticsWebModule extends WebModule {
                     $options = array(
                         'section'=>$sport
                     );
+                    
                     $newsItems = array();
                     $items = $newsFeed->items();
+                    $totalItems = $newsFeed->getTotalItems();
+                    
+                    if ($totalItems > $this->maxPerPage) {
+                        $newsItems[] = array(
+                            'title' => $this->getLocalizedString('FULL_NEWS_TEXT'),
+                            'url'   => $this->buildBreadcrumbURL('news', $options, true)
+                        );
+                    }
                     foreach ($items as $story) {
                         $newsItems[] = $this->linkForNewsItem($story, $options);
                     }
@@ -480,10 +477,21 @@ class AthleticsWebModule extends WebModule {
                     $options = array(
                         'section'=>'topnews'
                     );
+                    
                     $items = $newsFeed->items();
+                    $totalItems = $newsFeed->getTotalItems();
+
                     foreach ($items as $story) {
                         $topNews[] = $this->linkForNewsItem($story, $options);
                     }
+                    
+                    if ($totalItems > $limit) {
+                        $topNews[] = array(
+                            'title' => $this->getLocalizedString('FULL_NEWS_TEXT'),
+                            'url'   => $this->buildBreadcrumbURL('news', $options, true)
+                        );
+                    }
+                    
                     $tabs[] = $newsFeedData['TITLE'];
                     $this->assign('topNewsTitle', $newsFeedData['TITLE']);
                     $this->assign('topNews', $topNews);
