@@ -45,7 +45,7 @@ class PhotosAPIModule extends APIModule {
                 }
                 $this->setResponse($albums);
                 break;
-            case 'photos':
+            case 'list':
                 // get photos list for an album..
                 $id = $this->getArg('id');
                 $controller = $this->getFeed($id);
