@@ -123,7 +123,11 @@ class PhotosWebModule extends WebModule {
                 $id = base64_decode($this->getArg('id'));
                 $photo = $controller->getPhoto($id);
                 $this->setPageTitles($photo->getTitle());
-                $this->assign('photo', $photo);
+                $this->assign('photoURL',    $photo->getLUrl());
+                $this->assign('photoTitle',  $photo->getTitle());
+                $this->assign('photoAuthor', $photo->getAuthorName());
+//                $this->assign('photoDate',   $this->timeText($photo));
+                
                 break;
         }
     }
