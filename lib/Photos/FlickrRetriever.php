@@ -50,54 +50,23 @@ class FlickrRetriever extends URLDataRetriever {
 }
 
 class FlickrDataParser extends DataParser {
-    /**
-     * fillWith 
-     * fill object with array value
-     * the purpose is to make sure the array has the specified key
-     * 
-     * @param mixed $object 
-     * @param mixed $func 
-     * @param mixed $array 
-     * @param mixed $key 
-     * @access protected
-     * @return void
-     */
-    protected function fillWith($object, $func, $value, $key = false) {
-        if($key) {
-            if(!array_key_exists($key, $value)) {
-                return false;
-            }
-            return $object->$func($value[$key]);
-        }else {
-            return $object->$func($value);
-        }
-    }
+
     protected function parseEntry($entry) {
         $photo = new FlickrPhotoObject();
-        $this->fillWith($photo, 'setID', $entry, 'guid');
-        $this->fillWith($photo, 'setTitle', $entry, 'title');
-        $this->fillWith($photo, 'setUrl', $entry, 'url');
-        $this->fillWith($photo, 'setDescription', $entry, 'description');
-        $this->fillWith($photo, 'setMUrl', $entry, 'm_url');
-        $this->fillWith($photo, 'setTUrl', $entry, 't_url');
-        $this->fillWith($photo, 'setLUrl', $entry, 'l_url');
-        $this->fillWith($photo, 'setPhotoUrl', $entry, 'photo_url');
-        if(isset($entry['date'])) {
-            $published = new DateTime();
-            $published->setTimestamp($entry['date']);
-            $this->fillWith($photo, 'setPublished', $published);
-        }
-        if(isset($entry['date_taken'])) {
-            $this->fillWith($photo, 'setDateTaken', new DateTime($entry['date_taken']));
-        }
-        $this->fillWith($photo, 'setAuthorName', $entry, 'author_name');
-        $this->fillWith($photo, 'setAuthorUrl', $entry, 'author_url');
-        $this->fillWith($photo, 'setAuthorId', $entry, 'author_nsid');
-        $this->fillWith($photo, 'setAuthorIcon', $entry, 'author_icon');
-        $this->fillWith($photo, 'setHeight', $entry, 'height');
-        $this->fillWith($photo, 'setWidth', $entry, 'width');
-        $this->fillWith($photo, 'setTags', $entry, 'tags');
-        $this->fillWith($photo, 'setMimeType', $entry, 'photo_mime');
+        
+        $photo->setID($entry['guid']);
+        $photo->setTitle($entry['title']);
+        $photo->setDescription($entry['description']);
+        $photo->setAuthor($entry['author_name']);
+        $photo->setMimeType($entry['photo_mime']);
+        $photo->setURL($entry['photo_url']);
+        $photo->setHeight($entry['height']);
+        $photo->setWidth($entry['width']);
+        $photo->setTags($entry['tags']);
+        $photo->setThumbnailURL($entry['thumb_url']);
+
+        $published = new DateTime($entry['date_taken']);
+        $photo->setPublished($published);
         return $photo;
     }
 

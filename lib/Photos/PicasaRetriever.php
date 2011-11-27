@@ -34,44 +34,16 @@ class PicasaRetriever extends URLDataRetriever {
 }
 
 class PicasaDataParser extends DataParser {
-    /**
-     * fillWith 
-     * fill object with array value
-     * the purpose is to make sure the array has the specified key
-     * 
-     * @param mixed $object 
-     * @param mixed $func 
-     * @param mixed $array 
-     * @param mixed $key 
-     * @access protected
-     * @return void
-     */
-    protected function fillWith($object, $func, $value, $key = false) {
-        if(is_object($value)) {
-            if(!$key) {
-                $key = '$t';
-            }
-            if(property_exists($value, $key)) {
-                return $object->$func($value->$key);
-            }else {
-                return false;
-            }
-        }else {
-            return $object->$func($value);
-        }
-    }
 
     public function parseData($data) {
-        if($data = json_decode($data)) {
-            if(property_exists($data, 'feed') && property_exists($data->feed, 'entry') && is_array($data->feed->entry)) {
+        if($data = json_decode($data, true)) {
+            if(isset($data['feed']) && isset($data['feed']['entry']) && is_array($data['feed']['entry'])) {
                 $photos = array();
-                if (property_exists($data->feed, 'author')) {
-                    $this->setOption('author', $data->feed->author{0});
+                if (isset($data['feed']['author'][0])) {
+                    $this->setOption('author', $data['feed']['author'][0]['name']['$t']);
                 }
-                if (property_exists($data->feed, 'gphoto$user')) {
-                    $this->setOption('author_id', $data->feed->{'gphoto$user'});
-                }
-                foreach($data->feed->entry as $entry) {
+
+                foreach($data['feed']['entry'] as $entry) {
                     $photos[] = $this->parseEntry($entry);
                 }
                 $this->setTotalItems(count($photos));
@@ -84,30 +56,25 @@ class PicasaDataParser extends DataParser {
 
     protected function parseEntry($entry) {
         $photo = new PicasaPhotoObject();
-        $this->fillWith($photo, 'setID', $entry->id);
-        $this->fillWith($photo, 'setTitle', $entry->title);
-        $this->fillWith($photo, 'setUrl', $entry->link{1}, 'href');
-        $this->fillWith($photo, 'setDescription', $entry->{'media$group'}->{'media$description'});
-        $thumbnails = $entry->{'media$group'}->{'media$thumbnail'};
-        $this->fillWith($photo, 'setMUrl', $thumbnails[1], 'url');
-        $this->fillWith($photo, 'setTUrl', $thumbnails[0], 'url');
-        $this->fillWith($photo, 'setLUrl', $thumbnails[2], 'url');
-        $this->fillWith($photo, 'setPhotoUrl', $entry->content, 'src');
-        $this->fillWith($photo, 'setMimeType', $entry->content, 'type');
-        $this->fillWith($photo, 'setHeight', $entry->{'gphoto$height'});
-        $this->fillWith($photo, 'setWidth', $entry->{'gphoto$width'});
-        if($date = $entry->published->{'$t'}) {
-            $published = new DateTime($date);
-            $photo->setPublished($published);
+        $photo->setID($entry['id']['$t']);
+        $photo->setTitle($entry['title']['$t']);
+        $photo->setDescription($entry['media$group']['media$description']['$t']);
+        $photo->setAuthor($this->getOption('author'));
+        $photo->setMimeType($entry['content']['type']);
+        $photo->setURL($entry['content']['src']);
+        $photo->setHeight($entry['gphoto$height']['$t']);
+        $photo->setWidth($entry['gphoto$width']['$t']);
+
+        if (isset($entry['media$group']['media$keywords']['$t'])) {
+            $photo->setTags($entry['media$group']['media$keywords']['$t']);
         }
-        $this->fillWith($photo, 'setAuthorName', $this->getOption('author')->name);
-        $this->fillWith($photo, 'setAuthorUrl', $this->getOption('author')->uri);
-        $this->fillWith($photo, 'setAuthorId', $this->getOption('author_id'));
-        $this->fillWith($photo, 'setTags', $entry->{'media$group'}->{'media$keywords'});
-        //if(isset($entry['date_taken'])) {
-            //$this->fillWith($photo, 'setDateTaken', new DateTime($entry['date_taken']));
-        //}
-        //$this->fillWith($photo, 'setAuthorIcon', $entry, 'author_icon');
+
+        $published = new DateTime($entry['published']['$t']);
+        $photo->setPublished($published);
+        
+        $thumbnail = end($entry['media$group']['media$thumbnail']);
+        $photo->setThumbnailURL($thumbnail['url']);
+
         return $photo;
     }
 }

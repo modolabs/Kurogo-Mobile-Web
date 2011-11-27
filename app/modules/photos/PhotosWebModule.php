@@ -45,6 +45,11 @@ class PhotosWebModule extends WebModule {
         return $sections;
     }
 
+  protected function timeText($photo, $timeOnly=false) {
+    includePackage('Calendar');
+        return DateFormatter::formatDate($photo->getPublished(), DateFormatter::SHORT_STYLE, DateFormatter::SHORT_STYLE);
+  }
+
     protected function initializeForPage() {
         /**
          * no feed, throw exception
@@ -65,7 +70,7 @@ class PhotosWebModule extends WebModule {
                     $photo['albumcount'] = $controller->getAlbumSize() . ' photos';
                     // use base64_encode to make sure it will not be blocked by GFW
                     $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
-                    $photo['img'] = $defaultPhoto->getTUrl();
+                    $photo['img'] = $defaultPhoto->getThumbnailUrl();
                     $photos[] = $photo;
                 }
                 $this->assign('photos', $photos);
@@ -94,7 +99,7 @@ class PhotosWebModule extends WebModule {
         		foreach($items as $item){
         			$photo['title'] = $item->getTitle();
         			$photo['url'] = $this->buildBreadcrumbURL('show', array('id' => base64_encode($item->getID()), 'album' => $album), true);
-                    $photo['img'] = $item->getTUrl();
+                    $photo['img'] = $item->getThumbnailUrl();
                     $photos[] = $photo;
         		}
         		$this->assign('photos', $photos);
@@ -123,10 +128,10 @@ class PhotosWebModule extends WebModule {
                 $id = base64_decode($this->getArg('id'));
                 $photo = $controller->getPhoto($id);
                 $this->setPageTitles($photo->getTitle());
-                $this->assign('photoURL',    $photo->getLUrl());
+                $this->assign('photoURL',    $photo->getUrl());
                 $this->assign('photoTitle',  $photo->getTitle());
-                $this->assign('photoAuthor', $photo->getAuthorName());
-//                $this->assign('photoDate',   $this->timeText($photo));
+                $this->assign('photoAuthor', $photo->getAuthor());
+                $this->assign('photoDate',   $this->timeText($photo));
                 
                 break;
         }

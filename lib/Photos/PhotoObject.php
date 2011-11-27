@@ -1,6 +1,6 @@
 <?php
 
-class PhotoObject extends BaseObject implements KurogoObject {
+class PhotoObject implements KurogoObject {
     protected $id;
     protected $title;
     /**
@@ -21,15 +21,8 @@ class PhotoObject extends BaseObject implements KurogoObject {
      * @access protected
      */
     protected $type;
-    protected $mime_type;
-    /**
-     * m_url 
-     * middle image url
-     * 
-     * @var string
-     * @access protected
-     */
-    protected $m_url;
+    protected $mimeType;
+
     /**
      * t_url 
      * small/thumb image url
@@ -37,23 +30,8 @@ class PhotoObject extends BaseObject implements KurogoObject {
      * @var string
      * @access protected
      */
-    protected $t_url;
-    /**
-     * l_url 
-     * large image url
-     * 
-     * @var string
-     * @access protected
-     */
-    protected $l_url;
-    /**
-     * photo_url 
-     * origin image url
-     *
-     * @var string
-     * @access protected
-     */
-    protected $photo_url;
+    protected $thumbnailUrl;
+
     /**
      * date_taken 
      * photo taken datetime
@@ -61,11 +39,7 @@ class PhotoObject extends BaseObject implements KurogoObject {
      * @var datetime
      * @access protected
      */
-    protected $date_taken;
-    protected $author_name;
-    protected $author_url;
-    protected $author_id;
-    protected $author_icon;
+    protected $author;
     /**
      * published 
      * publish photo datetime
@@ -78,14 +52,6 @@ class PhotoObject extends BaseObject implements KurogoObject {
     protected $height;
     protected $tags;
     
-    public function setDateTaken(DateTime $date) {
-        $this->date_taken = $date;
-    }
-
-    public function setPublished(DateTime $date) {
-        $this->published = $date;
-    }
-
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
             switch ($filter) {
@@ -97,5 +63,97 @@ class PhotoObject extends BaseObject implements KurogoObject {
         }
 
         return true;
+    }
+
+ public function setID($id) {
+        $this->id = $id;
+    }
+
+    public function getID() {
+        return $this->id;
+    }
+    
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+    
+    public function getTitle() {
+        return $this->title;
+    }
+    
+    public function getAuthor() {
+        return $this->author;
+    }
+
+    public function setAuthor($author) {
+        $this->author = $author;
+    }
+    
+    public function setDescription($description) {
+        $this->description = $description;
+    }
+    
+    public function getDescription() {
+        return $this->description;
+    }
+
+    public function setPublished(DateTime $published) {
+        $this->published = $published;
+    }
+
+    public function getPublished() {
+        return $this->published;
+    }
+
+    public function setURL($url) {
+        $this->url = $url;
+    }
+    
+    public function getURL() {
+        return $this->url;
+    }
+
+    public function setMimeType($mimeType) {
+        $this->mimeType = $mimeType;
+    }
+    
+    public function getMimeType() {
+        return $this->mimeType;
+    }
+    
+    public function getThumbnailUrl() {
+        return $this->thumbnailUrl;
+    }
+
+    public function setThumbnailUrl($url) {
+        $this->thumbnailUrl = $url;
+    }
+
+    public function getHeight() {
+        return $this->height;
+    }
+
+    public function setHeight($height) {
+        $this->height = $height;
+    }
+
+    public function getWidth() {
+        return $this->width;
+    }
+
+    public function setWidth($width) {
+        $this->width = $width;
+    }
+
+    public function setTags($tags) {
+        $this->tags = $tags;
+    }
+    
+    public function getTags() {
+        return $this->tags;
+    }
+
+    public function getType() {
+        return $this->type;
     }
 }
