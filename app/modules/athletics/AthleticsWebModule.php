@@ -97,12 +97,18 @@ class AthleticsWebModule extends WebModule {
         if (isset($data['sport'])) {
             $options['sport'] = $data['sport'];
         }
-        
-        return array(
+
+        $return = array(
             'title'=>$event->getTitle(),
-            'subtitle'=>sprintf("%s - %s", $this->timeText($event), $event->getLocation()),
+            'subtitle'=>sprintf("%s<br />%s", $this->timeText($event), $event->getLocation()),
             'url'=> $this->buildBreadcrumbURL('schedule_detail', $options, true)
         );
+        
+        if (isset($data['label'])) {
+            $return['label']=$data['label'];
+        }
+        
+        return $return;
     }
     
     protected function valueForType($type, $value, $event = null) {
