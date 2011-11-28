@@ -13,7 +13,7 @@
         {if $story['img']}
           <img class="thumbnail" src="{$story['img']}" />
         {else}
-          <img class="thumbnail" src="/modules/{$moduleID}/images/news-placeholder{$imageExt}" />
+          <img class="thumbnail" src="/modules/{$moduleID}/images/athletics-placeholder{$imageExt}" />
         {/if}
         {/if}
         <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
