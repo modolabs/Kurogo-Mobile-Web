@@ -9,7 +9,7 @@
 {/if}
 {if $newsItems}
     <h2 class="nonfocal">News</h2>
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$newsItems}  
+    {include file="findInclude:modules/athletics/templates/stories.tpl" stories=$newsItems} 
 {/if}
 
 

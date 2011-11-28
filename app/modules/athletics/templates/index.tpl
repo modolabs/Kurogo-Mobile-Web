@@ -6,7 +6,7 @@
   {capture name="topnewsTab" assign="topnewsTab"}
     {include file="findInclude:common/templates/search.tpl"}
      
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$topNews}  
+    {include file="findInclude:modules/athletics/templates/stories.tpl" stories=$topNews}  
   {/capture}
   {$tabBodies[$topNewsTitle] = $topnewsTab}
 {/if}

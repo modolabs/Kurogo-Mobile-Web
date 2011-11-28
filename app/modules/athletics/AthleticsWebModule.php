@@ -280,9 +280,7 @@ class AthleticsWebModule extends WebModule {
                 
                 $previousURL = null;
                 $nextURL = null;
-                
-                $previousURL = null;
-                $nextURL = null;
+
                 if ($totalItems > $this->maxPerPage) {
                     $args = $this->args;
                     if ($start > 0) {
@@ -318,7 +316,6 @@ class AthleticsWebModule extends WebModule {
                 break;
                 
             case 'news_detail':
-                
                 $section = $this->getArg('section');
                 $gender = $this->getArg('gender');
                 $storyID = $this->getArg('storyID', false);
@@ -421,7 +418,6 @@ class AthleticsWebModule extends WebModule {
                     $this->assign('showImages',  $this->showImages);
                     $this->assign('showPubDate', $this->showPubDate);
                     $this->assign('showAuthor',  $this->showAuthor);
-          
                 } else {
                     $this->redirectTo('index'); // search was blank
                 }
@@ -497,29 +493,51 @@ class AthleticsWebModule extends WebModule {
                 }
                 
                 if ($newsFeed = $this->getNewsFeed($sport)) {
+                
+                    $start = $this->getArg('start', 0);
+                    $newsFeed->setStart($start);
                     $newsFeed->setLimit($this->maxPerPage);
+                
+                    $items = $newsFeed->items();
+                    $totalItems = $newsFeed->getTotalItems();
+                    $this->setLogData($sport, $newsFeed->getTitle());
+                
+                    $previousURL = null;
+                    $nextURL = null;
+
+                    if ($totalItems > $this->maxPerPage) {
+                        $args = $this->args;
+                        if ($start > 0) {
+                            $args['start'] = $start - $this->maxPerPage;
+                            $previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+                        }
+                    
+                        if (($totalItems - $start) > $this->maxPerPage) {
+                            $args['start'] = $start + $this->maxPerPage;
+                            $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+                        }
+                    }
 
                     $options = array(
                         'section'=>$sport
                     );
-                    
                     $newsItems = array();
-                    $items = $newsFeed->items();
-                    $totalItems = $newsFeed->getTotalItems();
-                    
-                    if ($totalItems > $this->maxPerPage) {
-                        $newsItems[] = array(
-                            'title' => $this->getLocalizedString('FULL_NEWS_TEXT'),
-                            'url'   => $this->buildBreadcrumbURL('news', $options, true)
-                        );
-                    }
                     foreach ($items as $story) {
                         $newsItems[] = $this->linkForNewsItem($story, $options);
                     }
                     
+                    $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                    $this->addOnLoad('setupNewsListing();');
+                    
+                    
                     $this->assign('newsItems', $newsItems);
+                    $this->assign('maxPerPage',     $this->maxPerPage);
+                    $this->assign('previousURL',    $previousURL);
+                    $this->assign('nextURL',        $nextURL);
+                    $this->assign('showImages',     $this->showImages);
+                    $this->assign('showPubDate',    $this->showPubDate);
+                    $this->assign('showAuthor',     $this->showAuthor);
                 }
-                
                 
                 // Bookmark
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
@@ -537,38 +555,59 @@ class AthleticsWebModule extends WebModule {
                 
                 //get top news
                 if ($newsFeedData = $this->getNavData('topnews')) {
-                    $topNews = array();
-                    $limit = isset($newsFeedData['LIMIT']) ? $newsFeedData['LIMIT'] : $this->maxPerPage;
+                    $start = $this->getArg('start', 0);
                     
                     $newsFeed = $this->getNewsFeed('topnews');
-                    $newsFeed->setLimit($limit);
-
+                    $newsFeed->setStart($start);
+                    $newsFeed->setLimit($this->maxPerPage);
+                
+                    $items = $newsFeed->items();
+                    $totalItems = $newsFeed->getTotalItems();
+                    $this->setLogData('topnews', $newsFeed->getTitle());
+                
+                    $previousURL = null;
+                    $nextURL = null;
+                    
+                    if ($totalItems > $this->maxPerPage) {
+                        //$args = $this->args;
+                        $args = array();
+                        if ($start > 0) {
+                            $args['start'] = $start - $this->maxPerPage;
+                            $previousURL = $this->buildURL('index', $args);
+                        }
+                    
+                        if (($totalItems - $start) > $this->maxPerPage) {
+                            $args['start'] = $start + $this->maxPerPage;
+                            $nextURL = $this->buildURL('index', $args);
+                        }
+                    }
+                
+                    $topNews = array();
+                    
                     $options = array(
                         'section'=>'topnews'
                     );
-                    
-                    $items = $newsFeed->items();
-                    $totalItems = $newsFeed->getTotalItems();
-
                     foreach ($items as $story) {
                         $topNews[] = $this->linkForNewsItem($story, $options);
-                    }
-                    
-                    if ($totalItems > $limit) {
-                        $topNews[] = array(
-                            'title' => $this->getLocalizedString('FULL_NEWS_TEXT'),
-                            'url'   => $this->buildBreadcrumbURL('news', $options, true)
-                        );
                     }
                     
                     $extraArgs = array(
                         'section' => 'topnews'
                     );
                     
+                    $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                    $this->addOnLoad('setupNewsListing();');
+                    
                     $tabs[] = $newsFeedData['TITLE'];
                     $this->assign('topNewsTitle', $newsFeedData['TITLE']);
                     $this->assign('topNews', $topNews);
                     $this->assign('extraArgs', $extraArgs);
+                    $this->assign('maxPerPage',     $this->maxPerPage);
+                    $this->assign('previousURL',    $previousURL);
+                    $this->assign('nextURL',        $nextURL);
+                    $this->assign('showImages',     $this->showImages);
+                    $this->assign('showPubDate',    $this->showPubDate);
+                    $this->assign('showAuthor',     $this->showAuthor);
                 }
                 
                 //get sports for each gender
