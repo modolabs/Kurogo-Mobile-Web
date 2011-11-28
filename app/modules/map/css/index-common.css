@@ -140,4 +140,11 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
     margin: 2px;
 }
 
+/* modifications to javascript map SDK classes */
+#mapimage .esriSimpleSlider {
+    top: auto;
+    left: auto;
+    bottom: 10px;
+    right: 10px;
+}
 
