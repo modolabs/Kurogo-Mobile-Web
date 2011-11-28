@@ -33,7 +33,7 @@
 {/if}
 
 <div id="tabscontainer">
-{include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
+{include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies smallTabs=true}
 </div>
 
 {include file="findInclude:common/templates/footer.tpl"}
