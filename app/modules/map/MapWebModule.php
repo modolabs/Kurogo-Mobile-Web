@@ -138,11 +138,7 @@ class MapWebModule extends WebModule {
 
     public function linkForItem(KurogoObject $mapItem, $options=null)
     {
-        $urlArgs = $this->args;
         $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
-        if (isset($options['external']) && $options['external']) {
-            $urlArgs['external'] = true;
-        }
 
         $result = array(
             'title'    => $mapItem->getTitle(),
@@ -169,6 +165,11 @@ class MapWebModule extends WebModule {
             }
 
         } else {
+            $urlArgs = $this->args;
+            if (isset($options['external']) && $options['external']) {
+                $urlArgs['external'] = true;
+            }
+
             // for folder objects, getId returns the subcategory ID
             $drilldownPath = array_merge($this->getDrillDownPath(), array($mapItem->getId()));
             $external = isset($urlArgs['external']) ? $urlArgs['external'] : false;
@@ -200,7 +201,9 @@ class MapWebModule extends WebModule {
     private function groupURL($group, $addBreadcrumb=false) {
         $args = $this->args;
         $args['group'] = $group;
-        //$args['action'] = ($group == '') ? 'remove' : 'add';
+        if (isset($args['worldmap'])) {
+            unset($args['worldmap']);
+        }
         return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
     }
   
@@ -357,6 +360,22 @@ class MapWebModule extends WebModule {
         $mapSearch = new $mapSearchClass($this->getFeedData());
         $this->assign('poweredByGoogle', $mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces());
         return $mapSearch;
+    }
+
+    private function assignCampuses() {
+        $campusData = array();
+        if ($this->numGroups > 1) {
+            foreach ($this->feedGroups as $id => $groupData) {
+                $campusData[] = array(
+                    'id' => $id,
+                    'title' => $groupData['title'],
+                    'url' => $this->groupURL($id),
+                    'listclass' => $id, // stupid way to sneak the id into the dom
+                    );
+            }
+            $this->assign('campuses', $campusData);
+        }
+        return $campusData;
     }
     
     private function assignCategories() {
@@ -660,6 +679,7 @@ class MapWebModule extends WebModule {
                         $this->feedGroup = null;
                         $this->assign('browseURL', $this->buildURL('index'));
                     }
+                    $this->assignCampuses();
                     $this->initializeDynamicMap();
 
                 } else {
@@ -747,8 +767,9 @@ class MapWebModule extends WebModule {
                         $places[] = $this->linkForItem($listItem);
                     }
                     $this->assign('title',  $dataModel->getTitle());
-                    $this->assign('places', $places);          
+                    $this->assign('places', $places);
                     
+                    // TODO: what is the purpose of the second condition?
                     if ($this->numGroups > 1 && count($categories) == 1) {
                         $this->assignClearLink();
                     }
@@ -879,17 +900,8 @@ class MapWebModule extends WebModule {
             // feedgroups section
             $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS');
             $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
-
-            foreach ($this->feedGroups as $id => $groupData) {
-                $categories[] = array(
-                    'id' => $id,
-                    'title' => $groupData['title'],
-                    'url' => $this->groupURL($id),
-                    'listclass' => $id, // stupid way to sneak the id into the dom
-                    );
-            }
-            $this->assign('campuses', $categories);
-            $this->assign('categories', $categories);
+            $campuses = $this->assignCampuses();
+            $this->assign('categories', $campuses);
 
             $this->addOnLoad('sortGroupsByDistance();');
         }

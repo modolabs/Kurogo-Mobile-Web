@@ -2,14 +2,7 @@
 
 {if $campuses}
   {capture name="additionalInputs" assign="additionalInputs"}
-    <div id="campus-select">
-      <label for="group" class="formlabel">{"SEARCH_IN_GROUP"|getLocalizedString}</label>&nbsp;
-      <select name="group">
-      {foreach $campuses as $campus}
-        <option value="{$campus['id']}">{$campus['title']}</option>
-      {/foreach}
-      </select>
-    </div>
+    {include file="findInclude:modules/map/templates/selectcampus.tpl" campuses=$campuses}
   {/capture}
 {/if}
 

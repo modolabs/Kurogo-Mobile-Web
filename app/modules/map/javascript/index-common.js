@@ -32,20 +32,23 @@ function clearSearch(form) {
 }
 
 function showSearchFormButtons() {
-    addClass(document.getElementById("header"), "expanded");
-    addClass(document.getElementById("searchbar"), "expanded");
-    document.getElementById("searchFormButtons").style.display = "block";
-    document.getElementById("searchBarButtons").style.display = "none";
-    doUpdateContainerDimensions();
+    var header = document.getElementById("header");
+    addClass(header, "expanded");
+    if (document.getElementById("campus-select")) {
+        addClass(header, "multi-campus");
+    } else {
+        addClass(header, "single-campus");
+    }
 }
 
 function hideSearchFormButtons() {
-    removeClass(document.getElementById("header"), "expanded");
-    removeClass(document.getElementById("searchbar"), "expanded");
-    document.getElementById("searchFormButtons").style.display = "none";
-    document.getElementById("searchBarButtons").style.display = "block";
-    scrollTo(0, 1);
-    doUpdateContainerDimensions();
+    var header = document.getElementById("header");
+    removeClass(header, "expanded");
+    if (document.getElementById("campus-select")) {
+        removeClass(header, "multi-campus");
+    } else {
+        removeClass(header, "single-campus");
+    }
 }
 
 

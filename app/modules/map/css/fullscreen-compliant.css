@@ -1,5 +1,5 @@
 /* Fullscreen in portrait (tall) orientation */
-
+/*
 #container {
   min-height: 320px;
 }
@@ -88,6 +88,7 @@ body.portrait #locateMe {
 }
 
 /* this doesn't seem to exist in the DOM */
+/*
 body.portrait #viewoptions {
 	position: absolute;
 	top: 5px;
@@ -115,7 +116,7 @@ body.portrait #formbuttons {
 }
 
 /* Fullscreen mode in wide (landscape) orientation */
-
+/*
 body.landscape {
 	width: 100%;
 	height: 100%;
@@ -196,6 +197,7 @@ body.landscape #locateMe {
 }
 
 /* this doesn't seem to exist in the DOM */
+/*
 body.landscape #viewoptions {
 	top: 70%;
 	bottom: auto;
@@ -250,3 +252,4 @@ body.landscape #options .check {
 	width: 20px;
 	height: 20px;
 }
+*/

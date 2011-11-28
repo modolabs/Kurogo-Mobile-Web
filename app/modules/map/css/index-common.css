@@ -11,50 +11,112 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
     margin: 0;
 }
 
-/* shorter min-height than default to prevent scrolling on short devices*/
-/*
-#container {
-    min-height: 200px;
-}
-*/
 #header {
-    height: 48px;
+    position: absolute;
+    top: 44; /* this should be the same as the #navbar height */
+    left: 0;
+    right: 0;
+    z-index: 1;
+    height: 44px;
     margin: 0;
-    padding: 0;
-    background-color: #369;
+    padding: 0 4px;
+    background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+}
+
+/* empty div behind the #header to align the top of the #mapimage */
+#spacer {
+    height: 44px;
 }
 
 #searchbar {
     margin: 0;
     padding: 0;
+    width: 100%;
     float: left;
 }
 
-#header.expanded {
-    height: 92px;
+#searchbar fieldset {
+    margin: 4px 0 0 0;
 }
 
-#searchbar.expanded {
-    width: 98%;
+#header.single-campus {
+    height: 80px;
+}
+
+#header.multi-campus {
+    height: 112px;
+}
+
+.searchwrapper {
+    right: 84px;
+}
+
+#header.expanded .searchwrapper {
+    right: 4px;
 }
 
 #search-form {
-    margin: 4px;
+    margin: 0;
+    width: 100%;
 }
 
 #search-form input[type="text"] {
+    border-radius: 10px;
     width: 100%;
-    height: 30px;
+    height: 26px;
 }
 
-#searchFormButtons {
+/* toolbar: browse/bookmark buttons to the right of the search field */
+#header.expanded #toolbar-buttons {
     display: none;
-    margin: 4px 0 0 0;
-    padding: 0;
 }
 
-#searchFormButtons input {
-   margin: 0.5%;
+.toolbar-button {
+    width: 36px;
+    height: 32px;
+    float: right;
+    margin: 0 0 0 3px;
+    background-image: url(/modules/map/images/button-background.png);
+}
+
+.toolbar-button a {
+    margin: 2px;
+}
+
+/* campus-select: the drop-down menu in multi-campus case */
+#campus-select {
+    height: 33px;
+}
+
+#campus-select td {
+    padding: 4px 0 5px;
+}
+
+#campus-select .formlabel {
+    width: 82px;
+    vertical-align: middle;
+}
+
+/* search-options: search/clear/cancel buttons below the search bar */
+#search-options {
+    display: none;
+    left: 4px;
+    padding: 0;
+    position: absolute;
+    right: 4px;
+    top: 33px;
+}
+
+#header.expanded #search-options {
+    display: block;
+}
+
+#search-options input {
+   margin: 7px 5px 0 0;
    height: 30px;
    border-radius: 5px;
    float: left;
@@ -66,16 +128,8 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
    background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
 }
 
-.searchBarButton {
-    width: 36px;
-    height: 32px;
+#search-options #cancelButton {
     float: right;
-    margin: 7px 6px 0 0;
-    background-image: url(/modules/map/images/button-background.png);
-}
-
-.searchBarButton a {
-    margin: 2px;
 }
 
 .calloutMain {
