@@ -26,7 +26,7 @@ class CoreAPIModule extends APIModule
                 $allmodules = $this->getAllModules();
                 $homeModules = $this->getModuleNavigationIDs();
                 foreach ($allmodules as $moduleID=>$module) {
-                    if (!$module->getModuleVar('disabled', 'module')) {
+                    if ($module->isEnabled()) {
                         $home = false;
                         if ( ($key = array_search($moduleID, $homeModules['primary'])) !== FALSE) {
                             $home = array('type'=>'primary', 'order'=>$key);
@@ -40,6 +40,7 @@ class CoreAPIModule extends APIModule
                             'tag'       =>$module->getConfigModule(),
                             'title'     =>$module->getModuleVar('title','module'),
                             'access'    =>$module->getAccess(AccessControlList::RULE_TYPE_ACCESS),
+                            'payload'   =>$module->getPayload(),
                             'vmin'      =>$module->getVmin(),
                             'vmax'      =>$module->getVmax(),
                             'home'      =>$home

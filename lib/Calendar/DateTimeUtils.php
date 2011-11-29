@@ -5,7 +5,13 @@
   */
 
 interface CalendarInterface {
+    public function getEvents();
     public function getEventsInRange(TimeRange $range=null, $limit=null);
+    public function set_attribute($contentname, $value, $params);
+    public function add_event(CalendarEvent $event);
+}
+
+interface CalendarEvent {
 }
 
 class DateFormatter
