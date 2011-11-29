@@ -1063,7 +1063,7 @@ class Kurogo
     
     public static function getCacheClasses() {
         includePackage('Cache');
-        return KurogoCache::getCacheClasses();
+        return KurogoMemoryCache::getCacheClasses();
         
     }
 }
