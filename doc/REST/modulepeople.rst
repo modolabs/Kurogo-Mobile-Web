@@ -100,6 +100,11 @@ contacts
 Returns a list of static contacts for displaying on the People module home 
 screen.
 
+
+Parameters
+
+* *group* - Optional parameter to get contacts for a particular contact group
+
 :kbd:`/rest/people/contacts?v=1`
 
 Sample *response* ::
@@ -129,6 +134,40 @@ Sample *response* ::
         ]
     }
 
+:kbd:`/rest/people/contacts?group=group1&v=1`
+
+Sample *response* ::
+
+    {
+        "total": 4,
+        "results": [
+            {
+                "title":"Static Entry 4",
+                "subtitle":"(617-555-0003)",
+                "url":"tel:6175550003",
+                "type":"phone"
+            },
+            {
+                "title":"Static Entry 5",
+                "subtitle":"(617-555-0004)",
+                "url":"tel:6175550004",
+                "type":"phone"
+            },
+            {   
+                "title":"Static Entry 6",
+                "subtitle":"(617-555-0004)",
+                "url":"tel:6175550004",
+                "type":"phone"
+            },
+            {
+                "title":"Static Entry 7",
+                "subtitle":"(617-555-0004)",
+                "url":"tel:6175550004",
+                "type":"phone"
+            }
+        ]
+    }
+
 Contents:
 
 * *total* - total number of static contacts.
@@ -144,41 +183,8 @@ Contents:
   * *url* - the contact's URL, if any.
 
   * *group* - indicates that this is not an individual contact but a group
-    of contacts. The client must use the *group* endpoint below to fetch
-    the individual contact objects in this group.
+    of contacts. The client must call the contacts endpoint again and use the 
+    *group* parameter to fetch the individual contact objects in this group.
 
-========
-group
-========
-
-:kbd:`/rest/people/group?group=group1&v=1`
-
-Sample *response* ::
-
-    {
-        "total": 3, 
-        "results": {
-            "contacts": [
-                {
-                    "url": "tel:6175550003", 
-                    "subtitle": "(617-555-0003)", 
-                    "class": "phone", 
-                    "title": "Static Entry 4"
-                }, 
-                {
-                    "url": "tel:6175550004", 
-                    "subtitle": "(617-555-0004)", 
-                    "class": "phone", 
-                    "title": "Static Entry 5"
-                },
-                // ...
-            ], 
-            "description": "This is a group of contacts", 
-            "title": "Group 1"
-        }
-    }
-
-Each entry in "contacts" has the same structure as the entries in the *contacts*
-API.
 
 
