@@ -74,6 +74,7 @@ class PhotosWebModule extends WebModule {
                     $photos[] = $photo;
                 }
                 $this->assign('photos', $photos);
+                $this->assign('description', $this->getModuleVar('description','strings'));
                 $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
         	case 'album':
