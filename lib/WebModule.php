@@ -30,7 +30,6 @@ abstract class WebModule extends Module {
   protected $platform = 'unknown';
   protected $supportsCerts = false;
   
-  protected $ajaxPagetype = false;
   protected $ajaxContentLoad = false;
   protected $hasNativePageRefresh = false;
   
@@ -312,15 +311,15 @@ abstract class WebModule extends Module {
   }
 
   public static function buildURLForModule($id, $page, $args=array()) {
-    $argString = '';
-    if (isset($args) && count($args)) {
-      $argString = http_build_query($args);
-    }
-  
-    if (KurogoNativeTemplates::isNativeCall()) {
-      if (!$page) { $page = 'index'; }
-      return KurogoNativeTemplates::INTERNAL_LINK_SCHEME."$id/$page".(strlen($argString) ? "?$argString" : '');
+    if (KurogoNativeTemplates::shouldRewriteInternalLinks()) {
+      return KurogoNativeTemplates::getInternalLink($id, $page, $args);
+      
     } else {
+      $argString = '';
+      if (isset($args) && count($args)) {
+        $argString = http_build_query($args);
+      }
+      
       return "/$id/$page".(strlen($argString) ? "?$argString" : '');
     }
   }
@@ -467,7 +466,6 @@ abstract class WebModule extends Module {
         $this->platform      = $this->getPlatform();
         $this->supportsCerts = $this->getSupportsCerts();
         
-        $this->ajaxPagetype    = $this->pagetype == 'native';
         $this->ajaxContentLoad = $this->getArg('ajax', false);
 
         switch ($this->getPagetype()) {
@@ -1175,14 +1173,15 @@ abstract class WebModule extends Module {
   }
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
-    if (KurogoNativeTemplates::isNativeCall()) {
-      if (!$page) { $page = 'index'; }
-      $url = KurogoNativeTemplates::INTERNAL_LINK_SCHEME."$id/$page?";
+    $args = array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb));
+  
+    if (KurogoNativeTemplates::shouldRewriteInternalLinks()) {
+      $url = KurogoNativeTemplates::getInternalLink($id, $page, $args);
     } else {
-      $url = "/$id/$page?";
+      $url = "/$id/$page?".http_build_query($args);
     }
     
-    return $url.http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+    return $url;
   }
   
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
@@ -1470,7 +1469,7 @@ abstract class WebModule extends Module {
         $this->assign('contentTitle', $title);
         $this->assign('contentBody', $message);
       
-    } else if (KurogoNativeTemplates::isNativeTemplateCall() || KurogoNativeTemplates::isNativeInlineAssetCall()) {
+    } else if (KurogoNativeTemplates::isNativeTemplateCall()) {
         Kurogo::log(LOG_DEBUG,"Calling initializeForNativeTemplatePage for $this->configModule - $this->page", 'module');
         $this->initializeForNativeTemplatePage(); //subclass behavior
         Kurogo::log(LOG_DEBUG,"Returned from initializeForNativeTemplatePage for $this->configModule - $this->page", 'module');
@@ -1496,10 +1495,14 @@ abstract class WebModule extends Module {
     $this->assign('breadcrumbs',            $this->breadcrumbs);
     $this->assign('breadcrumbArgs',         $this->getBreadcrumbArgs());
     $this->assign('breadcrumbSamePageArgs', $this->getBreadcrumbArgs(false));
-
-    $this->assign('nativePageConfigURL', $this->getNativePageConfigURL());
     
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
+
+    $this->assign('nativePageConfigURL', $this->getNativePageConfigURL());
+    $this->assign('nativeServerURLBase', KurogoNativeTemplates::getNativeURLBase());
+    $this->assign('nativeServerURL',     KurogoNativeTemplates::getNativeServerURL());
+    $this->assign('nativeServerPath',    KurogoNativeTemplates::getNativeServerPath($this->configModule, $this->page));
+    $this->assign('nativeServerArgs',    KurogoNativeTemplates::getNativeServerArgs($this->args));
     
     $moduleStrings = $this->getOptionalModuleSection('strings');
     $this->assign('moduleStrings', $moduleStrings);
@@ -1515,7 +1518,7 @@ abstract class WebModule extends Module {
     } else if ($this->page == '__nativeWebTemplates') {
         $template = 'common/templates/staticContent';
     
-    } else if ($this->pagetype == 'native' && !$this->ajaxContentLoad) {
+    } else if (KurogoNativeTemplates::isNativeTemplateCall()) {
       // Native page wrapper
       $template = 'common/templates/nativeTemplate';
       

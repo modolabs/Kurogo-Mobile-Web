@@ -7,60 +7,55 @@ class KurogoNativeTemplates
     protected $page = 'index';
     protected $path = '';
     protected $pathExists = false;
-    protected $streamContext = null;
     
+    const NATIVE_PLATFORM_PARAMETER = 'nativePlatform';
+    const ASSET_CHECK_PARAMETER = 'nativeAssetCheck';
+
     const INTERNAL_LINK_SCHEME = 'kgolink://';
     const CONFIG_LINK_SCHEME = 'kgoconfig://';
-    
+
     // This global could be removed by using closures (ie php 5.3+)
     static protected $currentInstance = null;
     protected $processingHTML = true;
     
     public function __construct($platform, $module, $dir=null) {
-        $platformToUserAgent = self::getNativeUserAgents();
-        if (isset($platformToUserAgent[$platform])) {
-            $this->platform = $platform;
-        }
-        
+        $this->platform = $platform;
         $this->module = $module;
         $this->path = ($dir ? rtrim($dir, '/') : CACHE_DIR.'/nativeBuild')."/$module";
-        
-        $this->streamContext = stream_context_create(array(
-            'http' => array(
-                'user_agent' => self::getNativeUserAgentForPlatform($this->platform),
-            ),
-        ));
     }
-    
+
     public function setPage($page) {
         $this->page = $page;
     }
-    
+
     protected static function isFileAsset($file) {
         $parts = explode('.', $file);
         $ext = strtolower(end($parts));
         return count($parts) > 1 && in_array($ext, array('png', 'gif', 'jpg', 'jpeg'));
     }
-    
+
     protected static function isHTMLFile($file) {
         $parts = explode('.', $file);
         $ext = strtolower(end($parts));
         return count($parts) < 2 || in_array($ext, array('html', 'php'));        
     }
-    
+
     //
     // Helper functions to avoid code duplication
     //
     protected function getAsset($urlSuffix) {
+        $urlSuffix .= stripos($urlSuffix, '?') ? '&' : '?';
+        $urlSuffix .= http_build_query(array(self::NATIVE_PLATFORM_PARAMETER => $this->platform));
+        
         $url = FULL_URL_PREFIX.$urlSuffix;
         //error_log($url);
-        $contents = @file_get_contents($url, false, $this->streamContext);
+        $contents = @file_get_contents($url);
         if (!$contents) {
             Kurogo::log(LOG_NOTICE, "Failed to load asset $url", 'api');
         }
         return $contents;
     }
-    
+
     protected function saveAsset($contents, $file) {
         $filePath = "{$this->path}/$file";
         
@@ -75,7 +70,7 @@ class KurogoNativeTemplates
             throw new KurogoDataException("Unable to write to $filePath");
         }
     }
-    
+
     protected function urlSuffixToFile($urlSuffix) {
         return str_replace(
             array('/', '-'), // Android does not support hyphens in asset filenames
@@ -101,7 +96,7 @@ class KurogoNativeTemplates
             )
         );
     }
-    
+
     protected static function getPartsForMatches($matches) {
         $urlSuffix = html_entity_decode($matches[4]);
         $file = self::$currentInstance->urlSuffixToFile($urlSuffix);
@@ -119,27 +114,27 @@ class KurogoNativeTemplates
         
         return array($urlSuffix, $file, $replacement);
     }
-    
+
     //
     // Callbacks for preg_replace_callback
     //
-    
+
     protected static function rewriteURLsToFilePathsCallback($matches) {
         list($urlSuffix, $file, $replacement) = self::getPartsForMatches($matches);
-
+        
         return $replacement;
     }
-    
+
     protected static function saveContentAndAssetsCallback($matches) {
         list($urlSuffix, $file, $replacement) = self::getPartsForMatches($matches);
-
+        
         if ($file) {
             self::$currentInstance->saveContentAndAssets($urlSuffix, $file, self::isHTMLFile($file));
         }
         
         return $replacement;
     }
-    
+
     //
     // Template and asset generation functions
     //
@@ -170,7 +165,6 @@ class KurogoNativeTemplates
             ),
             $contents
         );
-        
 
         // rewrite all other internal urls
         $oldProcessingHTML = $this->processingHTML;
@@ -192,7 +186,7 @@ class KurogoNativeTemplates
         
         return $contents;
     }
-    
+
     protected function saveContentAndAssets($urlSuffix=null, $file=null, $isHTML=true) {
         if (!$urlSuffix) {
             $urlSuffix = "{$this->module}/{$this->page}";
@@ -213,11 +207,11 @@ class KurogoNativeTemplates
             $this->saveAsset($contents, $file);
         }
     }
-    
+
     public function rewriteURLsToFilePaths($contents) {
         return $this->_rewriteURLsToFilePaths($contents); // internal function with more arguments
     }
-    
+
     public function saveAssets($assets) {
         foreach ($assets as $asset) {
             $contents = $this->getAsset($asset);
@@ -227,22 +221,28 @@ class KurogoNativeTemplates
             }
         }
     }
-    
+
     public function saveTemplatePage($page) {
         $this->setPage($page);
         $this->saveContentAndAssets();
         
         // Also check for inline content
-        $contents = $this->getAsset("{$this->module}/{$this->page}?nativeAssetCheck=1&ajax=1");
+        $contents = $this->getAsset("{$this->module}/{$this->page}?ajax=1&".self::ASSET_CHECK_PARAMETER.'=1');
         if ($contents) {
             self::$currentInstance = $this;
             $contents = $this->_rewriteURLsToFilePaths($contents, true, 'saveContentAndAssetsCallback');
         }
-        
-        $this->saveAssets(array('/common/images/blank.png')); // loader image used by all pages
     }
-    
+
+    //
+    // Config URL for setting native navbar options
+    //
+
     public static function getNativePageConfigURL($pageTitle, $backTitle, $hasRefresh) {
+        if (!self::hasNativePlatform()) {
+            return '';
+        }
+        
         $params = array(
           'pagetitle' => $pageTitle,
         );
@@ -254,68 +254,90 @@ class KurogoNativeTemplates
         }
         return self::CONFIG_LINK_SCHEME.'navbar/?'.http_build_query($params);
     }
-    
+
+    public static function getNativeURLBase() {
+        if (self::hasNativePlatform()) {
+            return '__KUROGO_URL_BASE__';
+        } else {
+            return URL_BASE;
+        }
+    }
+
+    public static function getNativeServerURL() {
+        if (self::hasNativePlatform()) {
+            return '__KUROGO_SERVER_URL__';
+        } else {
+            return ltrim(FULL_URL_PREFIX, '/');
+        }
+    }
+
+    public static function getNativeServerPath($id, $page) {
+        if (self::shouldForceNativePlatform($platform)) {
+            return "/{$id}/{$page}?ajax=1&nativePlatform={$platform}";
+        } else {
+            return "/{$id}/{$page}?ajax=1";
+        }
+    }
+
+    public static function getNativeServerArgs($args) {
+        if (self::hasNativePlatform()) {
+            return '__KUROGO_MODULE_EXTRA_ARGS__';
+        } else {
+            return http_build_query($args);
+        }
+    }
+
     //
     // Detecting native user agents
     //
-    
-    private static function getNativeUserAgents() {
-        static $nativeBuildUserAgents = null;
-        if (!isset($nativeBuildUserAgents)) {
-            $nativeBuildUserAgents = array(
-                'iphone'        => '',
-                'ipad'          => '',
-                'android'       => '',
-                'androidtablet' => '',
-                'unknown'       => '',
-            );
-            foreach ($nativeBuildUserAgents as $platform => $userAgent) {
-                $nativeBuildUserAgents[$platform] = "Kurogo (native-$platform)";
-            }
-        }
-      
-        return $nativeBuildUserAgents;
+
+    private static function isAjax() {
+      return isset($_GET['ajax']) && $_GET['ajax'];
+    }
+
+    // This is used to check template pages for inline images
+    private static function isAssetCheck() {
+      return isset($_GET[self::ASSET_CHECK_PARAMETER]) && $_GET[self::ASSET_CHECK_PARAMETER];
     }
     
-    private static function getNativeUserAgentForPlatform($platform) {
-        $platformToUserAgent = self::getNativeUserAgents();
-        if (isset($platformToUserAgent[$platform])) {
-            return $platformToUserAgent[$platform];
-        }
-        return $platformToUserAgent['unknown'];
+    private static function hasNativePlatform() {
+      return isset($_GET[self::NATIVE_PLATFORM_PARAMETER]) && $_GET[self::NATIVE_PLATFORM_PARAMETER];
     }
-    
-    public static function isNativeUserAgent($userAgent, &$platform) {
-        $userAgentToPlatform = array_flip(self::getNativeUserAgents());
-        if (isset($userAgentToPlatform[$userAgent])) {
-            $platform = $userAgentToPlatform[$userAgent];
+
+    // Note: this gets called before the device classifier is initialized
+    // We cannot reliably set the user agent in javascript so use a special get parameter
+    public static function shouldForceNativePlatform(&$platform) {
+        if (self::hasNativePlatform()) {
+            $platform = $_GET[self::NATIVE_PLATFORM_PARAMETER];
             return true;
         }
         return false;
     }
     
     public static function isNativeCall() {
-        return Kurogo::deviceClassifier()->getPageType() == 'native';
-    }
-
-    // Note: this gets called before the device classifier is initialized
-    // We cannot reliably set the user agent in javascript so use a special get parameter
-    public static function isNativeContentCall(&$platform) {
-        if (isset($_GET['nativePlatform'], $_GET['ajax']) && $_GET['nativePlatform'] && $_GET['ajax']) {
-            $platform = $_GET['nativePlatform'];
-            return true;
-        }
-        return false;
+        return Kurogo::deviceClassifier()->getPagetype() == 'native' || self::hasNativePlatform();
     }
     
     public static function isNativeTemplateCall() {
-        return Kurogo::deviceClassifier()->getPageType() == 'native' && 
-            (!isset($_GET['ajax']) || !$_GET['ajax']);
+        return self::isNativeCall() && (self::isAssetCheck() || !self::isAjax());
     }
     
-    // This is used to check template pages for inline images
-    public static function isNativeInlineAssetCall() {
-        return //Kurogo::deviceClassifier()->getPageType() == 'native' && 
-            isset($_GET['nativeAssetCheck']) && $_GET['nativeAssetCheck'];
+    public static function shouldRewriteAssetPaths() {
+        return self::hasNativePlatform() && self::isAjax();
+    }
+    
+    public static function shouldRewriteInternalLinks() {
+        return self::hasNativePlatform();
+    }
+    
+    //
+    // Rewriting links
+    //
+    
+    public static function getInternalLink($id, $page, $args=array()) {
+        if (!$page) { $page = 'index'; }
+        
+        return self::INTERNAL_LINK_SCHEME."$id/$page".
+            ($args ? '?'.http_build_query($args) : '');
     }
 }

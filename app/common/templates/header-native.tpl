@@ -9,10 +9,10 @@
     //
     
     function ajaxLoad() {ldelim}
-        var kurogoServerURL = '__KUROGO_SERVER_URL__';
-        var extraArgs       = '__KUROGO_MODULE_EXTRA_ARGS__';
+        var kurogoServerURL = '{$nativeServerURL}';
+        var extraArgs       = '{$nativeServerArgs}';
 
-        url = kurogoServerURL+'/{$configModule}/{$page}?ajax=1&nativePlatform={$platform}';
+        url = kurogoServerURL+'{$nativeServerPath}';
         if (extraArgs.length) {ldelim}
             url += '&'+extraArgs; // optional args set by native wrapper
         {rdelim}
@@ -46,7 +46,7 @@
     {rdelim}
   </script>
   
-  {$URL_BASE = '__KUROGO_URL_BASE__'}
+  {$URL_BASE = $nativeServerURLBase}
   
   {* Native has its own analytics *}
   {$GOOGLE_ANALYTICS_ID = ''}
