@@ -49,7 +49,8 @@ class CoreAPIModule extends APIModule
                 }
                 $response = array(
                     'version'=>KUROGO_VERSION,
-                    'modules'=>$modules
+                    'modules'=>$modules,
+                    'default'=>Kurogo::defaultModule()
                 );
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
