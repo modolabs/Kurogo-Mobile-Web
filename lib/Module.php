@@ -211,6 +211,10 @@ abstract class Module
         $this->logView = Kurogo::getOptionalSiteVar('STATS_ENABLED', true) ? true : false;
     }
     
+    public function isEnabled() {
+        return !$this->getModuleVar('disabled', 'module');
+    }
+    
     /**
       * Evaluates whether the current user has access to this Module
       * @return boolean

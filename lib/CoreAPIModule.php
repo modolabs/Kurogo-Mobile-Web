@@ -26,7 +26,7 @@ class CoreAPIModule extends APIModule
                 $allmodules = $this->getAllModules();
                 $homeModules = $this->getModuleNavigationIDs();
                 foreach ($allmodules as $moduleID=>$module) {
-                    if (!$module->getModuleVar('disabled', 'module')) {
+                    if ($module->isEnabled()) {
                         $home = false;
                         if ( ($key = array_search($moduleID, $homeModules['primary'])) !== FALSE) {
                             $home = array('type'=>'primary', 'order'=>$key);
