@@ -142,6 +142,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 '___STROKE_WEIGHT___' => $strokeWeight,
                 '___TITLE___' => json_encode($placemark->getTitle()),
                 '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
+                '___URL___' => $this->urlForPlacemark($placemark),
                 ));
         }
 
@@ -180,6 +181,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 '___POLYLINE_SPEC___' => json_encode($jsonObj),
                 '___TITLE___' => json_encode($placemark->getTitle()),
                 '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
+                '___URL___' => $this->urlForPlacemark($placemark),
                 );
 
             if ($style !== null) {
@@ -216,7 +218,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
             // defaults
             $templateValues = array(
-                '___SYMBOL_TYPE___' => 'SimpleMarkerSymbol'
+                '___SYMBOL_TYPE___' => 'SimpleMarkerSymbol',
+                '___URL___' => $this->urlForPlacemark($placemark),
                 );
 
             if ($style !== null) {
@@ -224,10 +227,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 if (($icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON)) !== null) {
                     // 1. icon image
                     // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/picturemarkersymbol.htm
-                    $templateValues = array(
-                        '___SYMBOL_TYPE___' => 'PictureMarkerSymbol',
-                        '___SYMBOL_ARGS___' => '"'.$icon.'",20,20'
-                        ); // TODO allow size (20, 20) above to be set
+                    $templateValues['___SYMBOL_TYPE___'] = 'PictureMarkerSymbol';
+                    $templateValues['___SYMBOL_ARGS___'] = '"'.$icon.'",20,20'; // TODO allow size to be changed
 
                 } else {
                     // 2. either all four of (color, size, outline, style) are set or zero
@@ -265,7 +266,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             // TODO use $placemark->getFields to populate Attributes
             $templateValues['___TITLE___'] = json_encode($placemark->getTitle());
             $templateValues['___SUBTITLE___'] = json_encode($placemark->getSubtitle());
-            $templateValues['___IDENTIFIER___'] = count($this->markers);
+            $templateValues['___URL___'] = $this->urlForPlacemark($placemark);
 
             $template->appendValues($templateValues);
         }

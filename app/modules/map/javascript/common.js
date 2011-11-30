@@ -226,6 +226,29 @@ function kgoMapLoader(attribs) {
             this.locationUpdateStopped(null);
         }
     }
+    this.generateInfoWindowContent = function(title, subtitle, url) {
+        var content = '';
+        if (title !== null) {
+            content += '<div class="map_name">' + title + '</div>';
+        }
+        if (subtitle !== null) {
+            content += '<div class="smallprint map_address">' + subtitle + '</div>';
+        }
+        if (typeof url != 'undefined' && url !== null) {
+            var query = url.match(/\?(.+)/)[1];
+            content = '<table><tr>' + 
+                        '<td class="calloutBookmark">' + 
+                          '<a onclick="toggleBookmark(\'mapbookmarks\', \'' + query + '\', 3600, \'/kurogo/\')">' +
+                            '<div id="bookmark" ontouchend="removeClass(this, \'pressed\')" ontouchstart="addClass(this, \'pressed\')"></div>' +
+                          '</a></td>' +
+                        '<td class="calloutMain">' + content + '</td>' +
+                        '<td class="calloutDisclosure">' +
+                          '<a href="' + url + '"><img src="' + URL_BASE + '/modules/map/images/info.png" /></a>' +
+                        '</td>' + 
+                      '</tr></table>';
+        }
+        return content;
+    }
 }
 
 function kgoGoogleMapLoader(attribs) {
@@ -243,29 +266,6 @@ function kgoGoogleMapLoader(attribs) {
             currentInfoWindow = null;
             google.maps.event.removeListener(calloutListener);
         });
-    }
-
-    var generateInfoWindowContent = function(title, subtitle, url) {
-        var content = '<div class="map_name">' + title + '</div>';
-         
-        if (subtitle !== null) {
-            content += '<div class="smallprint map_address">' + subtitle + '</div>';
-        }
-
-        if (typeof url != 'undefined' && url !== null) {
-            var query = url.match(/\?(.+)/)[1];
-            content = '<table><tr>' + 
-                        '<td class="calloutBookmark">' + 
-                          '<a onclick="toggleBookmark(\'mapbookmarks\', \'' + query + '\', 3600, \'/kurogo/\')">' +
-                            '<div id="bookmark" ontouchend="removeClass(this, \'pressed\')" ontouchstart="addClass(this, \'pressed\')"></div>' +
-                          '</a></td>' +
-                        '<td class="calloutMain">' + content + '</td>' +
-                        '<td class="calloutDisclosure">' +
-                          '<a href="' + url + '"><img src="' + URL_BASE + '/modules/map/images/info.png" /></a>' +
-                        '</td>' + 
-                      '</tr></table>';
-        }
-        return content;
     }
 
     that.loadMap = function() {
@@ -386,7 +386,7 @@ function kgoGoogleMapLoader(attribs) {
 
     that.addMarker = function(marker, attribs) {
         marker.infoWindow = new google.maps.InfoWindow({
-            'content' : generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']),
+            'content' : that.generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']),
             'maxWidth' : 200
         });
 
@@ -400,7 +400,7 @@ function kgoGoogleMapLoader(attribs) {
 
     that.addOverlay = function(overlay, attribs) {
         overlay.infoWindow = new google.maps.InfoWindow({
-            'content' : generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']),
+            'content' : that.generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']),
             'maxWidth' : 200,
             'position' : new google.maps.LatLng(attribs['lat'], attribs['lon'])
         });
@@ -425,7 +425,11 @@ function kgoGoogleMapLoader(attribs) {
             position: new google.maps.LatLng(lat, lon),
             map: map,
             title: title
-            }), title, subtitle, url);
+            }), {
+                title: title,
+                subtitle: subtitle,
+                url: url
+            });
     }
 
     // base map
@@ -465,7 +469,6 @@ function kgoEsriMapLoader(attribs) {
 
         map = new esri.Map(that.mapElement, {
             'logo' : false,
-            //'slider' : false,
             'resizeDelay' : 300
         });
 
@@ -485,8 +488,9 @@ function kgoEsriMapLoader(attribs) {
 
     that.addMarker = function(marker, attribs) {
         infoTemplate = new esri.InfoTemplate();
-        infoTemplate.setTitle(attribs["title"]);
-        infoTemplate.setContent(attribs["subtitle"]);
+        //infoTemplate.setTitle(attribs["title"]);
+        infoTemplate.setContent(
+            that.generateInfoWindowContent(attribs["title"], attribs["subtitle"], attribs["url"]));
         marker.setInfoTemplate(infoTemplate);
         map.graphics.add(marker);
         that.placemarks.push(marker);
@@ -513,7 +517,8 @@ function kgoEsriMapLoader(attribs) {
                     new dojo.Color([180, 0, 0]))),
             {
                 title: title,
-                subtitle: subtitle
+                subtitle: subtitle,
+                url: url
             }
         );
     }

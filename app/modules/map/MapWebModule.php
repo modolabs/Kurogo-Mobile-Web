@@ -138,8 +138,6 @@ class MapWebModule extends WebModule {
 
     public function linkForItem(KurogoObject $mapItem, $options=null)
     {
-        $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
-
         $result = array(
             'title'    => $mapItem->getTitle(),
             'subtitle' => $mapItem->getSubtitle(),
@@ -151,12 +149,13 @@ class MapWebModule extends WebModule {
                 $result['url'] = $url;
 
             } else {
-                $urlArgs = array_merge($urlArgs, shortArrayFromMapFeature($mapItem));
+                $urlArgs = array_merge($this->args, shortArrayFromMapFeature($mapItem));
+                $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
                 $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
                 // for map driven UI we want placemarks to show up on the full screen map
                 if ($this->isMapDrivenUI()) {
                     $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
-                    if (!$this->page == $mapPage) {
+                    if ($this->page != $mapPage) {
                         $result['url'] = $this->buildURL($mapPage, $urlArgs);
                     }
                 }
@@ -167,14 +166,9 @@ class MapWebModule extends WebModule {
             }
 
         } else {
-            $urlArgs = $this->args;
-            if (isset($options['external']) && $options['external']) {
-                $urlArgs['external'] = true;
-            }
-
             // for folder objects, getId returns the subcategory ID
             $drilldownPath = array_merge($this->getDrillDownPath(), array($mapItem->getId()));
-            $external = isset($urlArgs['external']) ? $urlArgs['external'] : false;
+            $external = $options && isset($options['external']) && $options['external'];
             $result['url'] = $this->categoryURL($this->getCategory(), $drilldownPath, $external);
         }
 
@@ -676,7 +670,9 @@ class MapWebModule extends WebModule {
 
             case 'index':
 
-                if ($this->feedGroup === null && !$this->getArg('worldmap') // multiple campuses, none selected
+                if ($this->feedGroup === null // multiple campuses, none selected
+                    && !$this->getArg('worldmap') // user did not explictly request map view
+                    || $this->getArg('listview') // user did explicitly request list view
                     || !$this->isMapDrivenUI()
                 ) {
                     $this->setupCampusPage();
@@ -685,25 +681,13 @@ class MapWebModule extends WebModule {
                 // fall through
             case 'campus':
 
-
-                //if (($this->feedGroup !== null || $this->getArg('worldmap')) && $this->isMapDrivenUI()) {
-                    $this->setTemplatePage('fullscreen');
-                    if ($this->getArg('worldmap')) {
-                        $this->feedGroup = null;
-                        $this->assign('browseURL', $this->buildURL('index'));
-                    }
-                    $this->assignCampuses();
-                    $this->initializeDynamicMap();
-
-            //    } else {
-            //        $this->setupCampusPage();
-            //    }
-
-            //    break;
-            
-            //case 'campus':
-            //    $this->setTemplatePage('index');
-            //    $this->setupCampusPage();
+                $this->setTemplatePage('fullscreen');
+                if ($this->getArg('worldmap')) {
+                    $this->feedGroup = null;
+                    $this->assign('browseURL', $this->buildURL('index', array('listview' => true)));
+                }
+                $this->assignCampuses();
+                $this->initializeDynamicMap();
 
                 break;
             
@@ -923,8 +907,8 @@ class MapWebModule extends WebModule {
     protected function initializeDynamicMap()
     {
         if ($this->feedGroup) {
-            $urlArgs = array('group' => $this->feedGroup);
-            $browseURL = $this->buildBreadcrumbURL('campus', $urlArgs, true);
+            $urlArgs = array('group' => $this->feedGroup, 'listview' => true);
+            $browseURL = $this->buildBreadcrumbURL('index', $urlArgs, false);
             $this->assign('browseURL', $browseURL); // browse button
         }
 
