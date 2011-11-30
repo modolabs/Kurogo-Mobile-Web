@@ -25,4 +25,11 @@ class PhotosDataModel extends ItemListDataModel {
 		return count($this->getPhotos());
     }
     
+    public static function getPhotoDataRetrievers() {
+        return array(
+            'FlickrRetriever'=>'Flickr',
+            'PicasaRetriever'=>'Picasa'
+        );
+    }
+    
 }
