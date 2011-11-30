@@ -60,7 +60,9 @@ abstract class KurogoMemoryCache {
                 $info = new ReflectionClass($class);
                 if (!$info->isAbstract()) {
                     $cache = new $class();
-                    $classes[$class] = $cache->getDescription();
+                    if ($cache instanceOf KurogoMemoryCache) {
+                        $classes[$class] = $cache->getDescription();
+                    }
                 }
 	        } catch (KurogoException $e) {
 	        }

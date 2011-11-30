@@ -192,15 +192,8 @@ if (get_magic_quotes_gpc()) {
  * home is the default
  */
 if (!strlen($path) || $path == '/') {
-  $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
-  $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
-
-  if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
-    if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
-        $url = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
-    }
-  } 
-  
+    $url = Kurogo::defaultModule();
+      
   if (!preg_match("/^http/", $url)) {
     $url = URL_PREFIX . $url . "/";
   }

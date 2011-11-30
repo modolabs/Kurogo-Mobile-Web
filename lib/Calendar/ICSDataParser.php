@@ -167,6 +167,9 @@ class ICSDataParser extends DataParser
                 break;
             default:
                 try {
+                    if (empty($nesting))
+                        throw new ICalendarException('Something other than BEGIN at the start of the calendar: '.$line);
+                    
                     end($nesting)->set_attribute($contentname, $value, $params);
                 } catch (ICalendarException $e) {
                     if ($this->haltOnParseErrors) {
