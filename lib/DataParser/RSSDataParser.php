@@ -10,7 +10,7 @@ if (!function_exists('xml_parser_create')) {
 
 /**
   */
-require_once(LIB_DIR . '/RSS.php');
+includePackage('RSS');
 
 /**
   * @package ExternalData
