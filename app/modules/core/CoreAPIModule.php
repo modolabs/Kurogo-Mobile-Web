@@ -26,7 +26,7 @@ class CoreAPIModule extends APIModule
                 $allmodules = $this->getAllModules();
                 $homeModules = $this->getModuleNavigationIDs();
                 foreach ($allmodules as $moduleID=>$module) {
-                    if (!$module->getModuleVar('disabled', 'module')) {
+                    if ($module->isEnabled()) {
                         $home = false;
                         if ( ($key = array_search($moduleID, $homeModules['primary'])) !== FALSE) {
                             $home = array('type'=>'primary', 'order'=>$key);
@@ -48,8 +48,10 @@ class CoreAPIModule extends APIModule
                     }
                 }
                 $response = array(
+                    'timezone'=>Kurogo::getSiteVar('LOCAL_TIMEZONE'),
                     'version'=>KUROGO_VERSION,
-                    'modules'=>$modules
+                    'modules'=>$modules,
+                    'default'=>Kurogo::defaultModule()
                 );
                 $this->setResponse($response);
                 $this->setResponseVersion(1);

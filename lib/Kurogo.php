@@ -1036,6 +1036,19 @@ class Kurogo
         }
     }
     
+    public static function defaultModule() {
+      $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
+      $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
+
+      if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
+        if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
+            $module = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
+        }
+      }
+      
+        return $module; 
+    }
+    
     public function clearCaches($type=null) {
 
         self::log(LOG_NOTICE, "Clearing site caches", "kurogo");
@@ -1063,7 +1076,7 @@ class Kurogo
     
     public static function getCacheClasses() {
         includePackage('Cache');
-        return KurogoCache::getCacheClasses();
+        return KurogoMemoryCache::getCacheClasses();
         
     }
 }

@@ -16,12 +16,23 @@ class MemcacheCache extends KurogoMemoryCache {
 		if(!isset($args['CACHE_HOST'])) {
 			throw new KurogoConfigurationException("Memcache host is not defined");
 		}else {
-			$host = $args['CACHE_HOST'];
+			$hosts = $args['CACHE_HOST'];
+			if(!is_array($hosts)){
+				$hosts = array($hosts);
+			}
 		}
 		if(!isset($args['CACHE_PORT'])) {
 			$port = 11211;
 		}else {
 			$port = $args['CACHE_PORT'];
+			if(is_array($port)){
+				$portSize = count($port);
+				$hostsSize = count($hosts);
+				if($hostsSize >= $portSize){
+					// pad the ports array with the last value to match hosts array size
+					$port = array_pad($port, $hostsSize, $port[$portSize-1]);
+				}
+			}
 		}
 		if(!isset($args['CACHE_PERSISTENT'])) {
 			$persistent = false;
@@ -44,15 +55,16 @@ class MemcacheCache extends KurogoMemoryCache {
 		}else {
 			$this->setDebug(false);
 		}
-
-        if ($persistent) {
-            $result = @$this->mem->pconnect($host, $port, $timeout);
-        }  else {
-            $result = @$this->mem->connect($host, $port, $timeout);
-        }
         
-        if (!$result) {
-            throw new KurogoConfigurationException("Memcache server $host not available");
+        foreach($hosts as $index => $host){
+            if(is_array($port)){
+                $result = @$this->mem->addServer($host, $port[$index], $persistent, 1, $timeout);
+            }else{
+                $result = @$this->mem->addServer($host, $port, $persistent, 1, $timeout);
+            }
+            if (!$result) {
+                throw new KurogoConfigurationException("Memcache server $host not available");
+            }
         }
         
 	}
