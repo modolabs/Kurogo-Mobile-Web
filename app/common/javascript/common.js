@@ -282,29 +282,45 @@ function toggleBookmark(name, item, expireseconds, path) {
   }
 }
 
-function makeAPICall(type, module, command, data, callback) {
-    var url = URL_BASE + API_URL_PREFIX + '/' + module + '/' + command;
-    $.ajax({
-        type: type,
-        url: url,
-        data: data, 
-        dataType: 'json',
-        success: function(data, textStatus, jqXHR) {
-            if (data.error) {
-                alert(data.error.message);
-               return;
-            }
-                    
-            if (callback) {
-                callback(data.response);
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
+// TODO this needs to handle encoded strings and parameter separators (&amp;)
+if (typeof makeAPICall === 'undefined' && typeof jQuery === 'undefined') {
+  function makeAPICall(type, module, command, data, callback) {
+    var urlParts = [];
+    for (var param in data) {
+      urlParts.push(param + "=" + data[param]);
+    }
+    url = URL_BASE + API_URL_PREFIX + '/' + module + '/' + command + '?' + urlParts.join('&');
+    var handleError = function(errorObj) {}
+
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open("GET", url, true);
+    httpRequest.onreadystatechange = function() {
+      if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        var obj;
+        if (window.JSON) {
+            obj = JSON.parse(httpRequest.responseText);
+            // TODO: catch SyntaxError
+        } else {
+            obj = eval('(' + httpRequest.responseText + ')');
         }
-    });
+        if (obj !== undefined) {
+          if ("response" in obj) {
+            callback(obj["response"]);
+          }
+
+          if ("error" in obj && obj["error"] !== null) {
+            handleError(obj["error"]);
+          } else {
+            handleError("response not found");
+          }
+        } else {
+          handleError("failed to parse response");
+        }
+      }
+    }
+    httpRequest.send(null);
+  }
 }
-
-
 
 
 

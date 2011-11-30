@@ -1,12 +1,4 @@
-
-#tabscontainer {
-    position: relative;
-    padding: 0 12px;
-}
-
-#mapcontrols {
-}
-
+/* used in map view - custom controls overlaying google maps, detail - controls below map image */
 #mapcontrols a {
     width: 40px;
     height: 34px;
@@ -35,75 +27,158 @@
     background-position: -160px 0;
 }
 
-#mapscrollers {
+/*** expanding search bar ***/
+
+#header {
     position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    z-index: 10;
+    top: 44; /* this should be the same as the #navbar height */
+    left: 0;
+    right: 0;
+    z-index: 1;
+    height: 44px;
+    margin: 0;
+    padding: 0 4px;
+    background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
 }
 
-#mapscrollers div {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    text-align: center;
+/* empty div behind the #header to align the top of the #mapimage */
+#spacer {
+    height: 44px;
+}
+
+#searchbar {
+    margin: 0;
     padding: 0;
-    z-index: 10;
-    background-image: url(/modules/map/images/scrollers.png);
-    background-repeat: no-repeat;
+    width: 100%;
+    float: left;
 }
 
-#nw {
-    top: 0;
-    left: 0;
-    background-position: -350px 0px;
+#searchbar fieldset {
+    margin: 4px 0 0 0;
 }
 
-#n {
-    top: 0;
-    left: 50%;
-    margin-left: -25px;
-    background-position: 0px 0px;
+#header.single-campus {
+    height: 80px;
 }
 
-#ne {
-    top: 0;
-    right: 0;
-    background-position: -200px 0px;
+#header.multi-campus {
+    height: 112px;
 }
 
-#e {
-    top: 50%;
-    margin-top: -25px;
-    right: 0;
-    background-position: -50px 0px;
+.searchwrapper {
+    right: 84px;
 }
 
-#se {
-    bottom: 0;
-    right: 0;
-    background-position: -250px 0px;
+#header.expanded .searchwrapper {
+    right: 4px;
 }
 
-#s {
-    bottom: 0;
-    left: 50%;
-    margin-left: -25px;
-    background-position: -100px 0px;
+#search-form {
+    margin: 0;
+    width: 100%;
 }
 
-#sw {
-    bottom: 0;
-    left: 0;
-    background-position: -300px 0px;
+#search-form input[type="text"] {
+    border-radius: 10px;
+    width: 100%;
+    height: 26px;
 }
 
-#w {
-    top: 50%;
-    margin-top: -25px;
-    left: 0;
-    background-position: -150px 0px;
+/* toolbar: browse/bookmark buttons to the right of the search field */
+#header.expanded #toolbar-buttons {
+    display: none;
+}
+
+.toolbar-button {
+    width: 36px;
+    height: 32px;
+    float: right;
+    margin: 0 0 0 3px;
+    background-image: url(/modules/map/images/button-background.png);
+}
+
+.toolbar-button a {
+    margin: 2px;
+}
+
+/* campus-select: the drop-down menu in multi-campus case */
+#campus-select {
+    height: 33px;
+}
+
+#campus-select td {
+    padding: 4px 0 5px;
+}
+
+#campus-select .formlabel {
+    width: 82px;
+    vertical-align: middle;
+}
+
+/* search-options: search/clear/cancel buttons below the search bar */
+#search-options {
+    display: none;
+    left: 4px;
+    padding: 0;
+    position: absolute;
+    right: 4px;
+    top: 33px;
+}
+
+#header.expanded #search-options {
+    display: block;
+}
+
+#search-options input {
+   margin: 7px 5px 0 0;
+   height: 30px;
+   border-radius: 5px;
+   float: left;
+   width: 32%;
+   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+}
+
+#search-options #cancelButton {
+    float: right;
+}
+
+/*** fullscreen map styles ***/
+
+body.fullscreen #mapimage.image {
+    min-height: none;
+    width: 100%;
+    border: none;
+    display: block !important;
+    overflow: hidden;
+}
+
+/* remove default margin between navbar and content */
+body.fullscreen #navbar {
+    margin: 0;
+}
+
+.calloutMain {
+    margin: 2px;
+}
+
+.calloutDisclosure {
+    margin: 2px;
+}
+
+/* modifications to javascript map SDK classes */
+#mapimage .esriSimpleSlider {
+    top: auto;
+    left: auto;
+    bottom: 10px;
+    right: 10px;
 }
 
 

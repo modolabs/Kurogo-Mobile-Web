@@ -152,11 +152,13 @@ class MapWebModule extends WebModule {
 
             } else {
                 $urlArgs = array_merge($urlArgs, shortArrayFromMapFeature($mapItem));
+                $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
                 // for map driven UI we want placemarks to show up on the full screen map
-                if ($this->isMapDrivenUI() && $this->page != 'index') {
-                    $result['url'] = $this->buildURL('index', $urlArgs);
-                } else {
-                    $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
+                if ($this->isMapDrivenUI()) {
+                    $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
+                    if (!$this->page == $mapPage) {
+                        $result['url'] = $this->buildURL($mapPage, $urlArgs);
+                    }
                 }
             }
 
@@ -204,7 +206,8 @@ class MapWebModule extends WebModule {
         if (isset($args['worldmap'])) {
             unset($args['worldmap']);
         }
-        return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
+        $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
+        return $this->buildBreadcrumbURL($mapPage, $args, $addBreadcrumb);
     }
   
     protected function detailURLForBookmark($aBookmark) {
@@ -214,7 +217,8 @@ class MapWebModule extends WebModule {
                 if ($this->feedGroup) {
                     $params['group'] = $this->feedGroup;
                 }
-                return $this->buildURL('index', $params);
+                $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
+                return $this->buildURL($mapPage, $params);
             }
             return $this->buildBreadcrumbURL('detail', $params, true);
         } else {
@@ -666,14 +670,23 @@ class MapWebModule extends WebModule {
 
     protected function initializeForPage() {
 
-        $this->addJQuery();
         $this->featureIndex = $this->getArg('featureindex', null);
 
         switch ($this->page) {
 
             case 'index':
 
-                if (($this->feedGroup !== null || $this->getArg('worldmap')) && $this->isMapDrivenUI()) {
+                if ($this->feedGroup === null && !$this->getArg('worldmap') // multiple campuses, none selected
+                    || !$this->isMapDrivenUI()
+                ) {
+                    $this->setupCampusPage();
+                    break;
+                }
+                // fall through
+            case 'campus':
+
+
+                //if (($this->feedGroup !== null || $this->getArg('worldmap')) && $this->isMapDrivenUI()) {
                     $this->setTemplatePage('fullscreen');
                     if ($this->getArg('worldmap')) {
                         $this->feedGroup = null;
@@ -682,15 +695,15 @@ class MapWebModule extends WebModule {
                     $this->assignCampuses();
                     $this->initializeDynamicMap();
 
-                } else {
-                    $this->setupCampusPage();
-                }
+            //    } else {
+            //        $this->setupCampusPage();
+            //    }
 
-                break;
+            //    break;
             
-            case 'campus':
-                $this->setTemplatePage('index');
-                $this->setupCampusPage();
+            //case 'campus':
+            //    $this->setTemplatePage('index');
+            //    $this->setupCampusPage();
 
                 break;
             
@@ -934,6 +947,7 @@ class MapWebModule extends WebModule {
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
         $this->configureUserLocation();
+        $this->addOnLoad('addClass(document.body, "fullscreen")');
         $this->addOnOrientationChange('updateContainerDimensions()');
     }
 

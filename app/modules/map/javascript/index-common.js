@@ -1,3 +1,4 @@
+/*
 function submitMapSearch(form) {
     if (form.filter.value.length > 0) {
         mapLoader.clearMarkers();
@@ -52,4 +53,4 @@ function hideSearchFormButtons() {
 }
 
 
-
+*/

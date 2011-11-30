@@ -1,7 +1,106 @@
 var map;
 var mapLoader;
+var browseGroups = {};
 
-// id7 doesn't understand window.innerWidth and window.innerHeight
+function sortGroupsByDistance() {
+    if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(function(location) {
+            var navCategories = document.getElementById("categories").children;
+            for (var i = 0; i < navCategories.length; i++) {
+                var category = navCategories[i];
+                var categoryId = category.getAttribute("class");
+                browseGroups[categoryId] = category;
+            }
+
+            makeAPICall(
+                'GET', 'map', 'sortGroupsByDistance',
+                {"lat": location.coords.latitude, "lon": location.coords.longitude},
+                function(response) {
+                    var sortedGroups = [];
+                    for (var i = 0; i < response.length; i++) {
+                        var id = response[i]["id"];
+                        if (id in browseGroups) {
+                            if ("distance" in response[i]) {
+                                browseGroups[id].innerHTML = browseGroups[id].innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
+                            }
+                            sortedGroups.push(browseGroups[id]);
+                        }
+                    }
+                    var navList = document.getElementById("categories");
+                    if (navList.children.length == sortedGroups.length) {
+                        while (navList.children.length > 0) {
+                            navList.removeChild(navList.children[0]);
+                        }
+                        for (var i = 0; i < sortedGroups.length; i++) {
+                            navList.appendChild(sortedGroups[i]);
+                        }
+                    }
+                }
+            );
+        },
+        function() {},
+        {maximumAge:3600000, timeout:5000});
+    }
+}
+
+////// expanding search bar
+
+function submitMapSearch(form) {
+    if (form.filter.value.length > 0) {
+        mapLoader.clearMarkers();
+        params = {'q': form.filter.value};
+        if ('projection' in mapLoader) {
+            params['projection'] = mapLoader.projection;
+        }
+        makeAPICall('GET', 'map', 'search', params, function(response) {
+            hideSearchFormButtons();
+            // TODO: make the "browse" button bring up results in a list
+            var minLat = 90;
+            var maxLat = -90;
+            var minLon = 180;
+            var maxLon = -180;
+            for (var i = 0; i < response.results.length; i++) {
+                var markerData = response.results[i];
+                mapLoader.createMarker(
+                    markerData.title, markerData.subtitle,
+                    markerData.lat, markerData.lon, markerData.url);
+                minLat = Math.min(minLat, markerData.lat);
+                minLon = Math.min(minLon, markerData.lon);
+                maxLat = Math.max(maxLat, markerData.lat);
+                maxLon = Math.max(maxLon, markerData.lon);
+            }
+            mapLoader.setMapBounds(minLat, minLon, maxLat, maxLon);
+        });
+    }
+}
+
+function clearSearch(form) {
+    form.filter.value = '';
+}
+
+function showSearchFormButtons() {
+    var header = document.getElementById("header");
+    addClass(header, "expanded");
+    if (document.getElementById("campus-select")) {
+        addClass(header, "multi-campus");
+    } else {
+        addClass(header, "single-campus");
+    }
+}
+
+function hideSearchFormButtons() {
+    var header = document.getElementById("header");
+    removeClass(header, "expanded");
+    if (document.getElementById("campus-select")) {
+        removeClass(header, "multi-campus");
+    } else {
+        removeClass(header, "single-campus");
+    }
+}
+
+///// window size
+
+// ie7 doesn't understand window.innerWidth and window.innerHeight
 function getWindowHeight() {
     if (window.innerHeight !== undefined) {
         return window.innerHeight;
@@ -65,6 +164,8 @@ function findPosY(obj) {
     }
     return intCurlTop;
 }
+
+///// various base maps
 
 function kgoMapLoader(attribs) {
     this.initLat = ("lat" in attribs) ? attribs["lat"] : 0;
