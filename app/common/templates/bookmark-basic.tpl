@@ -1,6 +1,6 @@
 {if $bookmarkURL}
 <span id="bookmark" class="nonfocal">
-    Bookmark
+    {"BOOKMARK_LINK"|getLocalizedString}&nbsp;
     <span class="fineprint">
         (<a href="{$bookmarkURL}">{$bookmarkAction}</a>)
     </span>

@@ -15,6 +15,10 @@ class LoginWebModule extends WebModule {
   protected function getAccessControlLists($type) {
         return array(AccessControlList::allAccess());
   }
+  
+    public function isEnabled() {
+        return Kurogo::getSiteVar('AUTHENTICATION_ENABLED') && parent::isEnabled();
+    }
 
     protected function extractModuleArray($args) {
         $return = array();
