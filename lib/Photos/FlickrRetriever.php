@@ -10,43 +10,29 @@ class FlickrRetriever extends URLDataRetriever {
 
     protected function init($args) {
         parent::init($args);
-    }
 
-    public function url() {
-        $type = $this->getOption('type');
-        switch($type) {
-            case 'user':
-                $this->setBaseUrl('http://api.flickr.com/services/feeds/photos_public.gne');
-                if ($id = $this->getOption('id')) {
-                    $this->addFilter('id', $id);
-                }
-                break;
-            case 'group':
-                $this->setBaseUrl('http://api.flickr.com/services/feeds/groups_pool.gne');
-                if ($id = $this->getOption('group_id')) {
-                    $this->addFilter('id', $id);
-                }
-                break;
-            case 'set':
-                $this->setBaseUrl('http://api.flickr.com/services/feeds/photoset.gne');
-                if ($id = $this->getOption('id')) {
-                    $this->addFilter('nsid', $id);
-                }
-                if ($setid = $this->getOption('set_id')) {
-                    $this->addFilter('set', $setid);
-                }
-                break;
+        if (isset($args['USER'])) {
+            $this->setBaseUrl('http://api.flickr.com/services/feeds/photos_public.gne');
+            $this->addFilter('id', $args['USER']);
         }
 
-        /**
-         * return feed type
-         * available values:
-         * rss2, atom, rss, rss091, rss_200_enc, rdf
-         * json, php_serial, php, csv are also available
-         */
+        if (isset($args['PHOTOSET'])) {
+            if (!isset($args['USER'])) {
+                throw new KurogoConfigurationException("Photoset feeds must contain a USER value");
+            }
+            $this->setBaseURL('http://api.flickr.com/services/feeds/photoset.gne');
+            $this->addFilter('set', $args['PHOTOSET']);
+            $this->addFilter('nsid', $args['USER']);
+        }
+        
+        if (isset($args['GROUP'])) {
+            $this->setBaseUrl('http://api.flickr.com/services/feeds/groups_pool.gne');
+            $this->addFilter('id', $args['GROUP']);
+        }
+
         $this->addFilter('format', 'php_serial');
-        return parent::url();
     }
+
 }
 
 class FlickrDataParser extends DataParser {

@@ -6,20 +6,12 @@
     {if $prevURL && $prev}
       <a href="{$prevURL}" class="sidenav-prev">
         {block name="prevPrefix"}{/block}
-        {if $linkDateFormat}
-          {$prev|date_format:$linkDateFormat}
-        {else}
           {$prev}
-        {/if}
       </a>{block name="sidenavSpacer"} {/block}
     {/if}
     {if $nextURL && $next}
       <a href="{$nextURL}" class="sidenav-next">
-        {if $linkDateFormat}
-          {$next|date_format:$linkDateFormat}
-        {else}
           {$next}
-        {/if}
         {block name="nextSuffix"}{/block}
       </a>
     {/if}

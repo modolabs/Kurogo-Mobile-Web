@@ -77,25 +77,20 @@ class PhotosWebModule extends WebModule {
                 $this->assign('description', $this->getModuleVar('description','strings'));
                 $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
+                
         	case 'album':
         		$album = $this->getArg('id', $this->getDefaultSection());
         		$controller = $this->getFeed($album);
-        		$pageTitle = $controller->getTitle();
-        		$this->setBreadcrumbTitle($pageTitle);
-        		$this->setPageTitle($pageTitle);
+        		$this->setPageTitles($controller->getTitle());
 
-        		
-        		// make this changeable via url?
-			    $limit = 4;
-        		$page = $this->getArg('page', 0);
-        		if($page < 0){
-        		    $page = 0;
-        		}
+                $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 20);
+                $start = $this->getArg('start', 0);
 
-                $start = $limit * $page;
-        		$items = $controller->getPhotosByIndex($start, $limit);
+                $controller->setStart($start);
+                $controller->setLimit($maxPerPage);
+        		$items = $controller->getPhotos();
         		$totalItems = $controller->getTotalItems();
-
+        		
         		$photos = array();
         		foreach($items as $item){
         			$photo['title'] = $item->getTitle();
@@ -103,22 +98,28 @@ class PhotosWebModule extends WebModule {
                     $photo['img'] = $item->getThumbnailUrl();
                     $photos[] = $photo;
         		}
+        		
         		$this->assign('photos', $photos);
         		$this->assign('albumcount', $totalItems);
         		
-        		$this->assign('fullTitle', $pageTitle);
-        		$this->assign('springboardID', 'photoSpringboard');
-        		$this->assign('page', $page + 1);
-        		$this->assign('totalPages', ceil($totalItems/$limit));
+                if ($totalItems > $maxPerPage) {
+                    $args = $this->args;
+                 
+                    if ($start > 0) {
+                        $args['start'] = $start - $maxPerPage;
+                        $previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+                        $this->assign('prev', 'Previous');
+                        $this->assign('prevURL', $previousURL);
+                    }
+                    
+                    if (($totalItems - $start) > $maxPerPage) {
+                        $args['start'] = $start + $maxPerPage;
+                        $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+                        $this->assign('next', 'Next');
+                        $this->assign('nextURL',     $nextURL);
+                    }		
+                }
 
-        		if((($page * $limit) + $limit) < $totalItems){
-        			$this->assign('next', 'Next');
-        			$this->assign('nextURL', $this->buildBreadcrumbURL('album', array('id' => $this->getArg('id'), 'page' => $page+1), false));
-        		}
-        		if($page > 0){
-        			$this->assign('prev', 'Previous');
-        			$this->assign('prevURL', $this->buildBreadcrumbURL('album', array('id' => $this->getArg('id'), 'page' => $page-1), false));
-        		}
         		break;
             case 'show':
             	$album = $this->getArg('album', null);
