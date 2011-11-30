@@ -669,6 +669,10 @@ abstract class Module
             SITE_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini'
         );
         
+        if ($this->id != $this->configModule) {
+            $stringFiles[] = SITE_MODULES_DIR . '/' . $this->configModule ."/strings/".$lang . '.ini';
+        }
+        
         $strings = array();
         foreach ($stringFiles as $stringFile) {
             if (is_file($stringFile)) {
