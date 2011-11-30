@@ -63,15 +63,15 @@ class PhotosWebModule extends WebModule {
             	$photos = array();
             	foreach($this->feeds as $feed){
                     $controller = $this->getFeed($feed['INDEX']);
-                    $defaultPhoto = $controller->getDefaultPhoto();
-
-                    $photo['title'] = $controller->getTitle();
-                    $photo['type'] = $defaultPhoto->getType();
-                    $photo['albumcount'] = $controller->getAlbumSize() . ' photos';
-                    // use base64_encode to make sure it will not be blocked by GFW
-                    $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
-                    $photo['img'] = $defaultPhoto->getThumbnailUrl();
-                    $photos[] = $photo;
+                    if ($defaultPhoto = $controller->getDefaultPhoto()) {
+                        $photo['title'] = $controller->getTitle();
+                        $photo['type'] = $defaultPhoto->getType();
+                        $photo['albumcount'] = $controller->getAlbumSize() . ' photos';
+                        // use base64_encode to make sure it will not be blocked by GFW
+                        $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
+                        $photo['img'] = $defaultPhoto->getThumbnailUrl();
+                        $photos[] = $photo;
+                    }
                 }
                 $this->assign('photos', $photos);
                 $this->assign('description', $this->getModuleVar('description','strings'));
