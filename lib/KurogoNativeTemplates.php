@@ -139,7 +139,7 @@ class KurogoNativeTemplates
     // Template and asset generation functions
     //
 
-    protected function _rewriteURLsToFilePaths($contents, $isHTML=true, $callback='rewriteURLsToFilePathsCallback') {
+    protected function _rewriteURLsToFilePaths($contents, $callback='rewriteURLsToFilePathsCallback', $isHTML=true) {
         // rewrite javascript url rewrites
         $contents = preg_replace(
             array(
@@ -201,7 +201,7 @@ class KurogoNativeTemplates
         if ($contents) {
             if (!self::isFileAsset($file)) {
                 self::$currentInstance = $this;
-                $contents = $this->_rewriteURLsToFilePaths($contents, $isHTML, 'saveContentAndAssetsCallback');
+                $contents = $this->_rewriteURLsToFilePaths($contents, 'saveContentAndAssetsCallback', $isHTML);
             }
             
             $this->saveAsset($contents, $file);
@@ -230,7 +230,7 @@ class KurogoNativeTemplates
         $contents = $this->getAsset("{$this->module}/{$this->page}?ajax=1&".self::ASSET_CHECK_PARAMETER.'=1');
         if ($contents) {
             self::$currentInstance = $this;
-            $contents = $this->_rewriteURLsToFilePaths($contents, true, 'saveContentAndAssetsCallback');
+            $contents = $this->_rewriteURLsToFilePaths($contents, 'saveContentAndAssetsCallback', true);
         }
     }
 
@@ -318,12 +318,16 @@ class KurogoNativeTemplates
         return Kurogo::deviceClassifier()->getPagetype() == 'native' || self::hasNativePlatform();
     }
     
-    public static function isNativeTemplateCall() {
-        return self::isNativeCall() && (self::isAssetCheck() || !self::isAjax());
+    public static function useNativeTemplateInitializer() {
+        return self::isNativeCall() && (!self::isAjax() || self::isAssetCheck());
+    }
+    
+    public static function useNativeTemplateWrapper() {
+        return self::isNativeCall() && !self::isAjax();
     }
     
     public static function shouldRewriteAssetPaths() {
-        return self::hasNativePlatform() && self::isAjax();
+        return self::hasNativePlatform() && self::isAjax() && !self::isAssetCheck();
     }
     
     public static function shouldRewriteInternalLinks() {

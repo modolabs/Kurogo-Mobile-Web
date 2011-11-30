@@ -1469,7 +1469,7 @@ abstract class WebModule extends Module {
         $this->assign('contentTitle', $title);
         $this->assign('contentBody', $message);
       
-    } else if (KurogoNativeTemplates::isNativeTemplateCall()) {
+    } else if (KurogoNativeTemplates::useNativeTemplateInitializer()) {
         Kurogo::log(LOG_DEBUG,"Calling initializeForNativeTemplatePage for $this->configModule - $this->page", 'module');
         $this->initializeForNativeTemplatePage(); //subclass behavior
         Kurogo::log(LOG_DEBUG,"Returned from initializeForNativeTemplatePage for $this->configModule - $this->page", 'module');
@@ -1518,7 +1518,7 @@ abstract class WebModule extends Module {
     } else if ($this->page == '__nativeWebTemplates') {
         $template = 'common/templates/staticContent';
     
-    } else if (KurogoNativeTemplates::isNativeTemplateCall()) {
+    } else if (KurogoNativeTemplates::useNativeTemplateWrapper()) {
       // Native page wrapper
       $template = 'common/templates/nativeTemplate';
       
