@@ -153,7 +153,8 @@ class MapWebModule extends WebModule {
                 $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
                 $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
                 // for map driven UI we want placemarks to show up on the full screen map
-                if ($this->isMapDrivenUI()) {
+                $category = key($mapItem->getCategoryIds());
+                if ($this->isMapDrivenUI($urlArgs['category'])) {
                     $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
                     if ($this->page != $mapPage) {
                         $result['url'] = $this->buildURL($mapPage, $urlArgs);
@@ -295,7 +296,7 @@ class MapWebModule extends WebModule {
         return null;
     }
 
-    private function getMergedConfigData() {
+    private function getMergedConfigData($category=null) {
         if ($this->getArg('worldmap')) {
             return array();
         }
@@ -312,7 +313,7 @@ class MapWebModule extends WebModule {
         $configData = $this->getDataForGroup($this->feedGroup);
 
         // allow individual feeds to override group value
-        $feedData = $this->getCurrentFeed();
+        $feedData = $this->getCurrentFeed($category);
         if ($feedData) {
             foreach ($feedData as $key => $value) {
                 $configData[$key] = $value;
@@ -330,11 +331,11 @@ class MapWebModule extends WebModule {
         return $this->mapDevice;
     }
 
-    protected function isMapDrivenUI()
+    protected function isMapDrivenUI($category=null)
     {
         list($class, $static) = MapImageController::basemapClassForDevice(
             $this->getMapDevice(),
-            $this->getMergedConfigData());
+            $this->getMergedConfigData($category));
         return !$static;
     }
 

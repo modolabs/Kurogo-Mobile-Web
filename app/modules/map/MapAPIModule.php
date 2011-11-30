@@ -17,6 +17,37 @@ class MapAPIModule extends APIModule
 
     protected $mapProjector;
 
+    // reimplements a subset of MapWebModule::linkForItem
+    protected function urlForPlacemark(Placemark $placemark)
+    {
+        $urlArgs = shortArrayFromMapFeature($placemark);
+
+        // mimic getMergedConfigData in MapWebModule
+        $category = isset($urlArgs['category']) ? $urlArgs['category'] : null;
+        $configData = $this->getDataForGroup($this->feedGroup);
+
+        // allow individual feeds to override group value
+        $feedData = $this->getCurrentFeed($category);
+        if ($feedData) {
+            foreach ($feedData as $key => $value) {
+                $configData[$key] = $value;
+            }
+        }
+
+        // the device needs to be compliant to use the APIModule
+        list($class, $static) = MapImageController::basemapClassForDevice(
+            new MapDevice('compliant', 'computer'),
+            $configData);
+        
+        if ($static) {
+            $page = $this->numGroups > 1 ? 'campus' : 'index';
+        } else {
+            $page = 'detail';
+        }
+
+        return FULL_URL_PREFIX.'/'.$this->configModule.'/'.$page.'?'.http_build_query($urlArgs);
+    }
+
     protected function shortArrayFromPlacemark(Placemark $placemark)
     {
         $result = array(
@@ -24,6 +55,7 @@ class MapAPIModule extends APIModule
             'subtitle' => $placemark->getSubtitle(),
             'id' => $placemark->getId(),
             'categories' => $placemark->getCategoryIds(),
+            'url' => $this->urlForPlacemark($placemark),
             );
 
         $geometry = $placemark->getGeometry();
