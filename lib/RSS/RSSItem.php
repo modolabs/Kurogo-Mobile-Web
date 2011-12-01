@@ -117,6 +117,15 @@ class RSSItem extends XMLElement implements KurogoObject
         {
             case 'LINK':
                 if (!$value) {
+                    if ($element->getAttrib('REL') == 'enclosure') {
+                        $this->enclosure = new RSSEnclosure(array(
+                            'URL' => $element->getAttrib('HREF'),
+                            'LENGTH' => $element->getAttrib('LENGTH'),
+                            'TYPE' => $element->getAttrib('TYPE'),
+                        ));
+                        break;
+                    }
+
                     if ($link = $element->getAttrib('HREF')) {
                         $element->setValue($link, true);
                     }
