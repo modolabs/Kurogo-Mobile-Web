@@ -34,7 +34,7 @@ abstract class DataModel {
         $this->response = null;
         $this->options = array();
         $this->retriever->clearInternalCache();
-        $this->parser->clearInternalCache();
+        $this->parser()->clearInternalCache();
     }
     
     
@@ -49,7 +49,7 @@ abstract class DataModel {
     protected function setOption($option, $value) {
         $this->options[$option] = $value;
         $this->retriever->setOption($option, $value);
-        $this->parser->setOption($option, $value);
+        $this->parser()->setOption($option, $value);
     }
 
     protected function getOption($option) {
@@ -145,6 +145,15 @@ abstract class DataModel {
         }
     }
     
+    protected function parser() {
+        // allow the retriever to customize the parser 
+        if ($parser = $this->retriever->parser()) {
+            return $parser;
+        }
+
+        return $this->parser;
+    }
+    
     /**
      * Parse the data.
      * @param string $data the data from a request
@@ -153,7 +162,7 @@ abstract class DataModel {
      */
     protected function parseData($data, DataParser $parser=null) {       
         if (!$parser) {
-            $parser = $this->parser;
+            $parser = $this->parser();
         }
         $parsedData = $parser->parseData($data);
         return $parsedData;
@@ -167,7 +176,7 @@ abstract class DataModel {
      */
     protected function parseFile($file, DataParser $parser=null) {       
         if (!$parser) {
-            $parser = $this->parser;
+            $parser = $this->parser();
         }
         $parsedData = $parser->parseFile($file);
         return $parsedData;
@@ -181,7 +190,7 @@ abstract class DataModel {
      */
     protected function parseResponse(DataResponse $response, DataParser $parser=null) {       
         if (!$parser) {
-            $parser = $this->parser;
+            $parser = $this->parser();
         }
         $parsedData = $parser->parseResponse($response);
         return $parsedData;
@@ -195,7 +204,7 @@ abstract class DataModel {
      */
     public function getParsedData(DataParser $parser=null) {
         if (!$parser) {
-            $parser = $this->parser;
+            $parser = $this->parser();
         }
 
         switch ($parser->getParseMode()) {
@@ -223,7 +232,7 @@ abstract class DataModel {
      * @return string. Default is utf-8
      */
     public function getEncoding() {
-        return $this->parser->getEncoding();
+        return $this->parser()->getEncoding();
     }
     
     
