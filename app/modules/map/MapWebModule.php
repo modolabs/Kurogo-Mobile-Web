@@ -13,32 +13,9 @@ class MapWebModule extends WebModule {
     protected $feeds;
     protected $featureIndex;
     protected $mapDevice = null;
-    
-    private function getDataForGroup($group) {
-        return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
-    }
-    
-    public function getFeedGroups() {
-        return $this->getModuleSections('feedgroups');
-    }
 
-    private function getCategory() {
-        $category = $this->getArg('category', null);
-        return $category;
-    }
-
-    private function getDrillDownPath() {
-        $path = $this->getArg('path', array());
-        if ($path !== array()) {
-            $path = explode(MAP_CATEGORY_DELIMITER, $path);
-        }
-        // remove empty strings from beginning of array
-        while (count($path) && !strlen($path[0])) {
-            array_shift($path);
-        }
-        return $path;
-    }
-    
+    ////// standard module functions
+     
     // overrides function in Module.php
     protected function loadFeedData() {
         $data = array();
@@ -77,14 +54,6 @@ class MapWebModule extends WebModule {
         return $data;
     }
 
-    private function getFeedData()
-    {
-        if (!$this->feeds) {
-            $this->feeds = $this->loadFeedData();
-        }
-        return $this->feeds;
-    }
-
     protected function getModuleAdminSections() {
         $sections = parent::getModuleAdminSections();
         
@@ -111,6 +80,17 @@ class MapWebModule extends WebModule {
         unset($configData['feed']);
         
         return $configData;
+    }
+
+    public function searchItems($searchTerms, $limit=null, $options=null)
+    {
+        $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
+        $mapSearch = $this->getSearchClass($options);
+        $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
+        if ($limit) {
+            return array_slice($searchResults, 0, $limit);
+        }
+        return $searchResults;
     }
 
     public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null)
@@ -178,76 +158,42 @@ class MapWebModule extends WebModule {
 
         return $result;
     }
+
+    ////// conventional data retrieval
     
-    ///////////// url builders
-
-    // $category can be a string or array which specifies the drilldown path 
-    // if null, user will be redirected to index
-    private function categoryURL($category=null, $path=array(), $addBreadcrumb=true) {
-        $args = array();
-        if ($category !== NULL) {
-            if (is_array($category)) {
-                $category = implode(MAP_CATEGORY_DELIMITER, $category);
-            }
-            $args['category'] = $category;
-            $args['path'] = implode(MAP_CATEGORY_DELIMITER, $path);
-            if ($this->feedGroup) {
-                $args['group'] = $this->feedGroup;
-            }
-        }
-        return $this->buildBreadcrumbURL('category', $args, $addBreadcrumb);
+    public function getFeedGroups() {
+        return $this->getModuleSections('feedgroups');
     }
+
+    ////// private data retrieval
     
-    private function groupURL($group, $addBreadcrumb=false) {
-        $args = $this->args;
-        $args['group'] = $group;
-        if (isset($args['worldmap'])) {
-            unset($args['worldmap']);
+    private function getDataForGroup($group) {
+        return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
+    }
+
+    private function getCategory() {
+        $category = $this->getArg('category', null);
+        return $category;
+    }
+
+    private function getDrillDownPath() {
+        $path = $this->getArg('path', array());
+        if ($path !== array()) {
+            $path = explode(MAP_CATEGORY_DELIMITER, $path);
         }
-        $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
-        return $this->buildBreadcrumbURL($mapPage, $args, $addBreadcrumb);
-    }
-  
-    protected function detailURLForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
-            if ($this->isMapDrivenUI()) {
-                if ($this->feedGroup) {
-                    $params['group'] = $this->feedGroup;
-                }
-                $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
-                return $this->buildURL($mapPage, $params);
-            }
-            return $this->buildBreadcrumbURL('detail', $params, true);
-        } else {
-            return '#';
+        // remove empty strings from beginning of array
+        while (count($path) && !strlen($path[0])) {
+            array_shift($path);
         }
+        return $path;
     }
 
-    // static maps only
-    private function detailUrlForPan($direction, $imgController) {
-        $args = $this->args;
-        $center = $imgController->getCenterForPanning($direction);
-        $args['center'] = $center['lat'] .','. $center['lon'];
-        return $this->buildBreadcrumbURL('detail', $args, false);
-    }
-
-    // static maps only
-    private function detailUrlForZoom($direction, $imgController) {
-        $args = $this->args;
-        $args['zoom'] = $imgController->getLevelForZooming($direction);
-        return $this->buildBreadcrumbURL('detail', $args, false);
-    }
-
-    public function searchItems($searchTerms, $limit=null, $options=null)
+    private function getFeedData()
     {
-        $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
-        $mapSearch = $this->getSearchClass($options);
-        $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
-        if ($limit) {
-            return array_slice($searchResults, 0, $limit);
+        if (!$this->feeds) {
+            $this->feeds = $this->loadFeedData();
         }
-        return $searchResults;
+        return $this->feeds;
     }
 
     // assumes feeds are loaded
@@ -326,6 +272,124 @@ class MapWebModule extends WebModule {
         return $configData;
     }
 
+    protected function getSearchClass($options=array()) {
+        if (isset($options['external']) && $options['external']) {
+            $searchConfigName = 'MAP_EXTERNAL_SEARCH_CLASS';
+            $searchConfigDefault = 'GoogleMapSearch';
+        } else { // includes federatedSearch
+            $searchConfigName = 'MAP_SEARCH_CLASS';
+            $searchConfigDefault = 'MapSearch';
+        }
+
+        $mapSearchClass = $this->getOptionalModuleVar($searchConfigName, $searchConfigDefault);
+        $mapSearch = new $mapSearchClass($this->getFeedData());
+        $this->assign('poweredByGoogle', $mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces());
+        return $mapSearch;
+    }
+
+    protected function getTitleForBookmark($aBookmark) {
+        parse_str($aBookmark, $params);
+        if (isset($params['featureindex'])) {
+            $index = $params['featureindex'];
+            $category = $params['category'];
+            $dataController = $this->getDataModel($category);
+            $feature = $dataController->selectPlacemark($index);
+            return array($feature->getTitle(), $dataController->getTitle());
+        
+        } else if (isset($params['title'])) {
+            $result = array($params['title']);
+            if (isset($params['address'])) {
+                $result[] = $params['address'];
+            }
+            return $result;
+
+        } else {
+            return array($aBookmark);
+        }
+    }
+
+    protected function bookmarkIDForPlacemark($placemark) {
+        if ($placemark) {
+            $category = current($placemark->getCategoryIds());
+            $cookieParams = array(
+                'category' => $category,
+                'featureindex' => $placemark->getId(),
+                );
+        } elseif (isset($this->args['lat'], $this->args['lon'])) {
+            $cookieParams = array(
+                'lat' => $this->args['lat'],
+                'lon' => $this->args['lon'],
+                );
+        }
+        $title = $this->getArg('title');
+        if ($title) {
+            $cookieParams['title'] = $title;
+        }
+        return http_build_query($cookieParams);
+    }
+    
+    ///////////// url builders
+
+    // $category can be a string or array which specifies the drilldown path 
+    // if null, user will be redirected to index
+    private function categoryURL($category=null, $path=array(), $addBreadcrumb=true) {
+        $args = array();
+        if ($category !== NULL) {
+            if (is_array($category)) {
+                $category = implode(MAP_CATEGORY_DELIMITER, $category);
+            }
+            $args['category'] = $category;
+            $args['path'] = implode(MAP_CATEGORY_DELIMITER, $path);
+            if ($this->feedGroup) {
+                $args['group'] = $this->feedGroup;
+            }
+        }
+        return $this->buildBreadcrumbURL('category', $args, $addBreadcrumb);
+    }
+    
+    private function groupURL($group, $addBreadcrumb=false) {
+        $args = $this->args;
+        $args['group'] = $group;
+        if (isset($args['worldmap'])) {
+            unset($args['worldmap']);
+        }
+        $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
+        return $this->buildBreadcrumbURL($mapPage, $args, $addBreadcrumb);
+    }
+  
+    protected function detailURLForBookmark($aBookmark) {
+        parse_str($aBookmark, $params);
+        if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
+            if ($this->isMapDrivenUI()) {
+                if ($this->feedGroup) {
+                    $params['group'] = $this->feedGroup;
+                }
+                $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
+                return $this->buildURL($mapPage, $params);
+            }
+            return $this->buildBreadcrumbURL('detail', $params, true);
+        } else {
+            return '#';
+        }
+    }
+
+    // static maps only
+    private function detailUrlForPan($direction, $imgController) {
+        $args = $this->args;
+        $center = $imgController->getCenterForPanning($direction);
+        $args['center'] = $center['lat'] .','. $center['lon'];
+        return $this->buildBreadcrumbURL('detail', $args, false);
+    }
+
+    // static maps only
+    private function detailUrlForZoom($direction, $imgController) {
+        $args = $this->args;
+        $args['zoom'] = $imgController->getLevelForZooming($direction);
+        return $this->buildBreadcrumbURL('detail', $args, false);
+    }
+
+    ////// basemap retrieval
+
     private function getMapDevice()
     {
         if (!$this->mapDevice) {
@@ -349,20 +413,7 @@ class MapWebModule extends WebModule {
             $this->getMapDevice());
     }
 
-    protected function getSearchClass($options=array()) {
-        if (isset($options['external']) && $options['external']) {
-            $searchConfigName = 'MAP_EXTERNAL_SEARCH_CLASS';
-            $searchConfigDefault = 'GoogleMapSearch';
-        } else { // includes federatedSearch
-            $searchConfigName = 'MAP_SEARCH_CLASS';
-            $searchConfigDefault = 'MapSearch';
-        }
-
-        $mapSearchClass = $this->getOptionalModuleVar($searchConfigName, $searchConfigDefault);
-        $mapSearch = new $mapSearchClass($this->getFeedData());
-        $this->assign('poweredByGoogle', $mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces());
-        return $mapSearch;
-    }
+    ///// template control
 
     private function assignCampuses() {
         $campusData = array();
@@ -418,71 +469,6 @@ class MapWebModule extends WebModule {
             'url' => $this->groupURL(''),
             ));
         $this->assign('clearLink', $clearLink);
-    }
-
-    protected function getTitleForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        if (isset($params['featureindex'])) {
-            $index = $params['featureindex'];
-            $category = $params['category'];
-            $dataController = $this->getDataModel($category);
-            $feature = $dataController->selectPlacemark($index);
-            return array($feature->getTitle(), $dataController->getTitle());
-        
-        } else if (isset($params['title'])) {
-            $result = array($params['title']);
-            if (isset($params['address'])) {
-                $result[] = $params['address'];
-            }
-            return $result;
-
-        } else {
-            return array($aBookmark);
-        }
-    }
-
-    protected function displayTextFromMeters($meters)
-    {
-        $result = null;
-        $system = $this->getOptionalModuleVar('DISTANCE_MEASUREMENT_UNITS', 'Metric');
-        switch ($system) {
-            case 'Imperial':
-                $miles = $meters * MILES_PER_METER;
-                if ($miles < 0.1) {
-                    $feet = $meters * FEET_PER_METER;
-                    $result = $this->getLocalizedString(
-                        'DISTANCE_IN_FEET',
-                         number_format($feet, 0));
-
-                } elseif ($miles < 15) {
-                    $result = $this->getLocalizedString(
-                        'DISTANCE_IN_MILES',
-                         number_format($miles, 1));
-                } else {
-                    $result = $this->getLocalizedString(
-                        'DISTANCE_IN_MILES',
-                         number_format($miles, 0));
-                }
-                break;
-            case 'Metric':
-            default:
-                if ($meters < 100) {
-                    $result = $this->getLocalizedString(
-                        'DISTANCE_IN_METERS',
-                         number_format($meters, 0));
-                } elseif ($meters < 15000) {
-                    $result = $this->getLocalizedString(
-                        'DISTANCE_IN_KILOMETERS',
-                         number_format($meters / 1000, 1));
-                } else {
-                    $result = $this->getLocalizedString(
-                        'DISTANCE_IN_KILOMETERS',
-                         number_format($meters / 1000, 0));
-                }
-                
-                break;
-        }
-        return $result;
     }
 
     protected function configureUserLocation() {
@@ -639,26 +625,6 @@ class MapWebModule extends WebModule {
         }
         
         return false;
-    }
-
-    protected function bookmarkIDForPlacemark($placemark) {
-        if ($placemark) {
-            $category = current($placemark->getCategoryIds());
-            $cookieParams = array(
-                'category' => $category,
-                'featureindex' => $placemark->getId(),
-                );
-        } elseif (isset($this->args['lat'], $this->args['lon'])) {
-            $cookieParams = array(
-                'lat' => $this->args['lat'],
-                'lon' => $this->args['lon'],
-                );
-        }
-        $title = $this->getArg('title');
-        if ($title) {
-            $cookieParams['title'] = $title;
-        }
-        return http_build_query($cookieParams);
     }
 
     protected function initialize() {
@@ -1026,5 +992,51 @@ JS;
         // javascript for all static maps
         $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
         $this->addOnOrientationChange('updateMapDimensions();');
+    }
+
+    /////// utilities
+
+    protected function displayTextFromMeters($meters)
+    {
+        $result = null;
+        $system = $this->getOptionalModuleVar('DISTANCE_MEASUREMENT_UNITS', 'Metric');
+        switch ($system) {
+            case 'Imperial':
+                $miles = $meters * MILES_PER_METER;
+                if ($miles < 0.1) {
+                    $feet = $meters * FEET_PER_METER;
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_FEET',
+                         number_format($feet, 0));
+
+                } elseif ($miles < 15) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_MILES',
+                         number_format($miles, 1));
+                } else {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_MILES',
+                         number_format($miles, 0));
+                }
+                break;
+            case 'Metric':
+            default:
+                if ($meters < 100) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_METERS',
+                         number_format($meters, 0));
+                } elseif ($meters < 15000) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_KILOMETERS',
+                         number_format($meters / 1000, 1));
+                } else {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_KILOMETERS',
+                         number_format($meters / 1000, 0));
+                }
+                
+                break;
+        }
+        return $result;
     }
 }
