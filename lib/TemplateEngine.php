@@ -176,6 +176,7 @@ class TemplateEngine extends Smarty {
           Kurogo::log(LOG_DEBUG, __FUNCTION__." replacing extends $name with $path", 'template');
         } else {
           Kurogo::log(LOG_WARNING, __FUNCTION__." FAILED to find EXTENDS for $name", 'template');
+          throw new SmartyException("Unable to load template \"findExtends : $name\"");
         }
       }
     }
