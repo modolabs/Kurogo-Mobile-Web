@@ -55,10 +55,10 @@ function submitMapSearch(form) {
         makeAPICall('GET', 'map', 'search', params, function(response) {
             hideSearchFormButtons();
             // TODO: make the "browse" button bring up results in a list
-            var minLat = 90;
-            var maxLat = -90;
-            var minLon = 180;
-            var maxLon = -180;
+            var minLat = 10000000;
+            var maxLat = -10000000;
+            var minLon = 10000000;
+            var maxLon = -10000000;
             for (var i = 0; i < response.results.length; i++) {
                 var markerData = response.results[i];
                 mapLoader.createMarker(
@@ -528,7 +528,10 @@ function kgoEsriMapLoader(attribs) {
         that.markerOnTop = false;
     }
 
-    that.clearMarkers = function() {}
+    that.clearMarkers = function() {
+        map.graphics.clear();
+    }
+
     that.createMarker = function(title, subtitle, lat, lon, url) {
         that.addMarker(
             new esri.Graphic(
@@ -559,7 +562,8 @@ function kgoEsriMapLoader(attribs) {
     }
 
     that.setMapBounds = function(minLat, minLon, maxLat, maxLon) {
-        
+        var extent = esri.geometry.Extent(minLon, minLat, maxLon, maxLat, that.spatialRef);
+        map.setExtent(extent, true);
     }
 
     // user location
