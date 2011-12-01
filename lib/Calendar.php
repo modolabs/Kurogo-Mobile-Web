@@ -1,7 +1,17 @@
 <?php
 
-require_once(LIB_DIR . '/Calendar/DateTimeUtils.php');
+includePackage('DateTime');
 require_once(LIB_DIR . '/Calendar/ICalendar.php');
+
+interface CalendarInterface {
+    public function getEvents();
+    public function getEventsInRange(TimeRange $range=null, $limit=null);
+    public function set_attribute($contentname, $value, $params);
+    public function add_event(CalendarEvent $event);
+}
+
+interface CalendarEvent {
+}
 
 class Calendar 
 {

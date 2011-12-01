@@ -44,7 +44,7 @@ Currently there are 4 included DataParser implementations
 * *JSONDataParser* - Parses the string as JSON. Will return the string decoded into its PHP equivalent data type.
 * *PassthroughDataParser* - Does no processing, simply returns the string as is. This is useful when you want
   to use the data controller, but no parsing is necessary.
-* *RSSDataParser* - Parses data within a RSS/Atom/RDF feed using the XML parser. Will return an array of RSSItem objects (see lib/RSS.php)
+* *RSSDataParser* - Parses data within a RSS/Atom/RDF feed using the XML parser. Will return an array of RSSItem objects (see lib/RSS/RSSItem.php)
 
 ===============
 Data Validation
