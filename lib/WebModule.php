@@ -311,6 +311,10 @@ abstract class WebModule extends Module {
   }
 
   public static function buildURLForModule($id, $page, $args=array()) {
+    if (KurogoNativeTemplates::isNativeCall() && isset($args['ajax'])) {
+      unset($args['ajax']);
+    }
+    
     if (KurogoNativeTemplates::shouldRewriteInternalLinks()) {
       return KurogoNativeTemplates::getInternalLink($id, $page, $args);
       
@@ -1136,10 +1140,7 @@ abstract class WebModule extends Module {
   
   private function getBreadcrumbString($addBreadcrumb=true) {
     if (KurogoNativeTemplates::isNativeCall()) {
-      if (!$addBreadcrumb) {
-        return 'same'; // Don't create a new page
-      }
-      $breadcrumbs = array(); // Only need current page breadcrumb on native nav stack
+      return $addBreadcrumb ? 'new' : 'same'; // Don't need actual breadcrumb on native
     } else {
       $breadcrumbs = $this->breadcrumbs;
     }
@@ -1173,8 +1174,12 @@ abstract class WebModule extends Module {
   }
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
+    if (KurogoNativeTemplates::isNativeCall() && isset($args['ajax'])) {
+      unset($args['ajax']);
+    }
+    
     $args = array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb));
-  
+    
     if (KurogoNativeTemplates::shouldRewriteInternalLinks()) {
       $url = KurogoNativeTemplates::getInternalLink($id, $page, $args);
     } else {

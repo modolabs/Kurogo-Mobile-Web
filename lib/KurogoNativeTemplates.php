@@ -26,7 +26,7 @@ class KurogoNativeTemplates
     public function __construct($platform, $module, $dir=null) {
         $this->platform = $platform;
         $this->module = $module;
-        $this->path = ($dir ? rtrim($dir, '/') : CACHE_DIR.'/nativeBuild')."/$module";
+        $this->path = ($dir ? rtrim($dir, '/') : CACHE_DIR.'/nativeBuild')."/$platform/$module";
     }
 
     public function setPage($page) {
