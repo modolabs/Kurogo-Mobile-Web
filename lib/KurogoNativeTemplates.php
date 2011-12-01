@@ -9,14 +9,19 @@ class KurogoNativeTemplates
     protected $pathExists = false;
     
     const NATIVE_PLATFORM_PARAMETER = 'nativePlatform';
-    const ASSET_CHECK_PARAMETER = 'nativeAssetCheck';
+    const ASSET_CHECK_PARAMETER     = 'nativeAssetCheck';
 
     const INTERNAL_LINK_SCHEME = 'kgolink://';
-    const CONFIG_LINK_SCHEME = 'kgoconfig://';
+    const CONFIG_LINK_SCHEME   = 'kgoconfig://';
+    
+    const FILE_TYPE_HTML       = 'html';
+    const FILE_TYPE_CSS        = 'css';
+    const FILE_TYPE_JAVASCRIPT = 'js';
+    const FILE_TYPE_ASSET      = 'asset';
 
     // This global could be removed by using closures (ie php 5.3+)
     static protected $currentInstance = null;
-    protected $processingHTML = true;
+    protected $processingFileType = self::FILE_TYPE_HTML;
     
     public function __construct($platform, $module, $dir=null) {
         $this->platform = $platform;
@@ -28,26 +33,29 @@ class KurogoNativeTemplates
         $this->page = $page;
     }
 
-    protected static function isFileAsset($file) {
+    protected static function getFileType($file) {
         $parts = explode('.', $file);
         $ext = strtolower(end($parts));
-        return count($parts) > 1 && in_array($ext, array('png', 'gif', 'jpg', 'jpeg'));
-    }
-
-    protected static function isHTMLFile($file) {
-        $parts = explode('.', $file);
-        $ext = strtolower(end($parts));
-        return count($parts) < 2 || in_array($ext, array('html', 'php'));        
+        if (count($parts) < 2 || in_array($ext, array('html', 'php'))) {
+            return self::FILE_TYPE_HTML;
+            
+        } else if (count($parts) > 1 && $ext == 'css') {
+            return self::FILE_TYPE_CSS;
+            
+        } else if (count($parts) > 1 && $ext == 'js') {
+            return self::FILE_TYPE_JAVASCRIPT;
+            
+        } else {
+            return self::FILE_TYPE_ASSET;
+        }
     }
 
     //
     // Helper functions to avoid code duplication
     //
     protected function getAsset($urlSuffix) {
-        $urlSuffix .= stripos($urlSuffix, '?') ? '&' : '?';
-        $urlSuffix .= http_build_query(array(self::NATIVE_PLATFORM_PARAMETER => $this->platform));
-        
-        $url = FULL_URL_PREFIX.$urlSuffix;
+        $url = FULL_URL_PREFIX.$urlSuffix.(stripos($urlSuffix, '?') ? '&' : '?').
+            http_build_query(array(self::NATIVE_PLATFORM_PARAMETER => $this->platform));
         //error_log($url);
         $contents = @file_get_contents($url);
         if (!$contents) {
@@ -103,7 +111,7 @@ class KurogoNativeTemplates
         
         if ($file) {
             $replacement = $matches[1];
-            if (self::$currentInstance->processingHTML) {
+            if (self::$currentInstance->processingFileType == self::FILE_TYPE_HTML) {
                 $replacement .= 'modules/'.self::$currentInstance->module.'/';
             }
             $replacement .= $file.$matches[5];
@@ -129,7 +137,7 @@ class KurogoNativeTemplates
         list($urlSuffix, $file, $replacement) = self::getPartsForMatches($matches);
         
         if ($file) {
-            self::$currentInstance->saveContentAndAssets($urlSuffix, $file, self::isHTMLFile($file));
+            self::$currentInstance->saveContentAndAssets($urlSuffix, $file, self::getFileType($file));
         }
         
         return $replacement;
@@ -139,7 +147,7 @@ class KurogoNativeTemplates
     // Template and asset generation functions
     //
 
-    protected function _rewriteURLsToFilePaths($contents, $callback='rewriteURLsToFilePathsCallback', $isHTML=true) {
+    protected function _rewriteURLsToFilePaths($contents, $callback='rewriteURLsToFilePathsCallback', $fileType=self::FILE_TYPE_HTML) {
         // rewrite javascript url rewrites
         $contents = preg_replace(
             array(
@@ -167,27 +175,27 @@ class KurogoNativeTemplates
         );
 
         // rewrite all other internal urls
-        $oldProcessingHTML = $this->processingHTML;
-        $this->processingHTML = $isHTML;
+        $oldFileType = $this->processingFileType;
+        $this->processingFileType = $fileType;
         self::$currentInstance = $this;
         $contents = preg_replace_callback(
             ';'.
-                '(\'|\\\"|\"|\()'.
+                '(href\s*=\s*"|href\s*=\s*\'|src\s*=\s*"|src\s*=\s*\'|url\(")'.
                 '('.
                     '('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')'.
-                    '([^\'\"\\\)]+)'.
+                    '([^>\'\"\\\)]+)'.
                 ')'.
-                '(\'|\\\"|\"|\))'.
+                '("\)|"|\')'.
             ';', 
             array(get_class(), $callback), 
             $contents
         );
-        $this->processingHTML = $oldProcessingHTML; // restore state since saveContentAndAssets is called recursively
+        $this->processingFileType = $oldFileType; // restore state since saveContentAndAssets is called recursively
         
         return $contents;
     }
 
-    protected function saveContentAndAssets($urlSuffix=null, $file=null, $isHTML=true) {
+    protected function saveContentAndAssets($urlSuffix=null, $file=null, $fileType=self::FILE_TYPE_HTML) {
         if (!$urlSuffix) {
             $urlSuffix = "{$this->module}/{$this->page}";
         }
@@ -199,9 +207,9 @@ class KurogoNativeTemplates
         
         $contents = $this->getAsset($urlSuffix);
         if ($contents) {
-            if (!self::isFileAsset($file)) {
+            if ($fileType != self::FILE_TYPE_ASSET) {
                 self::$currentInstance = $this;
-                $contents = $this->_rewriteURLsToFilePaths($contents, 'saveContentAndAssetsCallback', $isHTML);
+                $contents = $this->_rewriteURLsToFilePaths($contents, 'saveContentAndAssetsCallback', $fileType);
             }
             
             $this->saveAsset($contents, $file);
