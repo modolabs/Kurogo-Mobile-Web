@@ -176,11 +176,20 @@ function kgoMapLoader(attribs) {
     this.placemarks = [];
     this.showUserLocation = true;
     this.userLocationMarker = null;
+    this.markerOnTop = true; // track type of last placemark since it affects choice of function for positioning
 
     this.loadMap = function() {}
 
     // annotations
-    this.showDefaultCallout = function() {}
+    this.showDefaultCallout = function() {
+        if (this.placemarks.length == 1) {
+            if (this.markerOnTop) {
+                this.showCalloutForMarker(this.placemarks[0]);
+            } else {
+                this.showCalloutForOverlay(this.placemarks[0]);
+            }
+        }
+    }
     this.showCalloutForMarker = function(marker) {}
     this.showCalloutForOverlay = function(overlay) {}
     this.addMarker = function(marker, attribs) {}
@@ -254,7 +263,6 @@ function kgoMapLoader(attribs) {
 function kgoGoogleMapLoader(attribs) {
     var that = new kgoMapLoader(attribs);
     var currentInfoWindow = null;
-    var markerOnTop = true; // track type of last placemark since it affects choice of function for positioning
 
     var setCurrentInfoWindow = function(infoWindow) {
         if (currentInfoWindow !== null) {
@@ -364,16 +372,6 @@ function kgoGoogleMapLoader(attribs) {
 
     // annotations
 
-    that.showDefaultCallout = function() {
-        if (that.placemarks.length == 1) {
-            if (markerOnTop) {
-                that.showCalloutForMarker(that.placemarks[0]);
-            } else {
-                that.showCalloutForOverlay(that.placemarks[0]);
-            }
-        }
-    }
-
     that.showCalloutForMarker = function(marker) {
         marker.infoWindow.open(map, marker);
         setCurrentInfoWindow(marker.infoWindow);
@@ -395,7 +393,7 @@ function kgoGoogleMapLoader(attribs) {
         });
 
         that.placemarks.push(marker);
-        markerOnTop = true;
+        that.markerOnTop = true;
     }
 
     that.addOverlay = function(overlay, attribs) {
@@ -410,7 +408,7 @@ function kgoGoogleMapLoader(attribs) {
         });
 
         that.placemarks.push(overlay);
-        markerOnTop = false;
+        that.markerOnTop = false;
     }
 
     that.clearMarkers = function() {
@@ -482,9 +480,16 @@ function kgoEsriMapLoader(attribs) {
     }
 
     // annotations
-    that.showDefaultCallout = function() {}
-    that.showCalloutForMarker = function(marker) {}
-    that.showCalloutForOverlay = function(overlay) {}
+    that.showCalloutForMarker = function(marker) {
+        //marker.infoTemplate.show(marker.geometry);
+
+        map.infoWindow.setContent(marker.getContent());
+        map.infoWindow.show(marker.geometry);
+    }
+
+    that.showCalloutForOverlay = function(overlay) {
+        // TODO: construct centroid for polylgons/polylines
+    }
 
     that.addMarker = function(marker, attribs) {
         infoTemplate = new esri.InfoTemplate();
@@ -494,6 +499,7 @@ function kgoEsriMapLoader(attribs) {
         marker.setInfoTemplate(infoTemplate);
         map.graphics.add(marker);
         that.placemarks.push(marker);
+        that.markerOnTop = true;
     }
 
     that.addOverlay = function(overlay, attribs) {
@@ -503,6 +509,7 @@ function kgoEsriMapLoader(attribs) {
         infoTemplate.setTitle(attribs["title"]);
         infoTemplate.setContent(attribs["subtitle"]);
         overlay.setInfoTemplate(infoTemplate);
+        that.markerOnTop = false;
     }
 
     that.clearMarkers = function() {}

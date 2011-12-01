@@ -150,6 +150,9 @@ class MapWebModule extends WebModule {
 
             } else {
                 $urlArgs = array_merge($this->args, shortArrayFromMapFeature($mapItem));
+                if (!isset($urlArgs['group'])) {
+                    $urlArgs['group'] = $this->feedGroup;
+                }
                 $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
                 $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
                 // for map driven UI we want placemarks to show up on the full screen map
@@ -394,6 +397,18 @@ class MapWebModule extends WebModule {
         
         $this->assign('categories', $categories);
         return $categories;
+    }
+
+    private function assignSearchResults($searchTerms) {
+        $args = array_merge($this->args, array('addBreadcrumb' => true));
+        // still need a way to show the Google logo if we use their search
+        $searchResults = $this->searchItems($searchTerms, null, $args);
+        $places = array();
+        foreach ($searchResults as $place) {
+            $places[] = $this->linkForItem($place);
+        }
+        $this->assign('places', $places);
+        return $places;
     }
 
     protected function assignClearLink()
@@ -669,24 +684,48 @@ class MapWebModule extends WebModule {
 
         switch ($this->page) {
 
-            case 'index':
+            case 'index': // no breadcrumbs
+            case 'campus': // breadcrumbs
 
+                $searchTerms = $this->getArg('filter');
+                if ($searchTerms) {
+                    $this->assign('searchTerms', $searchTerms);
+                }
+                if ($this->feedGroup) {
+                    $this->assign('group', $this->feedGroup);
+                }
+
+                // set up list view if
                 if ($this->feedGroup === null // multiple campuses, none selected
                     && !$this->getArg('worldmap') // user did not explictly request map view
                     || $this->getArg('listview') // user did explicitly request list view
                     || !$this->isMapDrivenUI()
                 ) {
+                    $this->setTemplatePage('index');
                     $this->setupCampusPage();
+                    if ($searchTerms) {
+                        // user hit the "browse" button with a query string
+                        $this->setTemplatePage('browse');
+                        $this->assignSearchResults($searchTerms);
+                        $urlParams = array('filter' => $searchTerms, 'group' => $this->feedGroup);
+                        $this->assign('mapURL', $this->buildURL('index', $urlParams));
+                        $this->enableTabs(array('search', 'browse'), null, null);
+                        $this->addOnLoad('addClass(document.body, "fullscreen")');
+                    }
                     break;
                 }
-                // fall through
-            case 'campus':
 
+                // set up fullscreen map
                 $this->setTemplatePage('fullscreen');
+                $browseArgs = array('listview' => true);
+                $browsePage = ($this->numGroups > 1) ? 'campus' : 'index';
                 if ($this->getArg('worldmap')) {
                     $this->feedGroup = null;
-                    $this->assign('browseURL', $this->buildURL('index', array('listview' => true)));
                 }
+                if ($this->feedGroup) {
+                    $browseArgs['group'] = $this->feedGroup;
+                }
+                $this->assign('browseURL', $this->buildBreadcrumbURL($browsePage, $browseArgs, false));
                 $this->assignCampuses();
                 $this->initializeDynamicMap();
 
@@ -719,17 +758,9 @@ class MapWebModule extends WebModule {
 
                 $searchTerms = $this->getArg('filter');
                 if ($searchTerms) {
-                    // TODO: redirect if there is one result
-                    $args = array_merge($this->args, array('addBreadcrumb' => true));
-
-                    // still need a way to show the Google logo if we use their search
-                    $searchResults = $this->searchItems($searchTerms, null, $args);
-                    $places = array();
-                    foreach ($searchResults as $place) {
-                        $places[] = $this->linkForItem($place);
-                    }
                     $this->assign('searchTerms', $searchTerms);
-                    $this->assign('places',      $places);
+                    $places = $this->assignSearchResults($searchTerms);
+                    // TODO: redirect if there is only one result
                   
                 } else {
                     $this->redirectTo('index');
@@ -791,6 +822,8 @@ class MapWebModule extends WebModule {
                     if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                         $this->generateBookmarkOptions($this->bookmarkIDForPlacemark($feature));
                     }
+                    $link = $this->linkForItem($feature);
+                    $this->assign('mapURL', $link['url']);
 
                 } else {
                     if ($this->getArg('worldmap')) {
@@ -812,7 +845,7 @@ class MapWebModule extends WebModule {
                         $tabKeys[] = $tabKey;
                     }
                 }
-        
+
                 $this->assign('tabKeys', $tabKeys);
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
 
@@ -844,6 +877,10 @@ class MapWebModule extends WebModule {
             $dataModel = $this->getDataModel();
             $dataModel->selectPlacemark($this->featureIndex);
             return $dataModel->getSelectedPlacemarks();
+        }
+
+        if (($searchTerms = $this->getArg('filter'))) {
+            return $this->searchItems($searchTerms, null, $this->args);
         }
 
         // make the map display arbitrary locations that aren't in any feeds
@@ -907,12 +944,6 @@ class MapWebModule extends WebModule {
 
     protected function initializeDynamicMap()
     {
-        if ($this->feedGroup) {
-            $urlArgs = array('group' => $this->feedGroup, 'listview' => true);
-            $browseURL = $this->buildBreadcrumbURL('index', $urlArgs, false);
-            $this->assign('browseURL', $browseURL); // browse button
-        }
-
         // set up base map
         $baseMap = $this->getImageController();
         $baseMap->setWebModule($this);

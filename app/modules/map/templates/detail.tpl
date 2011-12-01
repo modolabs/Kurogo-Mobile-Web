@@ -57,16 +57,37 @@
 
 {if in_array('links', $tabKeys)}
   {capture name="linksPane" assign="linksPane"}
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/$moduleID/templates/listItemWithID.tpl"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/map/templates/listItemWithID.tpl"}
   {/capture}
   {$tabBodies['links'] = $linksPane}
 {/if}
 
 {block name="tabView"}
   <div id="tabscontainer">
-    {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
     <h2>{$name|escape}</h2>
     <p class="address">{$address|escape}</p>
+    <div id="buttonWrapper">
+      <div id="viewOnMapContainer" class="buttonContainer">
+        <a href="{$mapURL}">
+          <div id="viewOnMapButton"
+               ontouchstart="addClass(this, 'pressed')"
+               ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
+              <img src="/modules/map/images/map-button-map.png"/>
+              View on map
+          </div>
+        </a>
+      </div>
+      <div id="bookmarkButtonContainer" class="buttonContainer">
+        <a onclick="{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', 'bookmark button pressed', '{$bookmarkItem|escape:'javascript'|escape:'html'}']);{/if}toggleBookmark('{$name}', '{$bookmarkItem|escape:'javascript'|escape:'html'}', {$expireDate}, '{$smarty.const.COOKIE_PATH}')">
+          <div id="bookmarkButton"
+               ontouchstart="addClass(this, 'pressed')"
+               ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
+              <img src="/modules/map/images/map-button-favorites.png"/>
+              Bookmark
+          </div>
+        </a>
+      </div>
+    </div>
     {include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}

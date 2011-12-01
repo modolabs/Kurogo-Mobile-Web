@@ -1,3 +1,13 @@
+/* used in detail page and index when swapping to list view with search query */
+#tabscontainer {
+    position: relative;
+    padding: 0 12px;
+}
+
+body.fullscreen #tabscontainer {
+    padding: 6px 12px;
+}
+
 /* used in map view - custom controls overlaying google maps, detail - controls below map image */
 #mapcontrols a {
     width: 40px;
@@ -30,11 +40,6 @@
 /*** expanding search bar ***/
 
 #header {
-    position: absolute;
-    top: 44; /* this should be the same as the #navbar height */
-    left: 0;
-    right: 0;
-    z-index: 1;
     height: 44px;
     margin: 0;
     padding: 0 4px;
@@ -43,6 +48,14 @@
     background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
     background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
     background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+}
+
+body.fullscreen #header {
+    position: absolute;
+    top: 44; /* this should be the same as the #navbar height */
+    left: 0;
+    right: 0;
+    z-index: 1;
 }
 
 /* empty div behind the #header to align the top of the #mapimage */
@@ -69,7 +82,7 @@
     height: 112px;
 }
 
-.searchwrapper {
+body.fullscreen .searchwrapper {
     right: 84px;
 }
 
@@ -103,6 +116,10 @@
 
 .toolbar-button a {
     margin: 2px;
+}
+
+.toolbar-button a img {
+    margin: 4px;
 }
 
 /* campus-select: the drop-down menu in multi-campus case */
@@ -181,4 +198,12 @@ body.fullscreen #navbar {
     right: 10px;
 }
 
+#mapimage .simpleInfoWindow .title {
+    border: none;
+    padding: 0;
+}
+
+#mapimage .simpleInfoWindow {
+    max-height: 80px;
+}
 
