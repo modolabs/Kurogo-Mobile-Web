@@ -694,6 +694,7 @@ class MapWebModule extends WebModule {
                 if ($this->feedGroup) {
                     $this->assign('group', $this->feedGroup);
                 }
+                $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
 
                 // set up list view if
                 if ($this->feedGroup === null // multiple campuses, none selected
@@ -708,7 +709,7 @@ class MapWebModule extends WebModule {
                         $this->setTemplatePage('browse');
                         $this->assignSearchResults($searchTerms);
                         $urlParams = array('filter' => $searchTerms, 'group' => $this->feedGroup);
-                        $this->assign('mapURL', $this->buildURL('index', $urlParams));
+                        $this->assign('mapURL', $this->buildURL($topPage, $urlParams));
                         $this->enableTabs(array('search', 'browse'), null, null);
                         $this->addOnLoad('addClass(document.body, "fullscreen")');
                     }
@@ -718,14 +719,13 @@ class MapWebModule extends WebModule {
                 // set up fullscreen map
                 $this->setTemplatePage('fullscreen');
                 $browseArgs = array('listview' => true);
-                $browsePage = ($this->numGroups > 1) ? 'campus' : 'index';
                 if ($this->getArg('worldmap')) {
                     $this->feedGroup = null;
                 }
                 if ($this->feedGroup) {
                     $browseArgs['group'] = $this->feedGroup;
                 }
-                $this->assign('browseURL', $this->buildBreadcrumbURL($browsePage, $browseArgs, false));
+                $this->assign('browseURL', $this->buildBreadcrumbURL($topPage, $browseArgs, false));
                 $this->assignCampuses();
                 $this->initializeDynamicMap();
 

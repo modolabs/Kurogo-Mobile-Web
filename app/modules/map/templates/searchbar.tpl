@@ -17,11 +17,11 @@
                     </div>
                     {if $mapURL}
                         <div class="toolbar-button">
-                            <a href="{$mapURL}"><img src="/modules/map/images/map-button-map.png"/></a>
+                            <a id="mapLink" href="{$mapURL}"><img src="/modules/map/images/map-button-map.png"/></a>
                         </div>
                     {else}
                         <div class="toolbar-button">
-                            <a href="{$browseURL}"><img src="/modules/map/images/map-button-browse.png"/></a>
+                            <a id="browseLink" href="{$browseURL}"><img src="/modules/map/images/map-button-browse.png"/></a>
                         </div>
                     {/if}
                 </div>

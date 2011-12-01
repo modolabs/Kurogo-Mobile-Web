@@ -71,6 +71,22 @@ function submitMapSearch(form) {
             }
             mapLoader.setMapBounds(minLat, minLon, maxLat, maxLon);
         });
+        var addFilterToHref = function(link) {
+            var reg = new RegExp('&?filter=.+(&|$)');
+            if (link.href.match(reg)) {
+                link.href = link.href.replace(reg, '&filter='+form.filter.value);
+            } else {
+                link.href = link.href + '&filter='+form.filter.value;
+            }
+        }
+        var mapButton = document.getElementById("mapLink");
+        if (mapButton) {
+            addFilterToHref(mapButton);
+        }
+        var browseButton = document.getElementById("browseLink");
+        if (browseButton) {
+            addFilterToHref(browseButton);
+        }
     }
 }
 
