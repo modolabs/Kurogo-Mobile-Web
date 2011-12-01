@@ -218,7 +218,7 @@ class AthleticsWebModule extends WebModule {
         if (isset($this->feeds[$sport])) {
             return $this->feeds[$sport];
         } else {  
-            throw new KurogoDataException('Unable to load data for sport '. $sport);
+            throw new KurogoDataException($this->getLocalizedString('UNLOAD_SPORT', $sport));
         }
     }
     
@@ -226,7 +226,7 @@ class AthleticsWebModule extends WebModule {
     
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         if (!$data) {
-            throw new KurogoDataException('Unable to load data for nav '. $tab);
+            throw new KurogoDataException($this->getLocalizedString('UNLOAD_NAV', $tab));
         }
         
         return $data;
@@ -249,7 +249,7 @@ class AthleticsWebModule extends WebModule {
             $feedData = $this->getNavData('topnews');
         } else {
             if (!$feedData = $this->getOptionalModuleSection($sport, 'feeds')) {
-                throw new KurogoDataException('Unable to load data for sport '. $sport);
+                throw new KurogoDataException($this->getLocalizedString('UNLOAD_SPORT', $sport));
             }
         }
         
