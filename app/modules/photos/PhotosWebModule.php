@@ -61,7 +61,7 @@ class PhotosWebModule extends WebModule {
         switch($this->page) {
             case 'index':
                 // if there is only one album, go straight to album
-                if(count($this->feeds == 1)) {
+                if(count($this->feeds) == 1) {
                     $albumId = key($this->feeds);
                     $this->redirectTo('album', array('id' => $albumId), true);
                     exit;
