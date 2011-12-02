@@ -9,20 +9,23 @@
  */
 includePackage('DataRetriever');
 includePackage('DataResponse');
+includePackage('DataParser');
 abstract class DataRetriever {
 
     protected $DEFAULT_RESPONSE_CLASS = 'DataResponse';
-    protected $DEFAULT_PARSER_CLASS=null; 
+    protected $DEFAULT_PARSER_CLASS;
+    protected $PARSER_INTERFACE = 'DataParser';
     protected $DEFAULT_CACHE_LIFETIME = 900; // 15 min
     protected $initArgs=array();
     protected $authority;
     protected $debugMode = false;
-    protected $supportsSearch = false;
     protected $options = array();
+    protected $context = array(); // sent to the response
     protected $cache;
     protected $cacheKey;
     protected $cacheGroup;
     protected $cacheLifetime = null; //if null it will use cache default.
+    protected $parser;
 
     abstract protected function retrieveData();
     
@@ -74,11 +77,11 @@ abstract class DataRetriever {
     }
     
     /* subclasses can override this method to return a dynamic parser PER request */
-    public function parser() {
-        return null;
+    protected function parser() {
+        return $this->parser;
     }
     
-    public function getData() {
+    public function getResponse() {
         $cacheKey = $this->cacheKey();
         $cacheGroup = $this->cacheGroup();
         
@@ -98,11 +101,15 @@ abstract class DataRetriever {
     
     protected function initResponse() {
         $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, array());
-        if ($this->authority) {
-            $response->setContext('authority', $this->authority);
+        foreach ($this->context as $var=>$value) {
+            $response->setContext($var, $value);
         }
         
         return $response;
+    }
+    
+    protected function setContext($var, $value) {
+        $this->context[$var] = $value;
     }
     
     public function setDebugMode($debugMode) {
@@ -111,10 +118,6 @@ abstract class DataRetriever {
 
     protected function getAuthority() {
         return $this->authority;
-    }
-    
-    public function supportsSearch() {
-        return $this->supportsSearch;
     }
     
     public function getCurrentUser() {
@@ -128,10 +131,12 @@ abstract class DataRetriever {
     
     protected function setAuthority(AuthenticationAuthority $authority) {
         $this->authority = $authority;
+        $this->setContext('authority', $this->authority);
     }
     
     public function setOption($option, $value) {
         $this->options[$option] = $value;
+        $this->parser()->setOption($option, $value);
     }
 
     public function getOption($option) {
@@ -149,16 +154,28 @@ abstract class DataRetriever {
                 $this->setAuthority($authority);
             }
         }
+
+        if (!isset($args['PARSER_CLASS'])) {
+            if ($this->DEFAULT_PARSER_CLASS) {
+                $args['PARSER_CLASS'] = $this->DEFAULT_PARSER_CLASS;
+            } elseif (isset($args['DEFAULT_PARSER_CLASS']) && strlen($args['DEFAULT_PARSER_CLASS'])) {
+                $args['PARSER_CLASS'] = $args['DEFAULT_PARSER_CLASS'];
+            } else {
+                $args['PARSER_CLASS'] = 'PassthroughDataParser';
+            }            
+        }
         
+        // instantiate the parser class
+        $parser = DataParser::factory($args['PARSER_CLASS'], $args);
+        $this->setParser($parser);
+                
         $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
         $this->cache = DataCache::factory($cacheClass, $args);
     }
     
-    public function getDefaultParserClass() {
-        return $this->DEFAULT_PARSER_CLASS;
-    }
-    
     public function clearInternalCache() {
+        $this->options = array();
+        $this->parser()->clearInternalCache();
     }
     
     public static function factory($retrieverClass, $args) {
@@ -178,4 +195,110 @@ abstract class DataRetriever {
         $retriever->init($args);
         return $retriever;
     }
+
+   /**
+     * Sets the data parser to use for this request. Typically this is set at initialization automatically,
+     * but certain subclasses might need to determine the parser dynamically.
+     * @param DataParser a instantiated DataParser object
+     */
+    public function setParser(DataParser $parser) {
+        if ($parser instanceOf $this->PARSER_INTERFACE) {
+            $this->parser = $parser;
+        } else {
+            throw new KurogoException("Data Parser " . get_class($parser) . " must conform to $this->PARSER_INTERFACE");
+        }
+    }
+    
+    /**
+     * Parse the data.
+     * @param string $data the data from a request
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseData($data, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser();
+        }
+        $parsedData = $parser->parseData($data);
+        return $parsedData;
+    }
+
+    /**
+     * Parse a file. 
+     * @param string $file a file containing the contents of the data
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseFile($file, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser();
+        }
+        $parsedData = $parser->parseFile($file);
+        return $parsedData;
+    }
+
+    /**
+     * Parse the response
+     * @param DataResponse $response the DataResponse from a request
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseResponse(DataResponse $response, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser();
+        }
+        $parsedData = $parser->parseResponse($response);
+        return $parsedData;
+    }
+
+    public function getResponseError() {
+        if ($response = $this->getResponse()) {
+            return $response->getResponseError();
+        }
+    }
+
+    public function getResponseCode() {
+        if ($response = $this->getResponse()) {
+            return $response->getCode();
+        }
+    }
+
+    /**
+     * Return the parsed data. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    public function getData(&$response=null) {
+
+        $parser = $this->parser();
+        $response = $this->getResponse();
+                
+        switch ($parser->getParseMode()) {
+            case DataParser::PARSE_MODE_STRING:
+                $data = $response->getResponse();
+                $data = $this->parseData($data, $parser);
+                break;
+        
+           case DataParser::PARSE_MODE_FILE:
+                $file = $this->getDataFile();
+                $data =  $this->parseFile($file, $parser);
+                break;
+
+           case DataParser::PARSE_MODE_RESPONSE:
+                $data = $this->parseResponse($response, $parser);
+                break;
+            default:
+                throw new KurogoConfigurationException("Unknown parse mode");
+        }
+        
+        return $data;
+    }
+
+    /**
+     * Returns the target encoding of the result.
+     * @return string. Default is utf-8
+     */
+    public function getEncoding() {
+        return $this->parser()->getEncoding();
+    }
+        
 }

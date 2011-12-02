@@ -218,6 +218,9 @@ class URLDataRetriever extends DataRetriever {
         return null;
     }
     
+    protected function initRequest() {
+    }
+    
     /**
      * Retrieves the data using the config url. The default implementation uses the file_get_content()
      * function to retrieve the request. Subclasses would need to implement this if a simple GET request
@@ -225,7 +228,8 @@ class URLDataRetriever extends DataRetriever {
      * @return HTTPDataResponse a DataResponse object
      */
     protected function retrieveData() {
-
+    
+        $this->initRequest();
         if (!$this->requestURL = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }
@@ -246,6 +250,9 @@ class URLDataRetriever extends DataRetriever {
         $response->setResponseHeaders($http_response_header);
         
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
+        if ($response->getResponseError()) {
+            Kurogo::log(LOG_WARNING, sprintf("%s for %s", $response->getResponseError(), $this->requestURL), 'url_retriever');
+        }
         
         return $response;
     }
