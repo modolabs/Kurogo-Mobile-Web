@@ -20,7 +20,7 @@ class DatabaseDataRetriever extends DataRetriever
         $this->sql = $sql;
     }
     
-    public sql() {
+    public function sql() {
         return $this->sql;
     }
 
