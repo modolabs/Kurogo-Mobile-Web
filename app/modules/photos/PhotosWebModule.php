@@ -55,7 +55,7 @@ class PhotosWebModule extends WebModule {
          * no feed, throw exception
          */
         if (count($this->feeds) == 0) {
-            throw new KurogoConfigurationException("No photo feeds configured");
+            throw new KurogoConfigurationException($this->getLocalizedString('PHOTOS_FEED_CONFIGURE_ERROR_MESSAGE'));
         }
 
         switch($this->page) {
@@ -66,7 +66,7 @@ class PhotosWebModule extends WebModule {
                     if ($defaultPhoto = $controller->getDefaultPhoto()) {
                         $photo['title'] = $controller->getTitle();
                         $photo['type'] = $defaultPhoto->getType();
-                        $photo['albumcount'] = $controller->getAlbumSize() . ' photos';
+                        $photo['albumcount'] = $this->getLocalizedString('PHOTOS_ALBUMCOUNT',$controller->getAlbumSize());
                         // use base64_encode to make sure it will not be blocked by GFW
                         $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
                         $photo['img'] = $defaultPhoto->getThumbnailUrl();
@@ -108,14 +108,14 @@ class PhotosWebModule extends WebModule {
                     if ($start > 0) {
                         $args['start'] = $start - $maxPerPage;
                         $previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
-                        $this->assign('prev', 'Previous');
+                        $this->assign('prev', $this->getLocalizedString('PREVIOUS_TEXT'));
                         $this->assign('prevURL', $previousURL);
                     }
                     
                     if (($totalItems - $start) > $maxPerPage) {
                         $args['start'] = $start + $maxPerPage;
                         $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
-                        $this->assign('next', 'Next');
+                        $this->assign('next', $this->getLocalizedString('NEXT_TEXT'));
                         $this->assign('nextURL',     $nextURL);
                     }		
                 }
@@ -124,7 +124,7 @@ class PhotosWebModule extends WebModule {
             case 'show':
             	$album = $this->getArg('album', null);
             	if(!isset($album)){
-            		throw new KurogoUserException("Invalid album specified");
+            		throw new KurogoUserException($this->getLocalizedString('PHOTOS_SPECIFIED_ERROR_MESSAGE'));
             	}
             	$controller = $this->getFeed($album);
                 $id = base64_decode($this->getArg('id'));
