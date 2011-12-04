@@ -18,7 +18,6 @@ class SOAPDataRetriever extends DataRetriever {
     protected $method;
     protected $parameters;
     protected $soapHeaders = array();
-    protected $soapFunctions = array();
     
     public function setWSDL($wsdl) {
         if (($wsdl != $this->wsdl) && $this->soapClient) {
@@ -31,10 +30,6 @@ class SOAPDataRetriever extends DataRetriever {
         return $this->wsdl;
     }
 	
-	public function getSoapFunctions() {
-	    return $this->soapFunctions;
-	}
-	
 	protected function getSoapClient() {
 		if (!$this->soapClient) {
 		    try {
@@ -44,10 +39,6 @@ class SOAPDataRetriever extends DataRetriever {
                     $this->soapClient->__setSoapHeaders($this->soapHeaders);
                 }
                         
-		        if ($functions = $this->soapClient->__getFunctions()) {
-		            $this->parseSoapFunctions($functions);
-		        }
-        
 		    } catch (SoapFault $fault) {
 		        Kurogo::log(LOG_WARNING, "Error creating SOAP Client: " . $fault->getMessage(), 'soap_retriever');
 		        throw new KurogoDataException("Error creating SOAP Client");
@@ -56,18 +47,6 @@ class SOAPDataRetriever extends DataRetriever {
 		return $this->soapClient;
 	}
 	
-	protected function parseSoapFunctions($functions) {
-	    $soapFunctions = array();
-	    foreach ($functions as $function) {
-	        if (preg_match("/(.*?) (.*?)\(.*/", $function, $matches)) {
-	            if (isset($matches[2]) && $matches[2]) {
-	                $soapFunctions[] = $matches[2];
-	            }
-            }
-	    }
-	    return $soapFunctions;
-    }
-    
 	public function addSoapHeader($namespace, $name, $data) {
 	    $this->soapHeaders[] = new SOAPHeader($namespace, $name, $data);
     }
