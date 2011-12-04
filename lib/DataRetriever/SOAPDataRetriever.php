@@ -79,6 +79,26 @@ class SOAPDataRetriever extends DataRetriever {
         $args = array_merge(Kurogo::getOptionalSiteSection('soap'), $args);
         if (isset($args['WSDL']) && $args['WSDL']) {
             $this->setWSDL($args['WSDL']);
+            $this->location = $args['WSDL'];
+        }
+        
+        if (isset($args['BASE_URL'])) {
+            $this->location = $args['BASE_URL'];
+            $this->setSoapOption('location', $args['BASE_URL']);
+
+            if (isset($args['URI'])) {
+                $this->setSoapOption('uri', $args['URI']);
+            } else {
+                $this->setSoapOption('uri', FULL_URL_BASE);
+            }
+        }
+
+        if (isset($args['METHOD'])) {
+            $this->setMethod($args['METHOD']);
+        }
+
+        if (isset($args['PARAMETERS'])) {
+            $this->setParameters($args['PARAMETERS']);
         }
         
         if (isset($args['SSL_VERIFY'])) {
@@ -127,7 +147,9 @@ class SOAPDataRetriever extends DataRetriever {
             $parameters = get_object_vars($parameters);
         }
         
-        if (!$wsdl) {
+        if ($wsdl) {
+            $location = $wsdl;
+        } elseif (!$location = $this->getSoapOption('location')) {
             throw new KurogoDataException("SOAP WSDL not set");
         }
         
@@ -135,30 +157,24 @@ class SOAPDataRetriever extends DataRetriever {
             throw new KurogoDataException("SOAP method not set");
         }
         
-        return 'soap_' . md5($wsdl) . '-' . md5($method) . '-' . md5(serialize($parameters));
+        return 'soap_' . md5($location) . '-' . md5($method) . '-' . md5(serialize($parameters));
     }
 
     protected function retrieveData() {
     
-        $wsdl = $this->wsdl();
         $method = $this->method();
         $parameters = $this->parameters();
         $soapClient = $this->getSOAPClient();
 
-        Kurogo::log(LOG_DEBUG, sprintf("Calling SOAP Method %s from %s", $method, $wsdl), 'soap');
+        Kurogo::log(LOG_DEBUG, sprintf("Calling SOAP Method %s", $method), 'soap');
 
         try {
             $data = $soapClient->{$method}($parameters);
         } catch (SoapFault $fault) {
-            if(isset($fault->detail)) {
-                $message = $fault->detail->errorstring;
-            }else if(isset($fault->faultstring)) {
-                $message = $fault->faultstring;
-            }
-            throw new KurogoDataException("Retrieving data error: $message");
+            throw new KurogoDataException($fault->getMessage(), $fault->getCode());
         }
 
-        if (!$lastResponseHeaders = $this->getSoapClient()->__getLastResponseHeaders()) {
+        if (!$lastResponseHeaders = $soapClient->__getLastResponseHeaders()) {
             $lastResponseHeaders = array();
         }
         
@@ -166,7 +182,7 @@ class SOAPDataRetriever extends DataRetriever {
         if ($this->authority) {
             $response->setContext('authority', $this->authority);
         }
-        $response->setRequest($wsdl, $method, $parameters, $this->soapHeaders, $this->soapOptions);
+        $response->setRequest($this->location, $method, $parameters, $this->soapHeaders, $this->soapOptions);
         $response->setResponse($data);
 
         return $response;
