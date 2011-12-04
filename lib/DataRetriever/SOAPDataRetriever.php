@@ -77,6 +77,10 @@ class SOAPDataRetriever extends DataRetriever {
         }
 
         if (isset($args['PARAMETERS'])) {
+            if (!is_array($args['PARAMETERS'])) {
+                throw new KurogoConfigurationException("Parameters must be an array");
+            }
+            
             $this->setParameters($args['PARAMETERS']);
         }
         
@@ -93,7 +97,7 @@ class SOAPDataRetriever extends DataRetriever {
         return $this->method;
     }
 
-    protected function setParameters($parameters) {
+    protected function setParameters(array $parameters) {
         $this->parameters = $parameters;    
     }
     
@@ -148,8 +152,9 @@ class SOAPDataRetriever extends DataRetriever {
         Kurogo::log(LOG_DEBUG, sprintf("Calling SOAP Method %s", $method), 'soap');
 
         try {
-            $data = $soapClient->{$method}($parameters);
+            $data = $soapClient->__soapCall($method, $parameters);
         } catch (SoapFault $fault) {
+            KurogoDebug::debug($fault, true);
             throw new KurogoDataException($fault->getMessage(), $fault->getCode());
         }
 
