@@ -13,7 +13,7 @@ Basic Layout
 There are several directories located in the root of the Kurogo folder:
 
 **add-ons**
-  This directory contains additional scripts or code that be used to interact with other applications
+  This directory contains additional scripts or code that can be used to interact with other applications
 **app**
   This directory contains the code and :ref:`templates <templates-tour>` for each module provided by Kurogo. This also
   includes shared templates used by every module (including headers and footers). As with the lib 
@@ -81,12 +81,22 @@ module (use: *Kurogo::includePackage('PackageName')* in your module code). Curre
 
 * Authentication (included automatically when authentication is enabled)
 * Authorization - for connecting to various OAuth based web services
-* Calendar - includes classes to deal with date and time
+* Cache - classes dealing with in-memory and disk caching
+* Calendar - includes classes to deal with calendar data
+* Config - classes to deal with configuration files
+* DataController - legacy classes dealing with the pre 1.4 DataController class
+* DataModel - subclasses of the  :doc:`DataModel <datamodel>` class
+* DataParser - subclasses of the  :doc:`DataParser <dataparser>` class
+* DataResponse - subclasses of the  :doc:`DataResponse <dataresponse>` class
+* DataRetriever - subclasses of the  :doc:`DataRetriever <dataretriever>` class
+* DateTime - classes for handling date and time
 * db - used when you wish to interact with a database
-* Emergency - used by the emergency module
-* Maps - used by the maps module
-* People - used by the people module
-* Video - used by the video module
+* Emergency - used by the :doc:`emergency <moduleemergency>` module
+* Maps - used by the :doc:`map <modulemap>` module
+* People - used by the :doc:`people <modulepeople>` module
+* RSS - classes for handling RSS data
+* Session - Subclasses of the session object, used for session management
+* Video - used by the :doc:`video <modulevideo>` module
 
 --------------------
 Core / Support Files

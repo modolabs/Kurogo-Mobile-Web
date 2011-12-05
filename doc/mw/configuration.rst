@@ -209,6 +209,7 @@ Analytics
 
 * *GOOGLE_ANALYTICS_ID* - set this to your google analytics id and the framework will utilize the google 
   analytics server
+* *GOOGLE_ANALYTICS_DOMAIN* - If you use subdomains in your google analytics reporting, set this to the appropriate domain
 * *PERCENT_MOBILE_ID* - set this to your percent mobile analytics id and the framework will utilize the percent
   mobile analytics server
 * *STATS_ENABLED* - if set to 0 then the internal statistics engine will be disabled
