@@ -45,9 +45,13 @@ class DatabaseDataRetriever extends DataRetriever
         $this->setSQL($sql);
         $this->setParameters($parameters);
     }
+    
+    protected function initRequest() {
+    }
 
     protected function retrieveResponse() {
 
+        $this->initRequest();
         $response = $this->initResponse();
 
         if ($sql = $this->sql()) {
