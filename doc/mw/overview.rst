@@ -23,7 +23,7 @@ CSS. Kurogo is designed to accept data from a variety of external sources, parse
 and prepare it in a format suitable for presentation. 
 
 A typical user request would include querying a data source and parsing the resulting data using
-a *Data Controller*. Then the module would pass the data to the *Template Engine* which outputs the
+a :doc:`Data Parser <dataparser>`. Then the module would pass the data to the *Template Engine* which outputs the
 page using appropriate HTML, CSS and Javascript for the device.
 
 .. image:: images/diagram.png

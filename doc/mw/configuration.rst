@@ -152,7 +152,7 @@ The properties in this section are used during development. Most of them are boo
   vary by module. An example of this is showing the LDAP server used by the People module
 * *MINIFY_DEBUG* - When Minify debugging is turned on, Minify adds comments to help with locating the 
   actual file associated with a given line.
-* *DATA_DEBUG* - Data debugging enables logging and certain output to debug data controller connections. 
+* *DATA_DEBUG* - Data debugging enables logging and certain output to debug data connections. 
   When turned on, it will log url requests in the error log.
 * *DEVICE_DETECTION_DEBUG* - Show the device detection info in the footer
 * *PRODUCTION_ERROR_HANDLER_ENABLED* - The production error handler will email exceptions to the DEVELOPER_EMAIL
