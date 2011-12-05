@@ -106,6 +106,7 @@ abstract class DataParser
     }
 
     public function clearInternalCache() {
+        $this->setTotalItems(null);
     }
     
 }

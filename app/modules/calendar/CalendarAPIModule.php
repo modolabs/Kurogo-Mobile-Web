@@ -8,7 +8,7 @@ class CalendarAPIModule extends APIModule
 
     protected $id = 'calendar';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
 
     protected $timezone;
     protected $fieldConfig;

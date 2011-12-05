@@ -73,6 +73,11 @@ abstract class DataRetriever {
         
     }
     
+    /* subclasses can override this method to return a dynamic parser PER request */
+    public function parser() {
+        return null;
+    }
+    
     public function getData() {
         $cacheKey = $this->cacheKey();
         $cacheGroup = $this->cacheGroup();

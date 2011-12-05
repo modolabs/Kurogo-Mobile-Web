@@ -770,7 +770,7 @@ class ICalRecurrenceRule extends ICalObject {
                 case 'BYWEEKNO':
                 case 'BYSETPOS':
                 case 'WKST':
-                    throw new Exception("BYWEEKNO, BYSETPOS, WKST Not handled yet");
+                    throw new ICalendarException("$rule Not handled yet");
                     break;
                 default:
             }
