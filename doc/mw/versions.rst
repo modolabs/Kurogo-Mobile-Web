@@ -7,7 +7,16 @@ For more detailed release notes, see the included CHANGELOG file
 
 Version 1.4 (January, 2012)
 ===========================
-
+* Overhauled the :doc:`Data Retrieval <dataretrieval>` classes to better support SOAP and Database retrieval methods and complex data models
+* Better client side caching headers
+* Added support for in-memory caching of Kurogo data structures using Memcache or APC
+* Added support for encrypting data on disk (requires mcrypt)
+* Added option to locally save user credentials so they can be passed on to external services
+* Added support for Google Analytics domain names
+* Added support to show emergency notifications on the home screen
+* Federated search queries will now happen asynchronously on compliant devices.
+* Added support to create copied modules from the admin console.
+* Added support to remove modules from the admin console
 
 Version 1.3 (October 13, 2011)
 ==============================
