@@ -154,7 +154,6 @@ class SOAPDataRetriever extends DataRetriever {
         try {
             $data = $soapClient->__soapCall($method, $parameters);
         } catch (SoapFault $fault) {
-            KurogoDebug::debug($fault, true);
             throw new KurogoDataException($fault->getMessage(), $fault->getCode());
         }
 
