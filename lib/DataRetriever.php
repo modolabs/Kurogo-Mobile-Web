@@ -148,6 +148,12 @@ abstract class DataRetriever {
         if (isset($args['DEBUG_MODE'])) {
             $this->setDebugMode($args['DEBUG_MODE']);
         }
+        
+        if (isset($args['OPTIONS']) && is_array($args['OPTIONS'])) {
+            foreach ($args['OPTIONS'] as $arg=>$value) {
+                $this->setOption($arg, $value);
+            }
+        }
 
         if (isset($args['AUTHORITY'])) {
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($args['AUTHORITY'])) {
