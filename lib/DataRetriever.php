@@ -27,7 +27,7 @@ abstract class DataRetriever {
     protected $cacheLifetime = null; //if null it will use cache default.
     protected $parser;
 
-    abstract protected function retrieveData();
+    abstract protected function retrieveResponse();
     
     public function setCacheLifeTime($cacheLifetime) {
         $this->cacheLifetime = $cacheLifetime;
@@ -87,7 +87,7 @@ abstract class DataRetriever {
         
         if (!$response = $this->getCachedResponse($cacheKey, $cacheGroup)) {
 
-            $response = $this->retrieveData();
+            $response = $this->retrieveResponse();
             if (!$response instanceOf DataResponse) {
                 throw new KurogoDataException("Response must be instance of DataResponse");
             }

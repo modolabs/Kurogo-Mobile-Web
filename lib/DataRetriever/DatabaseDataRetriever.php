@@ -38,7 +38,7 @@ class DatabaseDataRetriever extends DataRetriever
         $this->setParameters($parameters);
     }
 
-    protected function retrieveData() {
+    protected function retrieveResponse() {
 
         $response = $this->initResponse();
 

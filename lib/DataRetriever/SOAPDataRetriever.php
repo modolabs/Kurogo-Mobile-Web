@@ -143,7 +143,7 @@ class SOAPDataRetriever extends DataRetriever {
         return 'soap_' . md5($location) . '-' . md5($method) . '-' . md5(serialize($parameters));
     }
 
-    protected function retrieveData() {
+    protected function retrieveResponse() {
     
         $method = $this->method();
         $parameters = $this->parameters();

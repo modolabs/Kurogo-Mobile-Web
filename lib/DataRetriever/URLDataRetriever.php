@@ -227,7 +227,7 @@ class URLDataRetriever extends DataRetriever {
      * is not sufficient (i.e. you need POST or custom headers). 
      * @return HTTPDataResponse a DataResponse object
      */
-    protected function retrieveData() {
+    protected function retrieveResponse() {
     
         $this->initRequest();
         if (!$this->requestURL = $this->url()) {

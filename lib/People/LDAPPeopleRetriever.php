@@ -32,7 +32,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
     
-    protected function retrieveData() {
+    protected function retrieveResponse() {
         $response = $this->initResponse();
         $response->setCode($this->errorNo);
         $response->setResponseError($this->errorMsg);
