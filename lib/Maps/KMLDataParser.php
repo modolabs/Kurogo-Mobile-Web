@@ -175,7 +175,11 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
             case 'STYLEURL':
                 $value = $element->value();
                 if ($parent->name() == 'Placemark') {
-                    $parent->setStyle($this->getStyle($value));
+                    if ($style = $this->getStyle($value)) {
+                        $parent->setStyle($this->getStyle($value));
+                    } else {
+                        Kurogo::log(LOG_WARNING, "Style $value was not found", 'map');
+                    }
                 } else {
                     $parent->addElement($element);
                 }
