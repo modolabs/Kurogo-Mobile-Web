@@ -33,11 +33,11 @@ abstract class DataRetriever {
         $this->cacheLifetime = $cacheLifetime;
     }
 
-    public function setCacheKey($cacheKey) {
+    protected function setCacheKey($cacheKey) {
         $this->cacheKey = $cacheKey;
     }
 
-    public function setCacheGroup($cacheGroup) {
+    protected function setCacheGroup($cacheGroup) {
         $this->cacheGroup = $cacheGroup;
     }
     
@@ -120,7 +120,7 @@ abstract class DataRetriever {
         return $this->authority;
     }
     
-    public function getCurrentUser() {
+    protected function getCurrentUser() {
         if ($this->authority) {
             return $this->authority->getCurrentUser();
         } else {
