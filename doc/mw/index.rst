@@ -41,7 +41,6 @@ This guide serves as a tour of the project source code and its features.
    themes
    libs
    dataretrieval
-   datacontroller
    modulenew
    moduleextend
    database

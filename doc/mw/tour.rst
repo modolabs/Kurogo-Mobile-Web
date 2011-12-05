@@ -110,42 +110,14 @@ for AJAX like functionality where supported.
 
 * *APIModule* - The base class for API modules, inherits from Module
 * *APIResponse* - A class that encapsulates the common response message for API requests
-* *CoreAPIModule* - Class used to handle site wide API functions (API requests not assigned to a specific module)
+
+See :doc:`apimodule` for more information.
 
 -----------------------
 External Data Retrieval
 -----------------------
 
-The main class is *DataController*. It provides functionality to retrieve URL based data (this could include
-both local and remote data), cache this data using the *DataResponse* class, and parse it using a subclass 
-of *DataParser* to prepare it into a structure suitable for use. In its optimal design, a data controller 
-will abstract the details of building the URL, and return objects that conform to the :ref:`KurogoObject <kurogoobject_interface>` interface, 
-allowing the module code to be as generic as possible.
-
-Included examples of DataControllers/Parsers include: 
-
-* *RSSDataController* - retrieves a feed of data in RSS/RDF or Atom formats. The corresponding *RSSDataParser* 
-  class takes the resulting data and builds a structure of items located in the feed. Also uses 
-  the *RSS* class.
-* *CalendarDataController* - retrieves a feed of data in ICS format. The corresponding *ICSDataParser*
-  class takes the resulting data and builds a structure of events in the feed. Also uses the *ICalendar*
-  and *TimeRange* class. The *TrumbaCalendarDataController* is a specific subclass for feeds that 
-  utilize the `Trumba <http://www.trumba.com/>`_ calendar service.
-* *PeopleController* - access directory/person data. Included implementations include the *LDAPPeopleController* 
-  and *DatabasePeopleController*. Note this is distinct from authenticating users.
-* *HTMLDataController* - retrieves a remote HTML document and optionally extracts a specific HTML ID
-  or element. It uses the *DOMDataParser*.
-
-These classes also use the *DiskCache* class to cache the retrieved data.
-
-Other included Data Parsers:
-
-* *PassthroughDataParser* - A no-op parser. Passes the data as is.
-* *JSONDataParser* - Parses JSON content into a PHP structure.
-* *DOMDataParser* - Parses HTML content into a DOM Object
-* *INIFileParser* - Parses INI files
-
-See :doc:`datacontroller` for more information
+See :doc:`dataretrieval` for more information
    
 ---------------
 Database Access

@@ -72,7 +72,10 @@ Writing A Parser
     {
         
         protected function parseData($data) {
-        
+            
+            // Take the data and parse it into objects or an array of objects
+                    
+            return $parsedData;
         }
     }
 

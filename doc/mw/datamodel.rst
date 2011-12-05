@@ -17,6 +17,7 @@ Developers should need to write any subclass of a Data Model for included module
 to connect to one of your services, then you will either set the appropriate configuration, or
 write a DataRetriever to connect to this service. 
 
+.. _itemlistdatamodel:
 
 =================
 ItemListDataModel
