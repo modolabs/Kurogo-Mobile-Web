@@ -87,6 +87,18 @@ class URLDataRetriever extends DataRetriever {
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
         }
+
+        if (isset($args['METHOD'])) {
+            $this->setMethod($args['METHOD']);
+        }
+
+        if (isset($args['HEADERS'])) {
+            $this->setHeaders($args['HEADERS']);
+        }
+
+        if (isset($args['DATA'])) {
+            $this->setData($args['DATA']);
+        }
         
         $this->initStreamContext($args);
     }
