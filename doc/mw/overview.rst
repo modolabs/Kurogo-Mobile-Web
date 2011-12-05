@@ -56,11 +56,12 @@ Data Customization
 
 Each module gives you the opportunity to choose the data source and processing methods for getting
 data into your application. By abstracting the details of retrieving and parsing data, your application
-can respond to a variety of data sources. Most modules will use a subclass of *DataController*. Each
-data controller has an object that is a subclass of *DataParser* that takes the resulting data and
-creates an appropriate PHP structure. Through configuration you can customize which DataController and
+can respond to a variety of data sources. Most modules will use a subclass of :doc:`DataModel <datamodel>`. 
+Each model uses an object called a :doc:`Data Retriever <dataretriever>` to retrieve the data
+and then parse it using a :doc:`DataParser <dataparser>` object that takes the resulting data and
+creates an appropriate PHP structure. Through configuration you can customize which DataRetriever and
 DataParser are used in a request which can influence the structures that get used. You can also create
-your own Data Controllers and Data Parsers to handle the unique qualities of your site's data.
+your own Data Retrievers and Data Parsers to handle the unique qualities of your site's data.
 
 ------------------
 Code Customization
