@@ -15,12 +15,12 @@ The configuration for this module is accomplished by using the :ref:`admin-modul
 the *SITE_DIR/config/people/feeds.ini* file. There are a variety of values to set in order to connect
 to your directory system.
 
-* *CONTROLLER_CLASS* allows you to set a different class name for the controller. Current options include
+* *RETRIEVER_CLASS* allows you to determine the mechanism for retrieving the data. Current options include:
 
-  * LDAPPeopleController - uses a standard LDAP server. You can configure the various fields if your values
+  * LDAPPeopleRetriever - uses a standard LDAP server. You can configure the various fields if your values
     differ from defaults
-  * ADPeopleController - a subclass of the LDAP controller that has preconfigured mappings for Active Directory
-  * DatabasePeopleController - connects to an external database server. This controller assumes
+  * ADPeopleRetriever - a subclass of the LDAP retriever that has preconfigured mappings for Active Directory
+  * DatabasePeopleRetriever - connects to an external database server. This controller assumes
     that people are mapped to a single row and that the various fields are stored in single (definable) columns 
   
 * *PERSON_CLASS* allows you to set a different class name for the returned user objects when searching.
@@ -28,7 +28,7 @@ to your directory system.
   the data in your directory service. 
 
 -------------------------------------------------------
-Options for LDAPPeopleController and ADPeopleController
+Options for LDAPPeopleRetriever and ADPeopleRetriever
 -------------------------------------------------------
 
 * *HOST* - should match the address of your server. Keep in mind that this server must
@@ -55,10 +55,10 @@ need to be altered if the values differ from the defaults in parentheses.
 * *LDAP_PHONE_FIELD* (telephonenumber) - The attribute of the user's phone number
 
 ------------------------------------
-Options for DatabasePeopleController
+Options for DatabasePeopleRetriever
 ------------------------------------
 
-The *DatabasePeopleController* has a number of possible configuration values, all of which
+The *DatabasePeopleRetriever* has a number of possible configuration values, all of which
 are optional. See :doc:`database` for a full detail on configuring database connections
 
 If you omit any of the values, it will default to the settings in :ref:`database_config`
