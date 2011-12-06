@@ -43,7 +43,13 @@ class HomeWebModule extends WebModule {
 
   protected function runFederatedSearchForModule($module, $searchTerms) {
       $results = array();
-      $total = $module->federatedSearch($searchTerms, 2, $results);
+      try {
+          $total = $module->federatedSearch($searchTerms, 2, $results);
+      } catch (Exception $e) {
+          $total = 0;
+          Kurogo::log(LOG_WARNING, 'Federated search for module '.$module->getID().' failed: '.
+              $e->getMessage(), 'module');
+      }
       return array(
           'items' => $results,
           'total' => $total,
