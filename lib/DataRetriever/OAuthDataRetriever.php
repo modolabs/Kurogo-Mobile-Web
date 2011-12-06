@@ -308,7 +308,7 @@ class OAuthDataRetriever extends URLDataRetriever
         return $headers;        
     }
     
-    protected function retrieveData() {
+    protected function retrieveResponse() {
     
         if ($this->requiresToken && !$this->token) {
             $response = $this->initResponse();
@@ -316,7 +316,7 @@ class OAuthDataRetriever extends URLDataRetriever
         }
 
         $headers = $this->headers(true);
-        $response = parent::retrieveData();
+        $response = parent::retrieveResponse();
         
         //if there is a location header we need to re-sign before redirecting
         if ($redirectURL = $response->getHeader("Location")) {
@@ -340,7 +340,7 @@ class OAuthDataRetriever extends URLDataRetriever
 		    //reset headers
 		    $this->setHeaders($headers);
             Kurogo::log(LOG_DEBUG, "Redirecting to $this->baseURL", 'oauth');
-            $response =  $this->retrieveData();
+            $response =  $this->retrieveResponse();
         }
         
         return $response;

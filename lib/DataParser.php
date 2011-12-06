@@ -17,6 +17,7 @@ abstract class DataParser
     const PARSE_MODE_RESPONSE=3;
     protected $encoding='utf-8';
     protected $parseMode=self::PARSE_MODE_RESPONSE;
+    protected $initArgs=array();
     protected $debugMode=false;
     protected $totalItems = null;
     protected $haltOnParseErrors = true;
@@ -55,6 +56,9 @@ abstract class DataParser
 
     protected function setTotalItems($total) {
         $this->totalItems = $total;
+        if ($this->response) {
+            $this->response->setContext('totalItems', $total);
+        }
     }
     
     public static function factory($parserClass, $args)
@@ -79,6 +83,7 @@ abstract class DataParser
     }
     
     public function init($args) {
+        $this->initArgs = $args;
         if (isset($args['HALT_ON_PARSE_ERRORS'])) {
             $this->haltOnParseErrors($args['HALT_ON_PARSE_ERRORS']);
         }
@@ -106,6 +111,7 @@ abstract class DataParser
     }
 
     public function clearInternalCache() {
+        $this->setTotalItems(null);
     }
     
 }

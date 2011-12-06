@@ -31,9 +31,8 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $filter;
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
-    protected $supportsSearch = true;
     
-    protected function retrieveData() {
+    protected function retrieveResponse() {
         $response = $this->initResponse();
         $response->setCode($this->errorNo);
         $response->setResponseError($this->errorMsg);
@@ -75,7 +74,6 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         $response->setResponse($result);
         $response->setCode($error_code);
         $response->setContext('ldap', $ds);
-        $response->setContext('fieldMap', $this->fieldMap);
 
         if ($error_code) {
             $response->setResponseError($this->generateErrorMessage($error_code));
@@ -113,11 +111,11 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         return $this->ldapResource;
     }
 
-    public function search($searchString) {
+    public function search($searchString, &$response=null) {
         $this->filter = $this->buildSearchFilter($searchString);
-        $response = $this->getData();
-        $response->setContext('mode', 'search');
-        return $response;
+        $this->setOption('action', 'search');
+
+        return $this->getData($response);
     }
     
     public function setAttributes($attributes) {
@@ -211,6 +209,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     }
     
     public function getUser($id) {
+        $this->setOption('action', 'user');
         if (strstr($id, '=')) { 
             // assume we're looking up person by "dn" (distinct ldap name)
             $this->filter = $id;
@@ -218,10 +217,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $this->filter = $this->buildUserFilter($id);
         }
 
-        $response = $this->getData();
-        $response->setContext('mode', 'user');
-        return $response;
-
+        return $this->getData();
     }
     
     protected function buildUserFilter($id) {
@@ -266,6 +262,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             'lastname'=>isset($args['LDAP_LASTNAME_FIELD']) ? $args['LDAP_LASTNAME_FIELD'] : 'sn',
             'phone'=>isset($args['LDAP_PHONE_FIELD']) ? $args['LDAP_PHONE_FIELD'] : 'telephonenumber'
         );
+        $this->setContext('fieldMap', $this->fieldMap);
     }
 }
 
@@ -442,7 +439,7 @@ class LDAPPeopleParser extends PeopleDataParser
         $fieldMap = $response->getContext('fieldMap');
         
         $parsedData = $this->parseSearch($data, $ds, $fieldMap);
-        if ($response->getContext('mode')=='user') {
+        if ($this->getOption('action')=='user') {
             $parsedData = isset($parsedData[0]) ? $parsedData[0] : false;
             $this->setTotalItems($parsedData ? 1 : 0);
         } else {

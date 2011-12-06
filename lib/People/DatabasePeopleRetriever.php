@@ -13,7 +13,6 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
     protected $personClass = 'DatabasePerson';
     protected $sortFields=array('lastname','firstname');
     protected $attributes = array();
-    protected $supportsSearch = true;
 
     public function debugInfo() {
         return sprintf("Using Database");
@@ -97,14 +96,13 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
         return array($sql, $parameters);
     }
     
-    public function search($searchString) {
+    public function search($searchString, &$response=null) {
 
         $this->setQuery($this->buildSearchQuery($searchString));
-        $response = $this->getData();
-        $response->setContext('fieldMap',$this->fieldMap);
-        $response->setContext('mode','search');
-        $response->setContext('value', $searchString);
-        return $response;
+        $this->setOption('action', 'search');
+        $this->setContext('value', $searchString);
+
+        return $this->getData($response);
     }
     
     protected function getField($_field) {
@@ -127,11 +125,10 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
     */
     public function getUser($id) {
         $this->setQuery($this->buildUserQuery($id));
-        $response = $this->getData();
-        $response->setContext('fieldMap',$this->fieldMap);
-        $response->setContext('mode','user');
-        $response->setContext('value', $id);
-        return $response;
+        $this->setOption('action','user');
+        $this->setContext('value', $id);
+
+        return $this->getData($response);
     }
 
     public function setAttributes($attributes) {
@@ -154,6 +151,8 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
             'lastname'=>isset($args['DB_LASTNAME_FIELD']) ? $args['DB_LASTNAME_FIELD'] : 'lastname',
             'phone'=>isset($args['DB_PHONE_FIELD']) ? $args['DB_PHONE_FIELD'] : ''
         );
+        
+        $this->setContext('fieldMap',$this->fieldMap);
     }
 }
 
@@ -174,7 +173,7 @@ class DatabasePeopleParser extends PeopleDataParser
 
         $fieldMap = $response->getContext('fieldMap');
         
-        switch ($response->getContext('mode')) {
+        switch ($this->getOption('action')) {
             case 'search':
                 $results = array();
                 while ($row = $result->fetch()) {

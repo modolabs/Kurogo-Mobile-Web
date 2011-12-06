@@ -1,9 +1,8 @@
 <?php
 
- class YouTubeRetriever extends URLDataRetriever
+ class YouTubeRetriever extends URLDataRetriever implements SearchDataRetriever, ItemDataRetriever
  {
     protected $DEFAULT_PARSER_CLASS='YouTubeDataParser';
-    protected $supportsSearch = true;
     
  	private function setStandardFilters() {
  		if ($playlist = $this->getOption('playlist')) {
@@ -18,54 +17,65 @@
         $this->addFilter('orderby', 'published');
     }
     
-    public function search($searchTerms) {
+    public function search($searchTerms, &$response=null) {
         $this->setStandardFilters();
         $this->addFilter('q', $searchTerms); //set the query
         $this->addFilter('orderby', 'relevance');
-        return $this->getData();
+        return $this->getData($response);
     }
     
     protected function init($args) {
+        parent::init($args);
         if (isset($args['PLAYLIST']) && strlen($args['PLAYLIST'])) {
             $this->setOption('playlist', $args['PLAYLIST']);
         }
         $this->setStandardFilters();
-        parent::init($args);
-
     }
-
-    public function url() {
-        if ($tag = $this->getOption('tag')) {
-            $this->addFilter('category', $tag);
-        }
-
-        if ($author = $this->getOption('author')) {
-            $this->addFilter('author', $author);
-        }
+    
+    protected function initRequest() {
+        parent::initRequest();
 
         if ($limit = $this->getOption('limit')) {
             $this->addFilter('max-results', $limit);
         }
-        $this->addFilter('start-index', $this->getOption('start')+1);
-        return parent::url();
+        
+        $start = $this->getOption('start');
+        if (strlen($start)) {
+            $this->addFilter('start-index', $this->getOption('start')+1);
+        }
     }
     
+    public function setOption($option, $value) {
+        parent::setOption($option, $value);
+        
+        switch ($option)
+        {
+            case 'tag':
+                $this->addFilter('category', $value);
+                break;
+            case 'author':
+                $this->addFilter('author', $value);
+                break;
+        }
+    }
+
     protected function isValidID($id) {
         return preg_match("/^[A-Za-z0-9_-]+$/", $id);
     }
     
 	 // retrieves video based on its id
-	public function getItem($id)
+	public function getItem($id, &$response=null)
 	{
 	    if (!$this->isValidID($id)) {
+	        Kurogo::log(LOG_WARNING, "Invalid YouTube id $id found", 'video');
 	        return false;
 	    }
         $this->setBaseUrl("http://gdata.youtube.com/feeds/mobile/videos/$id");
         $this->addFilter('alt', 'jsonc'); //set the output format to json
         $this->addFilter('format', 6); //only return mobile videos
         $this->addFilter('v', 2); // version 2
-
-        return $this->getParsedData();
+        
+        return $this->getData($response);
 	}
 }
  

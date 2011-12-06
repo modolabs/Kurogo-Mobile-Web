@@ -25,10 +25,8 @@ the type parameter is not indicated in a url, the first calendar is used.
 
 **Optional values**
 
-* *CONTROLLER_CLASS* - allows you to set a different class name for the controller. The default is 
-  CalendarDataController. You could write your own subclass to adjust the URL if your source is a 
-  web service. The framework also includes an implementation suitable for users who host their calendar
-  data on the Trumba event service. 
+* *RETRIEVER_CLASS* - allows you to set a different class name for the :doc:`Data Retriever <dataretriever>`. If
+  your service uses dynamic urls then you should write a custom retriever.
 * *PARSER_CLASS* (default ICSDataParser) set this to a subclass of *DataParser*. You would only need to change it if your data
   source returns data in a format other than iCalendar (ICS). 
 * *EVENT_CLASS* (default ICalEvent) allows you to set a different class name for the returned event objects when searching. 
@@ -92,13 +90,15 @@ To enable User Calendars:
 * Ensure that you have entered the required OAuth consumer key and secret
 * Ensure that the "http://www.google.com/calendar/feeds" scope is available in your authority.
 * Edit *config/calendar/module.ini* and add a *user_calendars* section.
-* Set CONTROLLER_CLASS to GoogleAppsCalendarListController
-* Set AUTHORITY to the section name of your Google Apps Authority
+* Set RETRIEVER_CLASS to GoogleAppsCalendarListRetriever
+* Set AUTHORITY to the section name of your Google Apps Authority. If this value is not set it will use the first defined GoogleAppsAuthority class
 
-This is an example section from the config/calendar/module.ini file::
+This is an example section from the config/calendar/module.ini file:
+
+.. code-block:: ini
 
   [user_calendars]
-  CONTROLLER_CLASS="GoogleAppsCalendarListController"
+  RETRIEVER_CLASS="GoogleAppsCalendarListRetriever"
   AUTHORITY="googleapps"
 
 To enable Resources: 
@@ -107,11 +107,14 @@ To enable Resources:
 * Ensure that you have entered the required OAuth consumer key and secret
 * Ensure that the "https://apps-apis.google.com/a/feeds/calendar/resource/" scope is available in your authority.
 * Edit *config/calendar/module.ini* and add a *resources* section.
-* Set CONTROLLER_CLASS to GoogleAppsCalendarListController
+* Set RETRIEVER_CLASS to GoogleAppsCalendarListRetriever
 * Set AUTHORITY to the section name of your Google Apps Authority
 
-This is an example section from the config/calendar/module.ini file::
+This is an example section from the config/calendar/module.ini file:
+
+.. code-block:: ini
 
   [resources]
-  CONTROLLER_CLASS="GoogleAppsCalendarListController"
+  RETRIEVER_CLASS="GoogleAppsCalendarListRetriever"
   AUTHORITY="googleapps"
+
