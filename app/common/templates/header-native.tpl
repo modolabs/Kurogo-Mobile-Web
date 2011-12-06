@@ -2,6 +2,21 @@
 
 {block name="pageTitle"}{$pageTitle|strip_tags|escape:'htmlall'}{/block}
 
+{block name="urlBaseJavascript"}
+  <script type="text/javascript">var URL_BASE='{$nativeServerURLBase}';</script>
+{/block}
+
+{block name="analyticsJavascript"}
+{/block}
+
+{block name="inlineJavascriptBlocks"}
+  {* will be loaded below by content *}
+{/block}
+
+{block name="onLoadJavascriptBlocks"}
+  {* will be loaded below by content *}
+{/block}
+
 {block name="javascript"}
   <script type="text/javascript">
     //
@@ -45,16 +60,6 @@
         httpRequest.send(null);
     {rdelim}
   </script>
-  
-  {$URL_BASE = $nativeServerURLBase}
-  
-  {* Native has its own analytics *}
-  {$GOOGLE_ANALYTICS_ID = ''}
-  {$PERCENT_MOBILE_ID = ''}
-  
-  {* will be loaded below by content *}
-  {$inlineJavascriptFooterBlocks = null}
-  {$onLoadBlocks = null}
   
   {$smarty.block.parent}
 {/block}

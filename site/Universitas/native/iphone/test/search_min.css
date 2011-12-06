@@ -1,0 +1,2105 @@
+/* Adding url prefix '/kurogo-private/device/native-iphone-0/' */
+
+/* Minify_CSS_UriRewriter::$debugText
+
+docRoot    : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/web
+currentDir : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/app/common/css
+symlinks : array (
+  '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/web' => '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/themes/hi-def',
+)
+
+*/
+
+/* native.css */
+
+/* 1    */ /* Redefinition of basic elements */
+/* 2    */ 
+/* 3    */ html, body {
+/* 4    */ 	margin: 0;
+/* 5    */ 	padding: 0;
+/* 6    */ 	width: 100%;
+/* 7    */ }
+/* 8    */ 
+/* 9    */ body {
+/* 10   */ 	-webkit-text-size-adjust: none; 
+/* 11   */ }
+/* 12   */ 
+/* 13   */ #nonfooternav {
+/* 14   */   position: relative;
+/* 15   */ }
+/* 16   */ 
+/* 17   */ h1, h2, h3 {
+/* 18   */ 	margin: 0 0 0.5em 0;
+/* 19   */ 	line-height: 1.2em;
+/* 20   */ 	color: #000;
+/* 21   */ }
+/* 22   */ 
+/* 23   */ h3.nonfocal {
+/* 24   */ 	margin-bottom: -0.25em;
+/* 25   */ }
+/* 26   */ 
+/* 27   */ h4 {
+/* 28   */ 	margin: 0 0 6px 0;
+/* 29   */ 	padding: 0;
+/* 30   */ }
+/* 31   */ 
+/* 32   */ a img {
+/* 33   */ 	border: none
+/* 34   */ }
+/* 35   */ 
+/* 36   */ p {
+/* 37   */ 	margin: 0 0 0.75em 0;
+/* 38   */ }
+/* 39   */ 
+/* 40   */ table {
+/* 41   */ 	width: 100%;
+/* 42   */ 	margin: 0 0 0.75em 0;
+/* 43   */ }
+/* 44   */ 
+/* 45   */ th, td {
+/* 46   */ 	padding: 4px 6px 5px 2px; 
+/* 47   */ 	line-height: 1em;
+/* 48   */ 	vertical-align: top;
+/* 49   */ }
+/* 50   */ 
+
+/* native.css */
+
+/* 51   */ th {
+/* 52   */ 	font-weight: normal;
+/* 53   */ 	text-align: left;
+/* 54   */ 	color: #666;
+/* 55   */ }
+/* 56   */ 
+/* 57   */ ol, ul {
+/* 58   */ 	margin: 0 0 0.75em 0;
+/* 59   */ 	padding-left: 1.2em;
+/* 60   */ }
+/* 61   */ 
+/* 62   */ dl {	
+/* 63   */ 	width: 100%;
+/* 64   */ 	padding: 0;
+/* 65   */ 	margin: 0;
+/* 66   */ }
+/* 67   */ 
+/* 68   */ dt {
+/* 69   */ 	display: block;
+/* 70   */ 	padding: 0;
+/* 71   */ 	margin: 0;
+/* 72   */ }
+/* 73   */ 
+/* 74   */ dd {
+/* 75   */ 	display: block;
+/* 76   */ 	padding: 0;
+/* 77   */ 	margin: 0 0 1em 0;
+/* 78   */ }
+/* 79   */ 
+/* 80   */ div, p, li, a {
+/* 81   */ 	word-wrap: break-word;
+/* 82   */ }
+/* 83   */ 
+/* 84   */ strong {
+/* 85   */ 	font-weight: bold;
+/* 86   */ }
+/* 87   */ 
+/* 88   */ 
+/* 89   */ /* Major layout blocks */
+/* 90   */ 
+/* 91   */ #container {
+/* 92   */ 	min-height: 550px;
+/* 93   */ }
+/* 94   */ 
+/* 95   */ #footer {
+/* 96   */ 	clear: both;
+/* 97   */ 	min-height: 22px;
+/* 98   */ 	padding-top: 10px;
+/* 99   */ 	margin: 20px 12px 14px 12px;
+/* 100  */ 	font-weight: normal;
+
+/* native.css */
+
+/* 101  */ }
+/* 102  */ 
+/* 103  */ #footerlinks {
+/* 104  */ 	clear: both;
+/* 105  */ 	margin: 3em 6px 2em 6px; 
+/* 106  */ 	font-size: 70.589%;
+/* 107  */ }
+/* 108  */ 
+/* 109  */ #footerlinks a {
+/* 110  */ 	text-decoration: none;
+/* 111  */ 	padding: 4px;
+/* 112  */ }
+/* 113  */ 
+/* 114  */ .leftfoot {
+/* 115  */ 	float: left;
+/* 116  */ }
+/* 117  */ 
+/* 118  */ .rightfoot {
+/* 119  */ 	float: right;
+/* 120  */ }
+/* 121  */ 
+/* 122  */ /* Forms */
+/* 123  */ 
+/* 124  */ form {	
+/* 125  */ 	margin: 18px 0 12px 0;
+/* 126  */ 	padding: 0;
+/* 127  */ 	border: none;
+/* 128  */ 	position: relative;
+/* 129  */ }
+/* 130  */ 
+/* 131  */ fieldset {
+/* 132  */ 	margin: 6px 0;
+/* 133  */ 	padding: 0;
+/* 134  */ 	border: none;
+/* 135  */ 	position: relative;
+/* 136  */ }
+/* 137  */ 
+/* 138  */ input, textarea, select {
+/* 139  */ 	color: #333;
+/* 140  */ 	font-size: 100%;
+/* 141  */ 	line-height: 30px;
+/* 142  */ }
+/* 143  */ 
+/* 144  */ textarea {
+/* 145  */ 	padding: 3px;
+/* 146  */ }
+/* 147  */ 
+/* 148  */ select {
+/* 149  */ 	width: 100%;
+/* 150  */ 	padding: 4px 2px;
+
+/* native.css */
+
+/* 151  */ 	line-height: normal;
+/* 152  */ }
+/* 153  */ 
+/* 154  */ #searchformcontainer h3 {
+/* 155  */ 	margin: 0 0 0.2em 0;
+/* 156  */ }
+/* 157  */ 
+/* 158  */ #searchformcontainer td {
+/* 159  */ 	padding: 0;
+/* 160  */ }
+/* 161  */ 
+/* 162  */ .forminput {
+/* 163  */ 	border: 1px solid #666;
+/* 164  */ 	position: absolute;
+/* 165  */ 	left: 0;
+/* 166  */ 	right: 34px;
+/* 167  */ 	height: 30px;
+/* 168  */ 	padding: 4px 6px;
+/* 169  */ 	-webkit-appearance:textfield;
+/* 170  */ }
+/* 171  */ .searchwrapper {
+/* 172  */     position: absolute;
+/* 173  */     left: 0;
+/* 174  */     right: 51px;
+/* 175  */ }
+/* 176  */ .searchwrapper input {
+/* 177  */     width: 100%;
+/* 178  */ }
+/* 179  */ 
+/* 180  */ *:first-child+html .forminput {
+/* 181  */ 	/* The return of IE CSS hacks makes me mad */
+/* 182  */ 	width: 90%;	
+/* 183  */ }
+/* 184  */ 
+/* 185  */ .inputcombo {
+/* 186  */ 	height: 38px;
+/* 187  */ 	position: relative;
+/* 188  */ }
+/* 189  */ 
+/* 190  */ .inputcombo .forminput {
+/* 191  */ 	height: 24px;
+/* 192  */ 	padding: 4px 4px 8px 7px;
+/* 193  */ 	line-height: 24px;
+/* 194  */ 	border: 1px 0 1px 1px solid #666;
+/* 195  */ 	border-bottom-left-radius: 11px;	
+/* 196  */ 	border-top-left-radius: 11px;	
+/* 197  */ 	border-bottom-right-radius: 0;	
+/* 198  */ 	border-top-right-radius: 0;
+/* 199  */ }
+/* 200  */ 
+
+/* native.css */
+
+/* 201  */ .inputcombo .combobutton {
+/* 202  */ 	position: absolute;
+/* 203  */ 	z-index: 10;
+/* 204  */ 	top: 0;
+/* 205  */ 	right: 0;
+/* 206  */ 	width: 38px;
+/* 207  */ 	height: 38px;
+/* 208  */ }
+/* 209  */ 
+/* 210  */ .emphasized {
+/* 211  */ 	margin: 14px 0;
+/* 212  */ }
+/* 213  */ 
+/* 214  */ 
+/* 215  */ .emphasized  .forminput {
+/* 216  */ 	border: 3px solid #666;
+/* 217  */ 	padding: 6px 4px 8px 7px;
+/* 218  */ 	height: 18px;
+/* 219  */ }
+/* 220  */ 
+/* 221  */ .emphasized .combobutton {
+/* 222  */ 	width: 38px;
+/* 223  */ 	height: 38px;
+/* 224  */ }
+/* 225  */ 
+/* 226  */ .formlist .formelement {
+/* 227  */   text-align: center;
+/* 228  */   margin-bottom: .5em;
+/* 229  */ }
+/* 230  */ .formlist .formelement label {
+/* 231  */   text-align: right;
+/* 232  */   margin-right: .5em;
+/* 233  */   display: inline-block;
+/* 234  */   width: 6.5em;
+/* 235  */ }
+/* 236  */ .formlist .formelement input {
+/* 237  */   width: 9.5em;
+/* 238  */   padding-left: .25em;
+/* 239  */   padding-right: .25em;
+/* 240  */   line-height: 26px;
+/* 241  */ }
+/* 242  */ .formlist .formelement select {
+/* 243  */   width: 10em;
+/* 244  */   line-height: 26px;
+/* 245  */ }
+/* 246  */ 
+/* 247  */ .formbuttons {
+/* 248  */ 	margin: 16px 0 8px 0;
+/* 249  */ 	text-align: center;
+/* 250  */ }
+
+/* native.css */
+
+/* 251  */ 
+/* 252  */ a.formbutton {
+/* 253  */   cursor: default;
+/* 254  */ 	text-align: center;
+/* 255  */ 	display: inline-block;
+/* 256  */ 	padding-right: 7px;
+/* 257  */ 	background-image: url("button-sd-r.png");
+/* 258  */ 	background-repeat: no-repeat;
+/* 259  */ 	background-position: right;
+/* 260  */ 	margin: 0 5px;
+/* 261  */ 	height: 36px;
+/* 262  */ 	text-decoration: none;
+/* 263  */ }
+/* 264  */ 
+/* 265  */ a.formbutton div {
+/* 266  */ 	display: inline-block;
+/* 267  */ 	color: #fff;
+/* 268  */ 	font-weight: bold;
+/* 269  */ 	font-size: 94.12%;
+/* 270  */ 	line-height: 26px;  /* height minus padding */
+/* 271  */ 	text-decoration: none;
+/* 272  */ 	padding: 5px 5px 5px 12px;
+/* 273  */ 	background-image: url("button-sd-l.png");
+/* 274  */ 	background-repeat: no-repeat;
+/* 275  */ 	background-position: left;
+/* 276  */ 	text-decoration: none;
+/* 277  */ }
+/* 278  */ 
+/* 279  */ input.formbutton {
+/* 280  */   -webkit-appearance: none;
+/* 281  */   display: block;
+/* 282  */ 	color: #fff;
+/* 283  */ 	font-weight: bold;
+/* 284  */ 	font-size: 94.12%;
+/* 285  */ 	line-height: 26px;  /* height minus padding */
+/* 286  */ 	text-decoration: none;
+/* 287  */ 	padding: 5px 12px 5px 12px;
+/* 288  */ 	margin-right: -7px;
+/* 289  */ 	border: none;
+/* 290  */ 	height: 36px;
+/* 291  */ 	background-color: transparent;
+/* 292  */ 	background-image: url("button-sd-r.png");
+/* 293  */ 	background-repeat: no-repeat;
+/* 294  */ 	background-position: right center;
+/* 295  */ 	-webkit-border-radius: 0px;
+/* 296  */ 	border-radius: 0px;
+/* 297  */ }
+/* 298  */ span.formbuttoncontainer {  /* must be span for winphone7 */
+/* 299  */   display: inline-block;
+/* 300  */ 	background-color: transparent;
+
+/* native.css */
+
+/* 301  */ 	background-image: url("button-sd-l.png");
+/* 302  */ 	background-repeat: no-repeat;
+/* 303  */ 	background-position: left center;
+/* 304  */ 	padding: 0;
+/* 305  */ 	margin: 0;
+/* 306  */ 	margin-right: 7px; /* recenter */
+/* 307  */ 	overflow: visible;
+/* 308  */ 	height: 36px;
+/* 309  */ }
+/* 310  */ 
+/* 311  */ .radiobutton {
+/* 312  */ 	width: 24px;
+/* 313  */ 	height: 24px;
+/* 314  */ 	margin-right: 5px;
+/* 315  */ 	margin-left: 0;
+/* 316  */ 	margin-bottom: 8px;
+/* 317  */ 	vertical-align: -12%;
+/* 318  */ 	-webkit-border-radius: 12px;
+/* 319  */ 	border-radius: 12px;
+/* 320  */ }
+/* 321  */ 
+/* 322  */ .required {
+/* 323  */ 	font-weight: bold;
+/* 324  */ 	color: #900;
+/* 325  */ }
+/* 326  */ 
+/* 327  */ /* Springboards */
+/* 328  */ 
+/* 329  */ .springboard {
+/* 330  */ 	margin: 0;
+/* 331  */ 	padding: 6px;
+/* 332  */ 	clear: both;
+/* 333  */ }
+/* 334  */ 
+/* 335  */ .springboard div {
+/* 336  */ 	position: relative;
+/* 337  */ 	margin: 0;
+/* 338  */ 	padding: 0;
+/* 339  */ 	border: 0;
+/* 340  */ 	float: left;
+/* 341  */ 	text-align: center;		
+/* 342  */ 	vertical-align: top;
+/* 343  */ }
+/* 344  */ 
+/* 345  */ .springboard a {
+/* 346  */ 	display: block;
+/* 347  */ 	text-decoration: none;
+/* 348  */ 	padding: 8px 5px;
+/* 349  */ 	word-wrap: normal;
+/* 350  */ }
+
+/* native.css */
+
+/* 351  */ 
+/* 352  */ .springboard a img {
+/* 353  */ 	height: 60px;
+/* 354  */ 	width: 60px;
+/* 355  */ 	margin-bottom: 1px;
+/* 356  */ }
+/* 357  */ 
+/* 358  */ .springboard .separator {
+/* 359  */ 	display: block;
+/* 360  */ 	width: 100%;
+/* 361  */ 	height: 18px;
+/* 362  */ 	clear:both;
+/* 363  */ 	margin: 0;
+/* 364  */ 	padding: 0;
+/* 365  */ 	float: none;
+/* 366  */ }
+/* 367  */ .springboard .badge img {
+/* 368  */ 	position: absolute;
+/* 369  */ 	right: 12px;
+/* 370  */ 	top: 5px;
+/* 371  */ 	width: 24px;
+/* 372  */ 	height: 24px;
+/* 373  */ 	padding-top: 5px;
+/* 374  */ 	text-align: center;
+/* 375  */ 	color: #fff;
+/* 376  */ 	font-size:70.59%;
+/* 377  */ 	font-weight: bold;
+/* 378  */ 	background-image: url("badge.png");
+/* 379  */ 	background-repeat: no-repeat;
+/* 380  */ }
+/* 381  */ 
+/* 382  */ .springboard .secured {
+/* 383  */ 	position: absolute;
+/* 384  */ 	z-index: 100;
+/* 385  */ 	top: 45px;
+/* 386  */ 	right: 4px;
+/* 387  */ 	width: 18px;
+/* 388  */ 	height: 22px;
+/* 389  */ 	background: url("secured.png") no-repeat;
+/* 390  */ }
+/* 391  */ 
+/* 392  */ .springboard .utility .secured {
+/* 393  */ 	top: 28px;
+/* 394  */ 	right: 14px;
+/* 395  */ }
+/* 396  */ 
+/* 397  */ /* Navigation and results listings */
+/* 398  */ 
+/* 399  */ .nav {	   
+/* 400  */ 	padding: 0;	   
+
+/* native.css */
+
+/* 401  */ 	margin: 9px; 
+/* 402  */ 	border: 1px solid #ccc;
+/* 403  */ 	-webkit-border-radius: 9px;	
+/* 404  */ 	border-radius: 9px;	
+/* 405  */ }
+/* 406  */ 
+/* 407  */ .nav li {	
+/* 408  */ 	list-style-type: none;	
+/* 409  */ 	border-top: 1px solid #ccc;
+/* 410  */ 	padding: 11px;
+/* 411  */ 	position: relative;
+/* 412  */ }
+/* 413  */ 
+/* 414  */ .nav li:first-child {
+/* 415  */ 	border-top:0; 
+/* 416  */ }
+/* 417  */ 
+/* 418  */ .nav li div.smallprint {
+/* 419  */   padding-top: 2px;
+/* 420  */ }
+/* 421  */ 
+/* 422  */ .nav span.nolink {
+/* 423  */ 	display: block;
+/* 424  */ 	padding: 8px;
+/* 425  */ 	margin: -8px;	 
+/* 426  */ 	background-repeat: no-repeat;
+/* 427  */ 	background-position: right; 
+/* 428  */ 	line-height: 1.2em;
+/* 429  */ 	text-decoration: none;
+/* 430  */ 	-webkit-border-radius: 5px;	
+/* 431  */ 	border-radius: 5px;	
+/* 432  */ }
+/* 433  */ 
+/* 434  */ .nav a  {
+/* 435  */ 	display: block;
+/* 436  */ 	padding: 8px 24px 10px 8px;
+/* 437  */ 	margin: -8px;	 
+/* 438  */ 	background-image: url("action-arrow.png"); 
+/* 439  */ 	background-repeat: no-repeat;
+/* 440  */ 	background-position: right; 
+/* 441  */ 	line-height: 1.2em;
+/* 442  */ 	text-decoration: none;
+/* 443  */ 	-webkit-border-radius: 5px;	
+/* 444  */ 	border-radius: 5px;	
+/* 445  */ }
+/* 446  */ 
+/* 447  */ .nav li.icon {
+/* 448  */   padding: 0 11px;
+/* 449  */   min-height: 72px;
+/* 450  */ }
+
+/* native.css */
+
+/* 451  */ .nav li.icon img {
+/* 452  */   position: absolute;
+/* 453  */   left: 0;
+/* 454  */   top: 11px;
+/* 455  */   height: 50px;
+/* 456  */   width: 50px;
+/* 457  */ }
+/* 458  */ .nav li.icon a {
+/* 459  */   position: relative;
+/* 460  */   margin: 0 -7px 0 0;
+/* 461  */   padding: 11px 4px 11px 57px;
+/* 462  */   min-height: 50px;
+/* 463  */   line-height: 30px;
+/* 464  */ }
+/* 465  */ 
+/* 466  */ .nav h2, .nav h3 {
+/* 467  */ 	margin-bottom: 0;
+/* 468  */ }
+/* 469  */ 
+/* 470  */ .focal .nav {
+/* 471  */ 	margin: 10px -13px;
+/* 472  */ 	-webkit-border-radius: 0px;	
+/* 473  */ 	border-radius: 0px;	
+/* 474  */ }
+/* 475  */ 
+/* 476  */ ul.focal {
+/* 477  */ 	list-style-type: none;
+/* 478  */ 	padding: 0;
+/* 479  */ }
+/* 480  */ 
+/* 481  */ ul.focal li {
+/* 482  */ 	list-style-type: none;
+/* 483  */ 	padding: 11px;
+/* 484  */ 	position: relative;
+/* 485  */ 	border-top: 1px solid #ccc; 
+/* 486  */ }
+/* 487  */ 
+/* 488  */ ul.focal li:first-child {
+/* 489  */ 	border-top:0; 
+/* 490  */ }
+/* 491  */ 
+/* 492  */ .tabbody .nav {
+/* 493  */ 	margin: 0 -8px;
+/* 494  */ 	border: none;
+/* 495  */ 	-webkit-border-bottom-right-radius: 8px;	
+/* 496  */ 	-webkit-border-bottom-left-radius: 8px;	
+/* 497  */ 	bottom-right-radius: 8px;	
+/* 498  */ 	bottom-left-radius: 8px;	
+/* 499  */ }
+/* 500  */ 
+
+/* native.css */
+
+/* 501  */ .tabbody .results {
+/* 502  */ 	margin: 8px 4px 0 4px;
+/* 503  */ 	border-width: 1px 0 0 0;
+/* 504  */ 	-webkit-border-bottom-right-radius: 8px;	
+/* 505  */ 	-webkit-border-bottom-left-radius: 8px;	
+/* 506  */ 	border-bottom-right-radius: 8px;	
+/* 507  */ 	border-bottom-left-radius: 8px;	
+/* 508  */ }
+/* 509  */ 
+/* 510  */ .tabbody .nested {
+/* 511  */ 	margin: 0px;
+/* 512  */ 	border: 1px solid #ccc;
+/* 513  */ }
+/* 514  */ 
+/* 515  */ .tabbody .nested li {
+/* 516  */ 	padding: 10px;
+/* 517  */ }
+/* 518  */ 
+/* 519  */ .results {	   
+/* 520  */ 	padding: 0;	   
+/* 521  */ 	margin: 10px 0; 
+/* 522  */ 	border-top: 1px solid #ccc;
+/* 523  */ 	border-bottom: 1px solid #ccc;
+/* 524  */ }
+/* 525  */ 
+/* 526  */ .results li {	
+/* 527  */ 	list-style-type: none;		
+/* 528  */ 	border-top: 1px solid #ccc;
+/* 529  */ 	padding: 10px;
+/* 530  */ }
+/* 531  */ 
+/* 532  */ .results li:first-child {
+/* 533  */ 	border-top:0; 
+/* 534  */ }
+/* 535  */ 
+/* 536  */ .results a  {
+/* 537  */ 	display: block;
+/* 538  */ 	padding: 9px 25px 9px 7px;
+/* 539  */ 	margin: -7px;	 
+/* 540  */ 	background-image: url("action-arrow.png"); 
+/* 541  */ 	background-repeat: no-repeat;
+/* 542  */ 	background-position: right; 
+/* 543  */ 	line-height: 1.2em;
+/* 544  */ 	text-decoration: none;
+/* 545  */ 	-webkit-border-radius: 5px;	
+/* 546  */ 	border-radius: 5px;	
+/* 547  */ }
+/* 548  */ 
+/* 549  */ .results a:visited {
+/* 550  */ 	color: #333;
+
+/* native.css */
+
+/* 551  */ }
+/* 552  */ 
+/* 553  */ .results li ul {
+/* 554  */ 	margin: 0 0 -8px 0;
+/* 555  */ 	padding: 0;
+/* 556  */ }
+/* 557  */ 
+/* 558  */ .results li div.smallprint {
+/* 559  */   padding-top: .25em;
+/* 560  */ }
+/* 561  */ 
+/* 562  */ .results li ul li {
+/* 563  */ 	list-style-type: none;
+/* 564  */ 	background-image: url("bullet.png");
+/* 565  */ 	background-repeat: no-repeat;
+/* 566  */ 	background-position: 0 2px;
+/* 567  */ 	padding: 0 0 0 19px;
+/* 568  */ 	margin: 0 0 8px -4px;
+/* 569  */ 	border: none;
+/* 570  */ }
+/* 571  */ 
+/* 572  */ .results li.icon {
+/* 573  */   padding: 0 10px;
+/* 574  */   min-height: 54px;
+/* 575  */ }
+/* 576  */ .results li.icon a {
+/* 577  */   position: relative;
+/* 578  */   margin: 0 -7px 0 0;
+/* 579  */   padding: 13px 18px 13px 58px;
+/* 580  */   line-height: 30px;
+/* 581  */ }
+/* 582  */ .results li.icon img {
+/* 583  */   position: absolute;
+/* 584  */   top: 2px;
+/* 585  */   left: 0;
+/* 586  */   height: 50px;
+/* 587  */   width: 50px;
+/* 588  */ }
+/* 589  */ 
+/* 590  */ .secondary {
+/* 591  */ 	margin: 10px; 
+/* 592  */ 	padding: 0;	   
+/* 593  */ 	border: 1px solid #ccc;
+/* 594  */ 	-webkit-border-radius: 8px;	
+/* 595  */ 	border-radius: 8px;	
+/* 596  */ }
+/* 597  */ 
+/* 598  */ .secondary li {
+/* 599  */ 	list-style-type: none;		
+/* 600  */ 	border-top: 1px solid #ccc;
+
+/* native.css */
+
+/* 601  */ 	position: relative;
+/* 602  */ 	padding: 9px;
+/* 603  */ }
+/* 604  */ 
+/* 605  */ .secondary li:first-child {
+/* 606  */ 	border-top: none;
+/* 607  */ }
+/* 608  */ 
+/* 609  */ .secondary a {
+/* 610  */ 	display: block;
+/* 611  */ 	padding: 8px 25px 8px 7px;
+/* 612  */ 	margin: -6px;	 
+/* 613  */ 	background-image: url("action-arrow.png"); 
+/* 614  */ 	background-repeat: no-repeat;
+/* 615  */ 	background-position: right; 
+/* 616  */ 	line-height: 1.2em;
+/* 617  */ 	text-decoration: none;
+/* 618  */ 	color: #333;
+/* 619  */ 	-webkit-border-radius: 5px;	
+/* 620  */ 	border-radius: 5px;	
+/* 621  */ }
+/* 622  */ 
+/* 623  */ .secondary a:visited {
+/* 624  */ 	color: #333;
+/* 625  */ }
+/* 626  */ 
+/* 627  */ .bottomnav {
+/* 628  */ 	clear: both;
+/* 629  */ 	margin: 32px 10px;
+/* 630  */ 	position: relative;
+/* 631  */ }
+/* 632  */ 
+/* 633  */ .nav .badge {
+/* 634  */ 	display: inline-block;
+/* 635  */ 	position: relative;
+/* 636  */ 	top: -1px;
+/* 637  */ 	margin-left: 4px;
+/* 638  */ 	margin-bottom: -4px;
+/* 639  */ 	font-size: 83.353%;
+/* 640  */ 	line-height: 1em;
+/* 641  */ 	padding: 4px 9px 4px 7px;
+/* 642  */ 	-webkit-border-radius: 10px;
+/* 643  */ 	border-radius: 10px;
+/* 644  */ }
+/* 645  */ 
+/* 646  */ .sidenav {
+/* 647  */ 	margin: 12px 8px;
+/* 648  */ }
+/* 649  */ 
+/* 650  */ .sidenav a {
+
+/* native.css */
+
+/* 651  */ 	padding: 6px 2px;
+/* 652  */ 	text-decoration: none;
+/* 653  */ }
+/* 654  */ 
+/* 655  */ .sidenav2 {
+/* 656  */ 	margin: 0;
+/* 657  */ 	position: relative;
+/* 658  */ 	height: 29px;
+/* 659  */ }
+/* 660  */ .sidenav2 a {
+/* 661  */ 	display: block;
+/* 662  */ 	position: absolute;
+/* 663  */ 	top: 0;
+/* 664  */ 	background: transparent url("sidenav-arrows.png") no-repeat;
+/* 665  */ 	height: 29px;
+/* 666  */ 	line-height: 29px;
+/* 667  */ 	padding: 0 10px;
+/* 668  */ 	text-decoration: none;
+/* 669  */ 	font-size: 88.3%;
+/* 670  */ }
+/* 671  */ a.sidenav-prev {
+/* 672  */ 	left: 0;
+/* 673  */ 	background-position: left top;
+/* 674  */ 	padding-left: 44px;
+/* 675  */ }
+/* 676  */ a.sidenav-next {
+/* 677  */ 	right: 0;
+/* 678  */ 	background-position: right bottom;
+/* 679  */ 	padding-right: 44px;
+/* 680  */ }
+/* 681  */ .sidenav3 {
+/* 682  */ 	float: right;
+/* 683  */ 	width: 90px;
+/* 684  */ 	height: 34px;
+/* 685  */ 	margin: -4px 0 4px 5px;
+/* 686  */ }
+/* 687  */ .sidenav3 a {
+/* 688  */ 	display: block;
+/* 689  */ 	position: absolute;
+/* 690  */ 	background: transparent url("sidenav-segmented.png") no-repeat;
+/* 691  */ 	height: 34px;
+/* 692  */ 	width: 45px;
+/* 693  */ }
+/* 694  */ .sidenav3 a.sidenav-prev {
+/* 695  */ 	right: 45px;
+/* 696  */ 	left: auto;
+/* 697  */ 	background-position: left;
+/* 698  */ 	padding: 0;
+/* 699  */ }
+/* 700  */ .sidenav3 a.sidenav-next {
+
+/* native.css */
+
+/* 701  */ 	right: 0;
+/* 702  */ 	background-position: right;
+/* 703  */ 	padding: 0;
+/* 704  */ }
+/* 705  */ 
+/* 706  */ 
+/* 707  */ /* Specific content formatting */
+/* 708  */ 
+/* 709  */ .focal {   
+/* 710  */ 	position: relative;
+/* 711  */ 	padding: 12px;	   
+/* 712  */ 	margin: 10px; 
+/* 713  */ 	font-weight:normal;
+/* 714  */ 	line-height: 1.33em;
+/* 715  */ 	border: 1px solid #ccc;
+/* 716  */ 	border-radius: 9px;	
+/* 717  */ }
+/* 718  */ 
+/* 719  */ .nonfocal {
+/* 720  */ 	margin: 12px;
+/* 721  */ }
+/* 722  */ 
+/* 723  */ .nonfocal form {
+/* 724  */ 	margin-left: -4px;
+/* 725  */ 	margin-right: -4px;
+/* 726  */ }
+/* 727  */ 
+/* 728  */ .shaded {
+/* 729  */ 	border: 1px solid #e0e0e0;
+/* 730  */ 	padding-bottom: 0;
+/* 731  */ }
+/* 732  */ 
+/* 733  */ .legend {
+/* 734  */ 	margin: 7px 0;
+/* 735  */ 	font-size: 82.353%;
+/* 736  */ 	line-height: 1.214em;
+/* 737  */ }
+/* 738  */ 
+/* 739  */ .legend.nonfocal {
+/* 740  */ 	margin: 0 0 24px 0;
+/* 741  */ 	padding: 0 12px;
+/* 742  */ }
+/* 743  */ 
+/* 744  */ .legend div {
+/* 745  */ 	display: inline;
+/* 746  */ 	margin-right: 0px;
+/* 747  */ 	padding: 1px 0;
+/* 748  */ }
+/* 749  */ 
+/* 750  */ .legend .icon {
+
+/* native.css */
+
+/* 751  */ 	background-position: 10px 0;
+/* 752  */ 	padding-left: 31px;
+/* 753  */ }
+/* 754  */ 
+/* 755  */ .smallprint {
+/* 756  */ 	font-weight: normal;
+/* 757  */ 	font-size: 82.353%;
+/* 758  */ 	line-height: 1.214em;
+/* 759  */ }
+/* 760  */ 
+/* 761  */ .fineprint {
+/* 762  */ 	font-weight: normal;
+/* 763  */ 	font-size: 70.589%;
+/* 764  */ 	line-height: 1.1167em;
+/* 765  */ }
+/* 766  */ 
+/* 767  */ .label {
+/* 768  */     display: block;
+/* 769  */     width: 6em;
+/* 770  */     position: relative;
+/* 771  */     font-size: 76.471%;
+/* 772  */     line-height: 1.3em;
+/* 773  */     font-weight: bold;
+/* 774  */     text-align: right;
+/* 775  */ }
+/* 776  */ 
+/* 777  */ .value {
+/* 778  */     display: block;
+/* 779  */     margin-top: -1.2em;
+/* 780  */     margin-left: 5em;
+/* 781  */     font-size: 100%;
+/* 782  */     min-height: 1.3em;
+/* 783  */     line-height: 1.3em;
+/* 784  */     word-wrap: break-word;
+/* 785  */ }
+/* 786  */ 
+/* 787  */ .longlabel {
+/* 788  */ 	display: block;
+/* 789  */ 	font-size: 76.471%;
+/* 790  */ 	line-height: 1.154em;
+/* 791  */ 	font-weight: bold;
+/* 792  */   text-align: left;
+/* 793  */   white-space: nowrap;
+/* 794  */   overflow: hidden;
+/* 795  */   text-overflow: ellipsis;
+/* 796  */ }
+/* 797  */ 
+/* 798  */ .longlabel + .value {
+/* 799  */   margin-left: 0px;
+/* 800  */   margin-top: 0px;
+
+/* native.css */
+
+/* 801  */ }
+/* 802  */ 
+/* 803  */ .more {
+/* 804  */ 	/* Inline links for "Show more..." */
+/* 805  */ 	color: #933;
+/* 806  */ }
+/* 807  */ 
+/* 808  */ .tight {
+/* 809  */ 	padding: 0;
+/* 810  */ 	margin: 0;
+/* 811  */ }
+/* 812  */ 
+/* 813  */ .clear {
+/* 814  */ 	clear: both;
+/* 815  */ }
+/* 816  */ 
+/* 817  */ .invisible {
+/* 818  */ 	display: none;
+/* 819  */ }
+/* 820  */ 
+/* 821  */ .disabled {
+/* 822  */ 	opacity: 0.22;
+/* 823  */ }
+/* 824  */ 
+/* 825  */ .collapsed .summary {
+/* 826  */ 	display: inline;
+/* 827  */ }
+/* 828  */ 
+/* 829  */ .collapsed .fulltext {
+/* 830  */ 	display: none;
+/* 831  */ }
+/* 832  */ 
+/* 833  */ .expanded .summary {
+/* 834  */ 	display: none;
+/* 835  */ }
+/* 836  */ 
+/* 837  */ .expanded .fulltext {
+/* 838  */ 	display: inline;
+/* 839  */ }
+/* 840  */ 
+/* 841  */ .foundat {
+/* 842  */ 	font-size: 83.353%;
+/* 843  */ 	line-height: 1.214em;
+/* 844  */ 	font-weight: normal;
+/* 845  */ 	color: #444;
+/* 846  */ }
+/* 847  */ 
+/* 848  */ p.foundat {
+/* 849  */ 	margin: 0 0 4px 0;
+/* 850  */ }
+
+/* native.css */
+
+/* 851  */ 
+/* 852  */ .address {
+/* 853  */ 	font-size: 83.353%;
+/* 854  */ 	line-height: 1.214em;
+/* 855  */ 	font-weight: normal;
+/* 856  */ }
+/* 857  */ 
+/* 858  */ .nowrap {
+/* 859  */ 	white-space: nowrap;
+/* 860  */ }
+/* 861  */ 
+/* 862  */ 
+/* 863  */ 
+/* 864  */ /* Action links (dial phone, launch map, compose email, etc.) */
+/* 865  */ 
+/* 866  */ .actionlink {
+/* 867  */ 	background-repeat: no-repeat;
+/* 868  */ 	background-position: right; 
+/* 869  */ 	padding-right: 38px;
+/* 870  */ 	padding-left: 0;
+/* 871  */ }
+/* 872  */ 
+/* 873  */ a.arrow {  
+/* 874  */ 	background-image: url("action-arrow.png"); 
+/* 875  */ 	padding-right: 25px;
+/* 876  */ }
+/* 877  */ 
+/* 878  */ a.phone {  
+/* 879  */ 	background-image: url("action-phone.png"); 
+/* 880  */ 	padding-right: 36px;
+/* 881  */ }
+/* 882  */ 
+/* 883  */ a.email {  
+/* 884  */ 	background-image: url("action-email.png"); 
+/* 885  */ 	padding-right: 38px;
+/* 886  */ }
+/* 887  */ 
+/* 888  */ a.map {  
+/* 889  */ 	background-image: url("action-map.png"); 
+/* 890  */ 	padding-right: 38px;
+/* 891  */ }
+/* 892  */ 
+/* 893  */ a.search {  
+/* 894  */ 	background-image: url("action-search.png"); 
+/* 895  */ 	padding-right: 36px;
+/* 896  */ }
+/* 897  */ 
+/* 898  */ a.people {  
+/* 899  */ 	background-image: url("action-people.png"); 
+/* 900  */ 	padding-right: 36px;
+
+/* native.css */
+
+/* 901  */ }
+/* 902  */ 
+/* 903  */ a.external {  
+/* 904  */ 	background-image: url("action-external.png"); 
+/* 905  */ 	padding-right: 34px;
+/* 906  */ }
+/* 907  */ 
+/* 908  */ a.secure {  
+/* 909  */ 	background-image: url("action-secure.png"); 
+/* 910  */ 	padding-right: 34px;
+/* 911  */ }
+/* 912  */ 
+/* 913  */ a.pdf {  
+/* 914  */ 	background-image: url("action-pdf.png"); 
+/* 915  */ 	padding-right: 34px;
+/* 916  */ }
+/* 917  */ 
+/* 918  */ a.noaction {
+/* 919  */ 	background-image: none;
+/* 920  */ 	padding-right: 7px;
+/* 921  */ }
+/* 922  */ 
+/* 923  */ 
+/* 924  */ 
+/* 925  */ /* Iconically coded links - e.g., Shuttle Schedule, 3DOWN, etc. */
+/* 926  */ 
+/* 927  */ .icon {
+/* 928  */ 	background-repeat: no-repeat;
+/* 929  */ 	background-position: 11px 14px;
+/* 930  */ }
+/* 931  */ 
+/* 932  */ .icon a {
+/* 933  */ 	padding-left: 32px;
+/* 934  */ }
+/* 935  */ 
+/* 936  */ h2.icon {
+/* 937  */ 	background-position: right;
+/* 938  */ 	padding-right: 24px;
+/* 939  */ }
+/* 940  */ 
+/* 941  */ .inset {
+/* 942  */ 	padding-left: 32px;
+/* 943  */ 	padding-top: 3px;
+/* 944  */ 	margin-left: -7px;
+/* 945  */ }
+/* 946  */ 
+/* 947  */ .gps {
+/* 948  */ 	background-image: url("gps.png");
+/* 949  */ }
+/* 950  */ 
+
+/* native.css */
+
+/* 951  */ .sch {
+/* 952  */ 	background-image: url("schedule.png");
+/* 953  */ }
+/* 954  */ 
+/* 955  */ .ok {
+/* 956  */ 	background-image: url("ok.png");
+/* 957  */ }
+/* 958  */ 
+/* 959  */ .alert {
+/* 960  */ 	background-image: url("alert.png");
+/* 961  */ }
+/* 962  */ 
+/* 963  */ .warning {
+/* 964  */ 	background-image: url("warning.png");
+/* 965  */ }
+/* 966  */ 
+/* 967  */ .critical {
+/* 968  */ 	background-image: url("critical.png");
+/* 969  */ }
+/* 970  */ 
+/* 971  */ .available {
+/* 972  */ 	background-image: url("available.png");
+/* 973  */ }
+/* 974  */ 
+/* 975  */ .full {
+/* 976  */ 	background-image: url("donotenter.png");
+/* 977  */ }
+/* 978  */ 
+/* 979  */ .running {
+/* 980  */ 	background-image: url("shuttle.png");
+/* 981  */ 	background-position: 11px 12px;
+/* 982  */ }
+/* 983  */ 
+/* 984  */ .nonrunning {
+/* 985  */ 	background-image: url("shuttle-off.png");
+/* 986  */ 	background-position: 11px 12px;
+/* 987  */ }
+/* 988  */ 
+/* 989  */ .running a {
+/* 990  */ 	padding-left: 28px;
+/* 991  */ }
+/* 992  */ 
+/* 993  */ .nonrunning a {
+/* 994  */ 	padding-left: 28px;
+/* 995  */ }
+/* 996  */ 
+/* 997  */ 
+/* 998  */ 
+/* 999  */ /* Tabs (e.g., Shuttle Schedule route pages) */
+/* 1000 */ 
+
+/* native.css */
+
+/* 1001 */ #tabs {
+/* 1002 */ 	list-style-type: none;
+/* 1003 */ 	margin: 0;
+/* 1004 */ 	padding: 0;
+/* 1005 */ }
+/* 1006 */ 
+/* 1007 */ #tabs li {
+/* 1008 */ 	position: relative;
+/* 1009 */ 	float: left;
+/* 1010 */ 	margin-bottom: -1px;
+/* 1011 */ 	margin-right: 4px;
+/* 1012 */ 	-webkit-border-top-right-radius: 7px;	
+/* 1013 */ 	-webkit-border-top-left-radius: 7px;	
+/* 1014 */ 	border-top-right-radius: 7px;	
+/* 1015 */ 	border-top-left-radius: 7px;	
+/* 1016 */ 	text-align: center;
+/* 1017 */ }
+/* 1018 */ 
+/* 1019 */ #tabs li .badge {
+/* 1020 */ 	position: absolute;
+/* 1021 */ 	top: -8px;
+/* 1022 */ 	right: -6px;
+/* 1023 */ 	width: 24px;
+/* 1024 */ 	height: 24px;
+/* 1025 */ 	line-height: 24px;
+/* 1026 */ 	text-align: center;
+/* 1027 */ 	color: #fff;
+/* 1028 */ 	font-size:70.59%;
+/* 1029 */ 	font-weight: bold;
+/* 1030 */ 	background-image: url("badge.png");
+/* 1031 */ 	background-repeat: no-repeat;
+/* 1032 */ }
+/* 1033 */  
+/* 1034 */ #tabs li a {
+/* 1035 */ 	display: block;
+/* 1036 */ 	text-decoration: none;
+/* 1037 */ 	min-width: 30px;
+/* 1038 */ 	padding: 7px 10px 8px 10px;
+/* 1039 */ }
+/* 1040 */ 
+/* 1041 */ #tabs.smalltabs li {
+/* 1042 */ 	font-size: 88.26%;
+/* 1043 */ 	margin-right: 3px;
+/* 1044 */ }
+/* 1045 */ 
+/* 1046 */ #tabs.smalltabs li a {
+/* 1047 */ 	padding-right: 7px;
+/* 1048 */ 	padding-left: 7px;
+/* 1049 */ }
+/* 1050 */ 
+
+/* native.css */
+
+/* 1051 */ #tabs li.active {
+/* 1052 */ 	margin-top: -1px;
+/* 1053 */ }
+/* 1054 */ 
+/* 1055 */ #tabs li.active a {
+/* 1056 */ 	padding-top: 8px;
+/* 1057 */ 	padding-bottom: 9px;
+/* 1058 */ }
+/* 1059 */ 
+/* 1060 */ #tabbodies {
+/* 1061 */ 	margin: 0 -12px 0 -12px;
+/* 1062 */ 	clear: both;
+/* 1063 */ 	border-top: 1px solid #bbb;
+/* 1064 */ 	-webkit-border-bottom-right-radius: 8px;	
+/* 1065 */ 	-webkit-border-bottom-left-radius: 8px;	
+/* 1066 */ 	border-bottom-right-radius: 8px;	
+/* 1067 */ 	border-bottom-left-radius: 8px;	
+/* 1068 */ }
+/* 1069 */ 
+/* 1070 */ .shaded #tabbodies {
+/* 1071 */ 	margin-top: -11px;
+/* 1072 */ }
+/* 1073 */ 
+/* 1074 */ .tabbody {
+/* 1075 */ 	position: relative;
+/* 1076 */ 	min-height: 230px;
+/* 1077 */ 	padding: 8px;
+/* 1078 */ }
+/* 1079 */ 
+/* 1080 */ .tabbody h3 {
+/* 1081 */ 	margin-top: 16px;
+/* 1082 */ 	padding-top: 4px;
+/* 1083 */ }
+/* 1084 */ 
+/* 1085 */ .tabbody h3:first-child {
+/* 1086 */     margin-top: 8px;
+/* 1087 */ }
+/* 1088 */ 
+/* 1089 */ .tabbody li:first-child h3 {
+/* 1090 */ 	margin-top: 2px;
+/* 1091 */ }
+/* 1092 */ 
+/* 1093 */ .tabstrip ,
+/* 1094 */ #tabstrip {
+/* 1095 */ 	list-style-type: none;
+/* 1096 */ 	height: 32px;
+/* 1097 */ 	-webkit-border-radius: 10px;	
+/* 1098 */ 	border-radius: 10px;	
+/* 1099 */ 	margin: 0;
+/* 1100 */ 	padding: 0;
+
+/* native.css */
+
+/* 1101 */ 	left: 0;
+/* 1102 */ 	overflow: hidden;
+/* 1103 */ 	font-size: 88.23%;
+/* 1104 */ }
+/* 1105 */ 
+/* 1106 */ .tabstrip li ,
+/* 1107 */ #tabstrip li {
+/* 1108 */ 	float: left;
+/* 1109 */ 	margin: 0;
+/* 1110 */ 	text-align: center;
+/* 1111 */ 	height: 33px;
+/* 1112 */ }
+/* 1113 */ 
+/* 1114 */ .tabstrip a,
+/* 1115 */ #tabstrip a {
+/* 1116 */ 	display: block;
+/* 1117 */ 	height: 32px;
+/* 1118 */ 	line-height: 32px;
+/* 1119 */ 	text-decoration: none;
+/* 1120 */ 	color: #fff !important;
+/* 1121 */ 	background: url("tabstrip.jpg") repeat-x;
+/* 1122 */ 	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
+/* 1123 */ 	border-right: 1px solid #999;
+/* 1124 */ 	-webkit-border-radius: 1px;	
+/* 1125 */ 	border-radius: 1px;	
+/* 1126 */ }	
+/* 1127 */ 
+/* 1128 */ .tabstrip li.active a ,
+/* 1129 */ #tabstrip li.active a {
+/* 1130 */ 	background-image: url("tabstrip-active.jpg");
+/* 1131 */ }
+/* 1132 */ 
+/* 1133 */ .tabstrip li:first-child a ,
+/* 1134 */ #tabstrip li:first-child a {
+/* 1135 */ 	-webkit-border-bottom-left-radius: 10px;	
+/* 1136 */ 	-webkit-border-top-left-radius: 10px;	
+/* 1137 */ 	border-bottom-left-radius: 10px;	
+/* 1138 */ 	border-top-left-radius: 10px;	
+/* 1139 */ }
+/* 1140 */ 
+/* 1141 */ .tabstrip li:last-child a ,
+/* 1142 */ #tabstrip li:last-child a {
+/* 1143 */ 	-webkit-border-bottom-right-radius: 10px;	
+/* 1144 */ 	-webkit-border-top-right-radius: 10px;	
+/* 1145 */ 	border-bottom-right-radius: 10px;	
+/* 1146 */ 	border-top-right-radius: 10px;	
+/* 1147 */ }
+/* 1148 */ 
+/* 1149 */ .twotabs li {
+/* 1150 */ 	width: 50%;
+
+/* native.css */
+
+/* 1151 */ }
+/* 1152 */ 
+/* 1153 */ .threetabs li {
+/* 1154 */ 	width: 33.333%;
+/* 1155 */ }
+/* 1156 */ 
+/* 1157 */ .fourtabs li {
+/* 1158 */ 	width: 25%;
+/* 1159 */ }
+/* 1160 */ 
+/* 1161 */ .fivetabs li {
+/* 1162 */ 	width: 20%;
+/* 1163 */ }
+/* 1164 */ 
+/* 1165 */ .columns2 {
+/* 1166 */ 	margin-bottom: 0.5em;
+/* 1167 */ }
+/* 1168 */ 
+/* 1169 */ .columns2 .col {
+/* 1170 */ 	float: left;
+/* 1171 */ 	width: 49%;
+/* 1172 */ }
+/* 1173 */ 
+/* 1174 */ .iconlegend {
+/* 1175 */ 	list-style-type: none;
+/* 1176 */ 	padding: 0;
+/* 1177 */ 	font-size: 70%;
+/* 1178 */ 	margin: 0;
+/* 1179 */ 	line-height: 1em;
+/* 1180 */ }
+/* 1181 */ 
+/* 1182 */ .iconlegend img {
+/* 1183 */ 	position: relative;
+/* 1184 */ 	top: 4px;
+/* 1185 */ 	margin-right: 3px;
+/* 1186 */ }
+/* 1187 */ 
+/* 1188 */ .iconlabel {
+/* 1189 */ 	display: block;
+/* 1190 */ 	float: right;
+/* 1191 */ 	white-space: nowrap;
+/* 1192 */ 	margin-top: 3px;
+/* 1193 */ }
+/* 1194 */ 
+/* 1195 */ 
+/* 1196 */ 
+/* 1197 */ 
+/* 1198 */ /* "Loading content" (for AJAX data pulls) */
+/* 1199 */ 
+/* 1200 */ .loading {
+
+/* native.css */
+
+/* 1201 */ 	margin: 16px 0;
+/* 1202 */ 	font-size: 83.353%;
+/* 1203 */ 	line-height: 1.5em;
+/* 1204 */ 	font-weight: normal;
+/* 1205 */ 	color: #888;
+/* 1206 */ 	text-align: center;
+/* 1207 */ }
+/* 1208 */ 
+/* 1209 */ #modalmessage {
+/* 1210 */ 	position: absolute;
+/* 1211 */ 	z-index: 99999;
+/* 1212 */ 	top: 0px;
+/* 1213 */ 	left: 0px;
+/* 1214 */ 	right: 0px;
+/* 1215 */ 	bottom: 0px;
+/* 1216 */ }
+/* 1217 */ 
+/* 1218 */ 
+/* 1219 */ .devicedetection {
+/* 1220 */   border: none;
+/* 1221 */   margin: 1.5em .5em;
+/* 1222 */   width: auto;
+/* 1223 */ }
+/* 1224 */ .devicedetection th,
+/* 1225 */ .devicedetection td {
+/* 1226 */   font-size: 65.71%;
+/* 1227 */   line-height: 1.2em;
+/* 1228 */   padding: 0 .25em;
+/* 1229 */   margin: 0;
+/* 1230 */   text-align: left;
+/* 1231 */ }
+/* 1232 */ .devicedetection th {
+/* 1233 */   font-weight: bold;
+/* 1234 */   text-align: right;
+/* 1235 */   white-space: nowrap;
+/* 1236 */ }
+/* 1237 */ 
+/* 1238 */ #share {
+/* 1239 */ 	float: right;
+/* 1240 */ 	margin: -12px 0 0 8px;
+/* 1241 */ }
+/* 1242 */ #sharesheet {
+/* 1243 */ 	position: absolute;
+/* 1244 */ 	top: 0;
+/* 1245 */ 	left: 0;
+/* 1246 */ 	width: 100%;
+/* 1247 */ 	height: 100%;
+/* 1248 */ 	z-index: 10000;
+/* 1249 */ }
+/* 1250 */ #shareback {
+
+/* native.css */
+
+/* 1251 */ 	position: absolute;
+/* 1252 */ 	top: 0;
+/* 1253 */ 	left: 0;
+/* 1254 */ 	width: 100%;
+/* 1255 */ 	height: 100%;
+/* 1256 */ 	padding-bottom: 20px;
+/* 1257 */ 	background-color: #333;
+/* 1258 */ 	opacity: 0.5;
+/* 1259 */ 	-webkit-opacity: 0.5;
+/* 1260 */ 	-moz-opacity: 0.5;
+/* 1261 */ 	filter: alpha(opacity=67); /* IE */
+/* 1262 */ }
+/* 1263 */ #sharedialog {
+/* 1264 */ 	position: absolute;
+/* 1265 */ 	top: 80px;
+/* 1266 */ 	left: 50%;
+/* 1267 */ 	width: 220px;
+/* 1268 */ 	margin-left: -130px;
+/* 1269 */ 	-webkit-border-radius: 10px;
+/* 1270 */ 	border-radius: 10px;
+/* 1271 */ 	padding: 10px 20px;
+/* 1272 */ 	background: #eee; /* Non-CSS3 browsers */
+/* 1273 */ 	/* This doesn't work with the Palm Pre: 
+/* 1274 *| 	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
+/* 1275 */ 	background: -moz-linear-gradient(top,  #f9f9f9,  #d0d0d0); /* Firefox 3.6+ */
+/* 1276 */ 	-moz-box-shadow: 0px 3px 7px #333;
+/* 1277 */ 	-webkit-box-shadow: 0px 3px 7px #333;
+/* 1278 */ 	box-shadow: 0px 3px 7px #333;
+/* 1279 */ }
+/* 1280 */ #sharedialog h1 {
+/* 1281 */ 	color: #333;
+/* 1282 */ 	font: 16pt/1.33em sans-serif;
+/* 1283 */ 	margin-bottom: 6px
+/* 1284 */ }
+/* 1285 */ #sharedialog ul {
+/* 1286 */ 	list-style-type: none;
+/* 1287 */ 	margin: 0;
+/* 1288 */ 	padding: 0;
+/* 1289 */ }
+/* 1290 */ #sharedialog a.sharelink {
+/* 1291 */ 	display: block;
+/* 1292 */ 	text-decoration: none;
+/* 1293 */ 	padding: 6px 0;
+/* 1294 */ 	line-height: 32px;
+/* 1295 */ 	color: #000;
+/* 1296 */ }
+/* 1297 */ #sharedialog a img {
+/* 1298 */ 	float: left;
+/* 1299 */ 	margin-right: 6px;
+/* 1300 */ 	border: none;
+
+/* native.css */
+
+/* 1301 */ }
+/* 1302 */ 
+/* 1303 */ #bookmarkContainer {
+/* 1304 */     float: right;
+/* 1305 */ 	margin: -44px 0 0 8px;
+/* 1306 */ }
+/* 1307 */ #bookmark {
+/* 1308 */     width: 44px;
+/* 1309 */     height: 38px;
+/* 1310 */     background: url("bookmark.png") no-repeat 0 -38px;
+/* 1311 */ }
+/* 1312 */ #bookmark.pressed {
+/* 1313 */     background-position: 0 1px;
+/* 1314 */ }
+/* 1315 */ #bookmark.on {
+/* 1316 */     background-position: -44px -38px;
+/* 1317 */ }
+/* 1318 */ #bookmark.pressed.on {
+/* 1319 */     background-position: -44px 1px;
+/* 1320 */ }
+/* 1321 */ 
+/* 1322 */ 
+/* 1323 */ /* Freeform content module - basic styles to format unstyled raw HTML */
+/* 1324 */ 
+/* 1325 */ .staticContentBody {
+/* 1326 */ 	margin: 10px;
+/* 1327 */ 	border-radius: 10px;
+/* 1328 */ 	background-color: #fff;
+/* 1329 */ 	padding: 10px;
+/* 1330 */ }
+/* 1331 */ 
+/* 1332 */ .staticContentBody h2 {
+/* 1333 */ 	font-size: 123%;
+/* 1334 */ 	font-weight: normal;
+/* 1335 */ 	color: #000;
+/* 1336 */ 	margin: 0 0 1em 0;
+/* 1337 */ }
+/* 1338 */ 
+/* 1339 */ .staticContentBody h3 {
+/* 1340 */ 	font-size: 100%;
+/* 1341 */ 	font-weight: bold;
+/* 1342 */ 	color: #000;
+/* 1343 */ 	margin: 0 0 1em 0;
+/* 1344 */ }
+/* 1345 */ 
+/* 1346 */ .staticContentBody h4 {
+/* 1347 */ 	font-size: 100%;
+/* 1348 */ 	font-weight: bold;
+/* 1349 */ 	color: #333;
+/* 1350 */ 	margin: 0 0 1em 0;
+
+/* native.css */
+
+/* 1351 */ }
+/* 1352 */ 
+/* 1353 */ .staticContentBody ul {
+/* 1354 */ 	margin-bottom: 1.5em;
+/* 1355 */ }
+/* 1356 */ 
+/* 1357 */ .loginstatus {
+/* 1358 */     clear: both;
+/* 1359 */     font-size: 80%;
+/* 1360 */     padding-top: 5px;
+/* 1361 */ }
+/* 1362 */ 
+/* 1363 */ 
+/* 1364 */ /* Login-related buttons */
+/* 1365 */ 
+/* 1366 */ .loginbuttons {
+/* 1367 */ 	margin-top: 0.75em;
+/* 1368 */ 	margin-bottom: 0.75em;
+/* 1369 */ }
+/* 1370 */ 
+/* 1371 */ .loginbuttons li {
+/* 1372 */ 	padding-left: 42px;
+/* 1373 */ 	background-size: 24px;
+/* 1374 */ 	background-position: 10px;
+/* 1375 */ 	background-repeat: no-repeat;
+/* 1376 */ }
+/* 1377 */ 
+/* 1378 */ .loginbuttons a {
+/* 1379 */ 	margin-left: -39px;
+/* 1380 */ 	padding-left: 39px;
+/* 1381 */ }
+/* 1382 */ 
+/* 1383 */ .loginbuttons li.facebook {
+/* 1384 */ 	background-image: url("button-facebook-24.png");
+/* 1385 */ }
+/* 1386 */ 
+/* 1387 */ .loginbuttons li.google {
+/* 1388 */ 	background-image: url("button-google-24.png");
+/* 1389 */ }
+/* 1390 */ 
+/* 1391 */ .loginbuttons li.oauth {
+/* 1392 */ 	background-image: url("button-oauth-24.png");
+/* 1393 */ }
+/* 1394 */ 
+/* 1395 */ .loginbuttons li.openid {
+/* 1396 */ 	background-image: url("button-openid-24.png");
+/* 1397 */ }
+/* 1398 */ 
+/* 1399 */ .loginbuttons li.twitter {
+/* 1400 */ 	background-image: url("button-twitter-24.png");
+
+/* native.css */
+
+/* 1401 */ }
+/* 1402 */ 
+/* 1403 */ .loginbuttons li.windows {
+/* 1404 */ 	background-image: url("button-windows-24.png");
+/* 1405 */ }
+/* 1406 */ 
+/* 1407 */ .loginbuttons li.noauth {
+/* 1408 */ 	background-image: none;
+/* 1409 */ 	padding-left: 10px;
+/* 1410 */ }
+/* 1411 */ 
+/* 1412 */ .loginbuttons li.noauth a {
+/* 1413 */ 	margin-left: -8px;
+/* 1414 */ 	padding-left: 8px;
+/* 1415 */ }
+/* 1416 */ 
+/* 1417 */ 
+/* 1418 */ 
+/* 1419 */ /* firefox adds these a tags when you edit the dom */
+/* 1420 */ .ellipsis a[xmlns] {
+/* 1421 */ 	display: inline !important;
+/* 1422 */ 	padding: 0 !important;
+/* 1423 */ 	margin: 0 !important;	 
+/* 1424 */ 	background: none !important; 
+/* 1425 */ 	line-height: inherit !important;
+/* 1426 */ 	text-decoration: none !important;
+/* 1427 */ 	font-size: inherit !important;
+/* 1428 */ }
+/* 1429 */ 
+/* Minify_CSS_UriRewriter::$debugText
+
+docRoot    : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/web
+currentDir : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/app/modules/test/css
+symlinks : array (
+  '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/web' => '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/themes/hi-def',
+)
+
+*/
+
+/* native.css */
+
+/* 1  */ h1.slugline a {
+/* 2  */     text-decoration: none;
+/* 3  */ }
+/* 4  */ 
+/* 5  */ li.story {
+/* 6  */     height: 5.5em;
+/* 7  */ 	  margin: 0;
+/* 8  */     padding: 1px;
+/* 9  */     overflow: hidden;
+/* 10 */     position: relative;
+/* 11 */ }
+/* 12 */ 
+/* 13 */ li.noimage {
+/* 14 */     padding-left: .4em;
+/* 15 */ }
+/* 16 */ 
+/* 17 */ .results li.story a {
+/* 18 */     overflow: hidden;
+/* 19 */     position: relative;
+/* 20 */     margin: 0;
+/* 21 */     padding: 0;
+/* 22 */     height: 5.5em;
+/* 23 */ }
+/* 24 */ .results li.story a .ellipsis {
+/* 25 */     overflow: hidden;
+/* 26 */     margin: 0;
+/* 27 */     margin: .4em 25px .4em 0;
+/* 28 */     font-size: 82.35%;
+/* 29 */     line-height: 1.36em;
+/* 30 */     height: 5.9em;
+/* 31 */ }
+/* 32 */ 
+/* 33 */ .results li.story a .title {
+/* 34 */     font-size: 114.29%;
+/* 35 */     padding: 0 0 .25em 0;
+/* 36 */ }
+/* 37 */ 
+/* 38 */ .results li.story a .author {
+/* 39 */     font-size: 90%;
+/* 40 */ }
+/* 41 */ 
+/* 42 */ .results li.story a .pubdate {
+/* 43 */     font-size: 90%;
+/* 44 */ }
+/* 45 */ 
+/* 46 */ .thumbnail {
+/* 47 */     float:left;
+/* 48 */     margin: 0 8px 0 0;
+/* 49 */     width: 5.5em;
+/* 50 */     height: 5.5em;
+
+/* native.css */
+
+/* 51 */     background: transparent url("news_news-placeholder.png") no-repeat left top;
+/* 52 */     background-size: 5.5em;
+/* 53 */ }
+/* 54 */ 
+/* 55 */ 
+/* Minify_CSS_UriRewriter::$debugText
+
+docRoot    : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/web
+currentDir : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/app/modules/test/css
+symlinks : array (
+  '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/web' => '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/themes/hi-def',
+)
+
+*/
+
+/* search-native.css */
+
+/* 1  */ #searchformcontainer {
+/* 2  */   margin-top: 1em;
+/* 3  */ }
+/* 4  */ form {
+/* 5  */ 	margin: -8px 0 0 0;
+/* 6  */ 	padding: 0;
+/* 7  */ }
+/* 8  */ .formlabel {
+/* 9  */ 	width: 62px;
+/* 10 */ 	text-align: right;
+/* 11 */ 	font-size: 89%;
+/* 12 */     padding-right: 0.25em;
+/* 13 */ }
+/* 14 */ .header form {
+/* 15 */     display: inline;
+/* 16 */     margin: 0;
+/* 17 */     padding: 0;
+/* 18 */ }
+/* 19 */ .header form input {
+/* 20 */     line-height: normal;
+/* 21 */ }
+/* 22 */ .header form select {
+/* 23 */     line-height: normal;
+/* 24 */     padding: 4px 6px;
+/* 25 */     font-size: 88.23%;
+/* 26 */ }
+/* 27 */ #search-form .toggle-search-button {
+/* 28 */ }
+/* 29 */ .header {
+/* 30 */     padding: 0;
+/* 31 */ }
+/* 32 */ 
+/* 33 */ .header button {
+/* 34 */     display: inline;
+/* 35 */ }
+/* 36 */ .pagerlink a {
+/* 37 */   background-image: none;
+/* 38 */   color: #1A1611;
+/* 39 */   font-weight: bold;
+/* 40 */   font-size: 90%;
+/* 41 */ }
+/* 42 */ 
+/* 43 */ .newsinput  {
+/* 44 */ 	width: 200px;
+/* 45 */ }
+/* 46 */ 
+/* 47 */ .search-field, select {
+/* 48 */ }
+/* 49 */ 
+/* 50 */ 
+/* Minify_CSS_UriRewriter::$debugText
+
+docRoot    : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/web
+currentDir : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/themes/hi-def/common/css
+symlinks : array (
+  '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/web' => '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/themes/hi-def',
+)
+
+*/
+
+/* common.css */
+
+/* 1   */ /* This CSS file contains most of the core theme CSS you'll need to customize your site's overall color scheme and fonts. */
+/* 2   */ 
+/* 3   */ 
+/* 4   */ /* Overall colors and fonts */
+/* 5   */ 
+/* 6   */ body {
+/* 7   */ 	/* Site-wide page background color, and base font family, size and line spacing */
+/* 8   */ 	background-color: #dcdddf;
+/* 9   */ 	font: 17px/1.33em sans-serif;
+/* 10  */ }
+/* 11  */ 
+/* 12  */ body, th, td, li, option, select, input {
+/* 13  */ 	/* Primary text color */
+/* 14  */ 	color: #333;
+/* 15  */ }
+/* 16  */ 
+/* 17  */ a, a:visited, .focal a, .focal a:visited, .tabbody a, .tabbody a:visited {
+/* 18  */ 	/* Primary text link color */
+/* 19  */ 	color: #036;
+/* 20  */ }
+/* 21  */ 
+/* 22  */ .nonfocal a, .nonfocal a:visited {
+/* 23  */ 	/* Text link color on body background */
+/* 24  */ 	color: #036;
+/* 25  */ }
+/* 26  */ 
+/* 27  */ h1 {
+/* 28  */ 	font-family: sans-serif;
+/* 29  */ 	font-size: 170.6%;
+/* 30  */ 	line-height: 1.25em;
+/* 31  */ 	font-weight: normal;
+/* 32  */ 	color: #333;
+/* 33  */ }
+/* 34  */ 
+/* 35  */ h2 {
+/* 36  */ 	font-family: sans-serif;
+/* 37  */ 	font-size: 123.5%;
+/* 38  */ 	font-weight: normal;
+/* 39  */ 	color: #036;
+/* 40  */ }
+/* 41  */ 
+/* 42  */ h3 {
+/* 43  */ 	font-family: sans-serif;
+/* 44  */ 	font-size: 100%;
+/* 45  */ 	font-weight: bold;
+/* 46  */ 	color: #036;
+/* 47  */ }
+/* 48  */ 
+/* 49  */ h4 {
+/* 50  */ 	font-family: sans-serif;
+
+/* common.css */
+
+/* 51  */ 	font-size: 100%;
+/* 52  */ 	font-weight: normal;
+/* 53  */ 	color: #333;
+/* 54  */ }
+/* 55  */ 
+/* 56  */ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
+/* 57  */ 	/* Accent text color for several types of secondary text that appears on white backgrounds */
+/* 58  */ 	/* e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
+/* 59  */ 	/* Often the same as the secondary text color defined in the next rule */
+/* 60  */ 	color: #404649;
+/* 61  */ }
+/* 62  */ 
+/* 63  */ .address, .smallprint, .fineprint, .dek {
+/* 64  */ 	/* Secondary text color for several types of secondary text */
+/* 65  */ 	color: #555;
+/* 66  */ }
+/* 67  */ 
+/* 68  */ 
+/* 69  */ 
+/* 70  */ /* Text labels for springboards (grids of icons, e.g., homescreen) */
+/* 71  */ 
+/* 72  */ .springboard a, .springboard a:visited {
+/* 73  */ 	color: #036;
+/* 74  */ }
+/* 75  */ 
+/* 76  */ 
+/* 77  */ 
+/* 78  */ /* Major content blocks */
+/* 79  */ 
+/* 80  */ .focal {   
+/* 81  */ 	/* Focal content div */
+/* 82  */ 	background-color: #fff;
+/* 83  */ 	border-color: #fff;
+/* 84  */ }
+/* 85  */ 
+/* 86  */ .nonfocal, .nonfocal .legend, .formlabel {
+/* 87  */ 	/* Text color for elements that sit on the overall body background */
+/* 88  */ 	color: #555;
+/* 89  */ }
+/* 90  */ 
+/* 91  */ .nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4 {
+/* 92  */ 	/* Color for headings that sit on the overall body background */
+/* 93  */ 	color: #036;
+/* 94  */ }
+/* 95  */ 
+/* 96  */ .shaded, .HomeModule .blockborder {
+/* 97  */ 	/* Shaded subclass of focal content - e.g., background for tabbed focal div, portlets in Tablet device class */
+/* 98  */ 	/* Typically very close to, but distinguishable from, body background */
+/* 99  */ 	background-color: #f3f3f3;
+/* 100 */ 	color: #333;
+
+/* common.css */
+
+/* 101 */ }
+/* 102 */ 
+/* 103 */ .shaded h1, .shaded h2, .shaded h3, .shaded h4 {
+/* 104 */ 	/* Color for headings that sit on the shaded divs */
+/* 105 */ 	color: #036;
+/* 106 */ }
+/* 107 */ 
+/* 108 */ 
+/* 109 */ 
+/* 110 */ /* Nav bar at top of all screens other than home screen */
+/* 111 */ 
+/* 112 */ #navbar {
+/* 113 */ 	height: 48px; 
+/* 114 */ 	background: transparent url("navback.png") repeat-x;
+/* 115 */ 	font-size: 94.1%;
+/* 116 */ }
+/* 117 */ 
+/* 118 */ .breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited, .pagetitle {
+/* 119 */  	/* All breadcrumb links in nav bar */
+/* 120 */ 	color: #036;
+/* 121 */ }
+/* 122 */ 
+/* 123 */ 
+/* 124 */ 
+/* 125 */ /* Navigation and results lists */
+/* 126 */ 
+/* 127 */ .nav, .results {
+/* 128 */ 	/* Main navigation lists and search-results lists */
+/* 129 */ 	background-color: #fff; 	
+/* 130 */ 	border-color: #fff;
+/* 131 */ }
+/* 132 */ 
+/* 133 */ .nav, .results, .nav a, .nav a:visited, .nav span.nolink, .results a, .results a:visited  {
+/* 134 */ 	/* Text color for all navigation and results lists */
+/* 135 */ 	color: #333;
+/* 136 */ }
+/* 137 */ 
+/* 138 */ .nav li, .results li, ul.focal li  {
+/* 139 */ 	/* Color of border between list items */
+/* 140 */ 	border-color: #ccc;
+/* 141 */ }
+/* 142 */ 
+/* 143 */ .secondary {
+/* 144 */ 	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds, often the same as .shaded specified above */
+/* 145 */ 	font-size: 95%;
+/* 146 */ 	background-color: #edeef0;
+/* 147 */ 	border-color: #ddd;
+/* 148 */ }
+/* 149 */ 
+/* 150 */ .secondary, .secondary a, .secondary a:visited {
+
+/* common.css */
+
+/* 151 */ 	color: #444;
+/* 152 */ }
+/* 153 */ 
+/* 154 */ .secondary .smallprint {
+/* 155 */ 	color: #666;
+/* 156 */ }
+/* 157 */ 
+/* 158 */ .secondary li {
+/* 159 */ 	border-color: #ddd;
+/* 160 */ }
+/* 161 */ 
+/* 162 */ .nav .badge {
+/* 163 */ 	/* Badge shown within a navigation list, e.g., unread count for messages */
+/* 164 */ 	color: #fff;
+/* 165 */ 	background-color: #c00;
+/* 166 */ }
+/* 167 */ 
+/* 168 */ 
+/* 169 */ 
+/* 170 */ /* Sitewide footer */
+/* 171 */ 
+/* 172 */ #footer {
+/* 173 */ 	font-size: 70.6%;
+/* 174 */ 	line-height: 1.167em;
+/* 175 */ }
+/* 176 */ 
+/* 177 */ #footer .copyright {
+/* 178 */ 	text-decoration: none;
+/* 179 */ }
+/* 180 */ 
+/* 181 */ #footerlinks {
+/* 182 */ 	/* Divider between footer links */
+/* 183 */ 	color: #fff;
+/* 184 */ }
+/* 185 */ 
+/* 186 */ #footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited {
+/* 187 */ 	/* Color of actual text and text links in sitewide footers */
+/* 188 */ 	color: #555;
+/* 189 */ }
+/* 190 */ 
+/* 191 */ 
+/* 192 */ 
+/* 193 */ /* Next/previous navigation (e.g., going from day to day in events calendar) and paging navigation (for content or lists spread across multiple pages) */
+/* 194 */ 
+/* 195 */ .sidenav, .sidenav2, .paging {
+/* 196 */ 	font-size: 93%;
+/* 197 */ 	color: #fff;
+/* 198 */ }
+/* 199 */ 
+/* 200 */ .sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .paging a:visited {
+
+/* common.css */
+
+/* 201 */ 	color: #333;
+/* 202 */ }
+/* 203 */ 
+/* 204 */ 
+/* 205 */ 
+/* 206 */ /* Tabs - for compliant, tablet, and touch */
+/* 207 */ 
+/* 208 */ #tabs li {
+/* 209 */ 	border: 1px solid #bbb;	/* Should match #tabbodies border-color */
+/* 210 */ 	background-color: #bbb;	/* Should match #tabbodies border-color */
+/* 211 */ }
+/* 212 */ 
+/* 213 */ #tabs li.active {
+/* 214 */ 	border-bottom: 1px solid #fff;	/* Should match #tabbodies background-color */
+/* 215 */ 	background-color: #fff;	/* Should match #tabbodies background-color */
+/* 216 */ }
+/* 217 */ 
+/* 218 */ #tabs li a {
+/* 219 */ 	/* Text label of unselected tab */
+/* 220 */ 	color: #333;
+/* 221 */ }
+/* 222 */ 
+/* 223 */ #tabs li.active a {
+/* 224 */ 	/* Text label of currently selected tab */
+/* 225 */ 	color: #000;
+/* 226 */ }
+/* 227 */ 
+/* 228 */ #tabs li.greyedout {
+/* 229 */ 	/* Text label of disabled tab */
+/* 230 */   	color: #666;
+/* 231 */ }
+/* 232 */ 
+/* 233 */ #tabbodies {
+/* 234 */ 	border-color: #bbb;
+/* 235 */ 	background-color: #fff;
+/* 236 */ }
+/* 237 */ 
+/* 238 */ .tabbody .nested {
+/* 239 */ 	/* Navigation list inside a tab body needs a bit of background color to contrast from tab body background */
+/* 240 */ 	background-color: #eee;
+/* 241 */ }
+/* 242 */ 
+/* 243 */ 
+/* 244 */ 
+/* 245 */ /* Form elements */
+/* 246 */ 
+/* 247 */ .forminput {
+/* 248 */   /* Should match the border color of image /common/images/compliant/search_button.png */
+/* 249 */ 	border-color: #666; 	
+/* 250 */ }
+
+/* common.css */
+
+/* 251 */ 
+/* 252 */ .inputcombo .forminput {
+/* 253 */   /* Border color should match the border color of image /common/images/compliant/search_button.png */
+/* 254 */ 	border: 1px 0 1px 1px solid #666; 	
+/* 255 */ 	-webkit-border-bottom-left-radius: 8px;	
+/* 256 */ 	-webkit-border-top-left-radius: 8px;	
+/* 257 */ 	border-bottom-left-radius: 8px;	
+/* 258 */ 	border-top-left-radius: 8px;	
+/* 259 */ }
+/* 260 */ 
+/* 261 */ .emphasized  .forminput {
+/* 262 */   /* Border color should match the border color of image /common/images/compliant/search_button.png */
+/* 263 */   /* Border weight should be 2px greater than border weight of .inputcombo .forminput */
+/* 264 */ 	border: 3px solid #666; 		
+/* 265 */ 	/* Corner radius should be 2px greater than corner radius of .inputcombo .forminput */
+/* 266 */ 	-webkit-border-bottom-left-radius: 10px; 		
+/* 267 */ 	-webkit-border-top-left-radius: 10px;	
+/* 268 */ 	border-bottom-left-radius: 10px; 		
+/* 269 */ 	border-top-left-radius: 10px;	
+/* 270 */ }
+/* 271 */ 
+/* 272 */ .submitbutton {
+/* 273 */ 	/* Form submit buttons that have text labels on Basic and Touch. */
+/* 274 */ 	background-color: #666;
+/* 275 */ 	color: #fff;
+/* 276 */ 	font-size: 93.75%;
+/* 277 */ }
+/* 278 */ 
+/* 279 */ 
+/* 280 */ 
+/* 281 */ /* Headlines and bylines */
+/* 282 */ 
+/* 283 */ h1.slugline, h2.itemtitle {
+/* 284 */ 	/* Special headline style used in news, videos, and other modules with story-type content detail */
+/* 285 */ 	font-family: sans-serif;
+/* 286 */     font-size: 129.4%;
+/* 287 */ 	line-height: 1.25em;
+/* 288 */ 	font-weight: normal;
+/* 289 */     color:#333;
+/* 290 */ 	margin: 0 0 0.75em 0;
+/* 291 */ }
+/* 292 */ 
+/* 293 */ .byline {
+/* 294 */     min-height:40px;
+/* 295 */     font-size: 64.7%;
+/* 296 */     line-height: 1.25em;
+/* 297 */ 	padding-bottom: 0.33em;
+/* 298 */ 	margin-bottom: 1.33em;
+/* 299 */     border-bottom: 1px dotted #999;
+/* 300 */ }
+
+/* common.css */
+
+/* 301 */ 
+/* 302 */ 
+/* 303 */ /* Freeform content module - basic styles to format unstyled raw HTML */
+/* 304 */ 
+/* 305 */ .staticContentBody {
+/* 306 */ 	background-color: #fff;
+/* 307 */ 	color: #333;
+/* 308 */ }
+/* 309 */ 
+/* 310 */ .staticContentBody h1 {
+/* 311 */ 	color: #333;
+/* 312 */ }
+/* 313 */ 
+/* 314 */ .staticContentBody h2 {
+/* 315 */ 	color: #333;
+/* 316 */ }
+/* 317 */ 
+/* 318 */ .staticContentBody h3 {
+/* 319 */ 	color: #333;
+/* 320 */ }
+/* 321 */ 
+/* 322 */ .staticContentBody h4 {
+/* 323 */ 	color: #666;
+/* 324 */ }
+/* 325 */ 
+/* 326 */ 
+/* 327 */ 
+/* 328 */ /* Data charts - compliant, tablet */
+/* 329 */ 
+/* 330 */ .rowbar {
+/* 331 */ 	background: #333 url("rowbar.png") repeat-x;
+/* 332 */ }
+/* 333 */ .colbar {
+/* 334 */ 	background: #333 url("colbar.png") repeat-y;
+/* 335 */ }
+/* 336 */ .average {
+/* 337 */ 	border-color: #c00;
+/* 338 */ }
+/* 339 */ 
+/* 340 */ 
+/* 341 */ 
+/* 342 */ 
+/* Minify_CSS_UriRewriter::$debugText
+
+docRoot    : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/web
+currentDir : /Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/themes/hi-def/common/css
+symlinks : array (
+  '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/web' => '/Volumes/Ra-Tilt/Users/lxs/ModoLabs/Kurogo/Kurogo-Private-Mobile-Web/site/Universitas/themes/hi-def',
+)
+
+*/
+
+/* native.css */
+
+/* 1  */ /* Springboards */
+/* 2  */ 
+/* 3  */ /* Overall size of one cell in a springboard (grid of icons) */
+/* 4  */ .springboard div {	
+/* 5  */ 	font-size: 76.5%;	/* Font size of text label below icon */
+/* 6  */ 	line-height: 1.1em;
+/* 7  */ 	/* width: 102px; */   	/* For springboard grid that is 3 icons wide */
+/* 8  */ 	/* height: 90px; */   	/* For springboard grid that is 3 icons wide */
+/* 9  */ 	width: 77px;	/* For springboard grid that is 4 icons wide */
+/* 10 */ 	height: 96px;	/* For springboard grid that is 4 icons wide */
+/* 11 */ }
+/* 12 */ 
+/* 13 */ .springboard a img {
+/* 14 */ 	/* Size of each standard icon image in a springboard */
+/* 15 */ 	width: 60px;
+/* 16 */ 	height: 60px;
+/* 17 */ }
+/* 18 */ 
+/* 19 */ .springboard .separator {
+/* 20 */ 	/* Height of extra gap between main and utility-class springboard items */
+/* 21 */ 	height: 10px;
+/* 22 */ }
+/* 23 */ 
+/* 24 */ /* Overall size of one cell in the springboard's utility-type items */
+/* 25 */ /* Utility-class modules are typically shown smaller and at the bottom of the springboard */
+/* 26 */ .springboard div.utility {
+/* 27 */ 	/* width: 102px; */ /* For a 3-wide row of utility icons */
+/* 28 */ 	width: 76px; /* For a 4-wide row of utility icons */
+/* 29 */ 	/* width: 61px; */ /* For a 5-wide row of utility icons */
+/* 30 */ 	height: 86px;
+/* 31 */ 	font-size: 70.6%;
+/* 32 */ 	line-height: 1.1em;
+/* 33 */ }
+/* 34 */ 
+/* 35 */ .springboard div.utility a img {
+/* 36 */ 	/* Size of each utility-class icon in a springboard */
+/* 37 */ 	width: 36px;
+/* 38 */ 	height: 36px;
+/* 39 */ }
+/* 40 */ 
+/* 41 */ .springboard .secured {
+/* 42 */ 	/* Overlay image to indicate that a module is password-protected */
+/* 43 */ 	/* Adjust size to fit /common/images/secured.png, and adjust position to fit springboard icon size */
+/* 44 */ 	top: 45px;
+/* 45 */ 	right: 4px;
+/* 46 */ 	width: 18px;
+/* 47 */ 	height: 22px;
+/* 48 */ }
+/* 49 */ 
+/* 50 */ .springboard .utility .secured {
+
+/* native.css */
+
+/* 51 */ 	/* Adjust position to fit springboard icon size for utility-class module icons */
+/* 52 */ 	top: 26px;
+/* 53 */ 	right: 12px;
+/* 54 */ }
+/* 55 */ 
+
+/* id::themeConfigModTimeChecker */
+
+/* 1 */ 

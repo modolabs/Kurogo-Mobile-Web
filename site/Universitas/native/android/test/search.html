@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><meta http-equiv="content-type" content="application/xhtml+xml" /><title>Search Results</title><link rel="shortcut icon" href="modules/test/favicon.ico" /><link href="modules/test/search_min.css" rel="stylesheet" media="all" type="text/css"/><script type="text/javascript">
+    //
+    // Native template for platform "android"
+    //
+    
+    function ajaxLoad() {
+        var kurogoServerURL = '__KUROGO_SERVER_URL__';
+        var extraArgs       = '__KUROGO_MODULE_EXTRA_ARGS__';
+
+        url = kurogoServerURL+'/test/search?ajax=1&nativePlatform=android';
+        if (extraArgs.length) {
+            url += '&'+extraArgs; // optional args set by native wrapper
+        }
+        
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open("GET", url, true);
+        httpRequest.onreadystatechange = function() {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                var container = document.getElementById("container");
+                container.innerHTML = httpRequest.responseText;
+                
+                // Grab script tags and appendChild them so they get evaluated
+                var scripts = container.getElementsByTagName("script");
+                var count = scripts.length; // scripts.length will change as we add elements
+                
+                for (var i = 0; i < count; i++) {
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.text = scripts[i].text;
+                    container.appendChild(script);
+                }
+                
+                if (typeof onAjaxLoad != 'undefined') {
+                    onAjaxLoad();
+                } else {
+                    console.log("Warning! onAjaxLoad is not defined by the page content");
+                }
+            }
+        }
+        httpRequest.send(null);
+    }
+  </script> <script type="text/javascript">var URL_BASE='__KUROGO_URL_BASE__';</script> <script src="modules/test/lib_ellipsizer.js" type="text/javascript"></script> <script src="modules/test/search_min.js" type="text/javascript"></script> <script type="text/javascript">
+        function onOrientationChange() {
+          if (typeof onOrientationChange.lastOrientation == 'undefined') {
+            onOrientationChange.lastOrientation = null;
+          }
+          var newOrientation = getOrientation();
+          if (newOrientation != onOrientationChange.lastOrientation) {
+            rotateScreen();
+                      }
+          onOrientationChange.lastOrientation = newOrientation;
+        }
+        if (window.addEventListener) {
+          window.addEventListener("orientationchange", onOrientationChange, false);
+        } else if (window.attachEvent) {
+          window.attachEvent("onorientationchange", onOrientationChange);
+        }
+              </script><meta name="HandheldFriendly" content="true" /><meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" /></head><body class="TestModule" onload="ajaxLoad();" ><div id="nonfooternav"><a name="top"> </a><div id="container"></div></div> <!--nonfooternav --></body></html>

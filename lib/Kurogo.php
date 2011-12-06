@@ -725,6 +725,7 @@ class Kurogo
         define('SITE_APP_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'app');
         define('SITE_MODULES_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'modules');
         define('DATA_DIR',             SITE_DIR . DIRECTORY_SEPARATOR . 'data');
+        define('NATIVE_TEMPLATES_DIR', SITE_DIR . DIRECTORY_SEPARATOR . 'native');
         define('CACHE_DIR',            SITE_DIR . DIRECTORY_SEPARATOR . 'cache');
         define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
         define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');

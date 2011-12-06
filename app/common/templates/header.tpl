@@ -8,86 +8,121 @@
   {/if}
   <title>{block name="pageTitle"}{if !$isModuleHome}{$moduleName}: {/if}{$pageTitle|strip_tags|escape:'htmlall'}{/block}</title>
   <link rel="shortcut icon" href="/favicon.ico" />
-  <link href="{$minify['css']|escape}" rel="stylesheet" media="all" type="text/css"/>
-  {foreach $inlineCSSBlocks as $css}
-    <style type="text/css" media="screen">
-      {$css}
-    </style>
-  {/foreach}
-  {foreach $cssURLs as $cssURL}
-    <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
-  {/foreach}
+{/if}
   
-  {$URL_BASE = $smarty.const.URL_BASE}{* Allow native to override this *}
-  {block name="javascript"}
-      <script type="text/javascript">var URL_BASE='{$URL_BASE}';</script>
-    {if strlen($GOOGLE_ANALYTICS_ID)}
-      <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', '{$GOOGLE_ANALYTICS_ID}']);
-        {if $GOOGLE_ANALYTICS_DOMAIN}
-        _gaq.push(['_setDomainName', '{$GOOGLE_ANALYTICS_DOMAIN}']);
-        {/if}
-        _gaq.push(['_trackPageview']);
-      </script>
-    {/if}
-    {if strlen($PERCENT_MOBILE_ID)}
-        <script src="{$PERCENT_MOBILE_URL}" type="text/javascript" charset="utf-8"></script>
-    {/if}
+  {capture name="headerCSS" assign="headerCSS"}
+    {block name="minifyCSS"}
+      <link href="{$minify['css']|escape}" rel="stylesheet" media="all" type="text/css"/>
+    {/block}
     
-    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
-      <script type="text/javascript">{$inlineJavascriptBlock}</script>
-    {/foreach}
+    {block name="cssURLs"}
+      {foreach $cssURLs as $cssURL}
+        <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
+      {/foreach}
+    {/block}
     
-    {foreach $javascriptURLs as $url}
-      <script src="{$url|escape}" type="text/javascript"></script>
-    {/foreach}
+    {block name="inlineCSS"}
+      {foreach $inlineCSSBlocks as $css}
+        <style type="text/css" media="screen">
+          {$css}
+        </style>
+      {/foreach}
+    {/block}
+  {/capture}
+  
+  {capture name="headerJavascript" assign="headerJavascript"}
+    {block name="urlBaseJavascript"}
+      <script type="text/javascript">var URL_BASE='{$smarty.const.URL_BASE}';</script>
+    {/block}
     
-    <script src="{$minify['js']|escape}" type="text/javascript"></script>
+    {block name="analyticsJavascript"}
+      {if strlen($GOOGLE_ANALYTICS_ID)}
+        <script type="text/javascript">
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', '{$GOOGLE_ANALYTICS_ID}']);
+          {if $GOOGLE_ANALYTICS_DOMAIN}
+          _gaq.push(['_setDomainName', '{$GOOGLE_ANALYTICS_DOMAIN}']);
+          {/if}
+          _gaq.push(['_trackPageview']);
+        </script>
+      {/if}
+      {if strlen($PERCENT_MOBILE_ID)}
+          <script src="{$PERCENT_MOBILE_URL}" type="text/javascript" charset="utf-8"></script>
+      {/if}
+    {/block}
+    
+    {block name="inlineJavascriptBlocks"}
+      {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
+        <script type="text/javascript">{$inlineJavascriptBlock}</script>
+      {/foreach}
+    {/block}
+    
+    {block name="javascriptURLs"}
+      {foreach $javascriptURLs as $url}
+        <script src="{$url|escape}" type="text/javascript"></script>
+      {/foreach}
+    {/block}
+    
+    {block name="minifyJavascript"}
+      <script src="{$minify['js']|escape}" type="text/javascript"></script>
+    {/block}
 
-    <script type="text/javascript">
-      function onOrientationChange() {ldelim}
-        {* the galaxy tab sends orientation change events constantly *}
-        if (typeof onOrientationChange.lastOrientation == 'undefined') {ldelim}
-          onOrientationChange.lastOrientation = null;
-        {rdelim}
-        var newOrientation = getOrientation();
-        if (newOrientation != onOrientationChange.lastOrientation) {ldelim}
-          rotateScreen();
-          {foreach $onOrientationChangeBlocks as $script}
-            {$script}
-          {/foreach}
-        {rdelim}
-        onOrientationChange.lastOrientation = newOrientation;
-      {rdelim}
-      if (window.addEventListener) {ldelim}
-        window.addEventListener("orientationchange", onOrientationChange, false);
-      {rdelim} else if (window.attachEvent) {ldelim}
-        window.attachEvent("onorientationchange", onOrientationChange);
-      {rdelim}
-      {if count($onOrientationChangeBlocks)}
-        function onResize() {ldelim}
-          {foreach $onOrientationChangeBlocks as $script}
-            {$script}
-          {/foreach}
+    {block name="orientationChangeJavascript"}
+      <script type="text/javascript">
+        function onOrientationChange() {ldelim}
+          {* the galaxy tab sends orientation change events constantly *}
+          if (typeof onOrientationChange.lastOrientation == 'undefined') {ldelim}
+            onOrientationChange.lastOrientation = null;
+          {rdelim}
+          var newOrientation = getOrientation();
+          if (newOrientation != onOrientationChange.lastOrientation) {ldelim}
+            rotateScreen();
+            {foreach $onOrientationChangeBlocks as $script}
+              {$script}
+            {/foreach}
+          {rdelim}
+          onOrientationChange.lastOrientation = newOrientation;
         {rdelim}
         if (window.addEventListener) {ldelim}
-          window.addEventListener("resize", onResize, false);
+          window.addEventListener("orientationchange", onOrientationChange, false);
         {rdelim} else if (window.attachEvent) {ldelim}
-          window.attachEvent("onresize", onResize);
+          window.attachEvent("onorientationchange", onOrientationChange);
         {rdelim}
-      {/if}
-    </script>
-    
-    {if count($onLoadBlocks)}
-      <script type="text/javascript">
-        function onLoad() {ldelim}
-          {foreach $onLoadBlocks as $script}
-            {$script}
-          {/foreach}
-        {rdelim}
+        {if count($onOrientationChangeBlocks)}
+          function onResize() {ldelim}
+            {foreach $onOrientationChangeBlocks as $script}
+              {$script}
+            {/foreach}
+          {rdelim}
+          if (window.addEventListener) {ldelim}
+            window.addEventListener("resize", onResize, false);
+          {rdelim} else if (window.attachEvent) {ldelim}
+            window.attachEvent("onresize", onResize);
+          {rdelim}
+        {/if}
       </script>
-    {/if}
+    {/block}
+    
+    {block name="onLoadJavascriptBlocks"}
+      {if count($onLoadBlocks)}
+        <script type="text/javascript">
+          function onLoad() {ldelim}
+            {foreach $onLoadBlocks as $script}
+              {$script}
+            {/foreach}
+          {rdelim}
+        </script>
+      {/if}
+    {/block}
+  {/capture}
+  
+{if !$ajaxContentLoad}
+  {block name="css"}
+    {$headerCSS}
+  {/block}
+
+  {block name="javascript"}
+    {$headerJavascript}
   {/block}
   
   {if !$autoPhoneNumberDetection}

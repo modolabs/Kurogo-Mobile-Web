@@ -1598,27 +1598,28 @@ abstract class WebModule extends Module {
   }
 
   protected function buildNativeWebTemplates() {
-    if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1') {
-      throw new KurogoConfigurationException("{$this->page} command can only be run from localhost");
-    }
-
-    $pages = array_keys($this->getModuleSections('pages'));
-    if (!$pages) {
-      throw new KurogoConfigurationException("module does not have any pages defined in pages.ini");
-    }
-    
-    $platform = $this->getArg('platform', 'unknown');
-    $path = $this->getArg('path', null);
-    
-    $rewriter = new KurogoNativeTemplates($platform, $this->configModule, $path);
-    foreach ($pages as $page) {
-      $rewriter->saveTemplatePage($page);
-    }
-    
-    $nativeConfig = $this->getOptionalModuleSection('native_template');
-    if ($nativeConfig && $nativeConfig['additional_assets']) {
-        $rewriter->saveAssets($nativeConfig['additional_assets']);
-    }
+      if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1') {
+          throw new KurogoConfigurationException("{$this->page} command can only be run from localhost");
+      }
+  
+      $pages = array_keys($this->getModuleSections('pages'));
+      if ($pages) {
+         $pages = array_diff($pages, array('pane')); 
+      }
+      if (!$pages) {
+          throw new KurogoConfigurationException("module does not have any pages defined in pages.ini");
+      }
+      
+      $platform = $this->getArg('platform', 'unknown');
+      
+      $additionalAssets = array();
+      $nativeConfig = $this->getOptionalModuleSection('native_template');
+      if ($nativeConfig && $nativeConfig['additional_assets']) {
+          $additionalAssets = $nativeConfig['additional_assets'];
+      }
+      
+      $rewriter = new KurogoNativeTemplates($platform, $this->configModule);
+      $rewriter->saveTemplates($pages, $additionalAssets);
   }
 
   //

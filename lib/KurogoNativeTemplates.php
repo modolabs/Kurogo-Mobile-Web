@@ -23,14 +23,74 @@ class KurogoNativeTemplates
     static protected $currentInstance = null;
     protected $processingFileType = self::FILE_TYPE_HTML;
     
-    public function __construct($platform, $module, $dir=null) {
+    public function __construct($platform, $module) {
         $this->platform = $platform;
         $this->module = $module;
-        $this->path = ($dir ? rtrim($dir, '/') : CACHE_DIR.'/nativeBuild')."/$platform/$module";
+        $this->path = NATIVE_TEMPLATES_DIR.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR.$module;
     }
 
     public function setPage($page) {
         $this->page = $page;
+    }
+
+    protected function rmPath($path) {
+        if (is_file($path)) {
+            if (!is_writeable($path)) { chmod($path, 0666); }
+            
+            unlink($path);
+            return !is_file($path);
+            
+        } else if (is_dir($path)) {
+            if (!is_writeable($path)) { chmod($path, 0777); }
+            
+            $handle = opendir($path);
+            while ($entry = readdir($handle)) {
+                if ($entry != '..' && $entry != '.' && $entry != '') {
+                    $this->rmdirAndFiles($path.DIRECTORY_SEPARATOR.$entry);
+                }
+            }
+            closedir($handle);
+            
+            rmdir($path);
+            return !is_dir($path);
+        }
+        return true; // never existed
+    }
+
+    protected function _addPathToZip($path, $zip, $zipPath='') {
+        $zipPath .= DIRECTORY_SEPARATOR.basename($path);
+        
+        if (is_file($path)) {
+            $zip->addFile($path, $zipPath);
+            
+        } else if (is_dir($path)) {
+            $zip->addEmptyDir($zipPath);
+            
+            $handle = opendir($path);
+            while ($entry = readdir($handle)) {
+                if ($entry != '..' && $entry != '.' && $entry != '') {
+                    $this->_addPathToZip($path.DIRECTORY_SEPARATOR.$entry, $zip, $zipPath);
+                }
+            }
+            closedir($handle);
+        }
+    }
+
+    protected function zipPath($path, $zipFile) {
+        if (!class_exists('ZipArchive')) {
+            throw new KurogoException("class ZipArchive (php-zip) not available");
+        }
+        
+        if (!is_dir($path) && !is_file($path)) {
+            throw new KurogoException("$path not found");
+        }
+        
+        $pathToZip = realpath($path);
+        
+        $zip = new ZipArchive();
+        $zip->open($zipFile, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
+        $this->_addPathToZip($path, $zip);
+        $zip->close();
     }
 
     protected static function getFileType($file) {
@@ -80,9 +140,7 @@ class KurogoNativeTemplates
     }
 
     protected function urlSuffixToFile($urlSuffix) {
-        return str_replace(
-            array('/', '-'), // Android does not support hyphens in asset filenames
-            array('_', '__'),
+        return str_replace('/', '_',
             preg_replace(
                 array(
                     '@device/native-[^/]+/@',
@@ -220,26 +278,31 @@ class KurogoNativeTemplates
         return $this->_rewriteURLsToFilePaths($contents); // internal function with more arguments
     }
 
-    public function saveAssets($assets) {
-        foreach ($assets as $asset) {
+    public function saveTemplates($pages, $additionalAssets = array()) {
+        
+
+        foreach ($pages as $page) {
+            $this->setPage($page);
+            $this->saveContentAndAssets();
+            
+            // Also check for inline content
+            $contents = $this->getAsset("{$this->module}/{$this->page}?ajax=1&".self::ASSET_CHECK_PARAMETER.'=1');
+            if ($contents) {
+                self::$currentInstance = $this;
+                $contents = $this->_rewriteURLsToFilePaths($contents, 'saveContentAndAssetsCallback', true);
+            }
+        }
+        
+        foreach ($additionalAssets as $asset) {
             $contents = $this->getAsset($asset);
             $file = $this->urlSuffixToFile($asset);
             if ($contents && $file) {
                 $this->saveAsset($contents, $file);
             }
         }
-    }
-
-    public function saveTemplatePage($page) {
-        $this->setPage($page);
-        $this->saveContentAndAssets();
         
-        // Also check for inline content
-        $contents = $this->getAsset("{$this->module}/{$this->page}?ajax=1&".self::ASSET_CHECK_PARAMETER.'=1');
-        if ($contents) {
-            self::$currentInstance = $this;
-            $contents = $this->_rewriteURLsToFilePaths($contents, 'saveContentAndAssetsCallback', true);
-        }
+        // write out zip file
+        $this->zipPath($this->path, $this->path.'.zip');
     }
 
     //
