@@ -18,7 +18,7 @@ class KurogoNativeTemplates
     const FILE_TYPE_CSS        = 'css';
     const FILE_TYPE_JAVASCRIPT = 'js';
     const FILE_TYPE_ASSET      = 'asset';
-
+    
     // This global could be removed by using closures (ie php 5.3+)
     static protected $currentInstance = null;
     protected $processingFileType = self::FILE_TYPE_HTML;
@@ -414,5 +414,38 @@ class KurogoNativeTemplates
         
         return self::INTERNAL_LINK_SCHEME."$id/$page".
             ($args ? '?'.http_build_query($args) : '');
+    }
+    
+    //
+    //  Payload calls
+    //
+    
+    public static function getNativeTemplatesPath() {
+        return 'media/native_templates';
+    }
+    
+    public static function getNativeTemplatesDir() {
+        return 'media'.DIRECTORY_SEPARATOR.'native_templates';
+    }
+    
+    public static function getNativeTemplateInfo($module) {
+        $info = array();
+        $files = glob(NATIVE_TEMPLATES_DIR."/*/$module.zip");
+        if ($files) {
+            foreach ($files as $file) {
+                $parts = explode(DIRECTORY_SEPARATOR, dirname($file));
+                if ($parts) {
+                    $platform = end($parts);
+                    $contents = file_get_contents($file);
+                    if ($platform && $contents) {
+                        $info[$platform] = array(
+                            'md5' => md5($contents),
+                            'url' => FULL_URL_PREFIX.self::getNativeTemplatesPath()."/$platform/$module.zip",
+                        );
+                    }
+                }
+            }
+        }
+        return $info ? $info : null;
     }
 }
