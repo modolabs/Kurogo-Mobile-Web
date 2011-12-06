@@ -31,10 +31,11 @@ abstract class ItemListDataModel extends DataModel {
     }
     
     public function search($searchTerms) {
-        if ($this->retriever->supportsSearch()) {
-            $this->response = $this->retriever->search($searchTerms);
-            $items = $this->parseResponse($this->response);
-            $this->setTotalItems($this->parser->getTotalItems());
+        if ($this->retriever instanceOf SearchDataRetriever) {
+            $items = $this->retriever->search($searchTerms, $response);
+            if ($totalItems = $response->getContext('totalItems')) {
+                $this->setTotalItems($totalItems);
+            }
             
         } else {
             //save the start/limit settings, we have to get back all the entries before filtering
@@ -75,6 +76,10 @@ abstract class ItemListDataModel extends DataModel {
 	 * @return KurogoObject The return value is data dependent. Subclasses should return false or null if the item could not be found
      */
     public function getItem($id) {
+        if ($this->retriever instanceOf ItemDataRetriever) {
+            $item = $this->retriever->getItem($id, $response);
+            return $item;
+        }
 
         if (!$id) {
             return null;
@@ -92,9 +97,7 @@ abstract class ItemListDataModel extends DataModel {
     }
     
     /**
-     * Sets the total number of items in the request. If subclasses override parseData() this method
-     * should be called when the number of items is known. The value is usually set by retrieving the
-     * the value of getTotalItems() from the DataParser.
+     * Sets the total number of items in the request. 
      * @param int
      */
     public function setTotalItems($totalItems) {
@@ -145,35 +148,6 @@ abstract class ItemListDataModel extends DataModel {
         
     }
 
-    protected function parseFile($file, DataParser $parser=null) {       
-        if (!$parser) {
-            $parser = $this->parser;
-        }
-        $data = parent::parseFile($file, $parser);
-        $this->setTotalItems($parser->getTotalItems());
-        return $data;
-    }
-    
-    protected function parseData($data, DataParser $parser=null) {       
-        if (!$parser) {
-            $parser = $this->parser;
-        }
-
-        $data = parent::parseData($data, $parser);
-        $this->setTotalItems($parser->getTotalItems());
-        return $data;
-    }
-
-    protected function parseResponse(DataResponse $response, DataParser $parser=null) {
-        if (!$parser) {
-            $parser = $this->parser;
-        }
-        $data = parent::parseResponse($response, $parser);
-        $this->setTotalItems($parser->getTotalItems());
-        return $data;
-    }
-
-
     /**
      * Returns an item at a particular index
      * @param int index
@@ -192,8 +166,11 @@ abstract class ItemListDataModel extends DataModel {
      * and return a filtered list of items
      */
     public function items() {
-        $items = $this->getParsedData();
-        
+        $items = $this->retriever->getData($response);
+        if ($totalItems = $response->getContext('totalItems')) {
+            $this->setTotalItems($totalItems);
+        }
+
         // the result has not been limited        
         if (count($items)== $this->getTotalItems()) {
             $items = $this->limitItems($items, $this->getStart(), $this->getLimit());

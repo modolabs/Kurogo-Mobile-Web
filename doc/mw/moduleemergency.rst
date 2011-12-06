@@ -30,13 +30,13 @@ a `contacts` section in *config/emergency/feeds.ini*
 
 Configure contacts list to connect to the drupal emergency module:
 
-* *CONTROLLER_CLASS* = "DrupalContactsListDataController"  
+* *RETRIEVER_CLASS* = "DrupalContactsDataRetriever"
 * *DRUPAL_SERVER_URL* = "http://YOUR_DRUPAL_SERVER_DOMAIN"  
 * *FEED_VERSION* = 1
 
 Otherwise you can configure the contacts list directly in an ini file with:  
 
-* *CONTROLLER_CLASS* = "INIFileContactsListDataController"
+* *CONTROLLER_CLASS* = "INIFileContactsListRetriever"
 * *BASE_URL* must point to the appropriate ini file
 
 The ini file will need a `primary` section for primary contacts and 
