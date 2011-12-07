@@ -13,7 +13,7 @@ Basic Layout
 There are several directories located in the root of the Kurogo folder:
 
 **add-ons**
-  This directory contains additional scripts or code that be used to interact with other applications
+  This directory contains additional scripts or code that can be used to interact with other applications
 **app**
   This directory contains the code and :ref:`templates <templates-tour>` for each module provided by Kurogo. This also
   includes shared templates used by every module (including headers and footers). As with the lib 
@@ -81,12 +81,22 @@ module (use: *Kurogo::includePackage('PackageName')* in your module code). Curre
 
 * Authentication (included automatically when authentication is enabled)
 * Authorization - for connecting to various OAuth based web services
-* Calendar - includes classes to deal with date and time
+* Cache - classes dealing with in-memory and disk caching
+* Calendar - includes classes to deal with calendar data
+* Config - classes to deal with configuration files
+* DataController - legacy classes dealing with the pre 1.4 DataController class
+* DataModel - subclasses of the  :doc:`DataModel <datamodel>` class
+* DataParser - subclasses of the  :doc:`DataParser <dataparser>` class
+* DataResponse - subclasses of the  :doc:`DataResponse <dataresponse>` class
+* DataRetriever - subclasses of the  :doc:`DataRetriever <dataretriever>` class
+* DateTime - classes for handling date and time
 * db - used when you wish to interact with a database
-* Emergency - used by the emergency module
-* Maps - used by the maps module
-* People - used by the people module
-* Video - used by the video module
+* Emergency - used by the :doc:`emergency <moduleemergency>` module
+* Maps - used by the :doc:`map <modulemap>` module
+* People - used by the :doc:`people <modulepeople>` module
+* RSS - classes for handling RSS data
+* Session - Subclasses of the session object, used for session management
+* Video - used by the :doc:`video <modulevideo>` module
 
 --------------------
 Core / Support Files
@@ -110,42 +120,14 @@ for AJAX like functionality where supported.
 
 * *APIModule* - The base class for API modules, inherits from Module
 * *APIResponse* - A class that encapsulates the common response message for API requests
-* *CoreAPIModule* - Class used to handle site wide API functions (API requests not assigned to a specific module)
+
+See :doc:`apimodule` for more information.
 
 -----------------------
 External Data Retrieval
 -----------------------
 
-The main class is *DataController*. It provides functionality to retrieve URL based data (this could include
-both local and remote data), cache this data using the *DataResponse* class, and parse it using a subclass 
-of *DataParser* to prepare it into a structure suitable for use. In its optimal design, a data controller 
-will abstract the details of building the URL, and return objects that conform to the :ref:`KurogoObject <kurogoobject_interface>` interface, 
-allowing the module code to be as generic as possible.
-
-Included examples of DataControllers/Parsers include: 
-
-* *RSSDataController* - retrieves a feed of data in RSS/RDF or Atom formats. The corresponding *RSSDataParser* 
-  class takes the resulting data and builds a structure of items located in the feed. Also uses 
-  the *RSS* class.
-* *CalendarDataController* - retrieves a feed of data in ICS format. The corresponding *ICSDataParser*
-  class takes the resulting data and builds a structure of events in the feed. Also uses the *ICalendar*
-  and *TimeRange* class. The *TrumbaCalendarDataController* is a specific subclass for feeds that 
-  utilize the `Trumba <http://www.trumba.com/>`_ calendar service.
-* *PeopleController* - access directory/person data. Included implementations include the *LDAPPeopleController* 
-  and *DatabasePeopleController*. Note this is distinct from authenticating users.
-* *HTMLDataController* - retrieves a remote HTML document and optionally extracts a specific HTML ID
-  or element. It uses the *DOMDataParser*.
-
-These classes also use the *DiskCache* class to cache the retrieved data.
-
-Other included Data Parsers:
-
-* *PassthroughDataParser* - A no-op parser. Passes the data as is.
-* *JSONDataParser* - Parses JSON content into a PHP structure.
-* *DOMDataParser* - Parses HTML content into a DOM Object
-* *INIFileParser* - Parses INI files
-
-See :doc:`datacontroller` for more information
+See :doc:`dataretrieval` for more information
    
 ---------------
 Database Access

@@ -8,12 +8,12 @@ class CalendarListModel extends DataModel
     
     public function getUserCalendars() {
         $this->setOption('action', 'userCalendars');
-        return $this->getParsedData();
+        return $this->getData();
     }
     
     public function getResources() {
         $this->setOption('action', 'resources');
-        return $this->getParsedData();
+        return $this->getData();
     }
     
 }

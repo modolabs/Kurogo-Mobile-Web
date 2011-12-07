@@ -92,7 +92,9 @@ abstract class XMLDataParser extends DataParser
     public function parseData($contents) {
         $this->clearInternalCache();
         $this->parseXML($contents);
-        $this->setTotalItems(count($this->items));
+        if (is_null($this->totalItems)) {
+            $this->setTotalItems(count($this->items));
+        }
         return $this->items;
     }
 }

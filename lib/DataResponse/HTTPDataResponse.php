@@ -15,6 +15,15 @@ class HTTPDataResponse extends DataResponse
         $this->requestParameters = $parameters;
         $this->requestHeaders = $headers;
     }
+    public function getRequest()
+    {
+        return array(
+            'method'     => $this->requestMethod,
+            'url'        => $this->requestURL,
+            'parameters' => $this->requestParameters,
+            'headers'    => $this->requestHeaders
+        );
+    }
     
     public function setResponseHeaders($http_response_header) {
         if (is_array($http_response_header)) {

@@ -1,6 +1,6 @@
 <?php
 
- class VimeoRetriever extends URLDataRetriever
+ class VimeoRetriever extends URLDataRetriever implements ItemDataRetriever
  {
     protected $DEFAULT_PARSER_CLASS='VimeoDataParser';
     
@@ -11,20 +11,19 @@
             $this->setOption('channel', $args['CHANNEL']);
         }
     }
-
-    public function url() {
-        $url = 'http://vimeo.com/api/v2/';
+    
+    public function setOption($option, $value) {
+        parent::setOption($option, $value);
         
-        if ($author = $this->getOption('author')) {
-            $url .= $author;
-        } elseif ($channel = $this->getOption('channel')) {
-            $url .= 'channel/' . $channel;
-        } else {
-            throw new KurogoConfigurationException("Unable to determine type of request");
+        switch ($option)
+        {
+            case 'channel':
+                $this->setBaseUrl('http://vimeo.com/api/v2/channel/' . $value . '/videos.json');
+                break;
+            case 'author':
+                $this->setBaseUrl('http://vimeo.com/api/v2/' . $value . '/videos.json');
+                break;
         }
-        
-        $url .= "/videos.json";
-        return $url;
     }
     
     protected function isValidID($id) {
@@ -32,14 +31,14 @@
     }
     
 	 // retrieves video based on its id
-	public function getItem($id) {
+	public function getItem($id, &$response=null) {
 	    if (!$this->isValidID($id)) {
 	        return false;
 	    }
 
         $url = 'http://vimeo.com/api/v2/video/' . $id . '.json';
         $this->setBaseURL($url);
-        if ($items = $this->getParsedData()) {
+        if ($items = $this->getData($response)) {
             return isset($items[0]) ? $items[0] : false;
         }
         

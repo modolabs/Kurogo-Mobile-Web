@@ -35,7 +35,7 @@ class EmergencyNoticeDataModel extends DataModel
             
             $this->emergencyNotices = array();
             
-            $items = $this->getParsedData();
+            $items = $this->getData();
             foreach ($items as $item) {
                 if ($now - strtotime($item->getPubDate()) > $this->NOTICE_EXPIRATION) {
                     break; // items too old

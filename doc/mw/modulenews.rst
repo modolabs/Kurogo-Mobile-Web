@@ -35,9 +35,8 @@ is 1, etc). The following values are required:
 
 **Optional values**
 
-* *CONTROLLER_CLASS* - allows you to set a different class name for the controller. The default is 
-  RSSDataController. You could write your own subclass to adjust the URL if your source is a 
-  web service. 
+* *RETRIEVER_CLASS* - allows you to set a define an alternate :doc:`data retriever <dataretriever>`
+  to get the data. The default is URLDataRetriever.
 * *PARSER_CLASS* set this to a subclass of *DataParser*. You would only need to change it if your data
   source returns data in a format other than RSS/Atom or RDF. The default is RSSDataParser.
 * *ITEM_CLASS* allows you to set a different class name for each item in the feed. This would allow
