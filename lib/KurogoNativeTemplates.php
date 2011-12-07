@@ -46,7 +46,7 @@ class KurogoNativeTemplates
             $handle = opendir($path);
             while ($entry = readdir($handle)) {
                 if ($entry != '..' && $entry != '.' && $entry != '') {
-                    $this->rmdirAndFiles($path.DIRECTORY_SEPARATOR.$entry);
+                    $this->rmPath($path.DIRECTORY_SEPARATOR.$entry);
                 }
             }
             closedir($handle);
@@ -168,11 +168,7 @@ class KurogoNativeTemplates
         $file = self::$currentInstance->urlSuffixToFile($urlSuffix);
         
         if ($file) {
-            $replacement = $matches[1];
-            if (self::$currentInstance->processingFileType == self::FILE_TYPE_HTML) {
-                $replacement .= 'modules/'.self::$currentInstance->module.'/';
-            }
-            $replacement .= $file.$matches[5];
+            $replacement = $matches[1].$file.$matches[5];
         } else {
             Kurogo::log(LOG_NOTICE, "Unable to determine file name for '{$matches[0]}'", 'api');
             $replacement = $matches[0];
@@ -279,8 +275,6 @@ class KurogoNativeTemplates
     }
 
     public function saveTemplates($pages, $additionalAssets = array()) {
-        
-
         foreach ($pages as $page) {
             $this->setPage($page);
             $this->saveContentAndAssets();
@@ -303,6 +297,7 @@ class KurogoNativeTemplates
         
         // write out zip file
         $this->zipPath($this->path, $this->path.'.zip');
+        $this->rmPath($this->path);
     }
 
     //
@@ -414,6 +409,11 @@ class KurogoNativeTemplates
         
         return self::INTERNAL_LINK_SCHEME."$id/$page".
             ($args ? '?'.http_build_query($args) : '');
+    }
+    
+    public static function redirectTo($url) {
+        echo '<script type="text/javascript">window.location = "'.$url.'";</script>';
+        exit;
     }
     
     //

@@ -346,9 +346,14 @@ abstract class WebModule extends Module {
 
   public function redirectToModule($id, $page, $args=array()) {
     $url = self::buildURLForModule($id, $page, $args);
+    
     //error_log('Redirecting to: '.$url);
-    Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url",'module');
-    header("Location: ". URL_PREFIX . ltrim($url, '/'));
+    if (KurogoNativeTemplates::shouldRewriteInternalLinks()) {
+      KurogoNativeTemplates::redirectTo($url);
+    } else {
+      Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url",'module');
+      header("Location: ". URL_PREFIX . ltrim($url, '/'));
+    }
     exit;
   }
 
@@ -363,8 +368,12 @@ abstract class WebModule extends Module {
     }
     
     //error_log('Redirecting to: '.$url);
-    Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url",'module');
-    header("Location: ". URL_PREFIX . ltrim($url, '/'));
+    if (KurogoNativeTemplates::shouldRewriteInternalLinks()) {
+      KurogoNativeTemplates::redirectTo($url);
+    } else {
+      Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url",'module');
+      header("Location: ". URL_PREFIX . ltrim($url, '/'));
+    }
     exit;
   }
 
@@ -1464,7 +1473,7 @@ abstract class WebModule extends Module {
     
     if ($this->page == '__nativeWebTemplates') {
         $title = 'Success!';
-        $message = 'Generated native web templates';
+        $message = 'Generated native web templates for '.$this->getArg('platform');
         try {
             $this->buildNativeWebTemplates();
         } catch (Exception $e) {
