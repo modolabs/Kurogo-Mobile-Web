@@ -17,18 +17,18 @@ The name of each section is generally not important, but must be unique.
 
 Within each feed you use the following options:
 
-* *CONTROLLER_CLASS* - The DataController to use. Currently supported controllers include:
+* *RETRIEVER_CLASS* - The :doc:`Data Retriever <dataretriever>` to use. Currently supported retrievers include:
   
-  * *YouTubeVideoControler*
-  * *VimeoVideoController*
-  * *BrightcoveVideoController*
+  * *YouTubeRetriever*
+  * *VimeoRetriever*
+  * *BrightcoveRetriever*
   
 * *TITLE* - The textual label used when showing the section list
 * *AUTHOR* - optional, used to limit the results by author
 * *TAG* - optional, used to limit the results by tag
 
 ----------------------
-YouTubeVideoController
+YouTubeRetriever
 ----------------------
 
 There are additional options for YouTube feeds:
@@ -36,7 +36,7 @@ There are additional options for YouTube feeds:
 * *PLAYLIST* - optional, used to limit the results by a particular playlist
 
 ----------------------
-VimeoVideoController
+VimeoRetriever
 ----------------------
 
 There are additional options for Vimeo feeds:
@@ -44,7 +44,7 @@ There are additional options for Vimeo feeds:
 * *CHANNEL* - optional, used to limit the results by a particular channel
 
 -------------------------
-BrightcoveVideoController
+BrightcoveRetriever
 -------------------------
 
 In order to to use the Brightcove service, you must also include several other parameters. These 

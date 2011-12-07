@@ -13,6 +13,14 @@ class DatabaseDataRetriever extends DataRetriever
             $args = array_merge(Kurogo::getSiteSection('database'), $args);
         }
         
+        if (isset($args['SQL'])) {
+            $this->setSQL($args['SQL']);
+        }
+
+        if (isset($args['PARAMETERS']) && is_array($args['PARAMETERS'])) {
+            $this->setParameters($args['PARAMETERS']);
+        }
+        
         $this->connection = new db($args);                
     }
 
@@ -20,7 +28,7 @@ class DatabaseDataRetriever extends DataRetriever
         $this->sql = $sql;
     }
     
-    public sql() {
+    public function sql() {
         return $this->sql;
     }
 
@@ -37,9 +45,13 @@ class DatabaseDataRetriever extends DataRetriever
         $this->setSQL($sql);
         $this->setParameters($parameters);
     }
+    
+    protected function initRequest() {
+    }
 
-    protected function retrieveData() {
+    protected function retrieveResponse() {
 
+        $this->initRequest();
         $response = $this->initResponse();
 
         if ($sql = $this->sql()) {

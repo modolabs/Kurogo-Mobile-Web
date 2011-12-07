@@ -1,10 +1,9 @@
 <?php
 
-class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
+class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever implements SearchDataRetriever
 {
     protected $DEFAULT_PARSER_CLASS = 'GoogleCalendarDataParser';
     protected $authority;
-    protected $supportsSearch = true;
     protected $requiresToken = true;
     
     protected function parameters() {
@@ -25,7 +24,7 @@ class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
         return $parameters;
     }
  
-    public function search($searchTerms) {
+    public function search($searchTerms, &$response=null) {
         $this->addFilter('q', $searchTerms);
         if ($start = $this->getOption('start')) {
             $this->addFilter('start-index', $start+1);
@@ -35,7 +34,7 @@ class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
             $this->addFilter('max-results', $limit);
         }
 
-        return $this->getData();
+        return $this->getData($response);
     }
 
     protected function addStandardFilters() {

@@ -6,7 +6,7 @@ class DrupalContactsDataRetriever extends URLDataRetriever
 
     protected function loadContacts() {
         if(!$this->contactsLoaded) {
-            $contacts = $this->getParsedData();
+            $contacts = $this->getData();
             $this->primaryContacts = $contacts['primary'];
             $this->secondaryContacts = $contacts['secondary'];
             $this->contactsLoaded = TRUE;
