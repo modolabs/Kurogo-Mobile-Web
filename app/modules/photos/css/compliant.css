@@ -1,0 +1,19 @@
+#footerlinks{
+	padding-top:24px;
+}
+
+.springboard{
+	overflow:hidden;
+}
+
+#photoSpringboard div{
+	height:74px;
+	width: 74px;
+}
+
+.fullimage{
+	max-width: 100%;
+	margin-left: auto;
+    margin-right: auto;
+    display: block;
+}

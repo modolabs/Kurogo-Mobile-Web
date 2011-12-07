@@ -19,6 +19,8 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
 
     protected $lastParseSignature = null;
 
+    protected $parseMode=self::PARSE_MODE_STRING;
+    
     // whitelists
     protected static $startElements=array(
         'DOCUMENT', 'FOLDER',
