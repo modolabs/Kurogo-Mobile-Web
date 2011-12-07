@@ -15,6 +15,14 @@ class AthleticsWebModule extends WebModule {
     protected $newsFeed;
     protected $scheduleFeed;
     
+    public static function getGenders() {
+        return array(
+            'men'=>'Men',
+            'women'=>'Women'
+        );
+        
+    }
+    
     protected function cleanContent($content) {
         //deal with pre tags. strip out pre tags and add <br> for newlines
         $bits = preg_split( '#(<pre.*?'.'>)(.*?)(</pre>)#s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
