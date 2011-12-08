@@ -59,6 +59,11 @@ class FileLoader {
     }
     
     protected static function generateLazyURL($file, $contents, $subdirectory=null) {
+    
+        if (realpath_exists(self::filePath($file, $subdirectory))) {
+            return self::fullURL($file,$subdirectory);
+        }
+        
         $lazyFile = "$file.needsLoad";
         $lazyURL = self::generateURL($lazyFile, $contents, $subdirectory);
         if ($lazyURL) {
