@@ -15,6 +15,10 @@ class AthleticsWebModule extends WebModule {
     protected $newsFeed;
     protected $scheduleFeed;
     
+    public function loadScheduleData() {
+        return $this->getModuleSections('schedule');
+    }
+    
     public static function getGenders() {
         return array(
             'men'=>'Men',
