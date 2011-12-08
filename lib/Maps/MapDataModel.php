@@ -10,11 +10,13 @@ class MapDataModel extends DataModel implements MapFolder
     // and feeds-xxx.ini; feeds-xxx.ini will take precedence
     protected $defaultZoomLevel = 16;
 
+    protected $feedId;
+    protected $categories = array();
+    protected $selectedCategory;
+
     // other stuff
     protected $items = null;
     protected $selectedPlacemarks = array();
-    protected $allPlacemarks = array();
-    protected $drillDownPath = array();
 
     protected function init($args)
     {
@@ -29,30 +31,45 @@ class MapDataModel extends DataModel implements MapFolder
         }
         
         $this->categoryId = mapIdForFeedData($args);
+    }
 
-        // TODO: this may go away from the superclass
-        $this->parser->setDataController($this);
+    protected function returnPlacemarks(Array $placemarks) {
+        $results = array();
+        foreach ($placemarks as $placemark) {
+            if ($placemark instanceof Placemark) {
+                $placemark->addCategoryId($this->feedId);
+                $results[] = $placemark;
+            }
+        }
+        return $results;
+    }
+
+    protected function returnCategories(Array $categories) {
+        $results = array();
+        foreach ($categories as $category) {
+            if ($category instanceof MapFolder) {
+                $results[] = $category;
+            }
+        }
+        return $results;
     }
 
     /* public */
     
-    public function getDefaultZoomLevel() {
+    public function getDefaultZoomLevel()
+    {
         return $this->defaultZoomLevel;
     }
 
-    public function selectPlacemark($featureId)
+    public function selectPlacemark($id)
     {
-        $result = null;
-        foreach ($this->getAllPlacemarks() as $feature) {
-            if ($feature->getId() == $featureId) {
-                $result = $feature;
-                break;
-            }
+        $this->setPlacemarkId($id);
+        if ($this->selectedCategory) {
+            return $this->returnPlacemarks($this->selectedCategory->getPlacemark($id));
         }
-        if ($result) {
-            $this->selectedPlacemarks[] = $result;
+        elseif ($this->selectedPlacemarks) {
+            return $this->returnPlacemarks($this->selectedPlacemarks);
         }
-        return $result;
     }
 
     public function setSelectedPlacemarks($features)
@@ -60,142 +77,72 @@ class MapDataModel extends DataModel implements MapFolder
         $this->selectedPlacemarks = $features;
     }
 
-    public function getSelectedPlacemark()
-    {
-        return end($this->selectedPlacemarks);
-    }
-
     public function getSelectedPlacemarks()
     {
-        return $this->selectedPlacemarks;
+        return $this->returnPlacemarks($this->selectedPlacemarks);
     }
 
-    public function addDisplayFilter($type, $value)
-    {
-        if ($type == 'category') {
-            if ($value && !is_array($value)) {
-                $value = array($value);
-            }
-            $this->drillDownPath = $value;
-        }
-    }
-
-    public function clearDisplayFilters()
-    {
-        $this->drillDownPath = null;
-    }
-
-    public function getFilteredPlacemarks()
-    {
-        $features = array();
-        foreach ($this->getAllPlacemarks() as $feature) {
-            if (!$this->drillDownPath 
-                || in_array($this->drillDownPath, $feature->getCategories()))
-            {
-                $features[] = $feature;
+    public function setCategoryId($categoryId) {
+        $this->selectedCategory = null;
+        foreach ($this->categories() as $category) {
+            if ($category->getId() == $categoryId) {
+                $this->selectedCategory = $category;
+                break;
             }
         }
-        return $features;
     }
 
-    /* MapFolder interface */
-
-    public function getChildCategories()
-    {
-        return $this->parser->getChildCategories();
-    }
-
-    public function getAllPlacemarks()
-    {
-        if (!$this->allPlacemarks) {
-            $this->getListItems(); // make sure we're populated
-            $this->allPlacemarks = $this->parser->getAllPlacemarks();
+    public function addCategoryId($categoryId) {
+        if (!$this->selectedCategory) {
+            $this->setCategoryId($categoryId);
+        } else {
+            foreach ($this->selectedCategory->categories() as $category) {
+                if ($category->getId() == $categoryId) {
+                    $this->selectedCategory = $category;
+                    break;
+                }
+            }
         }
-        return $this->allPlacemarks;
     }
 
-    public function getListItems()
-    {
-        return $this->listItemsAtPath(
-            $this->getParsedData(), $this->drillDownPath, $this->categoryId);
+    public function setPlacemarkId($placemarkId) {
+        if ($this->selectedCategory) {
+            $this->selectedCategory->setPlacemarkId($placemarkId);
+        }
+        else {
+            foreach ($this->placemarks() as $placemark) {
+                if ($placemark->getId() == $placemarkId) {
+                    $this->selectedPlacemarks = array($placemark);
+                    break;
+                }
+            }
+        }
     }
 
-    public function getProjection()
-    {
-        return $this->parser->getProjection();
+    public function categories() {
+        if ($this->selectedCategory) {
+            return $this->selectedCategory->categories();
+        }
+        return $this->returnCategories($this->retriever->getData());
     }
 
-    public function getCategoryId()
-    {
-        return $this->categoryId;
+    public function placemarks() {
+        if ($this->selectedPlacemarks) {
+            return $this->returnPlacemarks($this->selectedPlacemarks);
+        }
+        if ($this->selectedCategory) {
+            return $this->returnPlacemarks($this->selectedCategory->placemarks());
+        }
+        return $this->returnPlacemarks($this->retriever->getData());
     }
 
-    public function canSearch()
-    {
+    public function getFeedId() {
+        return $this->feedId;
+    }
+
+    public function canSearch() {
         return $this->searchable;
     }
 
-    /* not public */
-
-    private function listItemsAtPath(array $items, array $path=array(), $otherCateogryId='something_unique')
-    {
-        if (count($path)) {
-            $firstItem = array_shift($path);
-        }
-        $folders = array();
-        $features = array();
-        foreach ($items as $item) {
-            if ($item instanceof MapFolder) {
-                $folders[$item->getId()] = $item;
-            } elseif ($item instanceof Placemark) {
-                $features[] = $item;
-            }
-        }
-
-        if (count($folders) && count($features)) {
-            // put dangling placemarks at this level into a folder called "Other"
-            // since we don't have UI to handle mixed folders and placemarks
-            $someUniqueId = substr(md5($otherCateogryId.count($folders)), 0, strlen($otherCateogryId)-1);
-            $otherCategory = new MapBaseCategory($someUniqueId, 'Other places');
-            $folders[$otherCategory->getId()] = $otherCategory;
-            $otherCategory->setPlacemarks($features);
-        }
-
-        if (count($folders) >= 1) {
-            // attempt to drill down if we are given a "subdirectory"
-            if (isset($firstItem) && isset($folders[$firstItem])) {
-                return $this->listItemsAtPath(
-                    $folders[$firstItem]->getListItems(), $path);
-            }
-            return $folders;
-        }
-
-        return $features;
-    }
-    
-    protected function getAllLeafNodes() {
-        $leafNodes = array();
-        foreach ($this->getParsedData() as $item) {
-            $this->getLeafNodesForListItem($item, $leafNodes);
-        }
-        return $leafNodes;
-    }
-    
-    protected function getLeafNodesForListItem(MapListElement $listItem, Array &$results) {
-        if ($listItem instanceof MapFolder) {
-            foreach ($listItem->getListItems() as $innerItem) {
-                $this->getLeafNodesForListItem($innerItem, $results);
-            }
-        } else {
-            $results[] = $listItem;
-        }
-    }
-
-
-
-
-
-
-
-
 }
+

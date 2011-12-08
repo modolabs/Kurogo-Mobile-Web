@@ -2,58 +2,82 @@
 
 // http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd
 // http://portal.opengeospatial.org/files/?artifact_id=27810
+// http://code.google.com/apis/kml/documentation/kmlreference.html
 
 includePackage('Maps', 'KML');
 
 class KMLDataParser extends XMLDataParser implements MapDataParser
 {
-    protected $root;
     protected $elementStack = array();
     protected $data='';
+    protected $feedId;
 
     protected $document;
     protected $folders = array();
-    protected $features = array();
+    protected $placemarks = array();
     protected $title;
     protected $category;
+    protected $itemCount = 0;
 
-    protected $lastParseSignature = null;
+    protected $otherCategory;
 
     protected $parseMode=self::PARSE_MODE_STRING;
     
     // whitelists
     protected static $startElements=array(
         'DOCUMENT', 'FOLDER',
-        'STYLE','STYLEMAP',
-        'PLACEMARK','POINT','LINESTRING', 'LINEARRING', 'POLYGON'
+        'STYLE', 'STYLEMAP',
+        'PLACEMARK', 'POINT', 'LINESTRING', 'LINEARRING', 'POLYGON'
         );
     protected static $endElements=array(
-        'DOCUMENT', 'FOLDER',
-        'STYLE','STYLEMAP','STYLEURL',
-        'PLACEMARK',
+        'DOCUMENT', 
+        'STYLE', 'STYLEMAP', 'STYLEURL',
         );
+    
+    public function init($args) {
+        parent::init($args);
+        $this->feedId = mapIdForFeedData($args);
+    }
 
     /////// MapDataParser
+
+    public function placemarks() {
+        return $this->placemarks;
+    }
+
+    public function categories() {
+        return $this->folders;
+    }
 
     public function getProjection() {
         return null;
     }
 
-    public function getAllPlacemarks()
-    {
-        return $this->features;
-    }
-
-    public function getChildCategories()
-    {
-        return $this->folders;
-    }
-
-    public function getListItems()
-    {
-    }
-
     /////
+
+    protected function addPlacemark(Placemark $placemark)
+    {
+        if (!$this->otherCategory) {
+            $this->otherCategory = new KMLFolder('Folder', array());
+            $this->otherCategory->setName('Other Places'); // TODO: get localized string
+            $this->otherCategory->setId($this->getId().'-other');
+            $this->addFolder($this->otherCategory); // TODO: make sure this sorts to the bottom
+        }
+
+        $this->otherCategory->addItem($placemark);
+    }
+
+    protected function addFolder(MapFolder $folder)
+    {
+        $folder->setParent($this);
+        $this->folders[] = $folder;
+        $this->itemCount++;
+    }
+
+    public function getId()
+    {
+        return $this->feedId;
+    }
 
     public function getTitle() {
         return $this->title;
@@ -83,18 +107,16 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                 break;
             case 'FOLDER':
                 $parent = end($this->elementStack);
-
                 $folder = new KMLFolder($name, $attribs);
                 $this->elementStack[] = $folder;
-
-                // we need to do this before the element is completed
-                // since this info needs to be available for nested children
                 if ($parent instanceof KMLFolder) {
                     $parentCategory = $parent->getId();
-                    $newFolderIndex = count($parent->getChildCategories());
+                    $newFolderIndex = count($parent->categories());
+                    $parent->addItem($folder);
                 } else {
-                    $parentCategory = $this->dataController->getCategoryId();
-                    $newFolderIndex = count($this->items);
+                    $parentCategory = $this->getId();
+                    $newFolderIndex = $this->itemCount;
+                    $this->addFolder($folder);
                 }
                 $folder->setId(substr(md5($parentCategory.$newFolderIndex), 0, strlen($parentCategory)-1)); // something unique
                 break;
@@ -109,11 +131,13 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
             case 'PLACEMARK':
                 $placemark = new KMLPlacemark($name, $attribs);
                 $parent = end($this->elementStack);
-                $placemark->addCategoryId($this->dataController->getCategoryId());
-                if ($parent instanceof KMLFolder) {
-                    $placemark->addCategoryId($parent->getId());
-                }
                 $this->elementStack[] = $placemark;
+
+                if ($parent instanceof KMLFolder) {
+                    $parent->addItem($placemark);
+                } else {
+                    $this->addPlacemark($placemark);
+                }
                 break;
             case 'POINT':
                 $this->elementStack[] = new KMLPoint($name, $attribs);
@@ -146,37 +170,14 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         {
             case 'DOCUMENT':
                 $this->title = $element->getTitle();
-                // skip each drilldown level where only one thing exists,
-                while (count($this->items) == 1 && $this->items[0] instanceof KMLFolder) {
-                    $this->items = $this->items[0]->getListItems();
-                }
-                break;
-            case 'FOLDER':
-                if ($parent instanceof KMLFolder) {
-                    $parent->addItem($element);
-                } else {
-                    $this->items[] = $element;
-                    $this->folders[] = $element;
-                }
                 break;
             case 'STYLE':
             case 'STYLEMAP':
                 $this->styles[$element->getAttrib('ID')] = $element;
                 break;
-            case 'PLACEMARK':
-                $element->setId(count($this->items));
-                if ($parent instanceof KMLFolder) {
-                    $parent->addItem($element);
-                } else {
-                    $this->items[] = $element;
-                }
-                $element->setId(count($this->features));
-                $this->features[] = $element;
-
-                break;
             case 'STYLEURL':
                 $value = $element->value();
-                if ($parent->name() == 'Placemark') {
+                if ($parent instanceof Placemark) {
                     if ($style = $this->getStyle($value)) {
                         $parent->setStyle($this->getStyle($value));
                     } else {
@@ -189,16 +190,20 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         }
     }
 
-    // avoid parsing the same data twice
-    public function parseData($contents) {
-        $newSignature = strlen($contents);
-        if (!$this->features || $newSignature != $this->lastParseSignature) {
-            $this->features = array();
-            $this->folders = array();
-            $this->lastParseSignature = $newSignature;
-            return parent::parseData($contents);
+    public function parseData($content)
+    {
+        $this->clearInternalCache();
+        $this->parseXML($content);
+        $items = $this->categories();
+        $folder = $this;
+        while (count($items) == 1) {
+            $folder = current($items);
+            $items = $folder->categories();
         }
-        return $this->features;
+        if (!$items) {
+            $items = $folder->placemarks();
+        }
+        return $items;
     }
 }
 

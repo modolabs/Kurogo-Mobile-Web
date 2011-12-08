@@ -13,7 +13,7 @@ class KMLPlacemark extends XMLElement implements Placemark
     protected $style;
     protected $geometry;
     //protected $category;
-    protected $categories;
+    protected $categories = array();
 
     private $fields = array();
     
@@ -79,7 +79,9 @@ class KMLPlacemark extends XMLElement implements Placemark
     }
 
     public function addCategoryId($id) {
-        $this->categories[] = $id;
+        if ($id && !in_array($id, $this->categories)) {
+            $this->categories[] = $id;
+        }
     }
 
     public function getGeometry() {

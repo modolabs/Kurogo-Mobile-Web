@@ -5,7 +5,7 @@ define('FEET_PER_METER', 3.2808399);
 define('GEOGRAPHIC_PROJECTION', 4326);
 define('EARTH_RADIUS_IN_METERS', 6378100);
 define('EARTH_METERS_PER_DEGREE', 111319); // very very rough
-define('MAP_CATEGORY_DELIMITER', ':');
+define('MAP_CATEGORY_DELIMITER', '@@');
 
 Kurogo::includePackage('Maps', 'Abstract');
 Kurogo::includePackage('Maps', 'Base');
@@ -112,12 +112,11 @@ function mapIdForFeedData(Array $feedData) {
 }
 
 function shortArrayFromMapFeature(Placemark $feature) {
-    $category = current($feature->getCategoryIds());
+    $category = implode(MAP_CATEGORY_DELIMITER, $feature->getCategoryIds());
     $result = array('category' => $category);
-
     $id = $feature->getId();
-    if ($id) {
-        $result['featureindex'] = $id;
+    if ($id !== null) {
+        $result['pid'] = $id;
     } else {
         $geometry = $feature->getGeometry();
         if ($geometry) {

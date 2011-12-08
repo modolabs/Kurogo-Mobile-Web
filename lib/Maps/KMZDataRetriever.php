@@ -5,13 +5,7 @@
 */
 class KMZDataRetriever extends URLDataRetriever
 {
-    /**
-     * Retrieves the data using the config url. The default implementation uses the file_get_content()
-     * function to retrieve the request. Subclasses would need to implement this if a simple GET request
-     * is not sufficient (i.e. you need POST or custom headers). 
-     * @return HTTPDataResponse a DataResponse object
-     */
-    protected function retrieveData()
+    protected function retrieveResponse()
     {
         if (!class_exists('ZipArchive')) {
             throw new KurogoException("class ZipArchive (php-zip) not available");
@@ -29,9 +23,10 @@ class KMZDataRetriever extends URLDataRetriever
         }
                 
         $this->requestParameters = $this->parameters();
-        $this->requestMethod = $this->setContextMethod();
-        $this->requestHeaders = $this->setContextHeaders();
-        $this->requestData = $this->setContextData();
+        // the following are private functions in URLDataRetriever
+        //$this->requestMethod = $this->setContextMethod();
+        //$this->requestHeaders = $this->setContextHeaders();
+        //$this->requestData = $this->setContextData();
         
         Kurogo::log(LOG_INFO, "Retrieving $this->requestURL", 'url_retriever');
 
@@ -55,6 +50,4 @@ class KMZDataRetriever extends URLDataRetriever
         
         return $response;
     }
-
-
 }
