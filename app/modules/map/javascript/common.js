@@ -479,7 +479,7 @@ function kgoEsriMapLoader(attribs) {
     that.userLocationMarkerOnMap = false;
 
     that.loadMap = function() {
-        center = new esri.geometry.Point(that.initLon, that.initLat, that.spatialRef);
+        that.center = new esri.geometry.Point(that.initLon, that.initLat, that.spatialRef);
 
         map = new esri.Map(that.mapElement, {
             'logo' : false,
@@ -563,6 +563,7 @@ function kgoEsriMapLoader(attribs) {
 
     that.setMapBounds = function(minLat, minLon, maxLat, maxLon) {
         var extent = esri.geometry.Extent(minLon, minLat, maxLon, maxLat, that.spatialRef);
+        extent = extent.expand(1.2);
         map.setExtent(extent, true);
     }
 
@@ -595,7 +596,7 @@ function kgoEsriMapLoader(attribs) {
             if (firstLocation) {
                 // only recenter on first location so we don't rubber band on scrolling
                 var points = esri.geometry.Multipoint(spatialRef);
-                points.addPoint(center);
+                points.addPoint(that.center);
                 points.addPoint(point);
                 
                 var extent = points.getExtent();

@@ -203,7 +203,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
                 $templateValues['___SYMBOL_SPEC___'] = "$consistency,new dojo.Color(\"#$color\"),$weight";
             }
-            $tempalte->appendValues($templateValues);
+            $template->appendValues($templateValues);
         }
 
         return $template->getScript();
