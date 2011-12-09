@@ -167,8 +167,13 @@ class KurogoWebBridge
         $urlSuffix = html_entity_decode($matches[4]);
         $file = self::$currentInstance->urlSuffixToFile($urlSuffix);
         
-        if ($file) {
+        if (strpos($matches[0], '/'.FileLoader::fileDir().'/') !== FALSE) {
+            $file = '';                  // do not rewrite fileloader urls
+            $replacement = $matches[0];
+            
+        } else if ($file) {
             $replacement = $matches[1].$file.$matches[5];
+            
         } else {
             Kurogo::log(LOG_NOTICE, "Unable to determine file name for '{$matches[0]}'", 'api');
             $replacement = $matches[0];
