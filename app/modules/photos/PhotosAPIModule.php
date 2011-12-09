@@ -39,7 +39,7 @@ class PhotosAPIModule extends APIModule {
                     $photo['id'] = $id;
                     $photo['title'] = $controller->getTitle();
                     $photo['type'] = $defaultPhoto->getType();
-                    $photo['count'] = $controller->getAlbumSize();
+                    $photo['totalItems'] = $controller->getAlbumSize();
                     $photo['img'] = $defaultPhoto->getThumbnailUrl();
                     $albums['photos'][] = $photo;
                 }
@@ -70,9 +70,9 @@ class PhotosAPIModule extends APIModule {
         		foreach($items as $item){
         			$photo['id'] = $item->getID();
         			$photo['title'] = $item->getTitle();
-        			$photo['album_id'] = $id;
-                    $photo['thumbnail_url'] = $item->getThumbnailUrl();
-                    $photo['origin_img'] = $item->getUrl();
+        			$photo['albumId'] = $id;
+                    $photo['thumbnailUrl'] = $item->getThumbnailUrl();
+                    $photo['imgUrl'] = $item->getUrl();
                     $photos[] = $photo;
         		}
                 $albumTitle = $controller->getTitle();
