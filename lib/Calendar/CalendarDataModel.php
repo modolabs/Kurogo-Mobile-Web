@@ -176,24 +176,30 @@ class CalendarDataModel extends ItemListDataModel
     }
     
     public function getEvent($id) {
+        $calendar = $this->getCalendar();
+        return $calendar->getEvent($id);
+    }
+    
+    protected function getCalendar() {
         if (!$this->calendar) {
-            $this->calendar = $this->getParsedData();
+            $calendar = $this->retriever->getData();
+            if (!$calendar instanceOf CalendarInterface) {
+                throw new KurogoDataException('Return value is not a valid calendar');
+            }
+            $this->calendar = $calendar;
         }
-        
-        return $this->calendar->getEvent($id);
+        return $this->calendar;
     }
     
     public function items() {
 
-        if (!$this->calendar) {
-            $this->calendar = $this->getParsedData();
-        }
+        $calendar = $this->getCalendar();
 
         $startTimestamp = $this->startTimestamp() ? $this->startTimestamp() : CalendarDataController::START_TIME_LIMIT;
         $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : CalendarDataController::END_TIME_LIMIT;
         $range = new TimeRange($startTimestamp, $endTimestamp);
         
-        $events = $this->calendar->getEventsInRange($range, $this->getLimit(), $this->filters);
+        $events = $calendar->getEventsInRange($range, $this->getLimit(), $this->filters);
         return $this->limitItems($events, $this->getStart(), $this->getLimit());
     }
     
@@ -204,11 +210,14 @@ class CalendarDataModel extends ItemListDataModel
     }
 
     public function search($searchTerms) {
-        if ($this->retriever->supportsSearch()) {
-            $response = $this->retriever->search($searchTerms);
-            $calendar = $this->parseData($response->getResponse());
+        if ($this->retriever instanceOf SearchDataRetriever) {
+            $calendar = $this->retriever->search($searchTerms, $response);
             $items = $calendar->getEvents();
-            $this->totalItems = $this->parser->getTotalItems();
+
+            if ($totalItems = $response->getContext('totalItems')) {
+                $this->setTotalItems($totalItems);
+            }
+
             return $items;
         } else {
             return parent::search($searchTerms);

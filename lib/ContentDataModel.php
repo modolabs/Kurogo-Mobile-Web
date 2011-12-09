@@ -8,7 +8,7 @@ class ContentDataModel extends ItemListDataModel
     public function getContentById($id)
     {
         $content = '';
-        if ( ($dom = $this->getParsedData()) && ($dom instanceOf DOMDocument)) {
+        if ( ($dom = $this->getData()) && ($dom instanceOf DOMDocument)) {
             if ($element = $dom->getElementById($id)) {
                 $content = $dom->saveXML($element);
             }
@@ -20,7 +20,7 @@ class ContentDataModel extends ItemListDataModel
 
     public function getContentByTag($tag) {
         $content = '';
-        if ( ($dom = $this->getParsedData()) && ($dom instanceOf DOMDocument)) {
+        if ( ($dom = $this->getData()) && ($dom instanceOf DOMDocument)) {
             $elements = $dom->getElementsByTagName($tag);
             for ($i=0; $i < $elements->length; $i++) {
                 $element = $elements->item($i);
@@ -34,16 +34,20 @@ class ContentDataModel extends ItemListDataModel
         
         return $content;
     }
+    
+    protected function getData() {
+        return $this->retriever->getData($response);
+    }
 
     public function getContent()
     {
         $content = '';
-        if ( ($dom = $this->getParsedData()) && ($dom instanceOf DOMDocument)) {
+        if ( ($dom = $this->getData()) && ($dom instanceOf DOMDocument)) {
             if ($element = $dom->getElementsByTagName('body')->item(0)) {
                 $content = $dom->saveXML($element);
                 $content = preg_replace("#</?body.*?>#", "", $content);
             } else {
-                $content = $this->getData();
+                $content = $this->getResponse();
             }
         }
         

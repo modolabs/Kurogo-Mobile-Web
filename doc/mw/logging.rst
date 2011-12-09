@@ -62,7 +62,7 @@ are free to use any area they wish to log their own messages:
 * admin - Admin console
 * auth - Authentication and authorization
 * config - Configuration
-* data - Used by DataController classes or other libraries that retrieve external data.
+* data - Used by libraries that retrieve external data.
 * db - Database 
 * deviceDetection - Device Detection
 * exception - Exceptions

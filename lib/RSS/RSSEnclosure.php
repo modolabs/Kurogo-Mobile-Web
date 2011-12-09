@@ -23,9 +23,14 @@ class RSSEnclosure extends XMLElement
     public function __construct($attribs)
     {
         $this->setAttribs($attribs);
-        $this->url = $this->getAttrib('URL');
         $this->length = $this->getAttrib('LENGTH');
         $this->type = $this->getAttrib('TYPE');
+        if ($this->isImage()) {
+            $url = $this->getAttrib('URL');
+            $this->url = ImageLoader::precache($url);
+        } else {
+            $this->url = $this->getAttrib('URL');
+        }
     }
     
     public function isImage()

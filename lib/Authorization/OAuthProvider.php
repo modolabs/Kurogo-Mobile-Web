@@ -204,7 +204,7 @@ abstract class OAuthProvider
         $retriever->setParameters($parameters);
         $retriever->setHeaders($headers);
         $retriever->setCacheLifetime($cacheLifetime);
-        return $retriever->getData();
+        return $retriever->getResponse();
 	}
 	
 	protected function getRetriever() {
