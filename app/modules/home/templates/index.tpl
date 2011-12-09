@@ -1,4 +1,5 @@
 {capture name="banner" assign="banner"}
+  {block name="banner-notice"}
   {if $bannerNotice}
     {if $bannerURL}
       <a class="banner-notice"  href="{$bannerURL}">
@@ -15,6 +16,7 @@
   <h1 id="homelogo"{if isset($topItem)} class="roomfornew"{/if}>
     <img src="/modules/{$moduleID}/images/logo-home{$imageExt}" width="{$banner_width|default:265}" height="{$banner_height|default:45}" alt="{$strings.SITE_NAME|escape}" />
   </h1>
+  {/block}
 {/capture}
 
 {include file="findInclude:common/templates/header.tpl" customHeader=$banner scalable=false}
