@@ -73,6 +73,9 @@ class PhotosAPIModule extends APIModule {
         			$photo['albumId'] = $id;
                     $photo['thumbnailUrl'] = $item->getThumbnailUrl();
                     $photo['imgUrl'] = $item->getUrl();
+                    $photo['description'] = $item->getDescription();
+                    $photo['author'] = $item->getAuthor();
+                    $photo['published'] = $item->getPublished()->getTimestamp();
                     $photos[] = $photo;
         		}
                 $albumTitle = $controller->getTitle();
