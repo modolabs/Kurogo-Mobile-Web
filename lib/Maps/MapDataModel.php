@@ -82,25 +82,20 @@ class MapDataModel extends DataModel implements MapFolder
         return $this->returnPlacemarks($this->selectedPlacemarks);
     }
 
-    public function setCategoryId($categoryId) {
+    public function findCategory($categoryArg) {
+        foreach (explode(MAP_CATEGORY_DELIMITER, $categoryArg) as $categoryId) {
+            if (strlen($categoryId)) {
+                $this->setCategoryId($categoryId);
+            }
+        }
+    }
+
+    protected function setCategoryId($categoryId) {
         $this->selectedCategory = null;
         foreach ($this->categories() as $category) {
             if ($category->getId() == $categoryId) {
                 $this->selectedCategory = $category;
                 break;
-            }
-        }
-    }
-
-    public function addCategoryId($categoryId) {
-        if (!$this->selectedCategory) {
-            $this->setCategoryId($categoryId);
-        } else {
-            foreach ($this->selectedCategory->categories() as $category) {
-                if ($category->getId() == $categoryId) {
-                    $this->selectedCategory = $category;
-                    break;
-                }
             }
         }
     }
@@ -119,10 +114,14 @@ class MapDataModel extends DataModel implements MapFolder
         }
     }
 
+    protected function setupRetrieverForCategories() {}
+    protected function setupRetrieverForPlacemarks() {}
+
     public function categories() {
         if ($this->selectedCategory) {
             return $this->selectedCategory->categories();
         }
+        $this->setupRetrieverForCategories();
         return $this->returnCategories($this->retriever->getData());
     }
 
@@ -133,6 +132,7 @@ class MapDataModel extends DataModel implements MapFolder
         if ($this->selectedCategory) {
             return $this->returnPlacemarks($this->selectedCategory->placemarks());
         }
+        $this->setupRetrieverForPlacemarks();
         return $this->returnPlacemarks($this->retriever->getData());
     }
 

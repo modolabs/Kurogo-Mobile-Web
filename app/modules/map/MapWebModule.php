@@ -738,17 +738,15 @@ class MapWebModule extends WebModule {
 
                 $feedId = $this->getArg('feed');
                 $dataModel = $this->getDataModel($feedId);
-                $categoryArg = $this->getArg('category');
-                if ($categoryArg) {
-                    foreach (explode(MAP_CATEGORY_DELIMITER, $categoryArg) as $categoryId) {
-                        $dataModel->addCategoryId($categoryId);
-                    }
+                $category = $this->getArg('category');
+                if ($category) {
+                    $dataModel->findCategory($category);
                 }
                 $title = $dataModel->getTitle();
                 $listItems = $dataModel->categories();
                 while (count($listItems) == 1) {
                     $categoryId = end($listItems)->getId();
-                    $dataModel->addCategoryId($categoryId);
+                    $dataModel->findCategory($categoryId);
                     $listItems = $dataModel->categories();
                 }
                 // TODO: use different nav list types to distinguish placemarks vs. subcategories
@@ -843,9 +841,7 @@ class MapWebModule extends WebModule {
             $dataModel = $this->getDataModel($feedId);
             $category = $this->getArg('category', null);
             if ($category !== null) {
-                foreach (explode(MAP_CATEGORY_DELIMITER, $category) as $categoryId) {
-                    $dataModel->addCategoryId($categoryId);
-                }
+                $dataModel->findCategory($category);
             }
             if ($this->placemarkId !== null) {
                 $dataModel->setPlacemarkId($this->placemarkId);
