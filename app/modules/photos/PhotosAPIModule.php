@@ -39,7 +39,7 @@ class PhotosAPIModule extends APIModule {
                     $photo['id'] = $id;
                     $photo['title'] = $controller->getTitle();
                     $photo['type'] = $defaultPhoto->getType();
-                    $photo['album_count'] = $controller->getAlbumSize();
+                    $photo['count'] = $controller->getAlbumSize();
                     $photo['img'] = $defaultPhoto->getThumbnailUrl();
                     $albums['photos'][] = $photo;
                 }
