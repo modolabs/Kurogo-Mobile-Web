@@ -58,6 +58,18 @@ class RSSDataParser extends XMLDataParser
         if (isset($args['ENCLOSURE_CLASS'])) {
             $this->setEnclosureClass($args['ENCLOSURE_CLASS']);
         }
+
+        // KGO-282
+        // set image resize/crop parameters
+        if (isset($args['THUMB_MAX_WIDTH'])) {
+            $this->setOption("thumb_max_width", intval($args['THUMB_MAX_WIDTH']));
+        }
+        if (isset($args['THUMB_MAX_HEIGHT'])) {
+            $this->setOption("thumb_max_height", intval($args['THUMB_MAX_HEIGHT']));
+        }
+        if (isset($args['THUMB_CROP'])) {
+            $this->setOption("thumb_crop", (boolean)$args['THUMB_CROP']);
+        }
     }
 
     protected function shouldHandleStartElement($name)
@@ -82,6 +94,12 @@ class RSSDataParser extends XMLDataParser
                 break;
             case 'ENCLOSURE':
             case 'MEDIA:CONTENT':
+                $thumbOptions = array(
+                    'THUMB_MAX_WIDTH' => $this->getOption('thumb_max_width'),
+                    'THUMB_MAX_HEIGHT' => $this->getOption('thumb_max_height'),
+                    'THUMB_CROP' => $this->getOption('thumb_crop')
+                );
+                $attribs = array_merge($attribs, $thumbOptions);
                 $this->elementStack[] = new $this->enclosureClass($attribs);
                 break;
             case 'IMAGE':

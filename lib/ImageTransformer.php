@@ -18,13 +18,31 @@ class ImageTransformer
                 case 'aspect':
                 case 'min_aspect':
                 case 'max_aspect':
+                case 'crop':
                     $this->rules[$param] = $value;
                     break;
             }
         }
     }
-    
+
     public function getBoundingBox($width, $height) {
+
+        if(isset($this->rules['crop']) && isset($this->rules['max_width']) && isset($this->rules['max_height'])) {
+            // KGO-282
+            $destWidth = $this->rules['max_width'];
+            $destHeight= $this->rules['max_height'];
+            
+            // fit width first
+            $newHeight = $width * $destHeight / $destWidth;
+            if($newHeight > $height) {
+                // not work, do fit height
+                $newWidth = $height * $destWidth / $destHeight;
+                $newHeight = $height;
+            }else {
+                $newWidth = $width;
+            }
+            return array($this->rules['max_width'], $this->rules['max_height'], $newWidth, $newHeight);
+        }
 
         $aspect = round($width/$height, 4);
         if (isset($this->rules['height'])) {

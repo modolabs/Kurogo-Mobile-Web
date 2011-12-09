@@ -27,7 +27,17 @@ class RSSEnclosure extends XMLElement
         $this->type = $this->getAttrib('TYPE');
         if ($this->isImage()) {
             $url = $this->getAttrib('URL');
-            $this->url = ImageLoader::precache($url);
+            $options = array();
+            if(isset($attribs['THUMB_MAX_WIDTH'])) {
+                $options['max_width'] = $attribs['THUMB_MAX_WIDTH'];
+            }
+            if(isset($attribs['THUMB_MAX_HEIGHT'])) {
+                $options['max_height'] = $attribs['THUMB_MAX_HEIGHT'];
+            }
+            if(isset($attribs['THUMB_CROP'])) {
+                $options['crop'] = $attribs['THUMB_CROP'];
+            }
+            $this->url = ImageLoader::precache($url, $options);
         } else {
             $this->url = $this->getAttrib('URL');
         }

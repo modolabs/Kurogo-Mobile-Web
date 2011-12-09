@@ -97,8 +97,25 @@ class ImageProcessor
                 throw new KurogoDataException("Unable to save files of this type");
         }
         
-        if ($this->width != $width || $this->height != $height) {
-            imagecopyresampled ( $dest, $src, 0, 0, 0, 0, $width, $height, $this->width, $this->height );
+        $crop = false;
+        if (isset($boundingBox[2]) && isset($boundingBox[3])) {
+            $crop = true;
+            $srcWidth = $boundingBox[2];
+            $srcHeight = $boundingBox[3];
+        }
+        if($crop) {
+            // do crop
+            if($this->width == $srcWidth) {
+                $y = ($this->height - $srcHeight) / 2;
+                $x = 0;
+            }
+            if($this->height == $srcHeight) {
+                $x = ($this->width - $srcWidth) / 2;
+                $y = 0;
+            }
+            imagecopyresampled($dest, $src, 0, 0, $x, $y, $width, $height, $srcWidth, $srcHeight);
+        }elseif ($this->width != $width || $this->height != $height) {
+            imagecopyresampled($dest, $src, 0, 0, 0, 0, $width, $height, $this->width, $this->height);
         } else {
             $dest &= $src;
         }

@@ -5,19 +5,45 @@ class ImageLoader extends FileLoader {
         return 'images';
     }
     
-    protected static function processImageFile($path, $loaderInfo) {
-        // do nothing by default
+    protected static function processImageFile($inputFile, $loaderInfo) {
+        // if no gd support, do nothing
+        if (!function_exists('gd_info')) {
+            return false;
+        }
+        // if there is only url and processMethod, do nothing
+        if(count($loaderInfo) == 2) {
+            return false;
+        }
+        // make inputFile as temprary file
+        $outputFile = $inputFile;
+        $processor = new ImageProcessor($inputFile);
+        $transformer = new ImageTransformer($loaderInfo);
+
+        //maintain original image type 
+        $imageType = null;
+        $processor->transform($transformer, $imageType, $outputFile);
     }
 
-    public static function precache($url, $width=null, $height=null, $file=null) {
+    public static function precache($url, $options) {
         $loaderInfo = array(
-            'width' => $width,
-            'height' => $height,
             'url' => $url,
             'processMethod'=>array(__CLASS__, 'processImageFile')
-            );
+        );
+        foreach($options as $key => $option) {
+            switch($key) {
+                case 'width':
+                case 'height':
+                case 'max_width':
+                case 'max_height':
+                case 'crop':
+                    if($option) {
+                        $loaderInfo[$key] = $option;
+                    }
+                    break;
+            }
+        }
 
-        if (!$file) {
+        if (!isset($options['file'])) {
             $extension = pathinfo($url, PATHINFO_EXTENSION);
             $file = md5($url) . '.'. $extension;
         }    
