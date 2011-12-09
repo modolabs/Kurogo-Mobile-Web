@@ -32,15 +32,15 @@ class PhotosAPIModule extends APIModule {
                 $albums = array();
                 foreach($this->feeds as $id => $feed) {
                     $id = $feed['INDEX'];
-                    $albums[$id]['title'] = $feed['TITLE'];
                     $controller = $this->getFeed($id);
                     $defaultPhoto = $controller->getDefaultPhoto();
 
                     $photo = array();
+                    $photo['id'] = $id;
                     $photo['title'] = $controller->getTitle();
                     $photo['type'] = $defaultPhoto->getType();
                     $photo['album_count'] = $controller->getAlbumSize();
-                    $photo['img'] = $defaultPhoto->getTUrl();
+                    $photo['img'] = $defaultPhoto->getThumbnailUrl();
                     $albums['photos'][] = $photo;
                 }
                 $this->setResponse($albums);
@@ -52,7 +52,7 @@ class PhotosAPIModule extends APIModule {
                 if(!$controller) {
                     return false;
                 }
-                $limit = $this->getArg('limit', 4);
+                $limit = $this->getArg('limit', 10);
                 $totalItems = $controller->getAlbumSize();
                 $totalPage = ceil($totalItems / $limit);
                 $page = $this->getArg('page');
@@ -63,16 +63,16 @@ class PhotosAPIModule extends APIModule {
                     $page = $totalPage;
                 }
                 $start = $page * $limit;
-                $items = $controller->getPhotosByIndex($start, $limit);
+                $controller->setStart($start);
+                $controller->setLimit($limit);
+        		$items = $controller->getPhotos();
         		$photos = array();
         		foreach($items as $item){
         			$photo['id'] = $item->getID();
         			$photo['title'] = $item->getTitle();
         			$photo['album_id'] = $id;
-                    $photo['m_img'] = $item->getMUrl();
-                    $photo['t_img'] = $item->getTUrl();
-                    $photo['l_img'] = $item->getLUrl();
-                    $photo['origin_img'] = $item->getPhotoUrl();
+                    $photo['thumbnail_url'] = $item->getThumbnailUrl();
+                    $photo['origin_img'] = $item->getUrl();
                     $photos[] = $photo;
         		}
                 $albumTitle = $controller->getTitle();
