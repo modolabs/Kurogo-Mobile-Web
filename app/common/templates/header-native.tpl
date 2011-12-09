@@ -3,7 +3,7 @@
 {block name="pageTitle"}{$pageTitle|strip_tags|escape:'htmlall'}{/block}
 
 {block name="urlBaseJavascript"}
-  <script type="text/javascript">var URL_BASE='{$nativeServerURLBase}';</script>
+  <script type="text/javascript">var URL_BASE='{$webBridgeServerURLBase}';</script>
 {/block}
 
 {block name="analyticsJavascript"}
@@ -24,10 +24,10 @@
     //
     
     function ajaxLoad() {ldelim}
-        var kurogoServerURL = '{$nativeServerURL}';
-        var extraArgs       = '{$nativeServerArgs}';
+        var kurogoServerURL = '{$webBridgeServerURL}';
+        var extraArgs       = '{$webBridgeServerArgs}';
 
-        url = kurogoServerURL+'{$nativeServerPath}';
+        url = kurogoServerURL+'{$webBridgeServerPath}';
         if (extraArgs.length) {ldelim}
             url += '&'+extraArgs; // optional args set by native wrapper
         {rdelim}
@@ -91,8 +91,8 @@
       
       onOrientationChange();
       
-      {if $nativePageConfigURL}
-        window.location = "{$nativePageConfigURL}";
+      {if $webBridgePageConfigURL}
+        window.location = "{$webBridgePageConfigURL}";
       {/if}
     {rdelim}
   </script>

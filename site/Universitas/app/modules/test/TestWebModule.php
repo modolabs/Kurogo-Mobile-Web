@@ -30,7 +30,7 @@ class TestWebModule extends NewsWebModule {
     protected function initializeForPage() {
         parent::initializeForPage();
         if ($this->page == 'index') {
-            $this->setNativePageRefresh(true);
+            $this->setWebBridgePageRefresh(true);
         }
     }
 }

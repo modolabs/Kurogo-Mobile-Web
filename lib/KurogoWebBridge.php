@@ -1,6 +1,6 @@
 <?php
 
-class KurogoNativeTemplates
+class KurogoWebBridge
 {
     protected $platform = 'unknown';
     protected $module = 'unknown';
@@ -26,7 +26,7 @@ class KurogoNativeTemplates
     public function __construct($platform, $module) {
         $this->platform = $platform;
         $this->module = $module;
-        $this->path = NATIVE_TEMPLATES_DIR.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR.$module;
+        $this->path = WEB_BRIDGE_DIR.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR.$module;
     }
 
     public function setPage($page) {
@@ -304,7 +304,7 @@ class KurogoNativeTemplates
     // Config URL for setting native navbar options
     //
 
-    public static function getNativePageConfigURL($pageTitle, $backTitle, $hasRefresh) {
+    public static function getPageConfigURL($pageTitle, $backTitle, $hasRefresh) {
         if (!self::hasNativePlatform()) {
             return '';
         }
@@ -321,7 +321,7 @@ class KurogoNativeTemplates
         return self::CONFIG_LINK_SCHEME.'navbar/?'.http_build_query($params);
     }
 
-    public static function getNativeURLBase() {
+    public static function getURLBase() {
         if (self::hasNativePlatform()) {
             return '__KUROGO_URL_BASE__';
         } else {
@@ -329,7 +329,7 @@ class KurogoNativeTemplates
         }
     }
 
-    public static function getNativeServerURL() {
+    public static function getServerURL() {
         if (self::hasNativePlatform()) {
             return '__KUROGO_SERVER_URL__';
         } else {
@@ -337,15 +337,15 @@ class KurogoNativeTemplates
         }
     }
 
-    public static function getNativeServerPath($id, $page) {
+    public static function getServerPath($id, $page) {
+        $url = "/{$id}/{$page}?ajax=1";
         if (self::shouldForceNativePlatform($platform)) {
-            return "/{$id}/{$page}?ajax=1&nativePlatform={$platform}";
-        } else {
-            return "/{$id}/{$page}?ajax=1";
+            $url .= '&'.http_build_query(array(self::NATIVE_PLATFORM_PARAMETER => $platform));;
         }
+        return $url;
     }
 
-    public static function getNativeServerArgs($args) {
+    public static function getServerArgs($args) {
         if (self::hasNativePlatform()) {
             return '__KUROGO_MODULE_EXTRA_ARGS__';
         } else {
@@ -384,11 +384,11 @@ class KurogoNativeTemplates
         return Kurogo::deviceClassifier()->getPagetype() == 'native' || self::hasNativePlatform();
     }
     
-    public static function useNativeTemplateInitializer() {
+    public static function useNativeTemplatePageInitializer() {
         return self::isNativeCall() && (!self::isAjax() || self::isAssetCheck());
     }
     
-    public static function useNativeTemplateWrapper() {
+    public static function useWrapperPageTemplate() {
         return self::isNativeCall() && !self::isAjax();
     }
     
@@ -420,17 +420,17 @@ class KurogoNativeTemplates
     //  Payload calls
     //
     
-    public static function getNativeTemplatesPath() {
-        return 'media/native_templates';
+    public static function getAssetsPath() {
+        return 'media/web_bridge';
     }
     
-    public static function getNativeTemplatesDir() {
-        return 'media'.DIRECTORY_SEPARATOR.'native_templates';
+    public static function getAssetsDir() {
+        return 'media'.DIRECTORY_SEPARATOR.'web_bridge';
     }
     
-    public static function getNativeTemplateInfo($module) {
+    public static function getAssetsConfiguration($module) {
         $info = array();
-        $files = glob(NATIVE_TEMPLATES_DIR."/*/$module.zip");
+        $files = glob(WEB_BRIDGE_DIR."/*/$module.zip");
         if ($files) {
             foreach ($files as $file) {
                 $parts = explode(DIRECTORY_SEPARATOR, dirname($file));
@@ -440,7 +440,7 @@ class KurogoNativeTemplates
                     if ($platform && $contents) {
                         $info[$platform] = array(
                             'md5' => md5($contents),
-                            'url' => FULL_URL_PREFIX.self::getNativeTemplatesPath()."/$platform/$module.zip",
+                            'url' => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$module.zip",
                         );
                     }
                 }

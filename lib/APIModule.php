@@ -22,6 +22,10 @@ abstract class APIModule extends Module
         return null;
     }
 
+    public function getWebBridgeConfig() {
+        return null;
+    }
+
  /**
    * Set the command
    * @param string the command

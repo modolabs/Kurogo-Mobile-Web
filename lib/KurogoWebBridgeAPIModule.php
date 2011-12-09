@@ -1,8 +1,8 @@
 <?php
 
-class KurogoNativeTemplateAPIModule extends APIModule {
-    public function getPayload() {
-        return KurogoNativeTemplates::getNativeTemplateInfo($this->configModule);
+class KurogoWebBridgeAPIModule extends APIModule {
+    public function getWebBridgeConfig() {
+        return KurogoWebBridge::getAssetsConfiguration($this->configModule);
     }
     
     protected function initializeForCommand() {

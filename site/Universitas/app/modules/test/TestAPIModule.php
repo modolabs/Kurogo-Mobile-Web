@@ -1,5 +1,5 @@
 <?php
 
-class TestAPIModule extends KurogoNativeTemplateAPIModule {
+class TestAPIModule extends KurogoWebBridgeAPIModule {
     protected $id = 'test';
 }
