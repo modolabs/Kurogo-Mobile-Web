@@ -39,9 +39,18 @@ class FileLoader {
                 if (isset($loaderInfo, $loaderInfo['url'])) {
                     $data = file_get_contents($loaderInfo['url']);
                     if ($data) {
-                        if (file_put_contents($filePath, $data)) {
+                        //use a temp file to prevent race conditions
+                        $tempFile = $filePath . '.' . uniqid();
+                        if (file_put_contents($tempFile, $data)) {
+                            
+                            if (isset($loaderInfo['processMethod'])) {
+                                call_user_func($loaderInfo['processMethod'], $tempFile, $loaderInfo);
+                            }
+
+                            rename($tempFile, $filePath);
                             $path = realpath_exists($filePath);
                             unlink($loaderInfoPath);
+    
                         } else {
                             Kurogo::log(LOG_WARNING,"FileLoader failed to save data to '$filePath'",'data');
                         }
@@ -59,6 +68,11 @@ class FileLoader {
     }
     
     protected static function generateLazyURL($file, $contents, $subdirectory=null) {
+    
+        if (realpath_exists(self::filePath($file, $subdirectory))) {
+            return self::fullURL($file,$subdirectory);
+        }
+        
         $lazyFile = "$file.needsLoad";
         $lazyURL = self::generateURL($lazyFile, $contents, $subdirectory);
         if ($lazyURL) {
