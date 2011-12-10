@@ -37,7 +37,7 @@ class RSSEnclosure extends XMLElement
             if(isset($attribs['THUMB_CROP'])) {
                 $options['crop'] = $attribs['THUMB_CROP'];
             }
-            $this->url = ImageLoader::precache($url, $options);
+            $this->url = ImageLoader::cacheImage($url, $options);
         } else {
             $this->url = $this->getAttrib('URL');
         }

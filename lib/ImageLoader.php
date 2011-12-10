@@ -24,7 +24,18 @@ class ImageLoader extends FileLoader {
         $processor->transform($transformer, $imageType, $outputFile);
     }
 
-    public static function precache($url, $options) {
+    // retained for compatibility
+    public static function precache($url, $width=null, $height=null, $file=null) {
+        $loaderInfo = array(
+            'width' => $width,
+            'height' => $height,
+            'file'=>$file
+        );
+        
+        return self::xxx($url, $loaderInfo);
+    }
+
+    public static function cacheImage($url, $options) {
         $loaderInfo = array(
             'url' => $url,
             'processMethod'=>array(__CLASS__, 'processImageFile')
@@ -43,7 +54,8 @@ class ImageLoader extends FileLoader {
             }
         }
 
-        if (!isset($options['file'])) {
+        $file = isset($options['file']) ? $options['file'] : '';
+        if (!$file) {
             $extension = pathinfo($url, PATHINFO_EXTENSION);
             $file = md5($url) . '.'. $extension;
         }    
