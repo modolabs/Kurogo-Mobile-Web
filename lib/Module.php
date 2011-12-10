@@ -54,7 +54,7 @@ abstract class Module
         $default = $this->getOptionalModuleSection('feeds','module');
         $feeds = $this->getModuleSections('feeds');
         foreach ($feeds as $index=>&$feedData) {
-            $feedData = array_merge($feedData, $default);
+            $feedData = array_merge($default, $feedData);
             $feedData['INDEX'] = $index;
         }
         reset($feeds);
