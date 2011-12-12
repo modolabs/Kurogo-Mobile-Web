@@ -133,9 +133,13 @@ abstract class BinaryFileParser extends DataParser
         $this->cleanup();
     }
 
-    public function parseData($data)
-    {
+    public function parseData($data) {
         $this->setContents($data);
+        $this->doParse();
+    }
+
+    public function parseFile($file) {
+        $this->setFilename($file);
         $this->doParse();
     }
 

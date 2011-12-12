@@ -33,7 +33,7 @@ class MapWebModule extends WebModule {
             }
 
         } else {
-            $category = $this->getCategory();
+            $requestedFeedId = $this->getArg('feed', null);
             // if no feed group and category are specified, load whole list
             foreach ($this->feedGroups as $groupID => $groupSettings) {
                 $configName = "feeds-$groupID";
@@ -41,7 +41,7 @@ class MapWebModule extends WebModule {
                 foreach ($this->getModuleSections($configName) as $id => $feedData) {
                     $feedId = mapIdForFeedData($feedData);
                     $groupData[$feedId] = $feedData;
-                    if ($category == $feedId) {
+                    if ($requestedFeedId == $feedId) {
                         $this->feedGroup = $groupID;
                     }
                 }
@@ -168,11 +168,6 @@ class MapWebModule extends WebModule {
         return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
     }
 
-    private function getCategory() {
-        $category = $this->getArg('category', null);
-        return $category;
-    }
-
     private function getDrillDownPath() {
         $path = $this->getArg('path', array());
         if ($path !== array()) {
@@ -223,21 +218,21 @@ class MapWebModule extends WebModule {
         return $this->dataModel;
     }
 
-    private function getCurrentFeed($category=null) {
+    private function getCurrentFeed($feedId=null) {
         $this->getFeedData();
-        if ($category === null) {
-            $category = $this->getCategory();
+        if ($feedId === null || $feedId === '') {
+            $feedId = $this->getArg('feed');
         }
-        if ($category) {
-            if (isset($this->feeds[$category])) {
-                return $this->feeds[$category];
+        if ($feedId) {
+            if (isset($this->feeds[$feedId])) {
+                return $this->feeds[$feedId];
             }
         }
-        Kurogo::log(LOG_WARNING,"Warning: unable to find feed data for category $category",'maps');
+        Kurogo::log(LOG_WARNING,"Warning: unable to find feed data for feed $feedId",'maps');
         return null;
     }
 
-    private function getMergedConfigData($category=null) {
+    private function getMergedConfigData($feedId=null) {
         if ($this->getArg('worldmap')) {
             return array();
         }
@@ -254,13 +249,13 @@ class MapWebModule extends WebModule {
         $configData = $this->getDataForGroup($this->feedGroup);
 
         // allow individual feeds to override group value
-        $feedData = $this->getCurrentFeed($category);
+        $feedData = $this->getCurrentFeed($feedId);
         if ($feedData) {
             foreach ($feedData as $key => $value) {
                 $configData[$key] = $value;
             }
         }
-
+//var_dump($feedData);
         return $configData;
     }
 
@@ -528,7 +523,8 @@ class MapWebModule extends WebModule {
                     $maxItems = $groupData['NEARBY_ITEMS'];
                 }
 
-                $searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems, $this->getDataModel());
+                //$searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems, $this->getDataModel());
+                $searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems);
                 $places = array();
                 if ($searchResults) {
                     foreach ($searchResults as $result) {

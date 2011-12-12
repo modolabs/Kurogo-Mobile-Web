@@ -105,15 +105,15 @@ class GoogleJSMap extends JavascriptMapImageController {
     private function getPolygonJS()
     {
         $template = $this->prepareJavascriptTemplate('GoogleJSMapPolygons', true);
-        foreach ($this->polygons as $polygon) {
-            $rings = $polygon->getGeometry()->getRings();
+        foreach ($this->polygons as $placemark) {
+            $rings = $placemark->getGeometry()->getRings();
             $polyStrings = array();
             foreach ($rings as $ring) {
                 $polyString[] = '['.$this->coordsToGoogleArray($ring->getPoints()).']';
             }
 
             $options = array('map: map');
-            $style = $polygon->getStyle();
+            $style = $placemark->getStyle();
             if ($style !== null) {
                 if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR)) !== null) {
                     $options[] = 'strokeColor: "#'.htmlColorForColorString($color).'"';
@@ -128,15 +128,18 @@ class GoogleJSMap extends JavascriptMapImageController {
                 }
             }
 
-            $coord = $polygon->getGeometry()->getCenterCoordinate();
+            $coord = $placemark->getGeometry()->getCenterCoordinate();
+            if (isset($this->mapProjector)) {
+                $coord = $this->mapProjector->projectPoint($coord);
+            }
             $template->appendValues(array(
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
                 '___MULTIPATHSTRING___' => implode(',', $polyString),
-                '___TITLE___' => json_encode($polygon->getTitle()),
+                '___TITLE___' => json_encode($placemark->getTitle()),
                 '___OPTIONS___' => implode(',', $options),
-                '___SUBTITLE___' => json_encode($polygon->getSubtitle()),
-                '___URL___' => $this->urlForPlacemark($polygon),
+                '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
+                '___URL___' => $this->urlForPlacemark($placemark),
                 ));
         }
         return $template->getScript();
@@ -145,12 +148,12 @@ class GoogleJSMap extends JavascriptMapImageController {
     private function getPathJS()
     {
         $template = $this->prepareJavascriptTemplate('GoogleJSMapPaths', true);
-        foreach ($this->paths as $path) {
+        foreach ($this->paths as $placemark) {
             $geometry = $placemark->getGeometry();
             $coordString = $this->coordsToGoogleArray($geometry->getPoints());
 
             $options = array('map: map');
-            $style = $path->getStyle();
+            $style = $placemark->getStyle();
             if ($style) {
                 if (($color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR)) !== null) {
                     $options[] = 'strokeColor: "#'.htmlColorForColorString($color).'"';
@@ -160,22 +163,25 @@ class GoogleJSMap extends JavascriptMapImageController {
                     $options[] = "strokeWeight: $weight";
                 }
             }
-            $propString = implode(',', $properties);
+            $propString = implode(',', $options);
 
-            $subtitle = $path->getSubtitle();
+            $subtitle = $placemark->getSubtitle();
             if (!$subtitle) {
                 $subtitle = ''; // "null" will show up on screen
             }
 
             $coord = $geometry->getCenterCoordinate();
+            if (isset($this->mapProjector)) {
+                $coord = $this->mapProjector->projectPoint($coord);
+            }
             $template->appendValues(array(
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
                 '___PATHSTRING___' => $coordString,
-                '___TITLE___' => json_encode($path->getTitle()),
+                '___TITLE___' => json_encode($placemark->getTitle()),
                 '___OPTIONS___' => implode(',', $options),
-                '___SUBTITLE___' => json_encode($polygon->getSubtitle()),
-                '___URL___' => $this->urlForPlacemark($path),
+                '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
+                '___URL___' => $this->urlForPlacemark($placemark),
                 ));
         }
         return $template->getScript();

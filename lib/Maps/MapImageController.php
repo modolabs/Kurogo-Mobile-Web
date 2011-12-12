@@ -350,11 +350,7 @@ class JavascriptTemplate
                     if (!$value) {
                         $value = ''; // nulls may show up as strings
                     }
-                    $template = preg_replace('/\[?'.$placeholder.'\]?/', $value, $template);
-                }
-
-                while (preg_match('/\[___\w+___\]/', $template, $matches)) {
-                    $template = str_replace($matches[0], '', $template);
+                    $template = preg_replace('/'.$placeholder.'/', $value, $template);
                 }
 
                 $script .= $template;

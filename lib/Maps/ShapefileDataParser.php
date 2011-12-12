@@ -24,11 +24,10 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     private $dbfParser;
     private $bbox; // global bbox for file
     private $category;
-    private $mapProjection;
+    private $projection;
+    private $mapProjector;
     private $titleField = null;
     private $subtitleField = null;
-
-    protected $parseMode = DataParser::PARSE_MODE_FILE;
 
     protected $bigEndian = false;
 
@@ -61,64 +60,29 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         }
     }
 
-    public function parseFile($filename)
-    {
-        if (strpos($filename, '.zip') !== false) {
-            if (!class_exists('ZipArchive')) {
-                throw new KurogoException("class ZipArchive (php-zip) not available");
+    public function parseResponse($response) {
+        $this->dbfParser = new DBase3FileParser();
+        $this->mapProjector = new MapProjector();
+
+        if ($response->getContext('zipped')) {
+            $content = $response->getResponse();
+            foreach ($content as $filename => $fileData) {
+                $this->setContents($fileData['shp']);
+                $this->dbfParser->setContents($fileData['dbf']);
+                $this->dbfParser->setup();
+                $this->projection = isset($content['projection']) ? $content['projection'] : null;
+                $this->mapProjector->setSrcProj($this->projection);
+                $this->doParse();
             }
-            $zip = new ZipArchive();
-            $zip->open($filename);
-            // locate valid shapefile components
-            $shapeNames = array();
-            for ($i = 0; $i < $zip->numFiles; $i++) {
-                if (preg_match('/(.+)\.(shp|dbf|prj)$/', $zip->getNameIndex($i), $matches)) {
-                    $shapeName = $matches[1];
-                    $extension = $matches[2];
-                    if (!isset($shapeNames[$shapeName])) {
-                        $shapeNames[$shapeName] = array();
-                    }
-                    $shapeNames[$shapeName][] = $extension;
-                }
-            }
-            $this->dbfParser = new DBase3FileParser();
-            foreach ($shapeNames as $shapeName => $extensions) {
-                if (in_array('dbf', $extensions) && in_array('shp', $extensions)) {
-                    $this->setContents($zip->getFromName("$shapeName.shp"));
-                    $contents = $zip->getFromName("$shapeName.dbf");
-                    if (!$contents) {
-                        throw new KurogoDataException("could not read $shapeName.dbf");
-                    }
-                    $this->dbfParser->setContents($zip->getFromName("$shapeName.dbf"));
-                    $this->dbfParser->setup();
-
-                    if (in_array('prj', $extensions)) {
-                        $prjData = $zip->getFromName("$shapeName.prj");
-                        $this->mapProjection = new MapProjection($prjData);
-                    }
-
-                    $this->doParse();
-                }
-            }
-
-        } elseif (realpath_exists("$filename.shp") && realpath_exists("$filename.dbf")) {
-            $this->setFilename("$filename.shp");
-            $this->dbfParser = new DBase3FileParser();
-            $this->dbfParser->setFilename("$filename.dbf");
-            $this->dbfParser->setup();
-
-            $prjFile = $filename . '.prj';
-            if (realpath_exists($prjFile)) {
-                $prjData = file_get_contents($prjFile);
-                $this->mapProjection = new MapProjection($prjData);
-            }
-
-            $this->doParse();
 
         } else {
-            throw new KurogoDataException("Cannot find $filename");
+            $this->projection = $response->getContext('projection');
+            $this->mapProjector->setSrcProj($this->projection);
+            $this->setFilename($response->getContext('shp'));
+            $this->dbfParser->setFilename($response->getContext('dbf'));
+            $this->dbfParser->setup();
+            $this->doParse();
         }
-
         return $this->features;
     }
 
@@ -127,12 +91,12 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         return $this->features;
     }
 
-    public function getAllPlacemarks()
+    public function placemarks()
     {
         return $this->features;
     }
 
-    public function getChildCategories()
+    public function categories()
     {
         return array();
     }
@@ -259,8 +223,12 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     }
 
     private function addPoint() {
-        $point = new ShapefilePoint();
-        $point->readGeometry($this->readPoint());
+        $struct = $this->readPoint();
+        if ($this->projection) { // if projection is null, projector will do nothing
+            $struct = $this->mapProjector->projectPoint($struct);
+        }
+        $geometry = new MapBasePoint($struct);
+        $point = new ShapefilePlacemark($geometry);
         return $point;
     }
 
@@ -271,23 +239,44 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         for ($i = 0; $i < $numPoints; $i++) {
             $points[] = $this->readPoint();
         }
-        $point = new ShapefileMultiPoint();
-        $point->readGeometry($points);
-        $point->setBBox($bbox);
-        return $point;
+        // TODO: complete this
     }
 
     private function addPolyline() {
-        $polyline = new ShapefilePolyline();
-        $polyline->setBBox($this->readBBox());
-        $polyline->readGeometry($this->readPolyStructure());
+        $bbox = $this->readBBox();
+        $struct = $this->readPolyStructure();
+        $centroid = array(
+            'lat' => ($bbox['ymin'] + $bbox['ymax']) / 2,
+            'lon' => ($bbox['xmin'] + $bbox['xmax']) / 2,
+            );
+        if ($this->projection) {
+            $centroid = $this->mapProjector->projectPoint($centroid);
+        }
+        // TODO: find out if there are polylines that have more than one element
+        // in the outermost array. and if so, if they should be connected.
+        $geometry = new MapBasePolyline($struct[0], $centroid);
+        if ($this->projection) {
+            $geometry = $this->mapProjector->projectGeometry($geometry);
+        }
+        $polyline = new ShapefilePlacemark($geometry);
         return $polyline;
     }
 
     private function addPolygon() {
-        $polygon = new ShapefilePolygon();
-        $polygon->setBBox($this->readBBox());
-        $polygon->readGeometry($this->readPolyStructure());
+        $bbox = $this->readBBox();
+        $polyStruct = $this->readPolyStructure();
+        $centroid = array(
+            'lat' => ($bbox['ymin'] + $bbox['ymax']) / 2,
+            'lon' => ($bbox['xmin'] + $bbox['xmax']) / 2,
+            );
+        if ($this->projection) {
+            $centroid = $this->mapProjector->projectPoint($centroid);
+        }
+        $geometry = new MapBasePolygon($polyStruct, $centroid);
+        if ($this->projection) {
+            $geometry = $this->mapProjector->projectGeometry($geometry);
+        }
+        $polygon = new ShapefilePlacemark($geometry);
         return $polygon;
     }
 

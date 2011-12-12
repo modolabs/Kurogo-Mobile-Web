@@ -144,5 +144,13 @@ class MapDataModel extends DataModel implements MapFolder
         return $this->searchable;
     }
 
+    public function searchByProximity($center, $tolerance=1000, $maxItems=0) {
+        return array();
+    }
+
+    public function search($searchTerms) {
+        return array();
+    }
+
 }
 

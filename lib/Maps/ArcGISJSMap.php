@@ -182,6 +182,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 '___TITLE___' => json_encode($placemark->getTitle()),
                 '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
                 '___URL___' => $this->urlForPlacemark($placemark),
+                '___SYMBOL_SPEC___' => '',
                 );
 
             if ($style !== null) {
@@ -219,6 +220,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             // defaults
             $templateValues = array(
                 '___SYMBOL_TYPE___' => 'SimpleMarkerSymbol',
+                '___SYMBOL_ARGS___' => '',
                 '___URL___' => $this->urlForPlacemark($placemark),
                 );
 
@@ -337,6 +339,7 @@ JS;
             '___PATH_SCRIPT___' => $this->getPathJS()));
 
         if ($this->mapProjector) {
+var_dump($this->center);
             $xy = $this->mapProjector->projectPoint($this->center);
             list($x, $y) = MapProjector::getXYFromPoint($xy);
             $footer->setValues(array('___X___' => $x, '___Y___' => $y));
