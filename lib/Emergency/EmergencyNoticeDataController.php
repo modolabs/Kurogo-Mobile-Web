@@ -37,7 +37,7 @@ class EmergencyNoticeDataController extends DataController
         return NULL;
     }
 
-    public function getLatestEmergencyNotice()
+    public function getFeaturedEmergencyNotice()
     {
         $items = $this->getAllEmergencyNotices();
         return count($items)>0 ? reset($items) : null;
