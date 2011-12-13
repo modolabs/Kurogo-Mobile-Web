@@ -16,13 +16,30 @@ class KMLPlacemark extends XMLElement implements Placemark
     protected $categories = array();
 
     private $fields = array();
-    
+
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
-            switch ($filter)
-            {
-                case 'search': //case insensitive
-                    return  (stripos($this->getTitle(), $value)!==FALSE) || (stripos($this->getSubTitle(), $value)!==FALSE);
+            switch ($filter) {
+                case 'search':
+                    if (stripos($this->getTitle(), $value) === FALSE && stripos($this->getSubTitle(), $value) === FALSE) {
+                        return false;
+                    }
+                    break;
+                case 'min':
+                    if (!isset($center)) {
+                        $center = $this->getGeometry()->getCenterCoordinate();
+                    }
+                    if ($center['lat'] < $value['lat'] || $center['lon'] < $value['lon']) {
+                        return false;
+                    }
+                    break;
+                case 'max':
+                    if (!isset($center)) {
+                        $center = $this->getGeometry()->getCenterCoordinate();
+                    }
+                    if ($center['lat'] > $value['lat'] || $center['lon'] > $value['lon']) {
+                        return false;
+                    }
                     break;
             }
         }   
