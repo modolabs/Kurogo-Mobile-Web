@@ -168,18 +168,6 @@ class MapWebModule extends WebModule {
         return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
     }
 
-    private function getDrillDownPath() {
-        $path = $this->getArg('path', array());
-        if ($path !== array()) {
-            $path = explode(MAP_CATEGORY_DELIMITER, $path);
-        }
-        // remove empty strings from beginning of array
-        while (count($path) && !strlen($path[0])) {
-            array_shift($path);
-        }
-        return $path;
-    }
-
     private function getFeedData()
     {
         if (!$this->feeds) {
@@ -736,6 +724,10 @@ class MapWebModule extends WebModule {
                     if (count($listItems) == 1) {
                         $link = $this->linkForItem(current($listItems));
                         $this->redirectTo($link['url']);
+                    } else if ($this->getArg('mapview') && $this->isMapDrivenUI()) {
+                        $this->setTemplatePage('fullscreen');
+                        $this->initializeDynamicMap();
+                        break;
                     }
                 }
 
