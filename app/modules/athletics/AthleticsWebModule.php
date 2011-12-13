@@ -16,7 +16,13 @@ class AthleticsWebModule extends WebModule {
     protected $scheduleFeed;
     
     public function loadScheduleData() {
-        return $this->getModuleSections('schedule');
+        $scheduleFeeds = $this->getModuleSections('schedule');
+        foreach ($scheduleFeeds as $index=>&$feedData) {
+            if (isset($this->feeds[$index])) {
+                $feedData = array_merge($this->feeds[$index], $feedData);
+            }
+        }
+        return $scheduleFeeds;
     }
     
     public static function getGenders() {
