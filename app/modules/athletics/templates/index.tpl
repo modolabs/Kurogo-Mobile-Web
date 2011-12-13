@@ -27,7 +27,7 @@
 
 {if $bookmarksTitle} 
   {capture name="bookmarksTab" assign="bookmarksTab"}
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarks}
+    {include file="findInclude:modules/athletics/templates/bookmarks.tpl"}
   {/capture}
   {$tabBodies[$bookmarksTitle] = $bookmarksTab}
 {/if}
