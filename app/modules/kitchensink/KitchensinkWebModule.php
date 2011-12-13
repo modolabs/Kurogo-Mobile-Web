@@ -80,10 +80,30 @@ class KitchensinkWebModule extends WebModule {
                 break;
                 
             case 'search':
+                $formFields = $this->loadPageConfigFile($this->page, false);
+                foreach ($formFields as $i => $formField) {
+                    if (isset($formField['option_keys'])) {
+                        $options = array();
+                        foreach ($formField['option_keys'] as $j => $optionKey) {
+                            $options[$optionKey] = $formField['option_values'][$j];
+                        }
+                        $formFields[$i]['options'] = $options;
+                        unset($formFields[$i]['option_keys']);
+                        unset($formFields[$i]['option_values']);
+                    }
+                }
+                $this->assign('formFields', $formFields);
                 break;
                 
-            case 'nav':
             case 'results':
+                $this->assign('next',    'Next');
+                $this->assign('prev',    'Prev');
+                $this->assign('nextURL', $this->buildBreadcrumbURL($this->page, $this->args, false));
+                $this->assign('prevURL', $this->buildBreadcrumbURL($this->page, $this->args, false));
+                $this->assign('lists', $this->getListsForPage($this->page));
+                break;
+
+            case 'nav':
                 $this->assign('lists', $this->getListsForPage($this->page));
                 break;
                 
