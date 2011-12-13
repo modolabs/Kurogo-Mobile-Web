@@ -73,7 +73,7 @@
                ontouchstart="addClass(this, 'pressed')"
                ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
               <img src="/modules/map/images/map-button-map.png"/>
-              View on map
+              {"VIEW_ON_MAP"|getLocalizedString}
           </div>
         </a>
       </div>
@@ -83,7 +83,7 @@
                ontouchstart="addClass(this, 'pressed')"
                ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
               <img src="/modules/map/images/map-button-favorites.png"/>
-              Bookmark
+              {"BOOKMARK"|getLocalizedString}
           </div>
         </a>
       </div>

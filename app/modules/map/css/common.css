@@ -207,3 +207,37 @@ body.fullscreen #navbar {
     max-height: 80px;
 }
 
+/* buttons */
+.nonfocal .buttonContainer {
+    float: right;
+    margin: -5px 0 0;
+}
+
+.buttonContainer {
+   height: 39px;
+}
+
+.buttonContainer a {
+    text-decoration: none;
+}
+
+.buttonContainer div {
+   border-radius: 8px;
+   padding: 2px;
+   border: 1px solid #999;
+   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+}
+
+.buttonContainer div.pressed {
+   background-image: linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+   background-image: -o-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+   background-image: -moz-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+   background-image: -webkit-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+   background-image: -ms-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+}
+
+
