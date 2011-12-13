@@ -144,12 +144,44 @@ class MapDataModel extends DataModel implements MapFolder
         return $this->searchable;
     }
 
-    public function searchByProximity($center, $tolerance=1000, $maxItems=0) {
-        return array();
+    protected function filterPlacemarks($filters) {
+        $results = array();
+        foreach ($this->categories() as $category) {
+            $results[] = $category->filterPlacemarks($filters);
+        }
+        return $results;
+    }
+
+    // argument must be lat/lon (not projected)    
+    public function searchByProximity($center, $tolerance, $maxItems=0) {
+        $bbox = normalizedBoundingBox($center, $tolerance);
+        $results = $this->filterPlacemarks($bbox);
+        $resultsByDistance = array();
+        foreach ($results as $result) {
+            $resultCenter = $result->getGeometry()->getCenterCoordinate();
+            $distance = greatCircleDistance($center['lat'], $center['lon'], $resultCenter['lat'], $resultCenter['lon']);
+            if ($distance > $tolerance) continue;
+
+            // keep keys unique; give priority to whatever came first
+            $intDist = intval($distance * 1000);
+            while (array_key_exists($intDist, $resultsByDistance)) {
+                $intDist += 1; // one millimeter
+            }
+            $item->setField('distance', $distance);
+            //$item->addCategoryId($this->feedId);
+            $resultsByDistance[$intDist] = $$result;
+        }
+        ksort($resultsByDistance);
+        $values = array_values($resultsByDistance);
+        if ($maxItems) {
+            return array_slice($values, 0, $maxItems);
+        }
+        return $values;
     }
 
     public function search($searchTerms) {
-        return array();
+        $results = $this->filterPlacemarks(array('search' => $searchTerms));
+        return $results;
     }
 
 }

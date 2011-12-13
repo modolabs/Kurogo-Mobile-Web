@@ -27,25 +27,6 @@ class MapSearch {
         return $this->resultCount;
     }
 
-    private function mapModelFromFeedData($feedData) {
-        if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
-            $modelClass = $feedData['CONTROLLER_CLASS'];
-        }
-        elseif (isset($feedData['MODEL_CLASS'])) {
-            $modelClass = $feedData['MODEL_CLASS'];
-        }
-        else {
-            $modelClass = 'MapDataModel';
-        }
-
-        try {
-            $model = MapDataModel::factory($modelClass, $feedData);
-        } catch (KurogoConfigurationException $e) {
-            $model = DataController::factory($modelClass, $feedData);
-        }
-        return $model;
-    }
-
     // tolerance specified in meters
     public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null) {
         $this->searchResults = array();
@@ -98,7 +79,7 @@ class MapSearch {
     
     	foreach ($this->feeds as $id => $feedData) {
             //$controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller = $this->mapModelFromFeedData($feedData);
+            $controller = mapModelFromFeedData($feedData);
             
             if ($controller->canSearch()) {
                 try {

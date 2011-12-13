@@ -31,10 +31,27 @@ class BasePlacemark implements Placemark
 
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
-            switch ($filter)
-            {
-                case 'search': //case insensitive
-                    return  (stripos($this->getTitle(), $value)!==FALSE) || (stripos($this->getSubTitle(), $value)!==FALSE);
+            switch ($filter) {
+                case 'search':
+                    if (stripos($this->getTitle(), $value) === FALSE && stripos($this->getSubTitle(), $value) === FALSE) {
+                        return false;
+                    }
+                    break;
+                case 'min':
+                    if (!isset($center)) {
+                        $center = $this->getGeometry()->getCenterCoordinate();
+                    }
+                    if ($center['lat'] < $value['lat'] || $center['lon'] < $value['lon']) {
+                        return false;
+                    }
+                    break;
+                case 'max':
+                    if (!isset($center)) {
+                        $center = $this->getGeometry()->getCenterCoordinate();
+                    }
+                    if ($center['lat'] > $value['lat'] || $center['lon'] > $value['lon']) {
+                        return false;
+                    }
                     break;
             }
         }   
@@ -68,9 +85,8 @@ class BasePlacemark implements Placemark
         return $this->categories;
     }
 
-    public function addCategoryId($id)
-    {
-        if (!in_array($id, $this->categories)) {
+    public function addCategoryId($id) {
+        if ($id && !in_array($id, $this->categories)) {
             $this->categories[] = $id;
         }
     }

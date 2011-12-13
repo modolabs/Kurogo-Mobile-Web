@@ -101,6 +101,25 @@ function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null
     return array('min' => $min, 'max' => $max, 'center' => $center);
 }
 
+function mapModelFromFeedData($feedData) {
+    if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
+        $modelClass = $feedData['CONTROLLER_CLASS'];
+    }
+    elseif (isset($feedData['MODEL_CLASS'])) {
+        $modelClass = $feedData['MODEL_CLASS'];
+    }
+    else {
+        $modelClass = 'MapDataModel';
+    }
+
+    try {
+        $model = MapDataModel::factory($modelClass, $feedData);
+    } catch (KurogoConfigurationException $e) {
+        $model = DataController::factory($modelClass, $feedData);
+    }
+    return $model;
+}
+
 function mapIdForFeedData(Array $feedData) {
     $identifier = $feedData['TITLE'];
     if (isset($feedData['BASE_URL'])) {

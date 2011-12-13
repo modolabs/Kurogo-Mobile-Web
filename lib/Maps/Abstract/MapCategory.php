@@ -28,8 +28,7 @@ class MapCategory implements MapFolder, MapListElement
         return $this->id;
     }
 
-    protected function addPlacemark(Placemark $placemark)
-    {
+    public function addPlacemark(Placemark $placemark) {
         $categoryIds = array($this->id);
         $currentFolder = $this;
         while (($parent = $currentFolder->getParent())) {
@@ -41,7 +40,7 @@ class MapCategory implements MapFolder, MapListElement
         $this->placemarks[] = $placemark;
     }
 
-    protected function addFolder(MapFolder $folder)
+    public function addFolder(MapFolder $folder)
     {
         $folder->setParent($this);
         $this->folders[] = $folder;
@@ -61,6 +60,12 @@ class MapCategory implements MapFolder, MapListElement
         $this->selectedPlacemarkId = $placemarkId;
     }
 
+    public function selectPlacemark($id)
+    {
+        $this->setPlacemarkId($id);
+        return $this->placemarks();
+    }
+
     public function placemarks()
     {
         if ($this->selectedPlacemarkId) {
@@ -74,10 +79,8 @@ class MapCategory implements MapFolder, MapListElement
         return $this->placemarks;
     }
 
-    public function selectPlacemark($id)
-    {
-        $this->setPlacemarkId($id);
-        return $this->placemarks();
+    public function categories() {
+        return $this->folders;
     }
 
     public function getParent()
@@ -95,6 +98,20 @@ class MapCategory implements MapFolder, MapListElement
         $this->title = $title;
         $this->description = $description;
         $this->parent = $parent;
+    }
+
+    public function filterPlacemarks($filters)
+    {
+        $results = array();
+        foreach ($this->folders as $folder) {
+            $results = array_merge($results, $folder->filterPlacemarks($filters));
+        }
+        foreach ($this->placemarks as $placemark) {
+            if ($placemark->filterItem($filters)) {
+                $results[] = $placemark;
+            }
+        }
+        return $results;
     }
 
     public function filterItem($filters)

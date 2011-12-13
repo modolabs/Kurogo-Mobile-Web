@@ -189,7 +189,7 @@ class MapWebModule extends WebModule {
     }
 
     // assumes feeds are loaded
-    private function getDataModel($feedId)
+    private function getDataModel($feedId=null)
     {
         // re-instantiate DataModel if a different feed is requested.
         if ($this->dataModel && $feedId !== $this->dataModel->getFeedId()) {
@@ -198,21 +198,7 @@ class MapWebModule extends WebModule {
 
         if ($this->dataModel === null) {
             $feedData = $this->getCurrentFeed($feedId);
-            if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
-                $modelClass = $feedData['CONTROLLER_CLASS'];
-            }
-            elseif (isset($feedData['MODEL_CLASS'])) {
-                $modelClass = $feedData['MODEL_CLASS'];
-            }
-            else {
-                $modelClass = 'MapDataModel';
-            }
-
-            try {
-                $this->dataModel = MapDataModel::factory($modelClass, $feedData);
-            } catch (KurogoConfigurationException $e) {
-                $this->dataModel = DataController::factory($modelClass, $feedData);
-            }
+            $this->dataModel = mapModelFromFeedData($feedData);
         }
 
         return $this->dataModel;
@@ -255,7 +241,6 @@ class MapWebModule extends WebModule {
                 $configData[$key] = $value;
             }
         }
-//var_dump($feedData);
         return $configData;
     }
 
