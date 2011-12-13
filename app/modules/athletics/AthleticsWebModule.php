@@ -274,6 +274,16 @@ class AthleticsWebModule extends WebModule {
         return null;
     }
     
+    protected function loadFeedData() {
+        $feeds = parent::loadFeedData();
+        foreach ($feeds as $sport=>&$sportData) {
+            $localizedKey = sprintf("%s_BOOKMARK", strtoupper($sportData['GENDER']));
+            $sportData['GENDER_TITLE'] = $this->getLocalizedString($localizedKey, $sportData['TITLE']);
+        }
+        
+        return $feeds;
+    }
+    
     protected function initialize() {
 
         $this->feeds = $this->loadFeedData();
@@ -486,8 +496,8 @@ class AthleticsWebModule extends WebModule {
                 $previous = array();
                 $next = array();
                 $sportData = $this->getSportData($sport);
-                $this->assign('sportTitle', $sportData['TITLE']);
-                $this->setPageTitles($sportData['TITLE']);
+                $this->assign('sportTitle', $sportData['GENDER_TITLE']);
+                $this->setPageTitles($sportData['GENDER_TITLE']);
 
                 if ($scheduleFeed = $this->getScheduleFeed($sport)) {
                     $scheduleItems = array();
@@ -657,7 +667,7 @@ class AthleticsWebModule extends WebModule {
                         parse_str(stripslashes($bookmark), $params);
                         if (isset($params['sport']) && ($sportData = $this->getSportData($params['sport']))) {
                             $bookmarks[] = array(
-                                'title' => $sportData['TITLE'],
+                                'title' => $sportData['GENDER_TITLE'],
                                 'url'   => $this->buildURL('sport', array('sport' => $params['sport']))
                             );
                         }
