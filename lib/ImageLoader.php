@@ -36,18 +36,17 @@ class ImageLoader extends FileLoader {
                 case 'max_width':
                 case 'max_height':
                 case 'crop':
+                case 'grb':
                     if($option) {
                         $loaderInfo[$key] = $option;
                     }
                     break;
             }
         }
-
         if (!isset($options['file'])) {
             $extension = pathinfo($url, PATHINFO_EXTENSION);
             $file = md5($url) . '.'. $extension;
         }    
-
         return self::generateLazyURL($file, json_encode($loaderInfo), self::subDirectory());
     }
 }
