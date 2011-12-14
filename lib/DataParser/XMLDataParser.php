@@ -10,6 +10,7 @@ abstract class XMLDataParser extends DataParser
     protected $elementStack = array();
     protected $data='';
     protected $items = array();
+    protected $trimWhiteSpace = false;
     
     abstract protected function shouldStripTags($element);
 
@@ -33,12 +34,21 @@ abstract class XMLDataParser extends DataParser
     {
         if ($element = array_pop($this->elementStack)) {
 
-            $element->setValue($this->data, $this->shouldStripTags($element));
+            if ($this->data) {
+                if (!$element instanceOf XMLElement) {
+                    throw new KurogoDataException("$name is not an XMLElement");
+                }
+                $element->setValue($this->data, $this->shouldStripTags($element));
+                $this->data = '';
+            }
             $parent = end($this->elementStack);
 
             if ($this->shouldHandleEndElement($name)) {
                 $this->handleEndElement($name, $element, $parent);
             } else if ($parent) {
+                if (!$parent instanceOf XMLElement) {
+                    throw new KurogoDataException("Parent of $name is not an XMLElement");
+                }
                 $parent->addElement($element);
             } else {
                 $this->root = $element;
@@ -48,6 +58,7 @@ abstract class XMLDataParser extends DataParser
 
     protected function characterData($xml_parser, $data)
     {
+        $data = $this->trimWhiteSpace ? trim($data) : $data;
         $this->data .= $data;
     }
     
@@ -81,7 +92,9 @@ abstract class XMLDataParser extends DataParser
     public function parseData($contents) {
         $this->clearInternalCache();
         $this->parseXML($contents);
-        $this->setTotalItems(count($this->items));
+        if (is_null($this->totalItems)) {
+            $this->setTotalItems(count($this->items));
+        }
         return $this->items;
     }
 }

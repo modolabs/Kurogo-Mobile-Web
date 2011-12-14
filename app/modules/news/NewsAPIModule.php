@@ -46,6 +46,10 @@ class NewsAPIModule extends APIModule {
                 foreach ($feeds as $index => $feedData) {
                     $response[] = array('id' => strval($index),
                     					'title' => strip_tags($feedData['TITLE']),
+                                        'show_images'=>isset($feedData['SHOW_IMAGES']) ? $feedData['SHOW_IMAGES'] : true,
+                                        'show_pubdate'=>isset($feedData['SHOW_PUBDATE']) ? $feedData['SHOW_PUBDATE'] : false,
+                                        'show_author' => isset($feedData['SHOW_AUTHOR']) ? $feedData['SHOW_AUTHOR'] : false,
+                                        'show_link' => isset($feedData['SHOW_LINK']) ? $feedData['SHOW_LINK'] : false
                     					);
                 }
                 $this->setResponse($response);

@@ -40,7 +40,7 @@ This guide serves as a tour of the project source code and its features.
    template
    themes
    libs
-   datacontroller
+   dataretrieval
    modulenew
    moduleextend
    database

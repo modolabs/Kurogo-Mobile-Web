@@ -680,7 +680,7 @@ class Kurogo
                         foreach ($pathParts as $dir) {
                               $test = $testPath.$dir.DIRECTORY_SEPARATOR;
                           
-                            if (realpath_exists($test)) {
+                            if (realpath_exists($test,false)) {
                                 $testPath = $test;
                                 $urlBase .= $dir.'/';
                                 if (realpath($test) == WEBROOT_DIR) {
@@ -728,6 +728,7 @@ class Kurogo
         define('CACHE_DIR',            SITE_DIR . DIRECTORY_SEPARATOR . 'cache');
         define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
         define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');
+        define('SITE_DISABLED_DIR',    SITE_DIR . DIRECTORY_SEPARATOR . 'config_disabled');
     
         //load in the site config file (required);
         $config = ConfigFile::factory('site', 'site');
@@ -1035,6 +1036,19 @@ class Kurogo
         }
     }
     
+    public static function defaultModule() {
+      $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
+      $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
+
+      if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
+        if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
+            $module = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
+        }
+      }
+      
+        return $module; 
+    }
+    
     public function clearCaches($type=null) {
 
         self::log(LOG_NOTICE, "Clearing site caches", "kurogo");
@@ -1062,7 +1076,7 @@ class Kurogo
     
     public static function getCacheClasses() {
         includePackage('Cache');
-        return KurogoCache::getCacheClasses();
+        return KurogoMemoryCache::getCacheClasses();
         
     }
 }

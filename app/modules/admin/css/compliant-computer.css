@@ -176,6 +176,11 @@ input[type="text"], input[type="email"], input[type="url"], input[type="password
 	width: 440px;
 	color: #333;
 }
+
+#newModuleID {
+    width: auto;
+}
+
 input#adminCancel {
 	background-color: #a22;
 	float: right;

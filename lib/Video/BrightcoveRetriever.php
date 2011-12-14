@@ -1,9 +1,8 @@
 <?php
 
- class BrightCoveRetriever extends URLDataRetriever
+ class BrightCoveRetriever extends URLDataRetriever implements SearchDataRetriever
  {
     protected $DEFAULT_PARSER_CLASS='BrightCoveDataParser';
-    protected $supportsSearch = true;
     
     private function setStandardFilters() {
 	    $this->setBaseURL("http://api.brightcove.com/services/library");
@@ -15,13 +14,13 @@
 	    $this->addFilter('sort_order', 'DESC');
     }
     
-    public function search($searchTerms) {
+    public function search($searchTerms, &$response=null) {
 
         $this->setStandardFilters();
 	    $this->addFilter('command', 'search_videos');
-	    $this->addFilter('all',$q); // uh oh. if there is a tag, then we have a problem since "all" will be overwritten
+	    $this->addFilter('all', $searchTerms); // uh oh. if there is a tag, then we have a problem since "all" will be overwritten
 	    
-	    return $this->getData();
+	    return $this->getData($response);
     }
     
     protected function init($args) {
@@ -41,11 +40,10 @@
         }
         $this->setOption('playerId', $args['playerId']);
         $this->setStandardFilters();
+	    $this->addFilter('command', 'find_all_videos');
     }
     
-    public function url() {
-	    $this->addFilter('command', 'find_all_videos');
-
+    protected function initRequest() {
 	    if ($tag = $this->getOption('tag')) {
 	        $this->addFilter('all', 'tag:' . $tag);
 	    }
@@ -57,8 +55,6 @@
             $this->addFilter('page_size', $limit) ;
             $this->addFilter('page_number', floor($start / $limit));
         }
-        
-        return parent::url();
     }
     
 	 // retrieves video based on its id
@@ -67,7 +63,7 @@
         $this->setStandardFilters();
 	    $this->addFilter('command', 'find_video_by_id');
 	    $this->addFilter('video_id', $id);
-        return $this->getParsedData();
+        return $this->getData();
 	}
 }
  

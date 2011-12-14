@@ -29,6 +29,6 @@ class APCCache extends KurogoMemoryCache {
 	}
 
 	public function clear() {
-		return apc_clear_cache();
+		return apc_clear_cache('user');
 	}
 }

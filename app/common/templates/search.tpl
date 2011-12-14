@@ -4,7 +4,8 @@
   {else}
     {$hiddenArgs = $breadcrumbArgs}
   {/if}
-  
+  fsfd
+  {$hiddenArgs}
   {if isset($extraArgs)}
     {$hiddenArgs = array_merge($extraArgs, $hiddenArgs)}
   {/if}
@@ -18,9 +19,11 @@
     <p>{$inlineSearchError}</p>
   {elseif isset($resultCount)}
     {if $resultCount == 0}
-      <p>No matches found</p>
+      <p>{"NO_MATCHES_FOUND"|getLocalizedString}</p>
+    {elseif $resultCount == 1}
+      <p>{"ONE_MATCH_FOUND"|getLocalizedString}</p>
     {else}
-      <p>{$resultCount} match{if $resultCount != 1}es{/if} found</p>
+      <p>{"NUM_MATCHES_FOUND"|getLocalizedString:$resultCount}</p>
     {/if}
   {/if}
 {/capture}
@@ -28,7 +31,7 @@
 {capture name="tipHTML" assign="tipHTML"}
   {if isset($tip)}
     <p class="legend nonfocal">
-      <strong>Search tip:</strong> {$tip}
+      <strong>{"SEARCH_TIP_TITLE"|getLocalizedString}</strong> {$tip}
     </p>
   {/if}
 {/capture}

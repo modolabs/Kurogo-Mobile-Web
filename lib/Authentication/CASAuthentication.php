@@ -80,8 +80,18 @@ class CASAuthentication
     
         if (empty($args['CAS_PATH']))
             throw new KurogoConfigurationException('CAS_PATH value not set for ' . $this->AuthorityTitle);
-    
-        phpCAS::client($args['CAS_PROTOCOL'], $args['CAS_HOST'], intval($args['CAS_PORT']), $args['CAS_PATH'], false);
+        
+        if (empty($args['CAS_PROXY_INIT'])) {
+            phpCAS::client($args['CAS_PROTOCOL'], $args['CAS_HOST'], intval($args['CAS_PORT']), $args['CAS_PATH'], false);
+        } else {
+            phpCAS::proxy($args['CAS_PROTOCOL'], $args['CAS_HOST'], intval($args['CAS_PORT']), $args['CAS_PATH'], false);
+            
+            if (!empty($args['CAS_PROXY_TICKET_PATH']))
+                phpCAS::setPGTStorageFile('', $args['CAS_PROXY_TICKET_PATH']);
+            
+            if (!empty($args['CAS_PROXY_FIXED_CALLBACK_URL']))
+                phpCAS::setFixedCallbackURL($args['CAS_PROXY_FIXED_CALLBACK_URL']);
+        }
     
         if (empty($args['CAS_CA_CERT']))
             phpCAS::setNoCasServerValidation();
@@ -185,6 +195,21 @@ class CASAuthentication
     protected function validUserLogins()
     {
         return array('LINK', 'NONE');
+    }
+
+    /***
+     * Resets the authority and returns it to a fresh state.
+     * Called by the logout method to clean up any authority specific data (caches etc). Not all authorities will need this
+     * @param bool $hard if true a hard reset is done
+     */
+    protected function reset($hard=false)
+    {
+        // Log out from the CAS server
+        if (phpCAS::isAuthenticated()) {
+            $service = "http".(IS_SECURE ? 's' : '')."://".SERVER_HOST.$_SERVER['REQUEST_URI'];
+            phpCAS::logoutWithRedirectServiceAndUrl($service, $service);
+        }
+        return true;
     }
 }
 

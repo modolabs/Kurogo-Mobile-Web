@@ -2,7 +2,7 @@
 
 {block name="footer"}
   <p class="fontsize">
-    Font size:&nbsp;
+    {"FONT_SIZE_SELECTION_TITLE"|getLocalizedString}&nbsp;
     {foreach $fontsizes as $size}
       {if $size == $fontsize}
         <span class="font{$fontsize}">A</span>

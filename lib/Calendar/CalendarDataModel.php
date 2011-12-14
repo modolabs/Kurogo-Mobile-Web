@@ -15,7 +15,6 @@ includePackage('DataModel');
 class CalendarDataModel extends ItemListDataModel
 {
     protected $DEFAULT_PARSER_CLASS='ICSDataParser';
-    const DEFAULT_EVENT_CLASS='ICalEvent';
     const START_TIME_LIMIT=-2147483647; 
     const END_TIME_LIMIT=2147483647; 
     protected $cacheFolder = 'Calendar';
@@ -117,7 +116,6 @@ class CalendarDataModel extends ItemListDataModel
     
     protected function init($args)
     {
-        $args['EVENT_CLASS'] = isset($args['EVENT_CLASS']) ? $args['EVENT_CLASS'] : self::DEFAULT_EVENT_CLASS;
         parent::init($args);
     }
     
@@ -129,10 +127,30 @@ class CalendarDataModel extends ItemListDataModel
             $end = new DateTime();
             $end->setTime(23,59,59);
             $this->setEndDate($end);
+        } else {
+            $this->endDate = null;
+            $this->setOption('endDate', null);
         }
 
         $event = $this->getItemByIndex(0);
         return $event;
+    }
+
+    public function getPreviousEvent($todayOnly=false) {
+        $end = new DateTime();
+        $end->setTime(date('H'), floor(date('i')/5)*5, 0);
+        $this->setEndDate($end);
+        if ($todayOnly) {
+            $start = new DateTime();
+            $start->setTime(0,0,0);
+            $this->setStartDate($start);
+        } else {
+            $this->startDate = null;
+            $this->setOption('startDate', null);
+        }
+
+        $items = $this->items();
+        return end($items);
     }
     
     public function getItem($id, $time=null)
@@ -158,24 +176,30 @@ class CalendarDataModel extends ItemListDataModel
     }
     
     public function getEvent($id) {
+        $calendar = $this->getCalendar();
+        return $calendar->getEvent($id);
+    }
+    
+    protected function getCalendar() {
         if (!$this->calendar) {
-            $this->calendar = $this->getParsedData();
+            $calendar = $this->retriever->getData();
+            if (!$calendar instanceOf CalendarInterface) {
+                throw new KurogoDataException('Return value is not a valid calendar');
+            }
+            $this->calendar = $calendar;
         }
-        
-        return $this->calendar->getEvent($id);
+        return $this->calendar;
     }
     
     public function items() {
 
-        if (!$this->calendar) {
-            $this->calendar = $this->getParsedData();
-        }
+        $calendar = $this->getCalendar();
 
         $startTimestamp = $this->startTimestamp() ? $this->startTimestamp() : CalendarDataController::START_TIME_LIMIT;
         $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : CalendarDataController::END_TIME_LIMIT;
         $range = new TimeRange($startTimestamp, $endTimestamp);
         
-        $events = $this->calendar->getEventsInRange($range, $this->getLimit(), $this->filters);
+        $events = $calendar->getEventsInRange($range, $this->getLimit(), $this->filters);
         return $this->limitItems($events, $this->getStart(), $this->getLimit());
     }
     
@@ -186,11 +210,14 @@ class CalendarDataModel extends ItemListDataModel
     }
 
     public function search($searchTerms) {
-        if ($this->retriever->supportsSearch()) {
-            $response = $this->retriever->search($searchTerms);
-            $calendar = $this->parseData($response->getResponse());
+        if ($this->retriever instanceOf SearchDataRetriever) {
+            $calendar = $this->retriever->search($searchTerms, $response);
             $items = $calendar->getEvents();
-            $this->totalItems = $this->parser->getTotalItems();
+
+            if ($totalItems = $response->getContext('totalItems')) {
+                $this->setTotalItems($totalItems);
+            }
+
             return $items;
         } else {
             return parent::search($searchTerms);

@@ -17,11 +17,13 @@ abstract class DataParser
     const PARSE_MODE_RESPONSE=3;
     protected $encoding='utf-8';
     protected $parseMode=self::PARSE_MODE_RESPONSE;
+    protected $initArgs=array();
     protected $debugMode=false;
     protected $totalItems = null;
     protected $haltOnParseErrors = true;
     protected $dataController;
     protected $options = array();
+    protected $response;
 
     public function setOption($option, $value) {
         $this->options[$option] = $value;
@@ -31,8 +33,13 @@ abstract class DataParser
         return isset($this->options[$option]) ? $this->options[$option] : null;
     }
     
+    public function setResponse(DataResponse $response) {
+        $this->response = $response;
+    }
+        
     public function parseResponse(DataResponse $response) {
-        return $this->parseData($response->getResponse());
+        $this->setResponse($response);
+        return $this->parseData($this->response->getResponse());
     }
     
     public function getParseMode() {
@@ -49,6 +56,9 @@ abstract class DataParser
 
     protected function setTotalItems($total) {
         $this->totalItems = $total;
+        if ($this->response) {
+            $this->response->setContext('totalItems', $total);
+        }
     }
     
     public static function factory($parserClass, $args)
@@ -73,6 +83,7 @@ abstract class DataParser
     }
     
     public function init($args) {
+        $this->initArgs = $args;
         if (isset($args['HALT_ON_PARSE_ERRORS'])) {
             $this->haltOnParseErrors($args['HALT_ON_PARSE_ERRORS']);
         }
@@ -100,6 +111,7 @@ abstract class DataParser
     }
 
     public function clearInternalCache() {
+        $this->setTotalItems(null);
     }
     
 }

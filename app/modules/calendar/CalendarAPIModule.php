@@ -8,7 +8,7 @@ class CalendarAPIModule extends APIModule
 
     protected $id = 'calendar';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
 
     protected $timezone;
     protected $fieldConfig;
@@ -185,7 +185,7 @@ class CalendarAPIModule extends APIModule
             'description'   => $event->get_description(),
             'start'         => $event->get_start(),
             'end'           => $event->get_end(),
-            'allday'        => ($event->get_range() instanceOf DayRange),
+            'allday'        => ($event->isAllDay()),
             'location'      => $event->get_location(),
             'locationLabel' => '', // subclass to add dynamic title to location
         );

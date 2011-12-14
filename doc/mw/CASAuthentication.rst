@@ -29,6 +29,12 @@ To configure authentication, you only need to add a few parameters:
 * *CAS_PATH* - The path of the CAS application, e.g. ``"/cas/"``
 * *CAS_CA_CERT* - The filesystem path to a CA certificate that will be used to validate the authenticity of the CAS server, e.g. ``"/etc/tls/pki/certs/my_ca_cert.crt"``. If empty, no certificate validation will be performed (not recommended for production).
 
+If you wish to authenticate as a proxy (which will allow Kurogo to may proxy-authenticated requests to back-end data sources) then you can provide the following attributes to configure proxy authentication.
+
+* *CAS_PROXY_INIT* - Set to ``1`` to initialize as a proxy.
+* *CAS_PROXY_TICKET_PATH* - The path in which phpCAS should look for proxy-granting-tickets. E.g. ``"/tmp"``
+* *CAS_PROXY_FIXED_CALLBACK_URL* - If your Kurogo installation isn't running under SSL but shares a filesystem with an SSL-enabled host, then you can provide an alternate proxy-granting-ticket storage URL. E.g. ``"https://host.domain.edu/storePGT.php"``
+
 If your CAS server returns user attributes in a SAML-1.1 or CAS-2.0 response, you can provide these attributes
 to Kurogo to display full names and support group-based :doc:`authorization`.
 

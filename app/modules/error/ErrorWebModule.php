@@ -13,7 +13,9 @@ class ErrorWebModule extends WebModule {
   protected $configModule = 'error';
   protected $moduleName = 'Error';
   protected $canBeAddedToHomeScreen = false;
-
+  protected $canBeRemoved = false;
+  protected $canBeDisabled = false;
+  
     protected function getError($code) {
         static $errors = array(
             'server' => array(

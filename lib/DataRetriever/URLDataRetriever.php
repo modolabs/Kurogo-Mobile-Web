@@ -87,6 +87,18 @@ class URLDataRetriever extends DataRetriever {
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
         }
+
+        if (isset($args['METHOD'])) {
+            $this->setMethod($args['METHOD']);
+        }
+
+        if (isset($args['HEADERS'])) {
+            $this->setHeaders($args['HEADERS']);
+        }
+
+        if (isset($args['DATA'])) {
+            $this->setData($args['DATA']);
+        }
         
         $this->initStreamContext($args);
     }
@@ -218,14 +230,18 @@ class URLDataRetriever extends DataRetriever {
         return null;
     }
     
+    protected function initRequest() {
+    }
+    
     /**
      * Retrieves the data using the config url. The default implementation uses the file_get_content()
      * function to retrieve the request. Subclasses would need to implement this if a simple GET request
      * is not sufficient (i.e. you need POST or custom headers). 
      * @return HTTPDataResponse a DataResponse object
      */
-    protected function retrieveData() {
-
+    protected function retrieveResponse() {
+    
+        $this->initRequest();
         if (!$this->requestURL = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }
@@ -246,6 +262,9 @@ class URLDataRetriever extends DataRetriever {
         $response->setResponseHeaders($http_response_header);
         
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
+        if ($response->getResponseError()) {
+            Kurogo::log(LOG_WARNING, sprintf("%s for %s", $response->getResponseError(), $this->requestURL), 'url_retriever');
+        }
         
         return $response;
     }
