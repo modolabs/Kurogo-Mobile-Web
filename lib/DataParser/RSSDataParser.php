@@ -70,6 +70,9 @@ class RSSDataParser extends XMLDataParser
         if (isset($args['THUMB_CROP'])) {
             $this->setOption("thumb_crop", (boolean)$args['THUMB_CROP']);
         }
+        if (isset($args['THUMB_BACKGROUND_RGB'])) {
+            $this->setOption("thumb_background_rgb", (string)($args['THUMB_BACKGROUND_RGB']));
+        }
     }
 
     protected function shouldHandleStartElement($name)
@@ -97,7 +100,8 @@ class RSSDataParser extends XMLDataParser
                 $thumbOptions = array(
                     'THUMB_MAX_WIDTH' => $this->getOption('thumb_max_width'),
                     'THUMB_MAX_HEIGHT' => $this->getOption('thumb_max_height'),
-                    'THUMB_CROP' => $this->getOption('thumb_crop')
+                    'THUMB_CROP' => $this->getOption('thumb_crop'),
+               		'THUMB_BACKGROUND_RGB'=>$this->getOption('thumb_background_rgb'),
                 );
                 $attribs = array_merge($attribs, $thumbOptions);
                 $this->elementStack[] = new $this->enclosureClass($attribs);

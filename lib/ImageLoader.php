@@ -32,7 +32,7 @@ class ImageLoader extends FileLoader {
             'file'=>$file
         );
         
-        return self::xxx($url, $loaderInfo);
+        return self::cacheImage($url, $loaderInfo);
     }
 
     public static function cacheImage($url, $options) {
@@ -47,6 +47,7 @@ class ImageLoader extends FileLoader {
                 case 'max_width':
                 case 'max_height':
                 case 'crop':
+                case 'rgb':
                     if($option) {
                         $loaderInfo[$key] = $option;
                     }
@@ -59,7 +60,6 @@ class ImageLoader extends FileLoader {
             $extension = pathinfo($url, PATHINFO_EXTENSION);
             $file = md5($url) . '.'. $extension;
         }    
-
         return self::generateLazyURL($file, json_encode($loaderInfo), self::subDirectory());
     }
 }

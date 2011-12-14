@@ -37,6 +37,9 @@ class RSSEnclosure extends XMLElement
             if(isset($attribs['THUMB_CROP'])) {
                 $options['crop'] = $attribs['THUMB_CROP'];
             }
+            if(isset($attribs['THUMB_BACKGROUND_RGB'])) {
+                $options['rgb'] = $attribs['THUMB_BACKGROUND_RGB'];
+            }
             $this->url = ImageLoader::cacheImage($url, $options);
         } else {
             $this->url = $this->getAttrib('URL');
