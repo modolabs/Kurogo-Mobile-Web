@@ -36,7 +36,7 @@ class ImageLoader extends FileLoader {
                 case 'max_width':
                 case 'max_height':
                 case 'crop':
-                case 'grb':
+                case 'rgb':
                     if($option) {
                         $loaderInfo[$key] = $option;
                     }

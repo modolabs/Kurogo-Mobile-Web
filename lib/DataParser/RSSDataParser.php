@@ -70,14 +70,8 @@ class RSSDataParser extends XMLDataParser
         if (isset($args['THUMB_CROP'])) {
             $this->setOption("thumb_crop", (boolean)$args['THUMB_CROP']);
         }
-        if (isset($args['THUMB_BACKGROUND_RGB_COLOR_RED'])) {
-            $this->setOption("thumb_red", intval($args['THUMB_BACKGROUND_RGB_COLOR_RED']));
-        }
-        if (isset($args['THUMB_BACKGROUND_RGB_COLOR_GREEN'])) {
-            $this->setOption("thumb_green", intval($args['THUMB_BACKGROUND_RGB_COLOR_GREEN']));
-        }
-        if (isset($args['THUMB_BACKGROUND_RGB_COLOR_BLUE'])) {
-            $this->setOption("thumb_blue", intval($args['THUMB_BACKGROUND_RGB_COLOR_BLUE']));
+        if (isset($args['THUMB_BACKGROUND_RGB'])) {
+            $this->setOption("thumb_background_rgb", (string)($args['THUMB_BACKGROUND_RGB']));
         }
     }
 
@@ -107,9 +101,7 @@ class RSSDataParser extends XMLDataParser
                     'THUMB_MAX_WIDTH' => $this->getOption('thumb_max_width'),
                     'THUMB_MAX_HEIGHT' => $this->getOption('thumb_max_height'),
                     'THUMB_CROP' => $this->getOption('thumb_crop'),
-               		'THUMB_BACKGROUND_RGB_COLOR_RED'=>$this->getOption('thumb_red'),
-                	'THUMB_BACKGROUND_RGB_COLOR_GREEN'=>$this->getOption('thumb_green'),
-                	'THUMB_BACKGROUND_RGB_COLOR_BLUE'=>$this->getOption('thumb_blue'),
+               		'THUMB_BACKGROUND_RGB'=>$this->getOption('thumb_background_rgb'),
                 );
                 $attribs = array_merge($attribs, $thumbOptions);
                 $this->elementStack[] = new $this->enclosureClass($attribs);

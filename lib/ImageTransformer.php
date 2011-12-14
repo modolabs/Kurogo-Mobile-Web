@@ -19,7 +19,7 @@ class ImageTransformer
                 case 'min_aspect':
                 case 'max_aspect':
                 case 'crop':
-                case 'grb':
+                case 'rgb':
                     $this->rules[$param] = $value;
                     break;
             }
@@ -40,7 +40,7 @@ class ImageTransformer
             //decide crop or fill
        		if($destHeight > $height && $destWidth > $width){
             //only one case fill
-                return array($this->rules['max_width'], $this->rules['max_height'], $width, $height, true,$this->rules['grb']);
+                return array($this->rules['max_width'], $this->rules['max_height'], $width, $height, true,$this->rules['rgb']);
             }elseif($newHeight > $height){
             	$newHeight = $height;
             }else {

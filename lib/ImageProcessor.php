@@ -115,7 +115,8 @@ class ImageProcessor
     	}elseif (isset($boundingBox[2]) && isset($boundingBox[3]) && isset($boundingBox[4])){
     		$crop = true;
             // do fill
-            $bg = imagecolorallocate($dest, $boundingBox[5][0], $boundingBox[5][1], $boundingBox[5][2]);
+			$rgb = $boundingBox[5]?$boundingBox[5]:"ffffff";
+            $bg = imagecolorallocate($dest, hexdec(substr($rgb,0,2)), hexdec(substr($rgb,2,2)), hexdec(substr($rgb,4,2)));
             // fill white color on bg
             imagefill($dest, 0, 0, $bg);
             $y = ($height - $this->height) / 2;
