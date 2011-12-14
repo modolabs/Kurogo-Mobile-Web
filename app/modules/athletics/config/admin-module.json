@@ -12,6 +12,7 @@
         "descriptionKey":"ATHLETICS_ADMIN_FEEDS_DESCRIPTION",
         "config":"feeds",
         "sectiontype":"section",
+        "sectiontitlefield":"GENDER_TITLE",
         "fields":{
             "section":{"labelKey":"ATHLETICS_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
             "TITLE":{"labelKey":"ATHLETICS_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"ATHLETICS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
@@ -30,6 +31,7 @@
         "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_DESCRIPTION",
         "config":"schedule",
         "sectiontype":"section",
+        "sectiontitlefield":"GENDER_TITLE",
         "fields":{
             "section":{"labelKey":"ATHLETICS_ADMIN_SCHEDULE_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_SECTION_DESCRIPTION", "type":"label"},
             "BASE_URL":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_SCHEDULE_URL_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_URL_DESCRIPTION", "type":"text","omitBlankValue":true},
