@@ -95,19 +95,6 @@ if(!function_exists('json_decode')) {
     include(LIB_DIR .'/compat/JSON.php');
 }
 
-/**
-  * Simulate PHP 5.3 behavior on 5.2
-  */
-function realpath_exists($path, $safe=true) {
-    if ($safe) {
-      return Watchdog::kurogoPath($path);
-    }
-    
-    $test = realpath($path);
-    if (version_compare(PHP_VERSION, '5.3.0') >= 0 || 
-        ($test && file_exists($test))) {
-        return $test;
-    } else {
-        return false;
-    }
+function realpath_exists($path) {
+  return Watchdog::kurogoPath($path);
 }
