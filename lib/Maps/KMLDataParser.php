@@ -9,16 +9,15 @@ includePackage('Maps', 'KML');
 class KMLDataParser extends XMLDataParser implements MapDataParser
 {
     protected $elementStack = array();
-    protected $data='';
+    //protected $data='';
     protected $feedId;
 
     protected $document;
     protected $folders = array();
     protected $placemarks = array();
     protected $title;
-    protected $category;
+    //protected $category;
     protected $itemCount = 0;
-
     protected $otherCategory;
 
     protected $parseMode=self::PARSE_MODE_STRING;
@@ -188,6 +187,15 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                 }
                 break;
         }
+    }
+
+    public function clearInternalCache()
+    {
+        $this->docuemtn = null;
+        $this->folders = array();
+        $this->placemarks = array();
+        $this->itemCount = 0;
+        $this->otherCategory = null;
     }
 
     public function parseData($content)

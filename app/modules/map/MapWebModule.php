@@ -429,9 +429,6 @@ class MapWebModule extends WebModule {
         $searchResults = $this->searchItems($searchTerms, null, $args);
         $places = array();
         foreach ($searchResults as $place) {
-if (is_array($place)) {
-    var_dump(count($place));
-}
             $places[] = $this->linkForItem($place);
         }
         $this->assign('places', $places);
@@ -794,7 +791,6 @@ if (is_array($place)) {
                         $tabKeys[] = $tabKey;
                     }
                 }
-
                 $this->assign('tabKeys', $tabKeys);
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
 

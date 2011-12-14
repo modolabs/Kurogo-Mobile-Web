@@ -37,13 +37,10 @@ class MapSearch {
             $controllers[] = $dataController;
         } else {
             foreach ($this->feeds as $categoryID => $feedData) {
-                $controllers[] = $this->mapModelFromFeedData($feedData);
-                /*
-                $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                $controller = mapModelFromFeedData($feedData);
                 if ($controller->canSearch()) { // respect config settings
                     $controllers[] = $controller;
                 }
-                */
             }
         }
 
