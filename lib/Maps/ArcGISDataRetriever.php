@@ -11,7 +11,8 @@ class ArcGISDataRetriever extends URLDataRetriever
     protected $action;
 
     protected $selectedLayer;
-    protected $layerTypes = array();
+    //protected $layerTypes = array();
+    protected $searchFilters = array();
 
     public function init($args) {
         parent::init($args);
@@ -45,12 +46,15 @@ class ArcGISDataRetriever extends URLDataRetriever
 
             case self::ACTION_SEARCH:
                 return array(
-                    'text' => $this->searchText,
+                    'text' => $this->searchFilters['text'],
                     'f'    => 'json',
                     );
 
             case self::ACTION_SEARCH_NEARBY:
-                $bbox = normalizedBoundingBox($this->center, $this->tolerance, $this->parser->projection);
+                $bbox = normalizedBoundingBox(
+                    $this->searchFilters['center'],
+                    $this->searchFilters['tolerance'],
+                    $this->parser->getProjection());
                 return array(
                     'spatialRel'   => 'esriSpatialRelIntersects',
                     'geometryType' => 'esriGeometryEnvelope',
@@ -79,13 +83,9 @@ class ArcGISDataRetriever extends URLDataRetriever
         return $baseURL;
     }
 
-    /*
-    protected function initRequest() {
-        switch ($this->action) {
-
-        }
+    public function setSearchFilters($filters) {
+        $this->searchFilters = $filters;
     }
-    */
 
     public function setSelectedLayer($layerId) {
         $this->selectedLayer = $layerId;

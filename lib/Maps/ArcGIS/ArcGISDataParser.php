@@ -146,13 +146,21 @@ class ArcGISDataParser extends DataParser implements MapDataParser
         } elseif (isset($data['features'])) {
 
             $idField = $this->currentFolder->getIdField();
-            $geometryType = $this->currentFolder->getGeometryType();
+            if (isset($data['geometryType'])) {
+                $geometryType = $data['geometryType'];
+            } else {
+                $geometryType = $this->currentFolder->getGeometryType();
+            }
+
+            if (isset($data['displayFieldName'])) { // will set if we got here via layer query
+                $displayField = $data['displayFieldName'];
+            } else {
+                $displayField = $this->currentFolder->getDisplayField();
+            }
 
             foreach ($data['features'] as $featureInfo) {
-                if (isset($featureInfo['foundFieldName'])) { // will be set if we got here via search
+                if (isset($featureInfo['foundFieldName'])) { // may be set if we got here via search
                     $displayField = $featureInfo['foundFieldName'];
-                } else {
-                    $displayField = $this->currentFolder->getDisplayField();
                 }
 
                 $title = null;
@@ -177,7 +185,6 @@ class ArcGISDataParser extends DataParser implements MapDataParser
                 if ($geometryType && isset($featureInfo['geometry'])) {
                     $geometryJSON = $featureInfo['geometry'];
                 }
-
                 if ($title || $placemarkId) {
                     // only create placemarks if there is usable data associated with it
                     $geometry = null;

@@ -57,22 +57,24 @@ function submitMapSearch(form) {
         }
         makeAPICall('GET', 'map', 'search', params, function(response) {
             hideSearchFormButtons();
-            // TODO: make the "browse" button bring up results in a list
-            var minLat = 10000000;
-            var maxLat = -10000000;
-            var minLon = 10000000;
-            var maxLon = -10000000;
-            for (var i = 0; i < response.results.length; i++) {
-                var markerData = response.results[i];
-                mapLoader.createMarker(
-                    markerData.title, markerData.subtitle,
-                    markerData.lat, markerData.lon, markerData.url);
-                minLat = Math.min(minLat, markerData.lat);
-                minLon = Math.min(minLon, markerData.lon);
-                maxLat = Math.max(maxLat, markerData.lat);
-                maxLon = Math.max(maxLon, markerData.lon);
+            if (response.results.length > 0) {
+                // TODO: make the "browse" button bring up results in a list
+                var minLat = 10000000;
+                var maxLat = -10000000;
+                var minLon = 10000000;
+                var maxLon = -10000000;
+                for (var i = 0; i < response.results.length; i++) {
+                    var markerData = response.results[i];
+                    mapLoader.createMarker(
+                        markerData.title, markerData.subtitle,
+                        markerData.lat, markerData.lon, markerData.url);
+                    minLat = Math.min(minLat, markerData.lat);
+                    minLon = Math.min(minLon, markerData.lon);
+                    maxLat = Math.max(maxLat, markerData.lat);
+                    maxLon = Math.max(maxLon, markerData.lon);
+                }
+                mapLoader.setMapBounds(minLat, minLon, maxLat, maxLon);
             }
-            mapLoader.setMapBounds(minLat, minLon, maxLat, maxLon);
         });
         var addFilterToHref = function(link) {
             var reg = new RegExp('&?filter=.+(&|$)');
