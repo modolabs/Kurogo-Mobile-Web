@@ -98,6 +98,20 @@ class KMLFolder extends KMLDocument implements MapFolder, MapListElement
         return $this->categoryId;
     }
 
+    public function filterPlacemarks($filters)
+    {
+        $results = array();
+        foreach ($this->folders as $folder) {
+            $results = array_merge($results, $folder->filterPlacemarks($filters));
+        }
+        foreach ($this->placemarks as $placemark) {
+            if ($placemark->filterItem($filters)) {
+                $results[] = $placemark;
+            }
+        }
+        return $results;
+    }
+
     public function filterItem($filters)
     {
         foreach ($filters as $filter=>$value) {

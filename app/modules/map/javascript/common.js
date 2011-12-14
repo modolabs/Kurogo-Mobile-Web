@@ -49,6 +49,9 @@ function submitMapSearch(form) {
     if (form.filter.value.length > 0) {
         mapLoader.clearMarkers();
         params = {'q': form.filter.value};
+        if (form.group.value) {
+            params['group'] = form.group.value;
+        }
         if ('projection' in mapLoader) {
             params['projection'] = mapLoader.projection;
         }

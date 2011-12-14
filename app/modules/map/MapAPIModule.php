@@ -136,7 +136,9 @@ class MapAPIModule extends APIModule
         $feedConfigFile = NULL;
         
         if ($this->feedGroup === NULL) {
-            if ($this->numGroups === 1) {
+            if ($this->getArg('group')) {
+                $this->feedGroup = $this->getArg('group');
+            } elseif ($this->numGroups === 1) {
                 $this->feedGroup = key($this->feedGroups);
             }
         }

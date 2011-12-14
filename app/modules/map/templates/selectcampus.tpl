@@ -5,7 +5,7 @@
             <td class="inputfield">
                 <select name="group">
                     {foreach $campuses as $campus}
-                        <option value="{$campus['id']}">{$campus['title']}</option>
+                        <option value="{$campus['id']}" {if $campus['selected']}selected{/if}>{$campus['title']}</option>
                     {/foreach}
                 </select>
             </td>

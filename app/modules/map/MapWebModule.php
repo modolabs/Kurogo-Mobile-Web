@@ -388,12 +388,16 @@ class MapWebModule extends WebModule {
         $campusData = array();
         if ($this->numGroups > 1) {
             foreach ($this->feedGroups as $id => $groupData) {
-                $campusData[] = array(
+                $data = array(
                     'id' => $id,
                     'title' => $groupData['title'],
                     'url' => $this->groupURL($id),
                     'listclass' => $id, // stupid way to sneak the id into the dom
                     );
+                if ($this->feedGroup === $id) {
+                    $data['selected'] = true;
+                }
+                $campusData[] = $data;
             }
             $this->assign('campuses', $campusData);
         }
@@ -425,6 +429,9 @@ class MapWebModule extends WebModule {
         $searchResults = $this->searchItems($searchTerms, null, $args);
         $places = array();
         foreach ($searchResults as $place) {
+if (is_array($place)) {
+    var_dump(count($place));
+}
             $places[] = $this->linkForItem($place);
         }
         $this->assign('places', $places);

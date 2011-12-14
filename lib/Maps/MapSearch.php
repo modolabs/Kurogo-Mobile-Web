@@ -91,7 +91,7 @@ class MapSearch {
                 }
             }
     	}
-    	
+
     	return $this->searchResults;
     }
 }
