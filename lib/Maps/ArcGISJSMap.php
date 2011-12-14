@@ -339,7 +339,6 @@ JS;
             '___PATH_SCRIPT___' => $this->getPathJS()));
 
         if ($this->mapProjector) {
-var_dump($this->center);
             $xy = $this->mapProjector->projectPoint($this->center);
             list($x, $y) = MapProjector::getXYFromPoint($xy);
             $footer->setValues(array('___X___' => $x, '___Y___' => $y));
