@@ -2,12 +2,6 @@
 
 class PicasaRetriever extends URLDataRetriever {
     protected $DEFAULT_PARSER_CLASS = 'PicasaDataParser';
-    protected $supportsSearch = true;
-
-    public function search($searchTerms) {
-        return $this->getData();
-    }
-    
 
     protected function init($args) {
 

@@ -1,0 +1,48 @@
+{
+    "options": {
+        "titleKey":"ATHLETICS_ADMIN_OPTIONS_TITLE",
+        "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_DESCRIPTION",
+        "sectiontype":"fields",
+        "fields":{
+            "BOOKMARKS_ENABLED":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1}
+       }
+    },
+    "feeds": {
+        "titleKey":"ATHLETICS_ADMIN_FEEDS_TITLE",
+        "descriptionKey":"ATHLETICS_ADMIN_FEEDS_DESCRIPTION",
+        "config":"feeds",
+        "sectiontype":"section",
+        "sectiontitlefield":"GENDER_TITLE",
+        "fields":{
+            "section":{"labelKey":"ATHLETICS_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
+            "TITLE":{"labelKey":"ATHLETICS_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"ATHLETICS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
+            "GENDER":{"labelKey":"ATHLETICS_ADMIN_FEEDS_GENDER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_GENDER_DESCRIPTION", "type":"select","optionsMethod":["AthleticsWebModule","getGenders"],"optionsFirst":"--"},
+            "BASE_URL":{"labelKey":"ATHLETICS_ADMIN_FEEDS_URL_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_URL_DESCRIPTION", "type":"text","omitBlankValue":true},
+            "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_FEEDS_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"loadFeedData",
+        "sectionaddnew":true,
+        "sectiondelete":true,
+        "sectionreorder":true
+    },
+    "schedule": {
+        "titleKey":"ATHLETICS_ADMIN_SCHEDULE_TITLE",
+        "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_DESCRIPTION",
+        "config":"schedule",
+        "sectiontype":"section",
+        "sectiontitlefield":"GENDER_TITLE",
+        "fields":{
+            "section":{"labelKey":"ATHLETICS_ADMIN_SCHEDULE_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_SECTION_DESCRIPTION", "type":"label"},
+            "BASE_URL":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_SCHEDULE_URL_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_URL_DESCRIPTION", "type":"text","omitBlankValue":true},
+            "RETRIEVER_CLASS":{"labelKey":"ATHLETICS_ADMIN_SCHEDULE_RETRIEVER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_RETRIEVER_DESCRIPTION", "type":"select","optionsMethod":["AthleticEventsDataModel","getAthleticScheduleRetrievers"],"omitBlankValue":true},
+            "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_SCHEDULE_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS","URLDataRetriever"],"default":"ICSDataParser"}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"loadScheduleData",
+        "sectionaddnew":true,
+        "sectiondelete":true,
+        "sectionreorder":true
+    }
+    
+}

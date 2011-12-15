@@ -1,0 +1,49 @@
+body.NewsModule #navbar, .news {
+	/* Background color for news listing and story; should be white in most cases */
+    background-color: #fff;
+}
+.news {
+    margin-top: -9px;
+    padding: 10px;
+}
+
+#storybody div img {
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+}
+
+
+#storysubhead
+{
+    display: block;
+}
+
+.dek {
+	margin: 14px 0
+}
+
+.dek:empty { margin: 0; } /* CSS 3: shrink if no content */
+
+#image {float:right;margin: 4px 0 6px 8px;}
+
+#image img.thumbnail {border: 1px solid #505050; /* scale to width respecting aspect */}
+
+#image img.enlarge { float:right; margin-left: 4px; }
+
+#image div { float:right; margin-top: 2px; margin-right:-2px; }
+
+#image a { text-align:right; font-size:64.7%; line-height: 2.72em; text-decoration:none; color:#777;}
+
+#image a div { margin-top: -4px; }
+
+.wp-caption {
+    width: auto !important;
+    font-size: 84%;
+    line-height: 1.2em;
+}
+
+a.external {
+    background-image: none !important;
+    padding-right: 0;
+}

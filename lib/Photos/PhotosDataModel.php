@@ -27,7 +27,8 @@ class PhotosDataModel extends ItemListDataModel {
     
     public static function getPhotoDataRetrievers() {
         return array(
-            'FlickrRetriever'=>'Flickr',
+            'FlickrFeedRetriever'=>'Flickr (Feed)',
+            'FlickrAPIRetriever'=>'Flickr (API)',
             'PicasaRetriever'=>'Picasa',
             'URLDataRetriever'=>'Basic URL'
         );

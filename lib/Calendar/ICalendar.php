@@ -595,6 +595,7 @@ class ICalRecurrenceRule extends ICalObject {
     protected $interval = 1;
     protected $occurs_by_list = array();
     protected $occurs_by_day = array();
+    protected $wkst;
     private static $dayIndex = Array('SU'=>0, 'MO'=>1, 'TU'=>2, 'WE'=>3, 'TH'=>4, 'FR'=>5, 'SA'=>6 );
     private $dayString = array(
         'SU' => 'Sunday',
@@ -655,6 +656,8 @@ class ICalRecurrenceRule extends ICalObject {
                         break;
                     }
                 case 'WKST':
+                    $this->wkst = array_key_exists($rulevalue, self::$dayIndex) ? $rulevalue : '';
+                    break;
                 case (substr($rulename, 0, 2) == 'BY'):
                     $this->occurs_by_list[$rulename] = $rulevalue;
                     break;
@@ -698,24 +701,32 @@ class ICalRecurrenceRule extends ICalObject {
 
                 // Loop through the days and find the next one.
                 reset($this->occurs_by_day);
+                //check the wkst to resort the occurs_by_day 
+                if ($interval > 1 && $this->wkst && self::$dayIndex[$this->wkst] > 0 && isset($this->occurs_by_day[0])) {
+                    array_shift($this->occurs_by_day);
+                    $this->occurs_by_day[7] = 'SU';
+                }
+                
                 $day = current($this->occurs_by_day);
                 while ($day) {
                     if ($day == $current_day) {
                         $next_day = next($this->occurs_by_day);
                         if ($next_day) {
                             $offset = self::$dayIndex[$next_day] - self::$dayIndex[$current_day];
+                            $time = self::nextIncrement($time, 'DAILY', $offset);
                         }
                         // If we have reached the end of the sequence, use the beginning and add 7
                         else {
                             reset($this->occurs_by_day);
                             $next_day = current($this->occurs_by_day);
                             $offset = 7 + self::$dayIndex[$next_day] - self::$dayIndex[$current_day];
+                            $time = self::nextIncrement($time, 'DAILY', $offset + (($interval - 1) * 7));
                         }
                         break;
                     }
                     $day = next($this->occurs_by_day);
                 }
-                $time = self::nextIncrement($time, 'DAILY', $offset*$interval);
+                //$time = self::nextIncrement($time, 'DAILY', $offset*$interval);
                 break;
             case 'MONTHLY':
                 throw new ICalendarException("MONTHLY increment Not handled yet");
