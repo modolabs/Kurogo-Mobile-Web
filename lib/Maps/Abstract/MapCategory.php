@@ -28,6 +28,16 @@ class MapCategory implements MapFolder, MapListElement
         return $this->id;
     }
 
+    public function getIdStack() {
+        $categoryIds = array($this->id);
+        $currentFolder = $this;
+        while ($currentFolder instanceof KMLFolder) {
+            $currentFolder = $currentFolder->getParent();
+            array_unshift($categoryIds, $currentFolder->getId());
+        }
+        return $categoryIds;
+    }
+
     public function addPlacemark(Placemark $placemark) {
         $categoryIds = array($this->id);
         $currentFolder = $this;

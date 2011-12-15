@@ -20,6 +20,14 @@ class ArcGISDataModel extends MapDataModel
         $this->retriever->setSelectedLayer($categoryId);
     }
 
+    public function placemarks() {
+        if ($this->selectedPlacemarks) {
+            return $this->returnPlacemarks($this->selectedPlacemarks);
+        }
+        $this->setupRetrieverForPlacemarks();
+        return $this->returnPlacemarks($this->retriever->getData());
+    }
+
     public function search($searchTerms) {
         $this->categories(); // retriever needs to do this to initialize internal variables like projection
         $this->retriever->setSearchFilters(array('text' => $searchTerms));

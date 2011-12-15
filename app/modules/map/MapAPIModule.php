@@ -26,7 +26,11 @@ class MapAPIModule extends APIModule
         }
 
         // mimic getMergedConfigData in MapWebModule
-        $category = isset($urlArgs['category']) ? $urlArgs['category'] : null;
+        $categoryArg = isset($urlArgs['category']) ? $urlArgs['category'] : null;
+        $categories = explode(MAP_CATEGORY_DELIMITER, $categoryArg);
+        $category = current($categories);
+        $urlArgs['feed'] = $category;
+
         $configData = $this->getDataForGroup($this->feedGroup);
 
         // allow individual feeds to override group value

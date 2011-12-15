@@ -8,6 +8,7 @@ class ArcGISDataParser extends DataParser implements MapDataParser
     protected $projection;
     protected $mapProjector;
     protected $isTiledService;
+    protected $feedId;
 
     /////// MapDataParser
 
@@ -21,6 +22,19 @@ class ArcGISDataParser extends DataParser implements MapDataParser
 
     public function getProjection() {
         return $this->projection;
+    }
+
+    public function setProjection($proj) {
+        $this->projection = $proj;
+    }
+    
+    public function init($args) {
+        parent::init($args);
+        $this->feedId = mapIdForFeedData($args);
+    }
+
+    public function getId() {
+        return $this->feedId;
     }
 
     ////
@@ -39,11 +53,20 @@ class ArcGISDataParser extends DataParser implements MapDataParser
     public function setCurrentFolderId($folderId) {
         if (isset($this->folders[$folderId])) {
             $this->currentFolder = $this->folders[$folderId];
+        } else {
+            foreach ($this->categories() as $category) {
+                if (($found = $category->findCategory($folderId))) {
+                    $this->currentFolder = $found;
+                    break;
+                }
+            }
         }
     }
 
     public function getExtent() {
-        return $this->currentFolder->getExtent();
+        if (isset($this->currentFolder)) {
+            return $this->currentFolder->getExtent();
+        }
     }
 
     public function getFieldKeys() {
@@ -59,7 +82,7 @@ class ArcGISDataParser extends DataParser implements MapDataParser
                 ."Code: {$error['code']}\n"
                 ."Message: {$error['message']}\n"
                 ."Details: $details\n", 'maps');
-            throw new KurogoDataServerException("The map server for this category is temporarily down.  Please try again later.");
+            throw new KurogoDataServerException("Map server returned error: \"{$error['message']}\"");
         }
 
         if (isset($data['serviceDescription'])) {
@@ -75,11 +98,11 @@ class ArcGISDataParser extends DataParser implements MapDataParser
 
             foreach ($data['layers'] as $layerData) {
                 $parentId = $layerData['parentLayerId'];
-                $folderId = $data['id'];
+                $folderId = $layerData['id'];
                 if (isset($this->folders[$parentId])) {
-                    $this->folders[$parentId]->addCategory(new ArcGISFolder($folderId, $data['name']));
+                    $this->folders[$parentId]->addFolder(new ArcGISFolder($folderId, $layerData['name']));
                 } else {
-                    $this->folders[$folderId] = new ArcGISFolder($folderId, $data['name']);
+                    $this->createFolder($folderId, $layerData['name']);
                 }
             }
             return $this->categories();
@@ -98,7 +121,7 @@ class ArcGISDataParser extends DataParser implements MapDataParser
             if (isset($data['extent'])) {
                 $this->currentFolder->setExtent($data['extent']);
                 if (!$this->projection) {
-                    $this->projection = $data['extent']['spatialReference']['wkid'];
+                    $this->setProjection($data['extent']['spatialReference']['wkid']);
                 }
             }
 

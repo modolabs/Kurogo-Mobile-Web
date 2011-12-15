@@ -10,6 +10,15 @@ class ArcGISFolder extends MapCategory
 
     private $fieldAliases = array();
 
+    public function findCategory($folderId) {
+        foreach ($this->categories() as $category) {
+            if ($category->getId() == $folderId) {
+                return $category;
+            }
+        }
+        return null;
+    }
+
     public function setSubtitle($subtitle) {
         $this->description = $subtitle;
     }

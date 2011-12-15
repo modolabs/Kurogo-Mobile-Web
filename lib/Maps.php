@@ -132,9 +132,8 @@ function mapIdForFeedData(Array $feedData) {
 
 function shortArrayFromMapFeature(Placemark $feature) {
     $categories = $feature->getCategoryIds();
-    $feedId = current($categories);
     $category = implode(MAP_CATEGORY_DELIMITER, $categories);
-    $result = array('feed' => $feedId, 'category' => $category);
+    $result = array('category' => $category);
     $id = $feature->getId();
     if ($id !== null) {
         $result['pid'] = $id;

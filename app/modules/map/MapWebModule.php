@@ -711,8 +711,8 @@ class MapWebModule extends WebModule {
 
                 $feedId = $this->getArg('feed');
                 $dataModel = $this->getDataModel($feedId);
-                $category = $this->getArg('category');
-                if ($category) {
+                $category = $this->getArg('category', null);
+                if ($category !== null) {
                     $dataModel->findCategory($category);
                 }
                 $title = $dataModel->getTitle();

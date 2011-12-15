@@ -104,7 +104,7 @@ class ArcGISDataRetriever extends URLDataRetriever
     }
 
     public function setAction($action) {
-        if (!isset($this->action) && $action == self::ACTION_PLACEMARKS) {
+        if ($action == self::ACTION_PLACEMARKS) {
             // this won't work out of the box because we need metadata
             $this->action = self::ACTION_CATEGORIES;
             $this->getData();
