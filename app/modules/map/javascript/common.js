@@ -351,7 +351,7 @@ function kgoGoogleMapLoader(attribs) {
 
     that.locationUpdated = function(location, firstLocation) {
         var position = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
-        if (typeof that.userLocationMarker == 'undefined') {
+        if (that.userLocationMarker === null) {
             // TODO make these more customizable
             var icon = new google.maps.MarkerImage(URL_BASE + API_URL_PREFIX + '/modules/map/images/map-location@2x.png',
                 null, // original size
@@ -378,7 +378,7 @@ function kgoGoogleMapLoader(attribs) {
         // include current map center on map so zoom/pan is not as confusing
         if (firstLocation) {
             var bounds = new google.maps.LatLngBounds();
-            bounds.extend(initCoord);
+            bounds.extend(new google.maps.LatLng(that.initLat, that.initLon));
             bounds.extend(position);
             bounds.extend(map.getCenter());
             map.fitBounds(bounds);
@@ -386,7 +386,7 @@ function kgoGoogleMapLoader(attribs) {
     }
 
     that.locationUpdateStopped = function() {
-        if (typeof that.userLocationMarker != 'undefined') {
+        if (that.userLocationMarker === null) {
             that.userLocationMarker.setMap(null); // remove marker
         }
     }
