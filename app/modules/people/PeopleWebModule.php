@@ -384,6 +384,7 @@ class PeopleWebModule extends WebModule {
                 }
                 $this->assign('placeholder', $this->getLocalizedString("SEARCH"));
                 $this->assign('searchTip', $this->getOptionalModuleVar('SEARCH_TIP'));
+                $this->assign('contactsSubTitleNewline', $this->getOptionalModuleVar('CONTACTS_SUBTITLE_NEWLINE', false));
                 break;
         }  
     }
