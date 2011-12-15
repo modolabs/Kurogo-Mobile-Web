@@ -28,6 +28,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     private $mapProjector;
     private $titleField = null;
     private $subtitleField = null;
+    private $feedId;
 
     protected $bigEndian = false;
 
@@ -58,6 +59,8 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         if (isset($args['SUBTITLE_FIELD'])) {
             $this->subtitleField = $args['SUBTITLE_FIELD'];
         }
+
+        $this->feedId = mapIdForFeedData($args);
     }
 
     public function parseResponse($response) {
@@ -101,9 +104,17 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         return array();
     }
 
+    // MapDataParser
+
     public function getProjection() {
         return $this->mapProjection;
     }
+
+    public function getId() {
+        return $this->feedId;
+    }
+
+    ///
 
     public function parseData($data) {
         parent::parseData($data);
