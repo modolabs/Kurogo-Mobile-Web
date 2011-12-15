@@ -143,9 +143,6 @@ class AthleticsAPIModule extends APIModule
             'pubDate'     => strtotime($story->getPubDate())
         );
 
-        // like in the web module we
-        // use the existance of GUID
-        // to determine if we have content
         if($story->getContent()) {
             if($mode == 'full') {
                 $item['body'] = $story->getContent();
