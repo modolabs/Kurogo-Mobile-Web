@@ -514,7 +514,6 @@ function kgoEsriMapLoader(attribs) {
 
     that.addMarker = function(marker, attribs) {
         infoTemplate = new esri.InfoTemplate();
-        //infoTemplate.setTitle(attribs["title"]);
         infoTemplate.setContent(
             that.generateInfoWindowContent(attribs["title"], attribs["subtitle"], attribs["url"]));
         marker.setInfoTemplate(infoTemplate);
@@ -527,8 +526,8 @@ function kgoEsriMapLoader(attribs) {
         map.graphics.add(overlay);
         that.placemarks.push(overlay);
         infoTemplate = new esri.InfoTemplate();
-        infoTemplate.setTitle(attribs["title"]);
-        infoTemplate.setContent(attribs["subtitle"]);
+        infoTemplate.setContent(
+            that.generateInfoWindowContent(attribs["title"], attribs["subtitle"], attribs["url"]));
         overlay.setInfoTemplate(infoTemplate);
         that.markerOnTop = false;
     }
