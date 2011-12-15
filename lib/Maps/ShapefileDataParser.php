@@ -73,7 +73,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
                 $this->setContents($fileData['shp']);
                 $this->dbfParser->setContents($fileData['dbf']);
                 $this->dbfParser->setup();
-                $this->projection = isset($content['projection']) ? $content['projection'] : null;
+                $this->projection = isset($fileData['projection']) ? $fileData['projection'] : null;
                 $this->mapProjector->setSrcProj($this->projection);
                 $this->doParse();
             }
@@ -176,15 +176,18 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         } else {
             throw new KurogoDataException("geometry $shapeType not currently supported");
         }
-        $feature->setId($recordNumber);
-        $feature->setFields($this->dbfParser->readRecord());
+        $fields = $this->dbfParser->readRecord();
         if ($this->titleField) {
+            if (!strlen($fields[$this->titleField])) {
+                return null;
+            }
             $feature->setTitleField($this->titleField);
         }
         if ($this->subtitleField) {
             $feature->setSubtitleField($this->subtitleField);
         }
-        //$feature->setCategory($this->category);
+        $feature->setId($recordNumber);
+        $feature->setFields($fields);
 
         return $feature;
     }
@@ -293,7 +296,9 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
 
     public function readBody() {
         while ($this->position < $this->fileSize) {
-            $this->features[] = $this->readRecord();
+            if (($feature = $this->readRecord())) {
+                $this->features[] = $feature;
+            }
         }
     }
 
