@@ -1306,7 +1306,6 @@ abstract class WebModule extends Module {
 
   protected function loadPageConfigFile($page, $keyName=null, $opts=0) {
     $config = $this->getPageConfig($page, $opts);
-    if ($keyName === null) { $keyName = $name; }
     return $this->loadConfigFile($config, $keyName);
   }
   
@@ -1315,7 +1314,7 @@ abstract class WebModule extends Module {
 
     $themeVars = $config->getSectionVars(Config::EXPAND_VALUE);
     
-    if ($keyName === false) {
+    if (!$keyName) { // false, null, empty string, etc
       foreach($themeVars as $key => $value) {
         $this->templateEngine->assign($key, $value);
       }
