@@ -140,26 +140,18 @@ class KurogoWebBridge
     }
 
     protected function urlSuffixToFile($urlSuffix) {
-        return str_replace('/', '_',
-            preg_replace(
-                array(
-                    '@device/native-[^/]+/@',
-                    '@^min/\?g=file-/([^&]+)(&.+|)$@',
-                    '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
-                    '@/(images|javascript|css)/@',
-                    '@^modules/([^/]+)/@',
-                    '@^common/@',
-                ),
-                array(
-                    '',
-                    '$1',
-                    $this->page.'_min.$1',
-                    '/',
-                    '$1_',
-                    '',
-                ),
-                ltrim($urlSuffix, '/')
-            )
+        return preg_replace(
+            array(
+                '@device/native-[^/]+/@',
+                '@^min/\?g=file-/([^&]+)(&.+|)$@',
+                '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
+            ),
+            array(
+                '',
+                '$1',
+                $this->page.'_min.$1',
+            ),
+            ltrim($urlSuffix, '/')
         );
     }
 
