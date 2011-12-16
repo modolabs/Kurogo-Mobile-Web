@@ -371,6 +371,7 @@ class PeopleWebModule extends WebModule {
                 
                 $this->assign('contacts', $group['contacts']);
                 $this->assign('description', $group['description']);
+                $this->assign('contactsSubTitleNewline', $this->getOptionalModuleVar('CONTACTS_SUBTITLE_NEWLINE', false));
                 break;
         
             case 'index':
