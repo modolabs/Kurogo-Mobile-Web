@@ -219,15 +219,16 @@ class URLDataRetriever extends DataRetriever {
      * @return string
      */
     protected function cacheKey() {
-        if ($this->requestMethod == 'GET') {
-            if (!$url = $this->url()) {
-                throw new KurogoDataException("URL could not be determined");
-            }
-            return 'url_' . md5($url);
-        } 
+        if (!$url = $this->url()) {
+            throw new KurogoDataException("URL could not be determined");
+        }
         
-        //only cache GET requests
-        return null;
+        $key = 'url_' . md5($url);
+
+        if ($data = $this->data()) {
+            $key .= "_" . md5($data);
+        }
+        return $key;
     }
     
     protected function initRequest() {
