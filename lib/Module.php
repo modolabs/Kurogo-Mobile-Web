@@ -703,7 +703,7 @@ abstract class Module
         return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
     }
     
-    public function getLocalizedString($key, $opts=null) {
+    public function getLocalizedString($key) {
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
             throw new KurogoConfigurationException("Invalid string key $key");
         }

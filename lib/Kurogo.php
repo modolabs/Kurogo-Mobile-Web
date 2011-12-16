@@ -680,7 +680,7 @@ class Kurogo
                         foreach ($pathParts as $dir) {
                               $test = $testPath.$dir.DIRECTORY_SEPARATOR;
                           
-                            if (realpath_exists($test)) {
+                            if (file_exists(realpath($test))) {
                                 $testPath = $test;
                                 $urlBase .= $dir.'/';
                                 if (realpath($test) == WEBROOT_DIR) {

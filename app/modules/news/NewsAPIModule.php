@@ -92,17 +92,12 @@ class NewsAPIModule extends APIModule {
             'pubDate'     => self::getPubDateUnixtime($story),
        );
 
-       // like in the web module we
-       // use the existance of GUID
-       // to determine if we have content
-       if($story->getGUID()) {
-           $item['GUID'] = $story->getGUID();
+       if($story->getContent()) {
            if($mode == 'full') {
                 $item['body'] = $story->getContent();
            }
            $item['hasBody'] = TRUE;
        } else {
-           $item['GUID'] = $story->getLink();
            $item['hasBody'] = FALSE;
        }
 

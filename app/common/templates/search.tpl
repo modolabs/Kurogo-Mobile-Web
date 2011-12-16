@@ -4,8 +4,7 @@
   {else}
     {$hiddenArgs = $breadcrumbArgs}
   {/if}
-  fsfd
-  {$hiddenArgs}
+  
   {if isset($extraArgs)}
     {$hiddenArgs = array_merge($extraArgs, $hiddenArgs)}
   {/if}
