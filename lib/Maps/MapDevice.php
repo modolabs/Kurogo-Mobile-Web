@@ -18,6 +18,7 @@ class MapDevice
             ($this->pagetype == 'compliant' &&
              $this->platform != 'blackberry' &&
              $this->platform != 'bbplus' &&
+             $this->platform != 'winphone7' && // not reliable
              $this->platform != 'webos');
     }
 
