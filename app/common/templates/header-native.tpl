@@ -91,8 +91,8 @@
       
       onOrientationChange();
       
-      {if $webBridgePageConfigURL}
-        window.location = "{$webBridgePageConfigURL}";
+      {if $webBridgeOnPageLoadURL}
+        window.location = "{$webBridgeOnPageLoadURL}";
       {/if}
     {rdelim}
   </script>

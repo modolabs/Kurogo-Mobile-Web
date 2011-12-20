@@ -11,8 +11,8 @@ class KurogoWebBridge
     const NATIVE_PLATFORM_PARAMETER = 'nativePlatform';
     const ASSET_CHECK_PARAMETER     = 'nativeAssetCheck';
 
-    const INTERNAL_LINK_SCHEME = 'kgolink://';
-    const CONFIG_LINK_SCHEME   = 'kgoconfig://';
+    const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
+    const BRIDGE_URL_EVENT_ONLOAD  = 'kgobridge://event/load';
     
     const FILE_TYPE_HTML       = 'html';
     const FILE_TYPE_CSS        = 'css';
@@ -206,8 +206,8 @@ class KurogoWebBridge
               '@(window.location\s*=\s*[\'\"])\./([^\'\"]+)([\'\"])@',
             ),
             array(
-              '$1'.self::INTERNAL_LINK_SCHEME.'$2$3',
-              '$1'.self::INTERNAL_LINK_SCHEME.$this->module.'/$2$3',
+              '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$2$3',
+              '$1'.self::BRIDGE_URL_INTERNAL_LINK.$this->module.'/$2$3',
             ),
             $contents
         );
@@ -219,8 +219,8 @@ class KurogoWebBridge
               '@(<form\s+[^>]*action=")([^"/]+)(")@',
             ),
             array(
-                '$1'.self::INTERNAL_LINK_SCHEME.'$3$4',
-                '$1'.self::INTERNAL_LINK_SCHEME.$this->module.'/$2$3',
+                '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$3$4',
+                '$1'.self::BRIDGE_URL_INTERNAL_LINK.$this->module.'/$2$3',
             ),
             $contents
         );
@@ -301,7 +301,7 @@ class KurogoWebBridge
     // Config URL for setting native navbar options
     //
 
-    public static function getPageConfigURL($pageTitle, $backTitle, $hasRefresh) {
+    public static function getOnPageLoadURL($pageTitle, $backTitle, $hasRefresh) {
         if (!self::hasNativePlatform()) {
             return '';
         }
@@ -315,7 +315,7 @@ class KurogoWebBridge
         if ($hasRefresh) {
           $params['refresh'] = 1;
         }
-        return self::CONFIG_LINK_SCHEME.'navbar/?'.http_build_query($params);
+        return self::BRIDGE_URL_EVENT_ONLOAD.'?'.http_build_query($params);
     }
 
     public static function getURLBase() {
@@ -404,7 +404,7 @@ class KurogoWebBridge
     public static function getInternalLink($id, $page, $args=array()) {
         if (!$page) { $page = 'index'; }
         
-        return self::INTERNAL_LINK_SCHEME."$id/$page".
+        return self::BRIDGE_URL_INTERNAL_LINK."$id/$page".
             ($args ? '?'.http_build_query($args) : '');
     }
     
