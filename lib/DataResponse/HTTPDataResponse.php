@@ -44,6 +44,10 @@ class HTTPDataResponse extends DataResponse
                 }
             }
         }
+        
+        if (!$this->responseCode) { 
+            $this->responseError = 'Error Retrieving Data';
+        }
     }
     
     protected function parseHTTPHeader($header) {
