@@ -24,6 +24,7 @@ abstract class DataRetriever {
     protected $cache;
     protected $cacheKey;
     protected $cacheGroup;
+    protected $cacheRequest = true;
     protected $cacheLifetime = null; //if null it will use cache default.
     protected $parser;
 
@@ -35,6 +36,10 @@ abstract class DataRetriever {
 
     protected function setCacheKey($cacheKey) {
         $this->cacheKey = $cacheKey;
+    }
+    
+    protected function setCacheRequest($cacheRequest) {
+        $this->cacheRequest = $cacheRequest ? true : false;
     }
 
     protected function setCacheGroup($cacheGroup) {
@@ -81,8 +86,12 @@ abstract class DataRetriever {
         return $this->parser;
     }
     
+    protected function shouldCacheRequest() {
+        return $this->cacheRequest;
+    }
+    
     public function getResponse() {
-        $cacheKey = $this->cacheKey();
+        $cacheKey = $this->shouldCacheRequest() ? $this->cacheKey() : null;
         $cacheGroup = $this->cacheGroup();
         
         if (!$response = $this->getCachedResponse($cacheKey, $cacheGroup)) {

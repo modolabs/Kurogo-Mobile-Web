@@ -219,15 +219,16 @@ class URLDataRetriever extends DataRetriever {
      * @return string
      */
     protected function cacheKey() {
-        if ($this->requestMethod == 'GET') {
-            if (!$url = $this->url()) {
-                throw new KurogoDataException("URL could not be determined");
-            }
-            return 'url_' . md5($url);
-        } 
+        if (!$url = $this->url()) {
+            throw new KurogoDataException("URL could not be determined");
+        }
         
-        //only cache GET requests
-        return null;
+        $key = 'url_' . md5($url);
+
+        if ($data = $this->data()) {
+            $key .= "_" . md5($data);
+        }
+        return $key;
     }
     
     protected function initRequest() {
@@ -252,16 +253,26 @@ class URLDataRetriever extends DataRetriever {
         $this->requestData = $this->setContextData();
         
         Kurogo::log(LOG_INFO, "Retrieving $this->requestURL", 'url_retriever');
-        $data = file_get_contents($this->requestURL, false, $this->streamContext);
-        $http_response_header = isset($http_response_header) ? $http_response_header : array();
 
+        $data = file_get_contents($this->requestURL, false, $this->streamContext);
+        $url_parts = parse_url($this->requestURL);
+
+        if (!isset($url_parts['scheme'])) {
+             $this->DEFAULT_RESPONSE_CLASS="FileDataResponse";
+        }
+        
         $response = $this->initResponse();
-        $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders);
+        if ($response instanceOf HTTPDataResponse) {
+            $http_response_header = isset($http_response_header) ? $http_response_header : array();
+            $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders);
+            $response->setResponseHeaders($http_response_header);
+            Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
+        } elseif ($response instanceOf FileDataResponse) {
+            $response->setRequest($this->requestURL);
+        }
 
         $response->setResponse($data);
-        $response->setResponseHeaders($http_response_header);
         
-        Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
         if ($response->getResponseError()) {
             Kurogo::log(LOG_WARNING, sprintf("%s for %s", $response->getResponseError(), $this->requestURL), 'url_retriever');
         }
