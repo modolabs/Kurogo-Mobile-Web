@@ -18,7 +18,15 @@ class DateFormatter
         
         $string = '';
         if ($dateStyleConstant) {
-            $string .= strftime(Kurogo::getLocalizedString($dateStyleConstant), $date);
+            $format = Kurogo::getLocalizedString($dateStyleConstant);
+
+            // Work around lack of %e support in windows
+            // http://php.net/manual/en/function.strftime.php
+		    if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
+               $format = preg_replace('#(?<!%)((?:%%)*)%e#', '\1%#d', $format);
+			}	
+			
+            $string .= strftime($format, $date);
             if ($timeStyleConstant) {
                 $string .= " ";
             }
