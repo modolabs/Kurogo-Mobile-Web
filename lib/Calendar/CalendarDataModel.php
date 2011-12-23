@@ -86,7 +86,21 @@ class CalendarDataModel extends ItemListDataModel
     
     public function getEventCategories()
     {
-        return $this->parser->getEventCategories();
+        $this->setLimit(null);
+        $items = $this->items();
+        $categories = array();
+        foreach($items as $item) {
+            $eventCategories = $item->getEventCategories();
+            if($eventCategories) {
+                $categories = array_merge($categories, $eventCategories);
+            }
+        }
+        $categories = array_unique($categories);
+        foreach($categories as $category) {
+            // TODO: create calendar category object
+            $catObj = new CalendarCategory();
+        }
+        return $categories;
     }
     
     public function setDuration($duration, $duration_units)
