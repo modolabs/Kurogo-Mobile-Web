@@ -223,7 +223,7 @@ class LoginWebModule extends WebModule {
                     $loginMessage = $this->getLocalizedString('LOGIN_DIRECT_MESSAGE', Kurogo::getSiteString('SITE_NAME'));
                 }
                 $this->assign('LOGIN_DIRECT_MESSAGE', $loginMessage);
-                $this->assign('url', $url);
+                $this->assign('urlArray', $urlArray);
                 break;
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 //indirect logins handling the login process themselves. Send a return url so the indirect authority can come back here
