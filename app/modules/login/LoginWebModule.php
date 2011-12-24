@@ -46,7 +46,6 @@ class LoginWebModule extends WebModule {
     $session = $this->getSession();
     
     //return URL
-    $url = $this->buildURLFromArray($this->args);
     $urlArray = $this->extractModuleArray($this->args);
     
     //see if remain logged in is enabled by the administrator, then if the value has been passed (i.e. the user checked the "remember me" box)
@@ -245,9 +244,8 @@ class LoginWebModule extends WebModule {
                     $user = $this->getUser($authority);
                     $this->setLogData($user, $user->getFullName());
                     $this->logView();
-                    if ($url) {
-                        header("Location: $url");
-                        exit();
+                    if ($urlArray) {
+                        self::redirectToArray($urlArray);
                     } else {
                         $this->redirectToModule('home','',array('login'=>$authorityIndex));
                     }
@@ -280,9 +278,8 @@ class LoginWebModule extends WebModule {
             if ($this->isLoggedIn()) {
             
                 //if the url is set then redirect
-                if ($url) {
-                    header("Location: $url");
-                    exit();
+                if ($urlArray) {
+                    self::redirectToArray($urlArray);
                 }
 
                 //if there is only 1 authority then redirect to logout confirm
