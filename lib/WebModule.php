@@ -332,6 +332,20 @@ abstract class WebModule extends Module {
     return $url;
   }
 
+  protected function redirectToArray($params) {
+        $id = isset($params['id']) ? $params['id'] : '';
+        $page = isset($params['page']) ? $params['page'] : '';
+        $args = isset($params['args']) ? $params['args'] : array();
+        
+        if ($id) {
+            self::redirectToModule($id, $page, $args);
+        } elseif ($page) {
+            self::redirectTo($page, $args);
+        }
+        
+        return false;
+  }
+
   public function redirectToModule($id, $page, $args=array()) {
     $url = self::buildURLForModule($id, $page, $args);
     //error_log('Redirecting to: '.$url);
