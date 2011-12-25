@@ -86,6 +86,10 @@ abstract class DataRetriever {
         return $this->parser;
     }
     
+    public function getParser() {
+        return $this->parser();
+    }
+    
     protected function shouldCacheRequest() {
         return $this->cacheRequest;
     }
