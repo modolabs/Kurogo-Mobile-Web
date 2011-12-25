@@ -50,6 +50,14 @@ abstract class DataRetriever {
         return $this->cacheKey;
     }
     
+    protected function clearCacheGroup($cacheGroup) {
+        $this->cache->clearCacheGroup($cacheGroup);
+    }
+
+    protected function clearCache() {
+        $this->cache->clearCache();
+    }
+    
     protected function cacheGroup() {
         return $this->cacheGroup;
     }
