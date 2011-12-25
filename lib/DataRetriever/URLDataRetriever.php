@@ -21,6 +21,10 @@ class URLDataRetriever extends DataRetriever {
     protected $requestData;
     protected $streamContext = null;
     
+    public function __wakeup() {
+        $this->initStreamContext($this->initArgs);
+    }
+    
     /**
      * Sets the base url for the request. This value will be set automatically if the BASE_URL argument
      * is included in the factory method. Subclasses that have fixed URLs (i.e. web service data controllers)
@@ -122,7 +126,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     protected function setData($data) {
-        $this->data = $data;
+        $this->requestData = $data;
     }
 
     protected function data() {
@@ -219,6 +223,10 @@ class URLDataRetriever extends DataRetriever {
      * @return string
      */
     protected function cacheKey() {
+        if ($this->cacheKey) {
+            return $this->cacheKey;
+        }
+        
         if (!$url = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }
@@ -264,7 +272,7 @@ class URLDataRetriever extends DataRetriever {
         $response = $this->initResponse();
         if ($response instanceOf HTTPDataResponse) {
             $http_response_header = isset($http_response_header) ? $http_response_header : array();
-            $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders);
+            $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders, $this->requestData);
             $response->setResponseHeaders($http_response_header);
             Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
         } elseif ($response instanceOf FileDataResponse) {

@@ -50,6 +50,14 @@ abstract class DataRetriever {
         return $this->cacheKey;
     }
     
+    protected function clearCacheGroup($cacheGroup) {
+        $this->cache->clearCacheGroup($cacheGroup);
+    }
+
+    protected function clearCache() {
+        $this->cache->clearCache();
+    }
+    
     protected function cacheGroup() {
         return $this->cacheGroup;
     }
@@ -84,6 +92,10 @@ abstract class DataRetriever {
     /* subclasses can override this method to return a dynamic parser PER request */
     protected function parser() {
         return $this->parser;
+    }
+    
+    public function getParser() {
+        return $this->parser();
     }
     
     protected function shouldCacheRequest() {
