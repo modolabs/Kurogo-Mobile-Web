@@ -122,7 +122,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     protected function setData($data) {
-        $this->data = $data;
+        $this->requestData = $data;
     }
 
     protected function data() {
