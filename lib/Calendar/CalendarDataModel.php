@@ -83,6 +83,19 @@ class CalendarDataModel extends ItemListDataModel
     {
         return $this->endDate ? $this->endDate->format('U') : false;
     }
+
+    public function getEventsByCategory($cateID) {
+        $this->setLimit(null);
+        $items = $this->items();
+        $events = array();
+        foreach($items as $item) {
+            $eventCategories = $item->getEventCategories();
+            if(in_array($cateID, $eventCategories)) {
+                $events[] = $item;
+            }
+        }
+        return $events;
+    }
     
     public function getEventCategories()
     {
@@ -96,11 +109,14 @@ class CalendarDataModel extends ItemListDataModel
             }
         }
         $categories = array_unique($categories);
+        $cates = array();
         foreach($categories as $category) {
-            // TODO: create calendar category object
-            $catObj = new CalendarCategory();
+            $catObj = new ICalCategory();
+            $catObj->setID($category);
+            $catObj->setName($category);
+            $cates[] = $catObj;
         }
-        return $categories;
+        return $cates;
     }
     
     public function setDuration($duration, $duration_units)

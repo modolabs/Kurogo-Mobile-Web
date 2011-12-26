@@ -606,8 +606,9 @@ class CalendarWebModule extends WebModule {
     
             $feed->setStartDate($start);
             $feed->setEndDate($end);
-            $feed->addFilter('category', $catid);
-            $iCalEvents = $feed->items();
+            $iCalEvents = $feed->getEventsByCategory($catid);
+            //$feed->addFilter('category', $catid);
+            //$iCalEvents = $feed->items();
           
             foreach($iCalEvents as $iCalEvent) {
           
