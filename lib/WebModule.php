@@ -974,6 +974,10 @@ abstract class WebModule extends Module {
         return in_array($aBookmark, $this->getBookmarks());
     }
 
+    protected function hasBookmarks(){
+        return count($this->getBookmarks()) > 0 ? true : false;
+    }
+
     private function bookmarkToggleURL($toggle) {
         $args = $this->args;
         $args['bookmark'] = $toggle;
@@ -1049,7 +1053,7 @@ abstract class WebModule extends Module {
     }
     
     protected function generateBookmarkLink() {
-        $hasBookmarks = count($this->getBookmarks()) > 0;
+        $hasBookmarks = $this->hasBookmarks();
         $bookmarkLink = array(array(
             'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
             'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
