@@ -154,6 +154,8 @@ class CalendarDataModel extends ItemListDataModel
     protected function setFilterCateByDay($args) {
         if(isset($args['FILTER_CATEGORY_BY_DAY'])) {
             $this->filterCategoryByDay = (boolean) $args['FILTER_CATEGORY_BY_DAY'];
+        }else {
+            $this->filterCategoryByDay = false;
         }
     }
 
