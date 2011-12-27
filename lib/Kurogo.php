@@ -1022,7 +1022,7 @@ class Kurogo
         return trim(file_get_contents($url));
     }
     
-    private function rmdir($dir) {
+    public static function rmdir($dir) {
         if (strlen($dir) && is_dir($dir)) {
             if (is_file('/bin/rm')) {
                 $exec = sprintf("%s -rf %s", '/bin/rm', escapeshellarg($dir));
@@ -1054,7 +1054,7 @@ class Kurogo
         self::log(LOG_NOTICE, "Clearing site caches", "kurogo");
 
         if (strlen($type)>0) {
-            return $this->rmdir(CACHE_DIR . "/" . $type);
+            return self::rmdir(CACHE_DIR . "/" . $type);
         }
     
         //clear all folders
@@ -1064,7 +1064,7 @@ class Kurogo
         $dirs = scandir(CACHE_DIR);
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
-                $result = $this->rmdir(CACHE_DIR . "/" . $dir);
+                $result = self::rmdir(CACHE_DIR . "/" . $dir);
                 if ($result !==0) {
                     return $result;
                 }
