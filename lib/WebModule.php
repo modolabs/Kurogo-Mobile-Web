@@ -975,7 +975,7 @@ abstract class WebModule extends Module {
     }
 
     protected function hasBookmarks(){
-        return count($this->getBookmarks()) > 0 ? true : false;
+        return count($this->getBookmarks()) > 0;
     }
 
     private function bookmarkToggleURL($toggle) {
