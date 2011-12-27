@@ -21,6 +21,7 @@ class CalendarDataModel extends ItemListDataModel
     protected $startDate;
     protected $endDate;
     protected $calendar;
+    protected $filterCategoryByDay;
     protected $filters=array();
     
     public function setRequiresDateFilter($bool)
@@ -147,8 +148,19 @@ class CalendarDataModel extends ItemListDataModel
     protected function init($args)
     {
         parent::init($args);
+        $this->setFilterCateByDay($args);
     }
-    
+
+    protected function setFilterCateByDay($args) {
+        if(isset($args['FILTER_CATEGORY_BY_DAY'])) {
+            $this->filterCategoryByDay = (boolean) $args['FILTER_CATEGORY_BY_DAY'];
+        }
+    }
+
+    public function isFilterCateByDay() {
+        return $this->filterCategoryByDay;
+    }
+
     public function getNextEvent($todayOnly=false) {
         $start = new DateTime();
         $start->setTime(date('H'), floor(date('i')/5)*5, 0);
