@@ -2,7 +2,6 @@
 
 // the unit returned by MapDataParser.
 class MapCategory implements MapFolder, MapListElement
-//, MapListElement
 {
     protected $parent;
     protected $id;

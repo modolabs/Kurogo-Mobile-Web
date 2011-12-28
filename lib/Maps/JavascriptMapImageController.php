@@ -27,9 +27,11 @@ abstract class JavascriptMapImageController extends MapImageController
         return $url;
     }
 
+    /*
     public function getHeaderScript() {
         return '';
     }
+    */
 
     public function getFooterScript() {
         return '';

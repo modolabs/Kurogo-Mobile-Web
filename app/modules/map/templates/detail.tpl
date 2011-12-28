@@ -10,10 +10,8 @@
       <a name="map"> </a>
       <!--<div id="mapwrapper" class="image">-->
       <div id="mapimage" class="image">
-        {if $isStatic}
-          {include file="findInclude:modules/$moduleID/templates/mapscrollers.tpl"}
-          <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
-        {/if}
+        {include file="findInclude:modules/$moduleID/templates/mapscrollers.tpl"}
+        <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
       </div>
       <!--<div id="mapimage" style="display:none"></div>-->
     {/block}

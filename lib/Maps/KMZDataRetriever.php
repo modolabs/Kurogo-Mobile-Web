@@ -41,7 +41,7 @@ class KMZDataRetriever extends URLDataRetriever
         $http_response_header = isset($http_response_header) ? $http_response_header : array();
 
         $response = $this->initResponse();
-        $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders);
+        $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders, null);
 
         $response->setResponse($data);
         $response->setResponseHeaders($http_response_header);

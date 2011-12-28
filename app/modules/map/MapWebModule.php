@@ -898,6 +898,8 @@ class MapWebModule extends WebModule {
 
     protected function initializeDynamicMap()
     {
+        $this->addExternalJavascript($this->getInternalJavascriptURL('/common/javascript/maps.js'));
+
         // set up base map
         $baseMap = $this->getImageController();
         $baseMap->setWebModule($this);
@@ -913,7 +915,6 @@ class MapWebModule extends WebModule {
         foreach ($baseMap->getIncludeScripts() as $includeScript) {
             $this->addExternalJavascript($includeScript);
         }
-        $this->addInlineJavascript($baseMap->getHeaderScript());
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
         $this->configureUserLocation();
@@ -966,16 +967,13 @@ class MapWebModule extends WebModule {
 
         // ajax options for static maps
         // devices like bbplus will load a new page for each zoom/scroll
-        if ($this->getMapDevice()->pageSupportsDynamicMap()) {
-            $js = <<<JS
-                mapWidth = {$imgController->getImageWidth()};
-                mapHeight = {$imgController->getImageHeight()};
-                staticMapOptions = {$imgController->getJavascriptControlOptions()};
+        $js = <<<JS
+            mapWidth = {$baseMap->getImageWidth()};
+            mapHeight = {$baseMap->getImageHeight()};
+            staticMapOptions = {$baseMap->getJavascriptControlOptions()};
 JS;
-
-            $this->addInlineJavascript($js);
-            $this->addOnLoad('addStaticMapControls();');
-        }
+        $this->addInlineJavascriptFooter($js);
+        $this->addOnLoad('addStaticMapControls();');
 
         // javascript for all static maps
         $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
