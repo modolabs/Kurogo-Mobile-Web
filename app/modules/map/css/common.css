@@ -190,14 +190,6 @@ body.fullscreen #navbar {
     margin: 2px;
 }
 
-/* modifications to javascript map SDK classes */
-#mapimage .esriSimpleSlider {
-    top: auto;
-    left: auto;
-    bottom: 10px;
-    right: 10px;
-}
-
 #mapimage .simpleInfoWindow .title {
     border: none;
     padding: 0;

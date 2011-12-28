@@ -198,7 +198,7 @@ function kgoGoogleMapLoader(attribs) {
     }
 
     that.locationUpdateStopped = function() {
-        if (that.userLocationMarker === null) {
+        if (that.userLocationMarker !== null) {
             that.userLocationMarker.setMap(null); // remove marker
         }
     }
@@ -300,6 +300,7 @@ function kgoEsriMapLoader(attribs) {
 
         map = new esri.Map(that.mapElement, {
             'logo' : false,
+            'slider': false,
             'resizeDelay' : 300
         });
 
@@ -307,6 +308,55 @@ function kgoEsriMapLoader(attribs) {
         var basemap = new esri.layers.ArcGISTiledMapServiceLayer(basemapURL);
 
         map.addLayer(basemap);
+
+        // add map controls
+
+        var controlDiv = document.createElement('div');
+        controlDiv.id = "mapcontrols"
+        controlDiv.style.position = "absolute";
+        controlDiv.style.right = "10px";
+        controlDiv.style.bottom = "10px";
+
+        var zoominButton = document.createElement('a');
+        zoominButton.id = "zoomin";
+        zoominButton.onclick = function() {
+            var zoomLevel = map.getLevel();
+            var x = (map.extent.xmin + map.extent.xmax) / 2;
+            var y = (map.extent.ymin + map.extent.ymax) / 2;
+            map.centerAndZoom(new esri.geometry.Point(x, y, that.spatialRef), zoomLevel + 1);
+        }
+        controlDiv.appendChild(zoominButton);
+
+        var zoomoutButton = document.createElement('a');
+        zoomoutButton.id = "zoomout";
+        zoomoutButton.onclick = function() {
+            var zoomLevel = map.getLevel();
+            var x = (map.extent.xmin + map.extent.xmax) / 2;
+            var y = (map.extent.ymin + map.extent.ymax) / 2;
+            map.centerAndZoom(new esri.geometry.Point(x, y, that.spatialRef), zoomLevel - 1);
+        }
+        controlDiv.appendChild(zoomoutButton);
+
+        var recenterButton = document.createElement('a');
+        recenterButton.id = "recenter";
+        recenterButton.onclick = function() {
+            map.centerAndZoom(that.center, that.initZoom);
+        }
+        controlDiv.appendChild(recenterButton);
+
+        if ("geolocation" in navigator && that.showUserLocation) {
+            that.locateMeButton = document.createElement('a');
+            that.locateMeButton.id = "locateMe";
+            that.locateMeButton.onclick = function() {
+                that.toggleLocationUpdates();
+            }
+            controlDiv.appendChild(that.locateMeButton);
+        }
+
+        var mapElement = document.getElementById(that.mapElement);
+        if (mapElement) {
+            mapElement.appendChild(controlDiv);
+        }
 
         // this line doesn't seem to work if placed anywhere other than here
         dojo.connect(map, "onLoad", plotFeatures);
@@ -390,12 +440,12 @@ function kgoEsriMapLoader(attribs) {
             'lat': location.coords.latitude,
             'lon': location.coords.longitude,
             'from': 4326,
-            'to': wkid
+            'to': that.projection
         };
         makeAPICall('GET', 'map', 'projectPoint', params, function(response) {
-            var point = new esri.geometry.Point(response.lon, response.lat, spatialRef);
+            var point = new esri.geometry.Point(response.lon, response.lat, that.spatialRef);
 
-            if (typeof that.userLocationMarker == 'undefined') {
+            if (typeof that.userLocationMarker !== null) {
                 // TODO make these more customizable
                 var pointSymbol = new esri.symbol.PictureMarkerSymbol(URL_BASE + 'modules/map/images/map-location@2x.png', 16, 16);
                 that.userLocationMarker = new esri.Graphic(point, pointSymbol);
@@ -405,13 +455,13 @@ function kgoEsriMapLoader(attribs) {
             }
             
             if (!that.userLocationMarkerOnMap) {
-                map.graphics.add(uthat.serLocationMarker);
+                map.graphics.add(that.userLocationMarker);
                 that.userLocationMarkerOnMap = true;
             }
 
             if (firstLocation) {
                 // only recenter on first location so we don't rubber band on scrolling
-                var points = esri.geometry.Multipoint(spatialRef);
+                var points = esri.geometry.Multipoint(that.spatialRef);
                 points.addPoint(that.center);
                 points.addPoint(point);
                 
@@ -423,7 +473,7 @@ function kgoEsriMapLoader(attribs) {
     }
 
     that.locationUpdateStopped = function() {
-        if (typeof that.userLocationMarker != 'undefined') {
+        if (that.userLocationMarker !== null) {
             map.graphics.remove(that.userLocationMarker);
             that.userLocationMarkerOnMap = false;
         }
