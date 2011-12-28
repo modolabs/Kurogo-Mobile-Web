@@ -978,6 +978,8 @@ JS;
         // javascript for all static maps
         $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
         $this->addOnOrientationChange('updateMapDimensions();');
+
+        $this->assign('isStatic', true);
     }
 
     /////// utilities

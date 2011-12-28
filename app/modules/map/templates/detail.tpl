@@ -65,16 +65,18 @@
     <h2>{$name|escape}</h2>
     <p class="address">{$address|escape}</p>
     <div id="buttonWrapper">
-      <div id="viewOnMapContainer" class="buttonContainer">
-        <a href="{$mapURL}">
-          <div id="viewOnMapButton"
-               ontouchstart="addClass(this, 'pressed')"
-               ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
-              <img src="/modules/map/images/map-button-map.png"/>
-              {"VIEW_ON_MAP"|getLocalizedString}
-          </div>
-        </a>
-      </div>
+      {if !$isStatic}
+        <div id="viewOnMapContainer" class="buttonContainer">
+          <a href="{$mapURL}">
+            <div id="viewOnMapButton"
+                 ontouchstart="addClass(this, 'pressed')"
+                 ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
+                <img src="/modules/map/images/map-button-map.png"/>
+                {"VIEW_ON_MAP"|getLocalizedString}
+            </div>
+          </a>
+        </div>
+      {/if}
       <div id="bookmarkButtonContainer" class="buttonContainer">
         <a onclick="{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', 'bookmark button pressed', '{$bookmarkItem|escape:'javascript'|escape:'html'}']);{/if}toggleBookmark('{$name}', '{$bookmarkItem|escape:'javascript'|escape:'html'}', {$expireDate}, '{$smarty.const.COOKIE_PATH}')">
           <div id="bookmarkButton"
