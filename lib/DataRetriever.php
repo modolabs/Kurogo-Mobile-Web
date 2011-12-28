@@ -50,6 +50,14 @@ abstract class DataRetriever {
         return $this->cacheKey;
     }
     
+    protected function clearCacheGroup($cacheGroup) {
+        $this->cache->clearCacheGroup($cacheGroup);
+    }
+
+    protected function clearCache() {
+        $this->cache->clearCache();
+    }
+    
     protected function cacheGroup() {
         return $this->cacheGroup;
     }
@@ -86,6 +94,10 @@ abstract class DataRetriever {
         return $this->parser;
     }
     
+    public function getParser() {
+        return $this->parser();
+    }
+    
     protected function shouldCacheRequest() {
         return $this->cacheRequest;
     }
@@ -100,6 +112,7 @@ abstract class DataRetriever {
             if (!$response instanceOf DataResponse) {
                 throw new KurogoDataException("Response must be instance of DataResponse");
             }
+            $response->setRetriever($this);
             if (!$response->getResponseError()) {
                 $this->cacheResponse($cacheKey, $cacheGroup, $response);
             }

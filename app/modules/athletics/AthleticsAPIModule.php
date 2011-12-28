@@ -31,7 +31,7 @@ class AthleticsAPIModule extends APIModule
                 
                 $sports = array();
                 foreach ($sportsConfig as $key => $sportData) {
-                    $sports[$key] = array('title' => $sportData['TITLE']);
+                    $sports[] = array('key'=>$key, 'title' => $sportData['TITLE']);
                 }
                 
                 $response = array(
