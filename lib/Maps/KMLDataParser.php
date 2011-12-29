@@ -17,8 +17,8 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
     protected $placemarks = array();
     protected $title;
     //protected $category;
-    protected $itemCount = 0;
-    protected $otherCategory;
+    //protected $itemCount = 0;
+    //protected $otherCategory;
 
     protected $parseMode=self::PARSE_MODE_STRING;
     
@@ -56,6 +56,10 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
 
     protected function addPlacemark(Placemark $placemark)
     {
+        $placemark->addCategoryId($this->getId());
+        $placemark->setId(count($this->placemarks));
+        $this->placemarks[] = $placemark;
+        /*
         if (!$this->otherCategory) {
             $this->otherCategory = new KMLFolder('Folder', array());
             $this->otherCategory->setName('Other Places'); // TODO: get localized string
@@ -64,13 +68,14 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         }
 
         $this->otherCategory->addItem($placemark);
+        */
     }
 
     protected function addFolder(MapFolder $folder)
     {
         $folder->setParent($this);
         $this->folders[] = $folder;
-        $this->itemCount++;
+        //$this->itemCount++;
     }
 
     public function getId()
@@ -114,7 +119,8 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                     $parent->addItem($folder);
                 } else {
                     $parentCategory = $this->getId();
-                    $newFolderIndex = $this->itemCount;
+                    $newFolderIndex = count($this->folders);
+                    //$newFolderIndex = $this->itemCount;
                     $this->addFolder($folder);
                 }
                 $folder->setId(substr(md5($parentCategory.$newFolderIndex), 0, strlen($parentCategory)-1)); // something unique
@@ -194,7 +200,7 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         $this->docuemtn = null;
         $this->folders = array();
         $this->placemarks = array();
-        $this->itemCount = 0;
+        //$this->itemCount = 0;
         $this->otherCategory = null;
     }
 
@@ -202,14 +208,11 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
     {
         $this->clearInternalCache();
         $this->parseXML($content);
-        $items = $this->categories();
+        $items = array_merge($this->categories(), $this->placemarks());
         $folder = $this;
         while (count($items) == 1) {
             $folder = current($items);
-            $items = $folder->categories();
-        }
-        if (!$items) {
-            $items = $folder->placemarks();
+            $items = array_merge($folder->categories(), $folder->placemarks());
         }
         return $items;
     }

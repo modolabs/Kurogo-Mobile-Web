@@ -90,8 +90,14 @@ class MapDataModel extends DataModel implements MapFolder
         }
     }
 
-    protected function setCategoryId($categoryId) {
+    protected function clearCategoryId() {
         $this->selectedCategory = null;
+    }
+
+    protected function setCategoryId($categoryId) {
+        if (!$categoryId) {
+            die();
+        }
         foreach ($this->categories() as $category) {
             if ($category->getId() == $categoryId) {
                 $this->selectedCategory = $category;
@@ -134,6 +140,10 @@ class MapDataModel extends DataModel implements MapFolder
         }
         $this->setupRetrieverForPlacemarks();
         return $this->returnPlacemarks($this->retriever->getData());
+    }
+
+    public function items() {
+        return array_merge($this->categories(), $this->placemarks());
     }
 
     public function getFeedId() {

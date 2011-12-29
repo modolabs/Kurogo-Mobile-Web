@@ -131,6 +131,8 @@ class MapWebModule extends WebModule {
             );
 
         if ($mapItem instanceof Placemark) {
+            $result['class'] = 'placemark';
+
             if ($mapItem instanceof BasePlacemark && ($url = $mapItem->getURL())) {
                 // if url was set via setURL -- only applies to campus placemarks on worldmap
                 $result['url'] = $url;
@@ -722,24 +724,26 @@ class MapWebModule extends WebModule {
                     $dataModel->findCategory($category);
                 }
                 $title = $dataModel->getTitle();
-                $listItems = $dataModel->categories();
-                while (count($listItems) == 1) {
+                //$listItems = $dataModel->categories();
+                $listItems = $dataModel->items();
+                while (count($listItems) == 1 && end($listItems) instanceof MapFolder) {
                     $categoryId = end($listItems)->getId();
                     $dataModel->findCategory($categoryId);
-                    $listItems = $dataModel->categories();
+                    $listItems = $dataModel->items();
+                    //$listItems = $dataModel->categories();
                 }
                 // TODO: use different nav list types to distinguish placemarks vs. subcategories
-                if (!$listItems) {
-                    $listItems = $dataModel->placemarks();
-                    if (count($listItems) == 1) {
-                        $link = $this->linkForItem(current($listItems));
-                        $this->redirectTo($link['url']);
-                    } else if ($this->getArg('mapview') && $this->isMapDrivenUI()) {
-                        $this->setTemplatePage('fullscreen');
-                        $this->initializeDynamicMap();
-                        break;
-                    }
+                //if (!$listItems) {
+                //$listItems = $dataModel->placemarks();
+                if (count($listItems) == 1) {
+                    $link = $this->linkForItem(current($listItems));
+                    $this->redirectTo($link['url']);
+                } else if ($this->getArg('mapview') && $this->isMapDrivenUI()) {
+                    $this->setTemplatePage('fullscreen');
+                    $this->initializeDynamicMap();
+                    break;
                 }
+                //}
 
                 $places = array();
                 foreach ($listItems as $listItem) {

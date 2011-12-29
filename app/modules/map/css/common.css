@@ -8,6 +8,10 @@ body.fullscreen #tabscontainer {
     padding: 6px 12px;
 }
 
+.results a.placemark {
+    background-image: url(/modules/map/images/map-button-map.png);
+}
+
 /* used in map view - custom controls overlaying google maps, detail - controls below map image */
 #mapcontrols a {
     width: 40px;
