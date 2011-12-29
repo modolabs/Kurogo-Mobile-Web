@@ -21,7 +21,7 @@ class MapWebModule extends WebModule {
     }
      
     // overrides function in Module.php
-    protected function loadFeedData() {
+    protected function loadFeedData($requestedFeedId=null) {
         $data = array();
         $feedConfigFile = NULL;
 
@@ -33,7 +33,10 @@ class MapWebModule extends WebModule {
             }
 
         } else {
-            $requestedFeedId = $this->getArg('feed', null);
+
+            if ($requestedFeedId === null) {
+                $requestedFeedId = $this->getArg('feed', null);
+            }
             // if no feed group and category are specified, load whole list
             foreach ($this->feedGroups as $groupID => $groupSettings) {
                 $configName = "feeds-$groupID";
@@ -140,7 +143,7 @@ class MapWebModule extends WebModule {
                 $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
                 $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
                 // for map driven UI we want placemarks to show up on the full screen map
-                $category = key($mapItem->getCategoryIds());
+                //$category = key($mapItem->getCategoryIds());
                 if ($this->isMapDrivenUI($urlArgs['category'])) {
                     $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
                     if ($this->page != $mapPage) {
@@ -251,10 +254,12 @@ class MapWebModule extends WebModule {
         parse_str($aBookmark, $params);
         if (isset($params['pid'])) {
             $index = $params['pid'];
-            $category = $params['category'];
-            $dataController = $this->getDataModel($category);
-            $feature = $dataController->selectPlacemark($index);
-            return array($feature->getTitle(), $dataController->getTitle());
+            $feedId = $params['feed'];
+            $dataController = $this->getDataModel($feedId);
+            $placemarks = $dataController->selectPlacemark($index);
+            if (count($placemarks)) {
+                return array($placemarks[0]->getTitle(), $dataController->getTitle());
+            }
         
         } else if (isset($params['title'])) {
             $result = array($params['title']);
@@ -270,16 +275,15 @@ class MapWebModule extends WebModule {
 
     protected function bookmarkIDForPlacemark($placemark) {
         if ($placemark) {
-            $category = current($placemark->getCategoryIds());
-            $cookieParams = array(
-                'category' => $category,
-                'pid' => $placemark->getId(),
-                );
-        } elseif (isset($this->args['lat'], $this->args['lon'])) {
-            $cookieParams = array(
-                'lat' => $this->args['lat'],
-                'lon' => $this->args['lon'],
-                );
+            $cookieParams = shortArrayFromMapFeature($placemark);
+            if (($feedId = $this->getArg('feed'))) {
+                $cookieParams['feed'] = $feedId;
+            } else {
+                $feedId = current($placemark->getCategoryIds());
+                if ($feedId) {
+                    $cookieParams['feed'] = $feedId;
+                }
+            }
         }
         $title = $this->getArg('title');
         if ($title) {
@@ -329,6 +333,8 @@ class MapWebModule extends WebModule {
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
         if (isset($params['pid']) || isset($params['lat'], $params['lon'])) {
+            $feedId = $params['feed'];
+            $this->loadFeedData($feedId);
             if ($this->isMapDrivenUI()) {
                 if ($this->feedGroup) {
                     $params['group'] = $this->feedGroup;

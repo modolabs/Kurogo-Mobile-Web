@@ -77,16 +77,7 @@
           </a>
         </div>
       {/if}
-      <div id="bookmarkButtonContainer" class="buttonContainer">
-        <a onclick="{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', 'bookmark button pressed', '{$bookmarkItem|escape:'javascript'|escape:'html'}']);{/if}toggleBookmark('{$name}', '{$bookmarkItem|escape:'javascript'|escape:'html'}', {$expireDate}, '{$smarty.const.COOKIE_PATH}')">
-          <div id="bookmarkButton"
-               ontouchstart="addClass(this, 'pressed')"
-               ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
-              <img src="/modules/map/images/map-button-favorites.png"/>
-              {"BOOKMARK"|getLocalizedString}
-          </div>
-        </a>
-      </div>
+      {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
     </div>
     {include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
   </div>

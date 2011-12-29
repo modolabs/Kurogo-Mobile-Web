@@ -98,11 +98,11 @@
 }
 
 #buttonWrapper a div {
-    padding: 3px;
     margin: 0 0 6px;
 }
 
 #viewOnMapContainer {
+    padding: 3px;
     float: left;
 }
 

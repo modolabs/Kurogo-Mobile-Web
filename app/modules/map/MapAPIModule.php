@@ -442,7 +442,8 @@ class MapAPIModule extends APIModule
                 $dataController = $this->getDataController();
                 $placemarkId = $this->getArg('id', null);
                 if ($dataController && $placemarkId !== null) {
-                    $placemark = $dataController->selectPlacemark($placemarkId);
+                    $placemarks = $dataController->selectPlacemark($placemarkId);
+                    $placemark = current($placemarks);
 
                     $fields = $placemark->getFields();
                     $geometry = $placemark->getGeometry();

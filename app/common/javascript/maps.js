@@ -77,11 +77,41 @@ function kgoMapLoader(attribs) {
             content += '<div class="smallprint map_address">' + subtitle + '</div>';
         }
         if (typeof url != 'undefined' && url !== null) {
-            var query = url.match(/\?(.+)/)[1];
+            // we need to match the parameter order produced by php
+            if (typeof this.regexes == 'undefined') {
+                this.regexes = [
+                    /[?&](category=[\w\.\,\+\-:%]+)/,
+                    /[?&](pid=[\w\.\,\+\-:%]+)/,
+                    /[?&](lat=[\w\.\,\+\-:%]+)/,
+                    /[?&](lon=[\w\.\,\+\-:%]+)/,
+                    /[?&](feed=[\w\.\,\+\-:%]+)/,
+                    /[?&](title=[\w\.\,\+\-:%]+)/
+                ];
+            }
+
+            var parts = [];
+            for (var i = 0; i < this.regexes.length; i++) {
+                var match = url.match(this.regexes[i]);
+                if (match) {
+                    parts.push(match[1]);
+                }
+            }
+            query = parts.join('&').replace(/\+/g, ' ').replace(/%3A/g, ':');
+            var items = getCookieArrayValue("mapbookmarks");
+            var bookmarkState = "";
+            for (var i = 0; i < items.length; i++) {
+                if (items[i] == query) {
+                    bookmarkState = "on";
+                    break;
+                }
+            }
+
             content = '<table><tr>' + 
                         '<td class="calloutBookmark">' + 
                           '<a onclick="toggleBookmark(\'mapbookmarks\', \'' + query + '\', 3600, \'/kurogo/\')">' +
-                            '<div id="bookmark" ontouchend="removeClass(this, \'pressed\')" ontouchstart="addClass(this, \'pressed\')"></div>' +
+                            '<div id="bookmark"' +
+                                ' ontouchend="toggleClass(this, \'on\');"' +
+                                ' class="' + bookmarkState + '"></div>' +
                           '</a></td>' +
                         '<td class="calloutMain">' + content + '</td>' +
                         '<td class="calloutDisclosure">' +
@@ -310,7 +340,6 @@ function kgoEsriMapLoader(attribs) {
         map.addLayer(basemap);
 
         // add map controls
-
         var controlDiv = document.createElement('div');
         controlDiv.id = "mapcontrols"
         controlDiv.style.position = "absolute";
@@ -364,8 +393,6 @@ function kgoEsriMapLoader(attribs) {
 
     // annotations
     that.showCalloutForMarker = function(marker) {
-        //marker.infoTemplate.show(marker.geometry);
-
         map.infoWindow.setContent(marker.getContent());
         map.infoWindow.show(marker.geometry);
     }
