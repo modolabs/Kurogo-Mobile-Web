@@ -1399,6 +1399,7 @@ abstract class WebModule extends Module {
     $this->assign('isModuleHome', $this->page == 'index');
     $this->assign('request_uri' , $_SERVER['REQUEST_URI']);
     $this->assign('hideFooterLinks' , $this->hideFooterLinks);
+    $this->assign('charset', Kurogo::getCharset());
     
     // Font size for template
     $this->assign('fontsizes',    $this->fontsizes);
