@@ -344,6 +344,20 @@ abstract class WebModule extends Module {
     return $url;
   }
 
+  protected function redirectToArray($params) {
+        $id = isset($params['id']) ? $params['id'] : '';
+        $page = isset($params['page']) ? $params['page'] : '';
+        $args = isset($params['args']) ? $params['args'] : array();
+        
+        if ($id) {
+            self::redirectToModule($id, $page, $args);
+        } elseif ($page) {
+            self::redirectTo($page, $args);
+        }
+        
+        return false;
+  }
+
   public function redirectToModule($id, $page, $args=array()) {
     $url = self::buildURLForModule($id, $page, $args);
     
@@ -983,6 +997,10 @@ abstract class WebModule extends Module {
         return in_array($aBookmark, $this->getBookmarks());
     }
 
+    protected function hasBookmarks(){
+        return count($this->getBookmarks()) > 0;
+    }
+
     private function bookmarkToggleURL($toggle) {
         $args = $this->args;
         $args['bookmark'] = $toggle;
@@ -1058,7 +1076,7 @@ abstract class WebModule extends Module {
     }
     
     protected function generateBookmarkLink() {
-        $hasBookmarks = count($this->getBookmarks()) > 0;
+        $hasBookmarks = $this->hasBookmarks();
         $bookmarkLink = array(array(
             'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
             'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
@@ -1433,6 +1451,7 @@ abstract class WebModule extends Module {
     $this->assign('request_uri' , $_SERVER['REQUEST_URI']);
     $this->assign('hideFooterLinks' , $this->hideFooterLinks);
     $this->assign('ajaxContentLoad', $this->ajaxContentLoad);
+    $this->assign('charset', Kurogo::getCharset());
     
     // Font size for template
     $this->assign('fontsizes',    $this->fontsizes);

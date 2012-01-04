@@ -3,6 +3,7 @@
 includePackage('DataResponse');
 class DataResponse
 {
+    protected $retriever;
     protected $cacheLifeTime=0;
     protected $responseTimestamp;
     protected $response;
@@ -10,6 +11,18 @@ class DataResponse
     protected $responseStatus;
     protected $responseError;
     protected $context=array(); // response defined.
+    
+    public function setRetriever(DataRetriever $retriever) {
+        $this->retriever = $retriever;
+    }
+    
+    public function getRetriever() {
+        return $this->retriever;
+    }
+    
+    public function clearRetriever() {
+        $this->retriever = null;
+    }
     
     public static function factory($responseClass, $args) {
         if (!class_exists($responseClass)) {
