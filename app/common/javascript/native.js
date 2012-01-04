@@ -1,5 +1,5 @@
 function scrollToTop() {
-	scrollTo(0,1); 
+	scrollTo(0,0); 
 }
 
 function onDOMChange() {
