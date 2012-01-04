@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset={$charset}" />
 <title>{block name="pageTitle"}{/block}</title>
 <link type="text/css" href="{$minify['css']|escape}" rel="stylesheet" />
 <link rel="shortcut icon" href="/favicon.ico" />

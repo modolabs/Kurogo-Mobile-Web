@@ -13,6 +13,7 @@ class Kurogo
 {
     private static $_instance = NULL;
     private function __clone() {}
+    protected $charset='UTF-8';
     protected $startTime;
     protected $libDirs = array();
     protected $siteConfig;
@@ -475,7 +476,9 @@ class Kurogo
         // Load configuration files
         //    
         $this->initSite($path);
+        $this->setCharset($this->siteConfig->getOptionalVar('DEFAULT_CHARSET', 'UTF-8'));
         
+        ini_set('default_charset', $this->charset());
         ini_set('display_errors', $this->siteConfig->getVar('DISPLAY_ERRORS'));
         if (!ini_get('error_log')) {
             ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
@@ -752,6 +755,18 @@ class Kurogo
         define('THEME_DIR', SITE_DIR . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $theme);
         $this->siteConfig = $siteConfig;
       }    
+      
+    public static function getCharset() {
+        return Kurogo::sharedInstance()->charset();
+    }   
+    
+    public function setCharset($charset) {
+        $this->charset = $charset;
+    }
+
+    public function charset() {
+        return $this->charset;
+    }
 
     public static function encrypt($string, $key=SITE_KEY) {
         if (strlen($string)==0) {

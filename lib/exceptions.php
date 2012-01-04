@@ -159,7 +159,7 @@ function exceptionHandlerForError($exception) {
     array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
     Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
     $error = print_r($exception, TRUE);
-    header('Content-type: text/plain');
+    header('Content-type: text/plain; charset=' . Kurogo::getCharset());
     die("There was a serious error: " . $exception->getMessage());
 }
 
@@ -174,7 +174,7 @@ function exceptionHandlerForDevelopment($exception) {
     	header('Location: ' . $url);
     	die(0);
     } else {
-    	header('Content-type: text/plain');
+    	header('Content-type: text/plain; charset=' . Kurogo::getCharset());
 		die("A serious error has occurred: \n\n" . $error);
     }
 }
