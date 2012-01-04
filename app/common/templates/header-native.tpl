@@ -10,11 +10,11 @@
 {/block}
 
 {block name="inlineJavascriptBlocks"}
-  {* will be loaded below by content *}
+  {* will be called by onAjaxLoad() *}
 {/block}
 
 {block name="onLoadJavascriptBlocks"}
-  {* will be loaded below by content *}
+  {* will be called by onAjaxLoad() *}
 {/block}
 
 {block name="javascript"}
@@ -81,6 +81,10 @@
   <script type="text/javascript">
     function onAjaxLoad() {ldelim}
       // These can all have per-content page behavior
+      {foreach $inlineJavascriptBlocks as $script}
+        {$script}
+      {/foreach}
+
       {foreach $inlineJavascriptFooterBlocks as $script}
         {$script}
       {/foreach}

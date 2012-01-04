@@ -8,4 +8,6 @@
 
 {block name="deviceDetection"}{/block}
 
-{block name="footerJavascript"}{/block}
+{block name="footerJavascript"}
+  {* will be called by onAjaxLoad() *}
+{/block}
