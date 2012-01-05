@@ -48,6 +48,7 @@ abstract class DataRetriever {
     }
     
     protected function cacheKey() {
+        $this->initRequestIfNeeded();
         return $this->cacheKey;
     }
     
@@ -60,6 +61,7 @@ abstract class DataRetriever {
     }
     
     protected function cacheGroup() {
+        $this->initRequestIfNeeded();
         return $this->cacheGroup;
     }
 
