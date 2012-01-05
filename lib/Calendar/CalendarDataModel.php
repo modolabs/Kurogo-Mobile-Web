@@ -110,6 +110,7 @@ class CalendarDataModel extends ItemListDataModel
             }
         }
         $categories = array_unique($categories);
+        natsort($categories);
         $cates = array();
         foreach($categories as $category) {
             $catObj = new ICalCategory();
