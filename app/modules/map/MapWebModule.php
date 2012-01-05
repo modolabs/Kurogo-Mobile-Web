@@ -456,7 +456,7 @@ class MapWebModule extends WebModule {
         // extra javascript
         $showUserLocation = $this->getOptionalModuleVar('MAP_SHOWS_USER_LOCATION', false);
         if ($showUserLocation) {
-            $this->addInlineJavascript("\nshowUserLocation = true;\n");
+            $this->addInlineJavascriptFooter("showUserLocation = true;");
         }
     }
 
@@ -906,6 +906,8 @@ class MapWebModule extends WebModule {
         foreach ($baseMap->getIncludeScripts() as $includeScript) {
             $this->addExternalJavascript($includeScript);
         }
+        $this->addInlineJavascriptFooter("var COOKIE_PATH = '".COOKIE_PATH."';\n".
+            "var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";");
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
         $this->configureUserLocation();

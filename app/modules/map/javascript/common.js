@@ -186,4 +186,57 @@ function findPosY(obj) {
     return intCurlTop;
 }
 
+if (typeof KGOMapLoader != 'undefined') {
+    KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url) {
+        var content = '';
+        if (title !== null) {
+            content += '<div class="map_name">' + title + '</div>';
+        }
+        if (subtitle !== null) {
+            content += '<div class="smallprint map_address">' + subtitle + '</div>';
+        }
+        if (typeof url != 'undefined' && url !== null && typeof COOKIE_PATH != 'undefined' && typeof BOOKMARK_LIFESPAN != 'undefined') {
+            // we need to match the parameter order produced by php
+            if (typeof this.regexes == 'undefined') {
+                this.regexes = [
+                    /[?&](category=[\w\.\,\+\-:%]+)/,
+                    /[?&](pid=[\w\.\,\+\-:%]+)/,
+                    /[?&](lat=[\w\.\,\+\-:%]+)/,
+                    /[?&](lon=[\w\.\,\+\-:%]+)/,
+                    /[?&](feed=[\w\.\,\+\-:%]+)/,
+                    /[?&](title=[\w\.\,\+\-:%]+)/
+                ];
+            }
 
+            var parts = [];
+            for (var i = 0; i < this.regexes.length; i++) {
+                var match = url.match(this.regexes[i]);
+                if (match) {
+                    parts.push(match[1]);
+                }
+            }
+            query = parts.join('&').replace(/\+/g, ' ').replace(/%3A/g, ':');
+            var items = getCookieArrayValue("mapbookmarks");
+            var bookmarkState = "";
+            for (var i = 0; i < items.length; i++) {
+                if (items[i] == query) {
+                    bookmarkState = "on";
+                    break;
+                }
+            }
+
+            content = '<div id="bookmarkWrapper" style="float:left;">' +
+                        '<a onclick="toggleBookmark(\'mapbookmarks\', \'' + query + '\', BOOKMARK_LIFESPAN, COOKIE_PATH)">' +
+                          '<div id="bookmark"' +
+                              ' ontouchend="toggleClass(this, \'on\');"' +
+                              ' class="' + bookmarkState + '"></div>' +
+                        '</a>' + 
+                      '</div>' +
+                      '<div class="calloutMain" style="float:left;">' + content + '</div>' +
+                      '<div class="calloutDisclosure" style="flost:left;">' +
+                        '<a href="' + url + '"><img src="' + URL_BASE + '/modules/map/images/info.png" /></a>' +
+                      '</div>';
+        }
+        return content;
+    }
+}

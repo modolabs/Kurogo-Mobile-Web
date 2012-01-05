@@ -186,12 +186,16 @@ body.fullscreen #navbar {
     margin: 0;
 }
 
+#bookmarkWrapper {
+    margin: 6px 0;
+}
+
 .calloutMain {
-    margin: 2px;
+    margin: 6px 8px;
 }
 
 .calloutDisclosure {
-    margin: 2px;
+    margin: 6px 0;
 }
 
 #mapimage .simpleInfoWindow .title {
