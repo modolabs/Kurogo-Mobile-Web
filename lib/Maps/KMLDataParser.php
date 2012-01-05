@@ -185,7 +185,6 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         $this->docuemtn = null;
         $this->folders = array();
         $this->placemarks = array();
-        //$this->itemCount = 0;
         $this->otherCategory = null;
     }
 
@@ -195,7 +194,7 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         $this->parseXML($content);
         $items = array_merge($this->categories(), $this->placemarks());
         $folder = $this;
-        while (count($items) == 1) {
+        while (count($items) == 1 && !end($items) instanceof Placemark) {
             $folder = current($items);
             $items = array_merge($folder->categories(), $folder->placemarks());
         }
