@@ -139,7 +139,7 @@ function shortArrayFromMapFeature(Placemark $feature) {
     }
     $id = $feature->getId();
     if ($id !== null) {
-        $result['pid'] = $id;
+        $result['featureindex'] = $id;
     } else {
         $geometry = $feature->getGeometry();
         if ($geometry) {

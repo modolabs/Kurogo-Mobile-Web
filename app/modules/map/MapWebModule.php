@@ -254,8 +254,8 @@ class MapWebModule extends WebModule {
 
     protected function getTitleForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
-        if (isset($params['pid'])) {
-            $index = $params['pid'];
+        if (isset($params['featureindex'])) {
+            $index = $params['featureindex'];
             $feedId = $params['feed'];
             $dataController = $this->getDataModel($feedId);
             $placemarks = $dataController->selectPlacemark($index);
@@ -334,7 +334,7 @@ class MapWebModule extends WebModule {
     
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
-        if (isset($params['pid']) || isset($params['lat'], $params['lon'])) {
+        if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
             $feedId = $params['feed'];
             $this->loadFeedData($feedId);
             if ($this->isMapDrivenUI()) {
@@ -614,7 +614,7 @@ class MapWebModule extends WebModule {
 
     protected function initializeForPage() {
 
-        $this->placemarkId = $this->getArg('pid', null);
+        $this->placemarkId = $this->getArg('featureindex', null);
 
         switch ($this->page) {
 
