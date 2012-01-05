@@ -42,7 +42,7 @@ class KMLPlacemark extends XMLElement implements Placemark
                     }
                     break;
             }
-        }   
+        }
         
         return true;     
     }

@@ -188,22 +188,18 @@ abstract class MapImageController
     public function prepareForOutput()
     {
         $vRange = $this->bufferBox['ymax'] - $this->bufferBox['ymin'];
-        if ($vRange > 0) {
-            $vZoom = ceil(log(360 / $vRange, 2));
-        }
-
         $hRange = $this->bufferBox['xmax'] - $this->bufferBox['xmin'];
-        if ($hRange > 0) {
-            $hZoom = ceil(log(180 / $hRange, 2));
-        }
-
-        if (isset($vZoom, $hZoom)) {
-            $this->setZoomLevel(min($vZoom, $hZoom));
-
+        if ($vRange >= 0 && $hRange >= 0) {
             $this->setCenter(array(
                 'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
                 'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
                 ));
+
+            if ($vRange > 0 && $hRange > 0) {
+                $vZoom = ceil(log(360 / $vRange, 2));
+                $hZoom = ceil(log(180 / $hRange, 2));
+                $this->setZoomLevel(min($vZoom, $hZoom));
+            }
         }
     }
 

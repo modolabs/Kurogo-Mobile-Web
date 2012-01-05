@@ -146,7 +146,7 @@ class MapWebModule extends WebModule {
                 $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
                 // for map driven UI we want placemarks to show up on the full screen map
                 //$category = key($mapItem->getCategoryIds());
-                if ($this->isMapDrivenUI($urlArgs['category'])) {
+                if ($this->isMapDrivenUI($urlArgs['feed'])) {
                     $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
                     if ($this->page != $mapPage) {
                         $result['url'] = $this->buildURL($mapPage, $urlArgs);
@@ -491,24 +491,10 @@ class MapWebModule extends WebModule {
                 $mapSearch = $this->getSearchClass($this->args);
 
                 // defaults values for proximity search
-                $tolerance = 1000;
-                $maxItems = 0;
+                $feedData = $this->getMergedConfigData();
+                $tolerance = isset($feedData['NEARBY_THRESHOLD']) ? $feedData['NEARBY_THRESHOLD'] : 1000;
+                $maxItems = isset($feedData['NEARBY_ITEMS']) ? $feedData['NEARBY_ITEMS'] : 0;
 
-                // feed settings override group settings
-                $groupData = $this->getDataForGroup($this->feedGroup);
-                $feedData = $this->getCurrentFeed();
-                if (isset($feedData['NEARBY_THRESHOLD'])) {
-                    $tolerance = $feedData['NEARBY_THRESHOLD'];
-                } elseif ($groupData && isset($groupData['NEARBY_THRESHOLD'])) {
-                    $tolerance = $groupData['NEARBY_THRESHOLD'];
-                }
-                if (isset($feedData['NEARBY_ITEMS'])) {
-                    $maxItems = $feedData['NEARBY_ITEMS'];
-                } elseif ($groupData && isset($groupData['NEARBY_ITEMS'])) {
-                    $maxItems = $groupData['NEARBY_ITEMS'];
-                }
-
-                //$searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems, $this->getDataModel());
                 $searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems);
                 $places = array();
                 if ($searchResults) {
@@ -724,17 +710,13 @@ class MapWebModule extends WebModule {
                     $dataModel->findCategory($category);
                 }
                 $title = $dataModel->getTitle();
-                //$listItems = $dataModel->categories();
                 $listItems = $dataModel->items();
                 while (count($listItems) == 1 && end($listItems) instanceof MapFolder) {
                     $categoryId = end($listItems)->getId();
                     $dataModel->findCategory($categoryId);
                     $listItems = $dataModel->items();
-                    //$listItems = $dataModel->categories();
                 }
-                // TODO: use different nav list types to distinguish placemarks vs. subcategories
-                //if (!$listItems) {
-                //$listItems = $dataModel->placemarks();
+
                 if (count($listItems) == 1) {
                     $link = $this->linkForItem(current($listItems));
                     $this->redirectTo($link['url']);
@@ -743,7 +725,6 @@ class MapWebModule extends WebModule {
                     $this->initializeDynamicMap();
                     break;
                 }
-                //}
 
                 $places = array();
                 foreach ($listItems as $listItem) {

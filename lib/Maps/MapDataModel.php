@@ -159,6 +159,11 @@ class MapDataModel extends DataModel implements MapFolder
         foreach ($this->categories() as $category) {
             $results = array_merge($results, $category->filterPlacemarks($filters));
         }
+        foreach ($this->placemarks() as $placemark) {
+            if ($placemark->filterItem($filters)) {
+                $results[] = $placemark;
+            }
+        }
         return $results;
     }
 

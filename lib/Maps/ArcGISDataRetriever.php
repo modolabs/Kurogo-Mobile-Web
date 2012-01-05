@@ -54,6 +54,7 @@ class ArcGISDataRetriever extends URLDataRetriever
                 $bbox = normalizedBoundingBox(
                     $this->searchFilters['center'],
                     $this->searchFilters['tolerance'],
+                    null,
                     $this->parser->getProjection());
                 return array(
                     'spatialRel'   => 'esriSpatialRelIntersects',

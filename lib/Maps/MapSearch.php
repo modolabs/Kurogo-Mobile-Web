@@ -48,10 +48,21 @@ class MapSearch {
             try {
                 $results = $controller->searchByProximity($center, $tolerance, $maxItems);
                 // merge arrays manually since keys are numeric
-                foreach($results as $distance => $mapFeature) {
+                foreach($results as $mapFeature) {
+                    $toCenter = $mapFeature->getGeometry()->getCenterCoordinate();
+                    $distance = greatCircleDistance($center['lat'], $center['lon'], $toCenter['lat'], $toCenter['lon']);
+                    $mapFeature->setField('distance', $distance);
                     // avoid distance collisions
-                    while(isset($resultsByDistance[$distance])) {
-                        $distance++;
+                    if (isset($resultsByDistance[$distance])) {
+                        // don't add the same placemark twice
+                        if ($resultsByDistance[$distance]->getTitle() == $mapFeature->getTitle()) {
+                            continue;
+                        } else {
+                            $distance++;
+                            while(isset($resultsByDistance[$distance])) {
+                                $distance++;
+                            }
+                        }
                     }
                     $resultsByDistance[$distance] = $mapFeature;
                 }
