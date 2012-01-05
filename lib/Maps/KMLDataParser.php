@@ -9,16 +9,12 @@ includePackage('Maps', 'KML');
 class KMLDataParser extends XMLDataParser implements MapDataParser
 {
     protected $elementStack = array();
-    //protected $data='';
     protected $feedId;
 
     protected $document;
     protected $folders = array();
     protected $placemarks = array();
     protected $title;
-    //protected $category;
-    //protected $itemCount = 0;
-    //protected $otherCategory;
 
     protected $parseMode=self::PARSE_MODE_STRING;
     
@@ -59,23 +55,12 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         $placemark->addCategoryId($this->getId());
         $placemark->setId(count($this->placemarks));
         $this->placemarks[] = $placemark;
-        /*
-        if (!$this->otherCategory) {
-            $this->otherCategory = new KMLFolder('Folder', array());
-            $this->otherCategory->setName('Other Places'); // TODO: get localized string
-            $this->otherCategory->setId($this->getId().'-other');
-            $this->addFolder($this->otherCategory); // TODO: make sure this sorts to the bottom
-        }
-
-        $this->otherCategory->addItem($placemark);
-        */
     }
 
     protected function addFolder(MapFolder $folder)
     {
         $folder->setParent($this);
         $this->folders[] = $folder;
-        //$this->itemCount++;
     }
 
     public function getId()

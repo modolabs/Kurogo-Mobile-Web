@@ -55,8 +55,9 @@ class KMLStyle extends XMLElement implements MapStyle
         if (isset($style[$param])) {
             return $style[$param];
         } else if ($type == MapStyle::POLYGON
-            && $this->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::SHOULD_OUTLINE))
-        {
+            && isset($style[MapStyle::SHOULD_OUTLINE])
+            && $style[MapStyle::SHOULD_OUTLINE]
+        ) {
             $outlineStyle = $this->getStyleForType(MapStyle::LINE);
             if (isset($outlineStyle[$param])) {
                 return $outlineStyle[$param];
