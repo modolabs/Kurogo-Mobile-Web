@@ -66,6 +66,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     protected function parameters() {
+        $this->initRequestIfNeeded();
         return $this->filters;
     }
 
@@ -118,10 +119,12 @@ class URLDataRetriever extends DataRetriever {
     }
 
     protected function headers() {
+        $this->initRequestIfNeeded();
         return $this->requestHeaders;
     }
     
     protected function method() {
+        $this->initRequestIfNeeded();
         return $this->requestMethod;
     }
     
@@ -130,9 +133,9 @@ class URLDataRetriever extends DataRetriever {
     }
 
     protected function data() {
+        $this->initRequestIfNeeded();
         return $this->requestData;
     }
-    
     
     public function setMethod($method) {
         if (!in_array($method, array('POST','GET','DELETE','PUT'))) {
@@ -214,6 +217,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     protected function baseURL() {
+        $this->initRequestIfNeeded();
         return $this->baseURL;
     }
          
@@ -239,9 +243,6 @@ class URLDataRetriever extends DataRetriever {
         return $key;
     }
     
-    protected function initRequest() {
-    }
-    
     /**
      * Retrieves the data using the config url. The default implementation uses the file_get_content()
      * function to retrieve the request. Subclasses would need to implement this if a simple GET request
@@ -250,7 +251,7 @@ class URLDataRetriever extends DataRetriever {
      */
     protected function retrieveResponse() {
     
-        $this->initRequest();
+        $this->initRequestIfNeeded();
         if (!$this->requestURL = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }

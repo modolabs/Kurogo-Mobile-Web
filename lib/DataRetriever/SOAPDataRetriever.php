@@ -27,6 +27,7 @@ class SOAPDataRetriever extends DataRetriever {
     }
     
     public function wsdl() {
+        $this->initRequestIfNeeded();
         return $this->wsdl;
     }
 	
@@ -94,6 +95,7 @@ class SOAPDataRetriever extends DataRetriever {
     }
     
     protected function method() {
+        $this->initRequestIfNeeded();
         return $this->method;
     }
 
@@ -102,6 +104,7 @@ class SOAPDataRetriever extends DataRetriever {
     }
     
     protected function parameters() {
+        $this->initRequestIfNeeded();
         return $this->parameters;
     }
 
@@ -143,12 +146,9 @@ class SOAPDataRetriever extends DataRetriever {
         return 'soap_' . md5($location) . '-' . md5($method) . '-' . md5(serialize($parameters));
     }
 
-    protected function initRequest() {
-    }
-
     protected function retrieveResponse() {
     
-        $this->initRequest();
+        $this->initRequestIfNeeded();
         $method = $this->method();
         $parameters = $this->parameters();
         $soapClient = $this->getSOAPClient();
