@@ -200,7 +200,7 @@ if (typeof KGOMapLoader != 'undefined') {
             if (typeof this.regexes == 'undefined') {
                 this.regexes = [
                     /[?&](category=[\w\.\,\+\-:%]+)/,
-                    /[?&](pid=[\w\.\,\+\-:%]+)/,
+                    /[?&](featureindex=[\w\.\,\+\-:%]+)/,
                     /[?&](lat=[\w\.\,\+\-:%]+)/,
                     /[?&](lon=[\w\.\,\+\-:%]+)/,
                     /[?&](feed=[\w\.\,\+\-:%]+)/,
