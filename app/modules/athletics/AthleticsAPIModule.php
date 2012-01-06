@@ -163,12 +163,18 @@ class AthleticsAPIModule extends APIModule
     }
     
     protected function formatStory($story, $mode) {
+        if ($date = $story->getPubDate()) {
+            $pubDate = $date->format('U');
+        } else {
+            $pubDate = null;
+        }
+        
         $item = array(
             'GUID'        => $story->getGUID(),
             'link'        => $story->getLink(),
             'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
-            'pubDate'     => strtotime($story->getPubDate())
+            'pubDate'     => $pubDate 
         );
 
         if($story->getContent()) {
