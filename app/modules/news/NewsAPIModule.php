@@ -141,6 +141,10 @@ class NewsAPIModule extends APIModule {
   }
 
     private static function getPubDateUnixtime($story) {
-        return strtotime($story->getPubDate());
+        if ($pubDate = $story->getPubDate()) {
+            return $pubDate->format('U');
+        }
+        
+        return null;
     }
 }
