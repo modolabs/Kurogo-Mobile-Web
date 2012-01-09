@@ -32,7 +32,7 @@ abstract class CASProxyAuthenticatedDataController extends DataController
             
             $http->send();
     
-            $this->response = new DataResponse();
+            $this->response = DataResponse::factory('HTTPDataResponse', array());
             $this->response->setRequest($this->method, $url, $this->filters, $this->requestHeaders);
             $this->response->setResponse($http->getResponseBody(), $http->getResponseHeaders());
             
