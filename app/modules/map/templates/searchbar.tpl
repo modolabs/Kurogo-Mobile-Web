@@ -12,9 +12,11 @@
                         onfocus="androidPlaceholderFix(this);showSearchFormButtons();" />
                 </div>
                 <div id="toolbar-buttons">
-                    <div class="toolbar-button">
-                        <a href="{$bookmarksURL}"><img src="/modules/map/images/map-button-favorites.png"/></a>
-                    </div>
+                    {if $hasBookmarks}
+                        <div class="toolbar-button">
+                            <a href="{$bookmarkLink[0]['url']}"><img src="/modules/map/images/map-button-favorites.png"/></a>
+                        </div>
+                    {/if}
                     {if $mapURL}
                         <div class="toolbar-button">
                             <a id="mapLink" href="{$mapURL}"><img src="/modules/map/images/map-button-map.png"/></a>

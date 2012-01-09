@@ -913,6 +913,9 @@ class MapWebModule extends WebModule {
         $this->configureUserLocation();
         $this->addOnLoad('addClass(document.body, "fullscreen")');
         $this->addOnOrientationChange('updateContainerDimensions()');
+
+        // show button on search bar
+        $this->generateBookmarkLink();
     }
 
     protected function initializeStaticMap()
