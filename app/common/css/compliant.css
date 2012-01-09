@@ -803,6 +803,18 @@ a.sidenav-prev {
 	background-position: left top;
 	padding-left: 44px;
 }
+
+span.sidenav-current {
+    font-weight: bold;
+	display: block;
+	text-align: center;
+	height: 29px;
+	line-height: 29px;
+	padding: 0 10px;
+	text-decoration: none;
+	font-size: 88.3%;
+}
+
 a.sidenav-next {
 	right: 0;
 	background-position: right bottom;
