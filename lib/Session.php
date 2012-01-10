@@ -15,7 +15,7 @@ abstract class Session
     const USERHASH_COOKIE='lh';
     const API_TOKEN_COOKIE='alt';
     const API_USERHASH_COOKIE='alh';
-    const SESSION_USER_VAR_NAMESPACE = 'suvn';
+    const SESSION_USER_VAR_NAMESPACE = 'session_vars';
     protected $session_id;
     protected $users = array();
     protected $login_token;
@@ -63,6 +63,10 @@ abstract class Session
         session_start();
         $this->session_id = session_id();
         $this->login_token = isset($_COOKIE[self::TOKEN_COOKIE]) ? $_COOKIE[self::TOKEN_COOKIE] : '';
+
+        if(!isset($_SESSION[self::SESSION_USER_VAR_NAMESPACE]) || !is_array($_SESSION[self::SESSION_USER_VAR_NAMESPACE])){
+            $_SESSION[self::SESSION_USER_VAR_NAMESPACE] = array();
+        }
 
         if ($user = $this->getCurrentSessionUser()) {
             $this->setUser($user);
