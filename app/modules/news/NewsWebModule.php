@@ -13,6 +13,7 @@ if (!function_exists('mb_convert_encoding')) {
     die('Multibyte String Functions not available (mbstring)');
 }
 
+includePackage('News');
 includePackage('DateTime');
 class NewsWebModule extends WebModule {
   protected static $defaultModel = 'NewsDataModel';
