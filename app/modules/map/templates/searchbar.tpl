@@ -12,11 +12,13 @@
                         onfocus="androidPlaceholderFix(this);showSearchFormButtons();" />
                 </div>
                 <div id="toolbar-buttons">
+                    <div class="toolbar-button">
                     {if $hasBookmarks}
-                        <div class="toolbar-button">
                             <a href="{$bookmarkLink[0]['url']}"><img src="/modules/map/images/map-button-favorites.png"/></a>
-                        </div>
-                    {/if}
+                    {else}
+                            <a><img src="/modules/map/images/map-button-favorites-off.png"/></a>
+                        {/if}
+                    </div>
                     {if $mapURL}
                         <div class="toolbar-button">
                             <a id="mapLink" href="{$mapURL}"><img src="/modules/map/images/map-button-map.png"/></a>
@@ -31,9 +33,17 @@
                     {if $campuses}
                         {include file="findInclude:modules/map/templates/selectcampus.tpl" campuses=$campuses}
                     {/if}
-                    <input type="button" id="searchButton" onclick="submitMapSearch(this.form)" value={"SEARCHBAR_BUTTON_SEARCH"|getLocalizedString} />
-                    <input type="button" id="clearButton" onclick="clearSearch(this.form)" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />
-                    <input type="button" id="cancelButton" onclick="hideSearchFormButtons()" value={"SEARCHBAR_BUTTON_CANCEL"|getLocalizedString} />
+                    <div id="searchbar-buttons">
+                        <div id="searchButton">
+                            <input type="button" onclick="submitMapSearch(this.form)" value={"SEARCHBAR_BUTTON_SEARCH"|getLocalizedString} />
+                        </div>
+                        <div id="clearButton">
+                            <input type="button" onclick="clearSearch(this.form)" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />
+                        </div>
+                        <div id="cancelButton">
+                            <input type="button" onclick="hideSearchFormButtons()" value={"SEARCHBAR_BUTTON_CANCEL"|getLocalizedString} />
+                        </div>
+                    </div>
                 </div>
             </fieldset>
         </form>
