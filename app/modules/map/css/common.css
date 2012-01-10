@@ -4,10 +4,6 @@
     padding: 0 12px;
 }
 
-body.fullscreen #tabscontainer {
-    padding: 6px 12px;
-}
-
 .results a.placemark {
     background-image: url(/modules/map/images/map-button-map.png);
 }
@@ -54,14 +50,6 @@ body.fullscreen #tabscontainer {
     background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
     background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
     background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-}
-
-body.fullscreen #header {
-    position: absolute;
-    top: 44; /* this should be the same as the #navbar height */
-    left: 0;
-    right: 0;
-    z-index: 1;
 }
 
 /* empty div behind the #header to align the top of the #mapimage */
@@ -192,6 +180,19 @@ body.fullscreen #mapimage.image {
     border: none;
     display: block !important;
     overflow: hidden;
+}
+
+/* don't want map to resize when this shows */
+body.fullscreen #header {
+    position: absolute;
+    top: 44; /* this should be the same as the #navbar height */
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
+body.fullscreen #tabscontainer {
+    padding: 6px 12px;
 }
 
 #bookmarkWrapper {

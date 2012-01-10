@@ -13,6 +13,7 @@ class MapWebModule extends WebModule {
     protected $feeds;
     protected $placemarkId;
     protected $mapDevice = null;
+    protected $selectedPlacemarks;
 
     ////// inherited and conventional module functions
     
@@ -619,59 +620,47 @@ class MapWebModule extends WebModule {
     protected function initializeForPage() {
 
         $this->placemarkId = $this->getArg('featureindex', null);
+
         if ($this->feedGroup) {
             $this->assign('group', $this->feedGroup); // used in searchbar.tpl and selectcampus.tpl
+        }
+
+        $searchTerms = $this->getArg('filter');
+        if ($searchTerms) {
+            $this->assign('searchTerms', $searchTerms);
         }
 
         switch ($this->page) {
 
             case 'index': // no breadcrumbs
-            case 'campus': // same as index but with breadcrumb
-                $searchTerms = $this->getArg('filter');
-                if ($searchTerms) {
-                    $this->assign('searchTerms', $searchTerms);
-                }
+            case 'campus': // one breadcrumb
 
                 $this->assignGroups(); // appears in searchbar for campus.tpl or campus list in index.tpl
 
-                $toggleArgs = array();
-
                 // set up list view if
-                if ($this->feedGroup === null // multiple campuses, none selected
-                    && !$this->getArg('worldmap') // user did not explictly request map view
-                    || $this->getArg('listview') // user did explicitly request list view
-                    || !$this->isMapDrivenUI()
-                ) {
-                    $togglePage = 'mapURL';
+                $isListView = $this->getArg('listview') // user explicitly requested list view
+                    || $this->feedGroup === null // multiple campuses, none selected
+                        && !$this->getArg('worldmap') // user did not explictly request map view
+                        && !$this->getArg('mapview')
+                    || !$this->isMapDrivenUI(); // we are not able to show the map view
+
+                if ($isListView) {
 
                     if ($searchTerms) {
                         // user hit the "browse" button with a query string
-                        $toggleArgs['filter'] = $searchTerms;
-
                         $this->setTemplatePage('browse');
                         $this->assignSearchResults($searchTerms);
                         $this->enableTabs(array('search', 'browse'), null, null);
-
-                        // TODO: perhaps this can be removed
-                        $this->addOnLoad('addClass(document.body, "fullscreen")');
                     }
+
                     $this->setupGroupPage(); // this assigns a list of campuses or categories
 
                 } else {
-                    $togglePage = 'browseURL';
-                    $toggleArgs['listview'] = true;
-
-                    // set up fullscreen map
-                    $this->setTemplatePage('fullscreen');
                     if ($this->getArg('worldmap')) {
                         $this->feedGroup = null;
                     }
                     $this->initializeDynamicMap();
                 }
-
-                $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
-                $toggleArgs['group'] = $this->feedGroup;
-                $this->assign($togglePage, $this->buildBreadcrumbURL($topPage, $toggleArgs, false));
 
                 break;
             
@@ -702,9 +691,7 @@ class MapWebModule extends WebModule {
             
             case 'search':
 
-                $searchTerms = $this->getArg('filter');
                 if ($searchTerms) {
-                    $this->assign('searchTerms', $searchTerms);
                     $places = $this->assignSearchResults($searchTerms);
                     // TODO: redirect if there is only one result
                   
@@ -732,21 +719,28 @@ class MapWebModule extends WebModule {
                 if (count($listItems) == 1) {
                     $link = $this->linkForItem(current($listItems));
                     $this->redirectTo($link['url']);
-                } else if ($this->getArg('mapview') && $this->isMapDrivenUI()) {
-                    $this->setTemplatePage('fullscreen');
-                    $this->initializeDynamicMap();
-                    break;
                 }
+                
+                $isMapView = $this->getArg('mapview') && $this->isMapDrivenUI();
 
                 $places = array();
                 foreach ($listItems as $listItem) {
-                    $places[] = $this->linkForItem($listItem);
+                    if (!$isMapView) {
+                        $places[] = $this->linkForItem($listItem);
+                    } elseif ($listItem instanceof Placemark) {
+                        $places[] = $listItem;
+                    }
                 }
-                $this->assign('title',  $title);
-                $this->assign('places', $places);
 
-                if ($this->numGroups > 1) {
-                    $this->assignClearLink();
+                if ($isMapView) {
+                    $this->selectedPlacemarks = $places;
+                    $this->initializeDynamicMap();
+                } else {
+                    $this->assign('title',  $title);
+                    $this->assign('places', $places);
+                    if ($this->numGroups > 1) {
+                        $this->assignClearLink();
+                    }
                 }
 
                 // link to "view all on map"
@@ -803,6 +797,10 @@ class MapWebModule extends WebModule {
 
     protected function getSelectedPlacemarks()
     {
+        if ($this->selectedPlacemarks) {
+            return $this->selectedPlacemarks;
+        }
+
         // all campuses
         if ($this->getArg('worldmap')) {
             $placemarks = array();
@@ -863,7 +861,7 @@ class MapWebModule extends WebModule {
         return array();
     }
 
-    protected function setupGroupPage()
+    protected function setupGroupPage() // index or campus
     {
         if ($this->feedGroup !== null) {
             $groupData = $this->getDataForGroup($this->feedGroup);
@@ -896,10 +894,23 @@ class MapWebModule extends WebModule {
 
             $this->addOnLoad('sortGroupsByDistance();');
         }
+
+        $toggleArgs = array('group' => $this->feedGroup, 'mapview' => true);
+        if (($searchTerms = $this->getArg('searchTerms'))) {
+            $toggleArgs['filter'] = $searchTerms;
+        }
+        if (($feed = $this->getArg('feed'))) {
+            $toggleArgs['feed'] = $feed;
+        }
+        if (($category = $this->getArg('category'))) {
+            $toggleArgs['category'] = $category;
+        }
+        $this->assign('mapURL', $this->buildBreadcrumbURL($this->page, $toggleArgs, false));
     }
 
     protected function initializeDynamicMap()
     {
+        $this->setTemplatePage('fullscreen');
         $this->addExternalJavascript($this->getInternalJavascriptURL('/common/javascript/maps.js'));
 
         // set up base map
@@ -927,6 +938,16 @@ class MapWebModule extends WebModule {
 
         // show button on search bar
         $this->generateBookmarkLink();
+
+        // listview link
+        $toggleArgs = array('group' => $this->feedGroup, 'listview' => true);
+        if (($feed = $this->getArg('feed'))) {
+            $toggleArgs['feed'] = $feed;
+        }
+        if (($category = $this->getArg('category'))) {
+            $toggleArgs['category'] = $category;
+        }
+        $this->assign('browseURL', $this->buildBreadcrumbURL($this->page, $toggleArgs, false));
     }
 
     protected function initializeStaticMap()
