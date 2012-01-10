@@ -1241,7 +1241,7 @@ abstract class WebModule extends Module {
           $this->pageTitle = $pageConfig['pageTitle'];
         }
         
-        if ($this->pagetype == 'native' && self::argVal($pageConfig, 'nativeBreadcrumbTitle', '')) {
+        if (KurogoWebBridge::isNativeCall() && self::argVal($pageConfig, 'nativeBreadcrumbTitle', '')) {
           $this->breadcrumbTitle = $pageConfig['nativeBreadcrumbTitle'];
           
         } else if (isset($pageConfig['breadcrumbTitle'])  && strlen($pageConfig['breadcrumbTitle'])) {
@@ -1650,8 +1650,15 @@ abstract class WebModule extends Module {
           $additionalAssets = $nativeConfig['additional_assets'];
       }
       
-      $rewriter = new KurogoWebBridge($platform, $this->configModule);
+      // Phone version
+      $rewriter = new KurogoWebBridge(false, $platform, $this->configModule);
       $rewriter->saveTemplates($pages, $additionalAssets);
+      
+      if (Kurogo::getOptionalSiteVar('NATIVE_TABLET_ENABLED', 1)) {
+          // Tablet version
+          $rewriter = new KurogoWebBridge(true, $platform, $this->configModule);
+          $rewriter->saveTemplates($pages, $additionalAssets);
+      }
   }
 
   //

@@ -2,12 +2,17 @@
 
 class KurogoWebBridge
 {
+    protected $pagetype = 'unknown';
     protected $platform = 'unknown';
     protected $module = 'unknown';
     protected $page = 'index';
     protected $path = '';
     protected $pathExists = false;
     
+    const NATIVE_PAGETYPE_COMPLIANT = 'native';
+    const NATIVE_PAGETYPE_TABLET    = 'native_tablet';
+    
+    const NATIVE_PAGETYPE_PARAMETER = 'nativePagetype';
     const NATIVE_PLATFORM_PARAMETER = 'nativePlatform';
     const ASSET_CHECK_PARAMETER     = 'nativeAssetCheck';
 
@@ -24,14 +29,20 @@ class KurogoWebBridge
     static protected $currentInstance = null;
     protected $processingFileType = self::FILE_TYPE_HTML;
     
-    public function __construct($platform, $module) {
+    public function __construct($isTablet, $platform, $module) {
+        $this->pagetype = $isTablet ? self::NATIVE_PAGETYPE_TABLET : self::NATIVE_PAGETYPE_COMPLIANT;
         $this->platform = $platform;
         $this->module = $module;
-        $this->path = WEB_BRIDGE_DIR.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR.$module;
+        $this->path = WEB_BRIDGE_DIR.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR.$module.
+            ($isTablet ? '-tablet' : '');
     }
 
     public function setPage($page) {
         $this->page = $page;
+    }
+    
+    protected function nativeParams() {
+        return self::pagetypeAndPlatformToParams($this->pagetype, $this->platform);
     }
 
     protected function rmPath($path) {
@@ -116,7 +127,7 @@ class KurogoWebBridge
     //
     protected function getAsset($urlSuffix) {
         $url = FULL_URL_PREFIX.$urlSuffix.(stripos($urlSuffix, '?') ? '&' : '?').
-            http_build_query(array(self::NATIVE_PLATFORM_PARAMETER => $this->platform));
+            http_build_query($this->nativeParams());
         //error_log($url);
         $contents = @file_get_contents($url);
         if (!$contents) {
@@ -143,7 +154,7 @@ class KurogoWebBridge
     protected function urlSuffixToFile($urlSuffix) {
         return preg_replace(
             array(
-                '@device/native-[^/]+/@',
+                '@device/'.$this->pagetype.'-[^/]+/@',
                 '@^min/\?g=file-/([^&]+)(&.+|)$@',
                 '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
             ),
@@ -348,8 +359,8 @@ class KurogoWebBridge
             $url .= rtrim(FULL_URL_PREFIX, '/');
         }
         $url .= "/{$id}/{$page}?ajax=1";
-        if (self::shouldForceNativePlatform($platform)) {
-            $url .= '&'.http_build_query(array(self::NATIVE_PLATFORM_PARAMETER => $platform));
+        if (self::forceNativePlatform($pagetype, $platform)) {
+            $url .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform));
         }
         return $url;
     }
@@ -371,39 +382,49 @@ class KurogoWebBridge
     // Detecting native user agents
     //
 
-    private static function isAjax() {
-      return isset($_GET['ajax']) && $_GET['ajax'];
-    }
+    // Note: the following functions may be called before the device classifier is initialized
 
-    // This is used to check template pages for inline images
-    private static function isAssetCheck() {
-      return isset($_GET[self::ASSET_CHECK_PARAMETER]) && $_GET[self::ASSET_CHECK_PARAMETER];
-    }
-    
-    private static function hasNativePlatform() {
-      return isset($_GET[self::NATIVE_PLATFORM_PARAMETER]) && $_GET[self::NATIVE_PLATFORM_PARAMETER];
-    }
+    private static function paramsToPagetypeAndPlatform(&$pagetype, &$platform) {
+        if (isset($_GET[self::NATIVE_PAGETYPE_PARAMETER]) && $_GET[self::NATIVE_PAGETYPE_PARAMETER] && 
+            isset($_GET[self::NATIVE_PLATFORM_PARAMETER]) && $_GET[self::NATIVE_PLATFORM_PARAMETER]) {
 
-    // Note: this gets called before the device classifier is initialized
-    // We cannot reliably set the user agent in javascript so use a special get parameter
-    public static function shouldForceNativePlatform(&$platform) {
-        if (self::hasNativePlatform()) {
+            $pagetype = $_GET[self::NATIVE_PAGETYPE_PARAMETER];
             $platform = $_GET[self::NATIVE_PLATFORM_PARAMETER];
+            
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
-    
-    public static function isNativeCall() {
-        return Kurogo::deviceClassifier()->getPagetype() == 'native' || self::hasNativePlatform();
+
+    private static function pagetypeAndPlatformToParams($pagetype, $platform) {
+        return array(
+            self::NATIVE_PAGETYPE_PARAMETER => $pagetype,
+            self::NATIVE_PLATFORM_PARAMETER => $platform,
+        );
     }
-    
-    public static function useNativeTemplatePageInitializer() {
-        return self::isNativeCall() && (!self::isAjax() || self::isAssetCheck());
+
+    private static function isAjax() {
+        return isset($_GET['ajax']) && $_GET['ajax'];
     }
-    
-    public static function useWrapperPageTemplate() {
-        return self::isNativeCall() && !self::isAjax();
+
+    private static function isAssetCheck() {
+        return isset($_GET[self::ASSET_CHECK_PARAMETER]) && $_GET[self::ASSET_CHECK_PARAMETER];
+    }
+
+    private static function hasNativePlatform() {
+        return isset($_GET[self::NATIVE_PAGETYPE_PARAMETER]) && $_GET[self::NATIVE_PAGETYPE_PARAMETER] && 
+               isset($_GET[self::NATIVE_PLATFORM_PARAMETER]) && $_GET[self::NATIVE_PLATFORM_PARAMETER];
+    }
+
+    public static function forceNativePlatform(&$pagetype, &$platform) {
+        if (self::hasNativePlatform()) {
+            self::paramsToPagetypeAndPlatform($pagetype, $platform);
+            return true;
+            
+        } else {
+            return false;
+        }
     }
     
     public static function shouldRewriteAssetPaths() {
@@ -412,6 +433,22 @@ class KurogoWebBridge
     
     public static function shouldRewriteInternalLinks() {
         return self::hasNativePlatform();
+    }
+
+    // Note: the following functions can only be used after the device classifier initializes
+
+    public static function isNativeCall() {
+        return self::hasNativePlatform() ||
+          Kurogo::deviceClassifier()->getPagetype() == self::NATIVE_PAGETYPE_COMPLIANT || 
+          Kurogo::deviceClassifier()->getPagetype() == self::NATIVE_PAGETYPE_TABLET;
+    }
+    
+    public static function useNativeTemplatePageInitializer() {
+        return self::isNativeCall() && (!self::isAjax() || self::isAssetCheck());
+    }
+    
+    public static function useWrapperPageTemplate() {
+        return self::isNativeCall() && !self::isAjax();
     }
     
     //

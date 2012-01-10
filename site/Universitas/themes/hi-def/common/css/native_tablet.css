@@ -1,0 +1,134 @@
+/* Nav bar at top of all screens other than home screen */
+
+#navbar {
+	height: 50px;
+	font-size: 105.9%;
+	font-weight: bold;
+}
+
+#navbar .forminput {
+  border-color: #036;
+}
+
+
+
+/* Content titles e.g., news and video */
+
+h1.slugline {
+	font-size: 150%;
+	margin-bottom: 0.5em;
+}
+
+.byline {
+	font-size: 70.59%;
+	line-height: 1.5em;
+	padding-bottom: 0.67em;
+}
+
+
+
+/* Tablet-specific bottom nav bar */
+
+#footernav {
+  background: transparent url(/common/images/footernav-bg.png) repeat-x left top;
+}
+
+#footernav .module {
+  background: transparent url(/common/images/footernav-spacer.png) no-repeat left top;
+}
+
+#footernav {
+/*
+  -webkit-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+*/
+}
+
+#footernav a {
+  /* Text color of module icon labels */
+  color: white;
+}
+
+#footernav .selected a {
+  /* Background and label text color of selected module icon */
+  background: transparent url(/common/images/footernav-selected.png) repeat-x left top;
+  color: #404355;
+}
+
+#slideleft,
+#slideright {
+  /* make transparent indicators tap-through (remove this style if they are opaque) */
+  pointer-events: none;
+}
+
+
+
+/* Tablet-specific split-view styles, e.g., News and Video */
+/* Note: only the selected list item is styled here. The normal/unselected list item styles inherit from the overall theme */
+
+.splitview ul.results .title {
+    color: #333;
+}
+
+.splitview .listSelected {
+	/* Selected item in the master pane in the split view */
+	background-color:#2f3133;
+	-webkit-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+	-moz-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+	box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+}
+
+.splitview ul.results .ellipsis {
+   /* Description/dek within the selected item in the master pane in the split view */
+   color: #777;
+}
+
+.splitview ul.results .listSelected .ellipsis {
+   /* Description/dek within the selected item in the master pane in the split view */
+   color: #aaa;
+}
+
+.splitview ul.results .listSelected .title {
+    /* Title within the selected item in the master pane in the split view */
+	color: #ddd;
+}
+
+
+
+/* Springboards */
+
+/* Overall size of one cell in a springboard (grid of icons) */
+.springboard div {	
+	font-size: 76.5%;	/* Font size of text label below icon */
+	line-height: 1.1em;
+	width: 77px;
+	height: 98px;
+}
+
+.springboard a img {
+	/* Size of each standard icon image in a springboard */
+	width: 60px;
+	height: 60px;
+}
+
+.springboard .separator {
+	/* Height of extra gap between main and utility-class springboard items */
+	height: 10px;
+}
+
+
+.springboard .secured {
+	/* Overlay image to indicate that a module is password-protected */
+	/* Adjust size to fit /common/images/secured.png, and adjust position to fit springboard icon size */
+	top: 45px;
+	right: 4px;
+	width: 18px;
+	height: 22px;
+}
+
+.springboard .utility .secured {
+	/* Adjust position to fit springboard icon size for utility-class module icons */
+	top: 26px;
+	right: 12px;
+}
