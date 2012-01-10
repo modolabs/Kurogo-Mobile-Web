@@ -82,6 +82,12 @@
           
           httpRequest.send(null);
       {rdelim}
+    
+      function onAjaxError(status) {ldelim}
+          {if $webBridgeOnLoadErrorURL}
+              window.location = "{$webBridgeOnLoadErrorURL}"+status;
+          {/if}
+      {rdelim}
   </script>
   
   {$smarty.block.parent}
@@ -102,31 +108,25 @@
 
 {block name="ajaxContentHeader"}
   <script type="text/javascript">
-    function onAjaxLoad() {ldelim}
-        // These can all have per-content page behavior
-        {foreach $inlineJavascriptBlocks as $script}
-            {$script}
-        {/foreach}
-  
-        {foreach $inlineJavascriptFooterBlocks as $script}
-            {$script}
-        {/foreach}
-        
-        {foreach $onLoadBlocks as $script}
-            {$script}
-        {/foreach}
-        
-        onOrientationChange();
-        
-        {if $webBridgeOnPageLoadURL}
-            window.location = "{$webBridgeOnPageLoadURL}";
-        {/if}
-    {rdelim}
+      function onAjaxLoad() {ldelim}
+          // These can all have per-content page behavior
+          {foreach $inlineJavascriptBlocks as $script}
+              {$script}
+          {/foreach}
     
-    function onAjaxError(status) {ldelim}
-        {if $webBridgeOnPageLoadErrorURL}
-            window.location = "{$webBridgeOnPageLoadErrorURL}"+status;
-        {/if}
-    {rdelim}
+          {foreach $inlineJavascriptFooterBlocks as $script}
+              {$script}
+          {/foreach}
+          
+          {foreach $onLoadBlocks as $script}
+              {$script}
+          {/foreach}
+          
+          onOrientationChange();
+          
+          {if $webBridgeOnPageLoadURL}
+              window.location = "{$webBridgeOnPageLoadURL}";
+          {/if}
+      {rdelim}
   </script>
 {/block}
