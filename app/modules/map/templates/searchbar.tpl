@@ -10,6 +10,9 @@
                         name="filter"
                         placeholder={"MAP_SEARCH_PLACEHOLDER"|getLocalizedString}
                         onfocus="androidPlaceholderFix(this);showSearchFormButtons();" />
+                    {if $group && !$campuses}
+                        <input type="hidden" name="group" value="{$group}" />
+                    {/if}
                 </div>
                 <div id="toolbar-buttons">
                     <div class="toolbar-button">

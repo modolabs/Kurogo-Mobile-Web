@@ -4,9 +4,6 @@
   {if $campuses}
     {include file="findInclude:modules/map/templates/selectcampus.tpl" campuses=$campuses}
   {/if}
-  {if $group}
-    <input type="hidden" name="group" value="{$group}">
-  {/if}
 {/capture}
 
 {include file="findInclude:common/templates/search.tpl"
@@ -25,9 +22,5 @@
 </div>
 
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories navlistID="categories"}
-
-{if $clearLink}
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$clearLink secondary=true}
-{/if}
 
 {include file="findInclude:common/templates/footer.tpl"}

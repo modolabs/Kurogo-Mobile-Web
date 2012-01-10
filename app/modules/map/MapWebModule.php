@@ -302,8 +302,15 @@ class MapWebModule extends WebModule {
         if (isset($args['worldmap'])) {
             unset($args['worldmap']);
         }
-        $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
-        return $this->buildBreadcrumbURL($mapPage, $args, $addBreadcrumb);
+        if (isset($args['listview'])) {
+            unset($args['listview']);
+        }
+        if (!$group) {
+            $topPage = 'index';
+        } else {
+            $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
+        }
+        return $this->buildBreadcrumbURL($topPage, $args, $addBreadcrumb);
     }
   
     private function feedURL($feed, $group=null, $addBreadcrumb=true) {
@@ -392,7 +399,7 @@ class MapWebModule extends WebModule {
 
     ///// template control
 
-    private function assignCampuses() {
+    private function assignGroups($templateArg='campuses') {
         $campusData = array();
         if ($this->numGroups > 1) {
             foreach ($this->feedGroups as $id => $groupData) {
@@ -402,12 +409,9 @@ class MapWebModule extends WebModule {
                     'url' => $this->groupURL($id),
                     'listclass' => $id, // stupid way to sneak the id into the dom
                     );
-                if ($this->feedGroup === $id) {
-                    $data['selected'] = true;
-                }
                 $campusData[] = $data;
             }
-            $this->assign('campuses', $campusData);
+            $this->assign($templateArg, $campusData);
         }
         return $campusData;
     }
@@ -615,6 +619,9 @@ class MapWebModule extends WebModule {
     protected function initializeForPage() {
 
         $this->placemarkId = $this->getArg('featureindex', null);
+        if ($this->feedGroup) {
+            $this->assign('group', $this->feedGroup); // used in searchbar.tpl and selectcampus.tpl
+        }
 
         switch ($this->page) {
 
@@ -624,10 +631,10 @@ class MapWebModule extends WebModule {
                 if ($searchTerms) {
                     $this->assign('searchTerms', $searchTerms);
                 }
-                if ($this->feedGroup) {
-                    $this->assign('group', $this->feedGroup);
-                }
-                $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
+
+                $this->assignGroups(); // appears in searchbar for campus.tpl or campus list in index.tpl
+
+                $toggleArgs = array();
 
                 // set up list view if
                 if ($this->feedGroup === null // multiple campuses, none selected
@@ -635,31 +642,36 @@ class MapWebModule extends WebModule {
                     || $this->getArg('listview') // user did explicitly request list view
                     || !$this->isMapDrivenUI()
                 ) {
-                    $this->setTemplatePage('index');
-                    $this->setupCampusPage();
+                    $togglePage = 'mapURL';
+
                     if ($searchTerms) {
                         // user hit the "browse" button with a query string
+                        $toggleArgs['filter'] = $searchTerms;
+
                         $this->setTemplatePage('browse');
                         $this->assignSearchResults($searchTerms);
-                        $urlParams = array('filter' => $searchTerms, 'group' => $this->feedGroup);
-                        $this->assign('mapURL', $this->buildURL($topPage, $urlParams));
                         $this->enableTabs(array('search', 'browse'), null, null);
+
+                        // TODO: perhaps this can be removed
                         $this->addOnLoad('addClass(document.body, "fullscreen")');
                     }
+                    $this->setupGroupPage(); // this assigns a list of campuses or categories
+
                 } else {
+                    $togglePage = 'browseURL';
+                    $toggleArgs['listview'] = true;
+
                     // set up fullscreen map
                     $this->setTemplatePage('fullscreen');
-                    $browseArgs = array('listview' => true);
                     if ($this->getArg('worldmap')) {
                         $this->feedGroup = null;
                     }
-                    if ($this->feedGroup) {
-                        $browseArgs['group'] = $this->feedGroup;
-                    }
-                    $this->assign('browseURL', $this->buildBreadcrumbURL($topPage, $browseArgs, false));
-                    $this->assignCampuses();
                     $this->initializeDynamicMap();
                 }
+
+                $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
+                $toggleArgs['group'] = $this->feedGroup;
+                $this->assign($togglePage, $this->buildBreadcrumbURL($topPage, $toggleArgs, false));
 
                 break;
             
@@ -851,7 +863,7 @@ class MapWebModule extends WebModule {
         return array();
     }
 
-    protected function setupCampusPage()
+    protected function setupGroupPage()
     {
         if ($this->feedGroup !== null) {
             $groupData = $this->getDataForGroup($this->feedGroup);
@@ -880,8 +892,7 @@ class MapWebModule extends WebModule {
             // feedgroups section
             $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS');
             $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
-            $campuses = $this->assignCampuses();
-            $this->assign('categories', $campuses);
+            $this->assignGroups('categories');
 
             $this->addOnLoad('sortGroupsByDistance();');
         }

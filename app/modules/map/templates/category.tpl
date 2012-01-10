@@ -1,5 +1,7 @@
 {include file="findInclude:common/templates/header.tpl"}
 
+{include file="findInclude:modules/map/templates/searchbar.tpl"}
+
 <div class="nonfocal">
   <div class="buttonContainer">
     <a href="{$mapURL}">
