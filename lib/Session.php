@@ -15,6 +15,7 @@ abstract class Session
     const USERHASH_COOKIE='lh';
     const API_TOKEN_COOKIE='alt';
     const API_USERHASH_COOKIE='alh';
+    const SESSION_USER_VAR_NAMESPACE = 'suvn';
     protected $session_id;
     protected $users = array();
     protected $login_token;
@@ -175,6 +176,19 @@ abstract class Session
         $_SESSION['ping'] = time();
     }
     
+    public function getSessionVar($name){
+        if(isset($_SESSION[self::SESSION_USER_VAR_NAMESPACE][$name])){
+            return $_SESSION[self::SESSION_USER_VAR_NAMESPACE][$name];
+        }
+        return null;
+    }
+
+    public function setSessionVar($name, $value){
+        $name = (string)$name;
+        $_SESSION[self::SESSION_USER_VAR_NAMESPACE][$name] = $value;
+        return $this;
+    }
+
     public function setDebugMode($debugMode) {
         $this->debugMode = $debugMode ? true : false;
     }

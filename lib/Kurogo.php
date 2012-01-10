@@ -93,6 +93,14 @@ class Kurogo
         return self::$_instance;
     }
     
+    public static function getSessionVar($name){
+        return Kurogo::getSession()->getSessionVar($name);
+    }
+
+    public static function setSessionVar($name, $value){
+        Kurogo::getSession()->setSessionVar($name, $value);
+    }
+
     public static function tempDirectory() {
         return Kurogo::getOptionalSiteVar('TMP_DIR', sys_get_temp_dir());
     }
