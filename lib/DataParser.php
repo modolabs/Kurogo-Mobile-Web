@@ -42,6 +42,12 @@ abstract class DataParser
         return $this->parseData($this->response->getResponse());
     }
     
+    protected function getResponseRetriever() {
+        if ($this->response) {
+            return $this->response->getRetriever();
+        }
+    }
+    
     public function getParseMode() {
         return $this->parseMode;
     }

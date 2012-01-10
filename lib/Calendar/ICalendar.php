@@ -139,7 +139,12 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
     protected $exdates = array();
     protected $recurrence_exceptions = array();
 
-    public function getEventCategories() {
+    public function getEventCategories(TimeRange $range = null) {
+        if($range && $this->range->contained_by($range)) {
+            return $this->categories;
+        }else {
+            return $this->categories;
+        }
         return array();
     }
 

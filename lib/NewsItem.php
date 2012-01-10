@@ -10,5 +10,6 @@ interface NewsItem extends KurogoObject
     public function getLink();
     public function getContent();
     public function getPubDate();
+    public function getPubTimestamp();
     
 }

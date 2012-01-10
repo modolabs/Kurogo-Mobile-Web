@@ -21,6 +21,7 @@ class CalendarDataModel extends ItemListDataModel
     protected $startDate;
     protected $endDate;
     protected $calendar;
+    protected $filterCategoryByDay;
     protected $filters=array();
     
     public function setRequiresDateFilter($bool)
@@ -83,10 +84,41 @@ class CalendarDataModel extends ItemListDataModel
     {
         return $this->endDate ? $this->endDate->format('U') : false;
     }
+
+    public function getEventsByCategory($cateID) {
+        $this->setLimit(null);
+        $items = $this->items();
+        $events = array();
+        foreach($items as $item) {
+            $eventCategories = $item->getEventCategories();
+            if(in_array($cateID, $eventCategories)) {
+                $events[] = $item;
+            }
+        }
+        return $events;
+    }
     
     public function getEventCategories()
     {
-        return $this->parser->getEventCategories();
+        $this->setLimit(null);
+        $items = $this->items();
+        $categories = array();
+        foreach($items as $item) {
+            $eventCategories = $item->getEventCategories();
+            if($eventCategories) {
+                $categories = array_merge($categories, $eventCategories);
+            }
+        }
+        $categories = array_unique($categories);
+        natsort($categories);
+        $cates = array();
+        foreach($categories as $category) {
+            $catObj = new ICalCategory();
+            $catObj->setID($category);
+            $catObj->setName($category);
+            $cates[] = $catObj;
+        }
+        return $cates;
     }
     
     public function setDuration($duration, $duration_units)
@@ -117,8 +149,21 @@ class CalendarDataModel extends ItemListDataModel
     protected function init($args)
     {
         parent::init($args);
+        $this->setFilterCateByDay($args);
     }
-    
+
+    protected function setFilterCateByDay($args) {
+        if(isset($args['FILTER_CATEGORY_BY_DAY'])) {
+            $this->filterCategoryByDay = (boolean) $args['FILTER_CATEGORY_BY_DAY'];
+        }else {
+            $this->filterCategoryByDay = false;
+        }
+    }
+
+    public function isFilterCateByDay() {
+        return $this->filterCategoryByDay;
+    }
+
     public function getNextEvent($todayOnly=false) {
         $start = new DateTime();
         $start->setTime(date('H'), floor(date('i')/5)*5, 0);

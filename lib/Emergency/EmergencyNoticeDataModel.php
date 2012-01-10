@@ -1,5 +1,6 @@
 <?php
 
+includePackage('DateTime');
 class EmergencyNoticeDataModel extends DataModel
 {
     protected $DEFAULT_PARSER_CLASS = 'RSSDataParser';
@@ -37,15 +38,15 @@ class EmergencyNoticeDataModel extends DataModel
             
             $items = $this->getData();
             foreach ($items as $item) {
-                if ($now - strtotime($item->getPubDate()) > $this->NOTICE_EXPIRATION) {
+                if (($now - $item->getPubTimestamp()) > $this->NOTICE_EXPIRATION) {
                     break; // items too old
                 }
                 
                 $this->emergencyNotices[] = array(
                    'title' => $item->getTitle(),
                    'text' => $item->getDescription(),
-                   'date' => $item->getPubDate(),
-                   'unixtime' => strtotime($item->getPubDate()),
+                   'date' => DateFormatter::formatDate($item->getPubDate(), DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE),
+                   'unixtime' => $item->getPubTimestamp(),
                 );
                 
                 if (isset($this->NOTICE_MAX_COUNT) && count($this->emergencyNotices) >= $this->NOTICE_MAX_COUNT) {

@@ -89,7 +89,7 @@ class NewsAPIModule extends APIModule {
             'link'        => $story->getLink(),
             'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
-            'pubDate'     => self::getPubDateUnixtime($story),
+            'pubDate'     => $story->getPubTimestamp()
        );
 
        if($story->getContent()) {
@@ -140,11 +140,4 @@ class NewsAPIModule extends APIModule {
     }
   }
 
-    private static function getPubDateUnixtime($story) {
-        if ($pubDate = $story->getPubDate()) {
-            return $pubDate->format('U');
-        }
-        
-        return null;
-    }
 }

@@ -76,6 +76,12 @@ class RSSItem extends XMLElement implements NewsItem
     {
         return $this->pubDate;
     }
+    
+    public function getPubTimestamp() {
+        if ($this->pubDate) {
+            return $this->pubDate->format('U');
+        }
+    }
 
     public function getComments()
     {
