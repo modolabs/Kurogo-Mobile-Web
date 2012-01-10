@@ -89,20 +89,15 @@ class NewsAPIModule extends APIModule {
             'link'        => $story->getLink(),
             'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
-            'pubDate'     => self::getPubDateUnixtime($story),
+            'pubDate'     => $story->getPubTimestamp()
        );
 
-       // like in the web module we
-       // use the existance of GUID
-       // to determine if we have content
-       if($story->getGUID()) {
-           $item['GUID'] = $story->getGUID();
+       if($story->getContent()) {
            if($mode == 'full') {
                 $item['body'] = $story->getContent();
            }
            $item['hasBody'] = TRUE;
        } else {
-           $item['GUID'] = $story->getLink();
            $item['hasBody'] = FALSE;
        }
 
@@ -145,7 +140,4 @@ class NewsAPIModule extends APIModule {
     }
   }
 
-    private static function getPubDateUnixtime($story) {
-        return strtotime($story->getPubDate());
-    }
 }

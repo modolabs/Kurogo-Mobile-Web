@@ -23,7 +23,7 @@ CSS. Kurogo is designed to accept data from a variety of external sources, parse
 and prepare it in a format suitable for presentation. 
 
 A typical user request would include querying a data source and parsing the resulting data using
-a *Data Controller*. Then the module would pass the data to the *Template Engine* which outputs the
+a :doc:`Data Parser <dataparser>`. Then the module would pass the data to the *Template Engine* which outputs the
 page using appropriate HTML, CSS and Javascript for the device.
 
 .. image:: images/diagram.png
@@ -56,11 +56,12 @@ Data Customization
 
 Each module gives you the opportunity to choose the data source and processing methods for getting
 data into your application. By abstracting the details of retrieving and parsing data, your application
-can respond to a variety of data sources. Most modules will use a subclass of *DataController*. Each
-data controller has an object that is a subclass of *DataParser* that takes the resulting data and
-creates an appropriate PHP structure. Through configuration you can customize which DataController and
+can respond to a variety of data sources. Most modules will use a subclass of :doc:`DataModel <datamodel>`. 
+Each model uses an object called a :doc:`Data Retriever <dataretriever>` to retrieve the data
+and then parse it using a :doc:`DataParser <dataparser>` object that takes the resulting data and
+creates an appropriate PHP structure. Through configuration you can customize which DataRetriever and
 DataParser are used in a request which can influence the structures that get used. You can also create
-your own Data Controllers and Data Parsers to handle the unique qualities of your site's data.
+your own Data Retrievers and Data Parsers to handle the unique qualities of your site's data.
 
 ------------------
 Code Customization

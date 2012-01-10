@@ -9,16 +9,12 @@
 includePackage('DataModel');
 class PeopleDataModel extends ItemListDataModel
 {
+    protected $RETRIEVER_INTERFACE = 'PeopleRetriever';
     protected $DEFAULT_RETRIEVER_CLASS = 'LDAPPeopleRetriever';
     protected $personClass = 'Person';
     protected $capabilities=0;
     protected $attributes=array();
 
-    public function getUser($id) {
-        $this->response = $this->retriever->getUser($id);
-        return $this->parseResponse($this->response);
-    }
-        
     public static function getPeopleRetrievers() {
         return array(
             ''=>'-',
@@ -106,9 +102,8 @@ abstract class Person implements KurogoObject
     }
 }
 
-interface PeopleRetriever
+interface PeopleRetriever extends SearchDataRetriever
 {
-    public function search($searchTerms);
     public function getUser($id);
     public function setAttributes($attributes);
 }

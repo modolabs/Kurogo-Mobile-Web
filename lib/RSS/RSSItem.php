@@ -4,7 +4,8 @@
   * @package ExternalData
   * @subpackage RSS
   */
-class RSSItem extends XMLElement implements KurogoObject
+includePackage('News');
+class RSSItem extends XMLElement implements NewsItem
 {
     protected $name='item';
     protected $title;
@@ -76,6 +77,12 @@ class RSSItem extends XMLElement implements KurogoObject
     {
         return $this->pubDate;
     }
+    
+    public function getPubTimestamp() {
+        if ($this->pubDate) {
+            return $this->pubDate->format('U');
+        }
+    }
 
     public function getComments()
     {
@@ -99,7 +106,7 @@ class RSSItem extends XMLElement implements KurogoObject
     
     public function getImage()
     {
-        if ( ($enclosure = $this->getEnclosure()) && $enclosure->isImage()) {
+        if ( ($enclosure = $this->getEnclosure()) && $enclosure instanceOf RSSImageEnclosure) {
             return $enclosure;
         } elseif (count($this->images)>0) {
             return $this->images[0];
@@ -141,6 +148,19 @@ class RSSItem extends XMLElement implements KurogoObject
             case 'CATEGORY':
                 $name = strtolower($name);
                 array_push($this->$name, $value);
+                break;
+            case 'PUBDATE':
+            case 'DC:DATE':
+            case 'PUBLISHED':
+                if ($value = $element->value()) {
+                    try {
+                        if ($date = new DateTime($value)) {
+                            $this->pubDate = $date;
+                        }
+                    } catch (Exception $e) {
+                    }
+                }
+                
                 break;
             default:
                 parent::addElement($element);

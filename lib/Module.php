@@ -46,12 +46,15 @@ abstract class Module
     }
   
     /**
-      * Loads the data in the feeds configuration file
+      * Loads the data in the feeds configuration file. It will get merged with a feeds 
+      * section in the module.ini file
       * @return array
       */
     protected function loadFeedData() {
+        $default = $this->getOptionalModuleSection('feeds','module');
         $feeds = $this->getModuleSections('feeds');
         foreach ($feeds as $index=>&$feedData) {
+            $feedData = array_merge($default, $feedData);
             $feedData['INDEX'] = $index;
         }
         reset($feeds);
@@ -700,7 +703,7 @@ abstract class Module
         return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
     }
     
-    public function getLocalizedString($key, $opts=null) {
+    public function getLocalizedString($key) {
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
             throw new KurogoConfigurationException("Invalid string key $key");
         }

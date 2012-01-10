@@ -27,7 +27,7 @@ class KurogoDebug
         $plain = false;
         if ($halt && !headers_sent()) {
             $plain = true;
-            header('Content-type: text/plain');
+            header('Content-type: text/plain; charset=' . Kurogo::getCharset());
         }
        
         $line_break = (PHP_SAPI == 'cli' || $plain) ? PHP_EOL : (PHP_EOL . "<br />" . PHP_EOL);

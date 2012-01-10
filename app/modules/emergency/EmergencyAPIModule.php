@@ -28,7 +28,7 @@ class EmergencyAPIModule extends APIModule {
                 }
                 
                 
-                $emergencyNotice = $emergencyNoticeController->getLatestEmergencyNotice();
+                $emergencyNotice = $emergencyNoticeController->getFeaturedEmergencyNotice();
                 $response = array('notice' => $emergencyNotice);
                 $this->setResponse($response);
                 $this->setResponseVersion(1);

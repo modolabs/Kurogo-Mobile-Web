@@ -19,6 +19,8 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
 
     protected $lastParseSignature = null;
 
+    protected $parseMode=self::PARSE_MODE_STRING;
+    
     // whitelists
     protected static $startElements=array(
         'DOCUMENT', 'FOLDER',
@@ -175,7 +177,11 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
             case 'STYLEURL':
                 $value = $element->value();
                 if ($parent->name() == 'Placemark') {
-                    $parent->setStyle($this->getStyle($value));
+                    if ($style = $this->getStyle($value)) {
+                        $parent->setStyle($this->getStyle($value));
+                    } else {
+                        Kurogo::log(LOG_WARNING, "Style $value was not found", 'map');
+                    }
                 } else {
                     $parent->addElement($element);
                 }
