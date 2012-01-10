@@ -125,7 +125,7 @@ class RSSItem extends XMLElement implements NewsItem
             case 'LINK':
                 if (!$value) {
                     if ($element->getAttrib('REL') == 'enclosure') {
-                        $this->enclosure = new RSSEnclosure(array(
+                        $this->enclosure = RSSEnclosure::factory(array(
                             'URL' => $element->getAttrib('HREF'),
                             'LENGTH' => $element->getAttrib('LENGTH'),
                             'TYPE' => $element->getAttrib('TYPE'),
