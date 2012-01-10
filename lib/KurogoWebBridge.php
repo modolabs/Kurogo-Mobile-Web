@@ -13,6 +13,7 @@ class KurogoWebBridge
 
     const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
     const BRIDGE_URL_EVENT_ONLOAD  = 'kgobridge://event/load';
+    const BRIDGE_URL_EVENT_ERROR   = 'kgobridge://event/error';
     
     const FILE_TYPE_HTML       = 'html';
     const FILE_TYPE_CSS        = 'css';
@@ -317,6 +318,19 @@ class KurogoWebBridge
         }
         return self::BRIDGE_URL_EVENT_ONLOAD.'?'.http_build_query($params);
     }
+    
+    //
+    // Config URL for HTTP errors
+    //
+
+    public static function getOnPageLoadErrorURL() {
+        if (!self::hasNativePlatform()) {
+            return '';
+        }
+        
+        // http status code will be appended by javascript
+        return self::BRIDGE_URL_EVENT_ERROR.'?type=load&code=';
+    }
 
     public static function getURLBase() {
         if (self::hasNativePlatform()) {
@@ -326,18 +340,16 @@ class KurogoWebBridge
         }
     }
 
-    public static function getServerURL() {
+    public static function getServerURL($id, $page) {
+        $url = '';
         if (self::hasNativePlatform()) {
-            return '__KUROGO_SERVER_URL__';
+            $url .= '__KUROGO_SERVER_URL__';
         } else {
-            return ltrim(FULL_URL_PREFIX, '/');
+            $url .= rtrim(FULL_URL_PREFIX, '/');
         }
-    }
-
-    public static function getServerPath($id, $page) {
-        $url = "/{$id}/{$page}?ajax=1";
+        $url .= "/{$id}/{$page}?ajax=1";
         if (self::shouldForceNativePlatform($platform)) {
-            $url .= '&'.http_build_query(array(self::NATIVE_PLATFORM_PARAMETER => $platform));;
+            $url .= '&'.http_build_query(array(self::NATIVE_PLATFORM_PARAMETER => $platform));
         }
         return $url;
     }
@@ -349,6 +361,11 @@ class KurogoWebBridge
             return http_build_query($args);
         }
     }
+    
+    public static function getServerTimeout() {
+        return Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 30);
+    }
+
 
     //
     // Detecting native user agents
