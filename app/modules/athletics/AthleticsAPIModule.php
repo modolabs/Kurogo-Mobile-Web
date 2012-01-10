@@ -110,6 +110,34 @@ class AthleticsAPIModule extends APIModule
                 
                 break;
 
+            case "search":
+                $searchTerms = $this->getArg('filter');
+                $start = $this->getArg('start', 0);
+                $section = $this->getArg('section', 'topnews');
+                $mode = $this->getArg('mode');
+
+                $newsFeed = $this->getNewsFeed($section);
+
+                $newsFeed->setStart($start);
+                $newsFeed->setLimit($this->maxPerPage);
+
+                $items = $newsFeed->search($searchTerms);
+                $totalItems = $newsFeed->getTotalItems();
+
+                $stories = array();
+                foreach ($items as $story) {
+                    $stories[] = $this->formatStory($story, $mode);
+                }
+
+                $response = array(
+                    'stories' => $stories,
+                    'moreStories' => ($totalItems - $start - $this->maxPerPage)
+                );
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                break;
+
             default:
                 $this->invalidCommand();
                 break;
@@ -135,12 +163,18 @@ class AthleticsAPIModule extends APIModule
     }
     
     protected function formatStory($story, $mode) {
+        if ($date = $story->getPubDate()) {
+            $pubDate = $date->format('U');
+        } else {
+            $pubDate = null;
+        }
+        
         $item = array(
             'GUID'        => $story->getGUID(),
             'link'        => $story->getLink(),
             'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
-            'pubDate'     => strtotime($story->getPubDate())
+            'pubDate'     => $pubDate 
         );
 
         if($story->getContent()) {

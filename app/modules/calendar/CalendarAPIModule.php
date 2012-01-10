@@ -276,12 +276,23 @@ class CalendarAPIModule extends APIModule
                 // default to the full day that includes current time
                 $current = $this->getArg('time', time());
                 $start   = $this->getStartArg($current);
-                $end     = $this->getEndArg($start->format('U'));
                 $feed    = $this->getFeed($calendar, $type);
-
                 $feed->setStartDate($start);
-                $feed->setEndDate($end);
-                $iCalEvents = $feed->items();
+                
+                if ($limit = $this->getArg('limit')) {
+                    if (!$this->legacyController) {
+                        $feed->setLimit($limit);
+                    }
+                } else {
+                    $end = $this->getEndArg($start->format('U'));
+                    $feed->setEndDate($end);
+                }
+                
+                if ($limit && $this->legacyController) {
+                    $iCalEvents = $feed->items(0, $limit);
+                } else {
+                    $iCalEvents = $feed->items();
+                } 
 
                 $events = array();
                 $count  = 0;
@@ -322,8 +333,11 @@ class CalendarAPIModule extends APIModule
 
                 $feed = $this->getFeed($calendar, $type);
                 $feed->setStartDate($start);
-                $feed->setEndDate($end);
 
+                if (!$limit = $this->getArg('limit')) {
+                    $feed->setEndDate($end);
+                }
+                
                 if ($filter = $this->getArg('q')) {
                     $feed->addFilter('search', $filter);
                 }

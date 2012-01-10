@@ -4,7 +4,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
-class RSSItem extends XMLElement implements KurogoObject
+class RSSItem extends XMLElement implements NewsItem
 {
     protected $name='item';
     protected $title;
@@ -132,6 +132,19 @@ class RSSItem extends XMLElement implements KurogoObject
             case 'CATEGORY':
                 $name = strtolower($name);
                 array_push($this->$name, $value);
+                break;
+            case 'PUBDATE':
+            case 'DC:DATE':
+            case 'PUBLISHED':
+                if ($value = $element->value()) {
+                    try {
+                        if ($date = new DateTime($value)) {
+                            $this->pubDate = $date;
+                        }
+                    } catch (Exception $e) {
+                    }
+                }
+                
                 break;
             default:
                 parent::addElement($element);

@@ -10,7 +10,7 @@ class HTTPDataResponse extends DataResponse
     protected $responseStatus;
     protected $responseHeaders=array();
         
-    public function setRequest($method, $url, $parameters, $headers, $data) {
+    public function setRequest($method, $url, $parameters=null, $headers=null, $data=null) {
         $this->requestMethod = $method;
         $this->requestURL = $url;
         $this->requestParameters = $parameters;

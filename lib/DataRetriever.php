@@ -26,6 +26,7 @@ abstract class DataRetriever {
     protected $cacheGroup;
     protected $cacheRequest = true;
     protected $cacheLifetime = null; //if null it will use cache default.
+    protected $requestInit = false; //whether initRequest has been called or not
     protected $parser;
 
     abstract protected function retrieveResponse();
@@ -47,6 +48,7 @@ abstract class DataRetriever {
     }
     
     protected function cacheKey() {
+        $this->initRequestIfNeeded();
         return $this->cacheKey;
     }
     
@@ -59,6 +61,7 @@ abstract class DataRetriever {
     }
     
     protected function cacheGroup() {
+        $this->initRequestIfNeeded();
         return $this->cacheGroup;
     }
 
@@ -164,6 +167,16 @@ abstract class DataRetriever {
     public function getOption($option) {
         return isset($this->options[$option]) ? $this->options[$option] : null;
     }
+
+    protected function initRequest() {
+    }
+    
+    protected function initRequestIfNeeded() {
+        if (!$this->requestInit) {
+            $this->initRequest();
+            $this->requestInit = true;
+        }
+    }
     
     protected function init($args) {
         $this->initArgs = $args;
@@ -203,6 +216,7 @@ abstract class DataRetriever {
     
     public function clearInternalCache() {
         $this->options = array();
+        $this->requestInit = false;
         $this->parser()->clearInternalCache();
     }
     
