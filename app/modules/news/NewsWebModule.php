@@ -60,8 +60,8 @@ class NewsWebModule extends WebModule {
         if ($image) {
           return array(
             'src'    => $image->getURL(),
-            'width'  => $image->getProperty('width'),
-            'height' => $image->getProperty('height'),
+            'width'  => $image->getWidth(),
+            'height' => $image->getHeight()
           );
         }
     }

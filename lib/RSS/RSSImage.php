@@ -4,7 +4,7 @@
   * @subpackage RSS
   */
 
-class RSSImage extends XMLElement
+class RSSImage extends XMLElement implements NewsImage
 {
     protected $name='image';
     protected $title;
