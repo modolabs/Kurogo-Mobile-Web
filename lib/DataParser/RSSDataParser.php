@@ -82,7 +82,8 @@ class RSSDataParser extends XMLDataParser
                 break;
             case 'ENCLOSURE':
             case 'MEDIA:CONTENT':
-                $this->elementStack[] = new $this->enclosureClass($attribs);
+                $element = call_user_func(array($this->enclosureClass, 'factory'), $attribs);
+                $this->elementStack[] = $element;
                 break;
             case 'IMAGE':
                 $this->elementStack[] = new $this->imageClass($attribs);
