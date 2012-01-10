@@ -3,7 +3,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
-
+includePackage('News');
 class RSSImage extends XMLElement implements NewsImage
 {
     protected $name='image';

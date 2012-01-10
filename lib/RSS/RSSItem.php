@@ -4,6 +4,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
+includePackage('News');
 class RSSItem extends XMLElement implements NewsItem
 {
     protected $name='item';
