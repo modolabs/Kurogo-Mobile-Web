@@ -4,6 +4,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
+includePackage('News');
 class RSSItem extends XMLElement implements NewsItem
 {
     protected $name='item';
@@ -105,7 +106,7 @@ class RSSItem extends XMLElement implements NewsItem
     
     public function getImage()
     {
-        if ( ($enclosure = $this->getEnclosure()) && $enclosure->isImage()) {
+        if ( ($enclosure = $this->getEnclosure()) && $enclosure instanceOf RSSImageEnclosure) {
             return $enclosure;
         } elseif (count($this->images)>0) {
             return $this->images[0];

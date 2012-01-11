@@ -13,6 +13,7 @@ if (!function_exists('mb_convert_encoding')) {
     die('Multibyte String Functions not available (mbstring)');
 }
 
+includePackage('News');
 includePackage('DateTime');
 class NewsWebModule extends WebModule {
   protected static $defaultModel = 'NewsDataModel';
@@ -59,8 +60,8 @@ class NewsWebModule extends WebModule {
         if ($image) {
           return array(
             'src'    => $image->getURL(),
-            'width'  => $image->getProperty('width'),
-            'height' => $image->getProperty('height'),
+            'width'  => $image->getWidth(),
+            'height' => $image->getHeight()
           );
         }
     }
