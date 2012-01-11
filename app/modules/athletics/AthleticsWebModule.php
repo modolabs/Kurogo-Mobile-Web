@@ -1,6 +1,8 @@
 <?php
 
 includePackage('Athletics');
+includePackage('News');
+includePackage('DateTime');
 class AthleticsWebModule extends WebModule {
 
     protected $id = 'athletics';
@@ -57,8 +59,8 @@ class AthleticsWebModule extends WebModule {
             if ($image = $story->getImage()) {
                 return array(
                     'src'    => $image->getURL(),
-                    'width'  => $image->getProperty('width'),
-                    'height' => $image->getProperty('height'),
+                    'width'  => $image->getWidth(),
+                    'height' => $image->getHeight()
                 );
             } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
                 return array(
@@ -72,8 +74,12 @@ class AthleticsWebModule extends WebModule {
     }
     
     protected function linkForNewsItem($story, $data = array()) {
-        $pubDate = strtotime($story->getProperty("pubDate"));
-        $date = date("M d, Y", $pubDate);
+        if ($pubDate = $story->getPubDate()) {
+            $date = DateFormatter::formatDate($pubDate, DateFormatter::MEDIUM_STYLE, DateFormatter::NO_STYLE);
+        } else {
+            $date = "";
+        }              
+
         $image = $this->getImageForStory($story);
 
         $link = array(
@@ -96,7 +102,7 @@ class AthleticsWebModule extends WebModule {
             }
     
             $link['url'] = $this->buildBreadcrumbURL('news_detail', $options, true);
-        } elseif ($url = $story->getProperty('link')) {
+        } elseif ($url = $story->getLink()) {
             $link['url'] = $url;
         }
         return $link;
@@ -362,8 +368,8 @@ class AthleticsWebModule extends WebModule {
                 }
                 $this->setLogData($storyID, $story->getTitle());
         
-                if (!$content = $this->cleanContent($story->getProperty('content'))) {
-                  if ($url = $story->getProperty('link')) {
+                if (!$content = $this->cleanContent($story->getContent())) {
+                  if ($url = $story->getLinks()) {
                       header("Location: $url");
                       exit();
                   } else {
@@ -380,8 +386,11 @@ class AthleticsWebModule extends WebModule {
                     $this->assign('storyURL',      $story->getLink());
                 }
         
-                $pubDate = strtotime($story->getProperty("pubDate"));
-                $date = date("M d, Y", $pubDate);
+                if ($pubDate = $story->getPubDate()) {
+                    $date = DateFormatter::formatDate($pubDate, DateFormatter::MEDIUM_STYLE, DateFormatter::NO_STYLE);
+                } else {
+                    $date = "";
+                }              
 
                 $this->enablePager($content, $this->newsFeed->getEncoding(), $storyPage);
                 $this->assign('date',   $date);
