@@ -64,6 +64,11 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     }
 
     public function parseResponse($response) {
+        // this parser doesn't depend on any internal state, so never re-parse
+        if ($this->features) {
+            return $this->features;
+        }
+
         $this->dbfParser = new DBase3FileParser();
         $this->mapProjector = new MapProjector();
 
@@ -188,7 +193,6 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         }
         $feature->setId($recordNumber);
         $feature->setFields($fields);
-
         return $feature;
     }
 
