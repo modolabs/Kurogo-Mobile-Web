@@ -30,6 +30,7 @@ class MapWebModule extends WebModule {
             $configName = "feeds-{$this->feedGroup}";
             foreach ($this->getModuleSections($configName) as $id => $feedData) {
                 $feedId = mapIdForFeedData($feedData);
+                $feedData['group'] = $this->feedGroup;
                 $data[$feedId] = $feedData;
             }
 
@@ -44,6 +45,7 @@ class MapWebModule extends WebModule {
                 $groupData = array();
                 foreach ($this->getModuleSections($configName) as $id => $feedData) {
                     $feedId = mapIdForFeedData($feedData);
+                    $feedData['group'] = $id;
                     $groupData[$feedId] = $feedData;
                     if ($requestedFeedId == $feedId) {
                         $this->feedGroup = $groupID;
@@ -139,15 +141,18 @@ class MapWebModule extends WebModule {
                 $result['url'] = $url;
 
             } else {
+                /*
                 $urlArgs = array_merge($this->args, shortArrayFromMapFeature($mapItem));
                 if (!isset($urlArgs['group'])) {
                     $urlArgs['group'] = $this->feedGroup;
                 }
+                */
+                $urlArgs = $mapItem->getURLParams();
                 $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
                 $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
                 // for map driven UI we want placemarks to show up on the full screen map
-                //$category = key($mapItem->getCategoryIds());
-                if ($this->isMapDrivenUI($urlArgs['feed'])) {
+                $category = key($mapItem->getCategoryIds());
+                if ($this->isMapDrivenUI($category)) {
                     $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
                     if ($this->page != $mapPage) {
                         $result['url'] = $this->buildURL($mapPage, $urlArgs);
@@ -278,7 +283,9 @@ class MapWebModule extends WebModule {
 
     protected function bookmarkIDForPlacemark($placemark) {
         if ($placemark) {
-            $cookieParams = shortArrayFromMapFeature($placemark);
+            //$cookieParams = shortArrayFromMapFeature($placemark);
+            $cookieParams = $placemark->getURLParams();
+            /*
             if (($feedId = $this->getArg('feed'))) {
                 $cookieParams['feed'] = $feedId;
             } else {
@@ -287,6 +294,7 @@ class MapWebModule extends WebModule {
                     $cookieParams['feed'] = $feedId;
                 }
             }
+            */
         }
         $title = $this->getArg('title');
         if ($title) {
@@ -346,7 +354,7 @@ class MapWebModule extends WebModule {
             $feedId = $params['feed'];
             $this->loadFeedData($feedId);
             if ($this->isMapDrivenUI()) {
-                if ($this->feedGroup) {
+                if (!isset($params['group']) && $this->feedGroup) {
                     $params['group'] = $this->feedGroup;
                 }
                 $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
@@ -818,6 +826,10 @@ class MapWebModule extends WebModule {
             return $placemarks;
         }
 
+        if (($searchTerms = $this->getArg('filter'))) {
+            return $this->searchItems($searchTerms, null, $this->args);
+        }
+
         // if anything was already selected by something else
         $feedId = $this->getArg('feed');
         if ($feedId) {
@@ -833,10 +845,6 @@ class MapWebModule extends WebModule {
             if ($placemarks) {
                 return $placemarks;
             }
-        }
-
-        if (($searchTerms = $this->getArg('filter'))) {
-            return $this->searchItems($searchTerms, null, $this->args);
         }
 
         // make the map display arbitrary locations that aren't in any feeds
@@ -896,7 +904,7 @@ class MapWebModule extends WebModule {
         }
 
         $toggleArgs = array('group' => $this->feedGroup, 'mapview' => true);
-        if (($searchTerms = $this->getArg('searchTerms'))) {
+        if (($searchTerms = $this->getArg('filter'))) {
             $toggleArgs['filter'] = $searchTerms;
         }
         if (($feed = $this->getArg('feed'))) {

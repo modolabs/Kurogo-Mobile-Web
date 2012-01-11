@@ -195,16 +195,30 @@ body.fullscreen #tabscontainer {
     padding: 6px 12px;
 }
 
+#calloutWrapper {
+    width: 210px;
+}
+
 #bookmarkWrapper {
     margin: 6px 0;
 }
 
 .calloutMain {
+    max-width: 110px;
     margin: 6px 8px;
 }
 
 .calloutDisclosure {
     margin: 6px 0;
+}
+
+/* ESRI maps have wider callouts */
+.simpleInfoWindow #calloutWrapper {
+    width: 230px;
+}
+
+.simpleInfoWindow .calloutMain {
+    max-width: 130px;
 }
 
 #mapimage .simpleInfoWindow .title {

@@ -13,6 +13,7 @@ class MapDataModel extends DataModel implements MapFolder
     protected $feedId;
     protected $categories = array();
     protected $selectedCategory;
+    protected $feedGroup;
 
     // other stuff
     protected $items = null;
@@ -29,15 +30,20 @@ class MapDataModel extends DataModel implements MapFolder
         if (isset($args['DEFAULT_ZOOM_LEVEL'])) {
             $this->defaultZoomLevel = $args['DEFAULT_ZOOM_LEVEL'];
         }
+
+        if (isset($args['group'])) {
+            $this->feedGroup = $args['group'];
+        }
         
-        $this->categoryId = mapIdForFeedData($args);
+        $this->feedId = mapIdForFeedData($args);
     }
 
     protected function returnPlacemarks(Array $placemarks) {
         $results = array();
         foreach ($placemarks as $placemark) {
             if ($placemark instanceof Placemark) {
-                $placemark->addCategoryId($this->feedId);
+                $this->addURLParams($placemark);
+                //$placemark->addCategoryId($this->feedId);
                 $results[] = $placemark;
             }
         }
@@ -55,6 +61,10 @@ class MapDataModel extends DataModel implements MapFolder
     }
 
     /* public */
+
+    public function setFeedGroup($group) {
+        $This->feedGroup = $group;
+    }
     
     public function getDefaultZoomLevel()
     {
@@ -154,13 +164,24 @@ class MapDataModel extends DataModel implements MapFolder
         return $this->searchable;
     }
 
+    protected function addURLParams($placemark) {
+        $placemark->setURLParam('feed', $this->getFeedId());
+        if (isset($this->feedGroup)) {
+            $placemark->setURLParam('group', $this->feedGroup);
+        }
+    }
+
     protected function filterPlacemarks($filters) {
         $results = array();
         foreach ($this->categories() as $category) {
-            $results = array_merge($results, $category->filterPlacemarks($filters));
+            foreach ($category->filterPlacemarks($filters) as $placemark) {
+                $this->addURLParams($placemark);
+                $results[] = $placemark;
+            }
         }
         foreach ($this->placemarks() as $placemark) {
             if ($placemark->filterItem($filters)) {
+                $this->addURLParams($placemark);
                 $results[] = $placemark;
             }
         }

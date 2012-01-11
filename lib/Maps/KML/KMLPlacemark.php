@@ -12,7 +12,7 @@ class KMLPlacemark extends XMLElement implements Placemark
     protected $snippet;
     protected $style;
     protected $geometry;
-    //protected $category;
+    protected $urlParams = array();
     protected $categories = array();
 
     private $fields = array();
@@ -86,6 +86,21 @@ class KMLPlacemark extends XMLElement implements Placemark
     }
 
     // Placemark interface
+
+    public function getURLParams() {
+        $result = $this->urlParams;
+        $result['featureindex'] = $this->getId();
+        $categories = $this->getCategoryIds();
+        $category = implode(MAP_CATEGORY_DELIMITER, $categories);
+        if ($category) {
+            $result['category'] = $category;
+        }
+        return $result;
+    }
+
+    public function setURLParam($name, $value) {
+        $this->urlParams[$name] = $value;
+    }
 
     public function getAddress() {
         return null;

@@ -130,29 +130,6 @@ function mapIdForFeedData(Array $feedData) {
     return substr(md5($identifier), 0, 10);
 }
 
-function shortArrayFromMapFeature(Placemark $feature) {
-    $result = array();
-    $categories = $feature->getCategoryIds();
-    $category = implode(MAP_CATEGORY_DELIMITER, $categories);
-    if ($category) {
-        $result['category'] = $category;
-    }
-    $id = $feature->getId();
-    if ($id !== null) {
-        $result['featureindex'] = $id;
-    } else {
-        $geometry = $feature->getGeometry();
-        if ($geometry) {
-            $coords = $geometry->getCenterCoordinate();
-            $result['lat'] = $coords['lat'];
-            $result['lon'] = $coords['lon'];
-        }
-        $result['title'] = $feature->getTitle();
-    }
-
-    return $result;
-}
-
 // $colorString must be 6 or 8 digit hex color
 function htmlColorForColorString($colorString) {
     return substr($colorString, strlen($colorString)-6);
@@ -179,9 +156,11 @@ class MapsAdmin
 {
     public static function getMapControllerClasses() {
         return array(
-            'MapDataController' => 'default',
-            'MapDBDataController' => 'database',
+            //'MapDataController' => 'default',
+            //'MapDBDataController' => 'database',
             //'ArcGISDataController'=>'ArcGIS',
+            'MapDataModel' => 'default',
+            'ArcGISDataModel' => 'ArcGIS Server',
         );
     }
     

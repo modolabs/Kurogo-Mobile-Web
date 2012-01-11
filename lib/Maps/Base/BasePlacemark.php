@@ -11,6 +11,7 @@ class BasePlacemark implements Placemark
     protected $style = null;
     protected $fields = array();
     protected $categories = array();
+    protected $urlParams = array();
     
     public function __construct(MapGeometry $geometry) {
         $this->geometry = $geometry;
@@ -92,6 +93,32 @@ class BasePlacemark implements Placemark
     }
 
     // Placemark interface
+
+    public function getURLParams() {
+        $result = $this->urlParams;
+        if (isset($this->id)) {
+            $result['featureindex'] = $this->getId();
+        } else {
+            $geometry = $feature->getGeometry();
+            if ($geometry) {
+                $coords = $geometry->getCenterCoordinate();
+                $result['lat'] = $coords['lat'];
+                $result['lon'] = $coords['lon'];
+            }
+            $result['title'] = $this->getTitle();
+        }
+
+        $categories = $this->getCategoryIds();
+        $category = implode(MAP_CATEGORY_DELIMITER, $categories);
+        if ($category) {
+            $result['category'] = $category;
+        }
+        return $result;
+    }
+
+    public function setURLParam($name, $value) {
+        $this->urlParams[$name] = $value;
+    }
     
     public function getGeometry() {
         return $this->geometry;

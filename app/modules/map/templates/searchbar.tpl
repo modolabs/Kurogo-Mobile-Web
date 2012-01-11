@@ -1,6 +1,11 @@
 <div id="header">
     <div id="searchbar" class="searchbar">
-        <form id="search-form" onsubmit="submitMapSearch(this);return false">
+        <form id="search-form"
+              method="get"
+            {if !$mapURL}
+              onsubmit="submitMapSearch(this);return false"
+            {/if}
+              >
             <fieldset class="inputcombo">
                 <div class="searchwrapper">
                     <input id="search_terms"
@@ -12,6 +17,9 @@
                         onfocus="androidPlaceholderFix(this);showSearchFormButtons();" />
                     {if $group && !$campuses}
                         <input type="hidden" name="group" value="{$group}" />
+                    {/if}
+                    {if $mapURL}
+                    <input type="hidden" name="listview" value=1 />
                     {/if}
                 </div>
                 <div id="toolbar-buttons">
@@ -38,7 +46,9 @@
                     {/if}
                     <div id="searchbar-buttons">
                         <div id="searchButton">
-                            <input type="button" onclick="submitMapSearch(this.form)" value={"SEARCHBAR_BUTTON_SEARCH"|getLocalizedString} />
+                            <input type="button"
+                                   onclick="{if !$mapURL}submitMapSearch(this.form){else}this.form.submit(){/if}"
+                                   value={"SEARCHBAR_BUTTON_SEARCH"|getLocalizedString} />
                         </div>
                         <div id="clearButton">
                             <input type="button" onclick="clearSearch(this.form)" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />

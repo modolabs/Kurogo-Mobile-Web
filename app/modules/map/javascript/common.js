@@ -48,6 +48,7 @@ function sortGroupsByDistance() {
 function submitMapSearch(form) {
     if (form.filter.value.length > 0) {
         mapLoader.clearMarkers();
+        hideSearchFormButtons();
         params = {'q': form.filter.value};
         if (form.group.value) {
             params['group'] = form.group.value;
@@ -56,7 +57,6 @@ function submitMapSearch(form) {
             params['projection'] = mapLoader.projection;
         }
         makeAPICall('GET', 'map', 'search', params, function(response) {
-            hideSearchFormButtons();
             if (response.results.length > 0) {
                 // TODO: make the "browse" button bring up results in a list
                 var minLat = 10000000;
@@ -225,7 +225,7 @@ if (typeof KGOMapLoader != 'undefined') {
                 }
             }
 
-            content = '<div id="bookmarkWrapper" style="float:left;">' +
+            content = '<div id="calloutWrapper"><div id="bookmarkWrapper" style="float:left;">' +
                         '<a onclick="toggleBookmark(\'mapbookmarks\', \'' + query + '\', BOOKMARK_LIFESPAN, COOKIE_PATH)">' +
                           '<div id="bookmark"' +
                               ' ontouchend="toggleClass(this, \'on\');"' +
@@ -235,7 +235,7 @@ if (typeof KGOMapLoader != 'undefined') {
                       '<div class="calloutMain" style="float:left;">' + content + '</div>' +
                       '<div class="calloutDisclosure" style="flost:left;">' +
                         '<a href="' + url + '"><img src="' + URL_BASE + '/modules/map/images/info.png" /></a>' +
-                      '</div>';
+                      '</div></div>';
         }
         return content;
     }

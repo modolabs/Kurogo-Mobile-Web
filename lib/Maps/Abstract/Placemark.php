@@ -7,6 +7,9 @@ interface Placemark extends MapListElement
     public function getStyle();
     public function getAddress();
 
+    public function getURLParams();
+    public function setURLParam($name, $value); // set by feeds when children are created
+
     // we don't currently have placemarks that belong in multiple categories
     // but there are some kml-like formats that do 
     public function getCategoryIds();
