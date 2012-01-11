@@ -1,5 +1,6 @@
 <?php
 
+includePackage('News');
 class NewsAPIModule extends APIModule {
 
     protected $id = 'news';
@@ -106,8 +107,8 @@ class NewsAPIModule extends APIModule {
        if($image && $image->getURL()) {
            $item['image'] = array(
                 'src'    => $image->getURL(),
-                'width'  => $image->getProperty('width'),
-                'height' => $image->getProperty('height'),
+                'width'  => $image->getWidth(),
+                'height' => $image->getHeight()
            );
        }
        $author = $story->getAuthor();
