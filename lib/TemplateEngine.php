@@ -275,7 +275,7 @@ class TemplateEngine extends Smarty {
     
     if (KurogoWebBridge::shouldRewriteAssetPaths()) {
       // Need to rewrite Kurogo assets to use filenames used in native templates
-      $rewriter = new KurogoWebBridge($platform, $smarty->getTemplateVars('configModule'));
+      $rewriter = new KurogoWebBridge($smarty->getTemplateVars('configModule'));
       $source = $rewriter->rewriteURLsToFilePaths($source);
     }
     

@@ -9,13 +9,13 @@ class KurogoWebBridge
     protected $path = '';
     protected $pathExists = false;
     
-    const NATIVE_PAGETYPE_COMPLIANT = 'native';
-    const NATIVE_PAGETYPE_TABLET    = 'native_tablet';
+    const PAGETYPE_COMPLIANT = 'native';
+    const PAGETYPE_TABLET    = 'native_tablet';
     
-    const NATIVE_PAGETYPE_PARAMETER = 'nativePagetype';
-    const NATIVE_PLATFORM_PARAMETER = 'nativePlatform';
-    const ASSET_CHECK_PARAMETER     = 'nativeAssetCheck';
-
+    const PAGETYPE_PARAMETER    = 'webBridgePagetype';
+    const PLATFORM_PARAMETER    = 'webBridgePlatform';
+    const ASSET_CHECK_PARAMETER = 'webBridgeAssetCheck';
+    
     const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
     const BRIDGE_URL_EVENT_ONLOAD  = 'kgobridge://event/load';
     const BRIDGE_URL_EVENT_ERROR   = 'kgobridge://event/error';
@@ -29,12 +29,18 @@ class KurogoWebBridge
     static protected $currentInstance = null;
     protected $processingFileType = self::FILE_TYPE_HTML;
     
-    public function __construct($isTablet, $platform, $module) {
-        $this->pagetype = $isTablet ? self::NATIVE_PAGETYPE_TABLET : self::NATIVE_PAGETYPE_COMPLIANT;
+    public function __construct($module, $pagetype=null, $platform=null) {
+        if (!$pagetype) {
+            $pagetype = Kurogo::deviceClassifier()->getPagetype();
+        }
+        if (!$platform) {
+            $platform = Kurogo::deviceClassifier()->getPlatform();
+        }
+        $this->pagetype = $pagetype;
         $this->platform = $platform;
         $this->module = $module;
         $this->path = WEB_BRIDGE_DIR.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR.$module.
-            ($isTablet ? '-tablet' : '');
+            ($pagetype == self::PAGETYPE_TABLET ? '-tablet' : '');
     }
 
     public function setPage($page) {
@@ -385,11 +391,11 @@ class KurogoWebBridge
     // Note: the following functions may be called before the device classifier is initialized
 
     private static function paramsToPagetypeAndPlatform(&$pagetype, &$platform) {
-        if (isset($_GET[self::NATIVE_PAGETYPE_PARAMETER]) && $_GET[self::NATIVE_PAGETYPE_PARAMETER] && 
-            isset($_GET[self::NATIVE_PLATFORM_PARAMETER]) && $_GET[self::NATIVE_PLATFORM_PARAMETER]) {
+        if (isset($_GET[self::PAGETYPE_PARAMETER]) && $_GET[self::PAGETYPE_PARAMETER] && 
+            isset($_GET[self::PLATFORM_PARAMETER]) && $_GET[self::PLATFORM_PARAMETER]) {
 
-            $pagetype = $_GET[self::NATIVE_PAGETYPE_PARAMETER];
-            $platform = $_GET[self::NATIVE_PLATFORM_PARAMETER];
+            $pagetype = $_GET[self::PAGETYPE_PARAMETER];
+            $platform = $_GET[self::PLATFORM_PARAMETER];
             
             return true;
         } else {
@@ -399,8 +405,8 @@ class KurogoWebBridge
 
     private static function pagetypeAndPlatformToParams($pagetype, $platform) {
         return array(
-            self::NATIVE_PAGETYPE_PARAMETER => $pagetype,
-            self::NATIVE_PLATFORM_PARAMETER => $platform,
+            self::PAGETYPE_PARAMETER => $pagetype,
+            self::PLATFORM_PARAMETER => $platform,
         );
     }
 
@@ -413,8 +419,8 @@ class KurogoWebBridge
     }
 
     private static function hasNativePlatform() {
-        return isset($_GET[self::NATIVE_PAGETYPE_PARAMETER]) && $_GET[self::NATIVE_PAGETYPE_PARAMETER] && 
-               isset($_GET[self::NATIVE_PLATFORM_PARAMETER]) && $_GET[self::NATIVE_PLATFORM_PARAMETER];
+        return isset($_GET[self::PAGETYPE_PARAMETER]) && $_GET[self::PAGETYPE_PARAMETER] && 
+               isset($_GET[self::PLATFORM_PARAMETER]) && $_GET[self::PLATFORM_PARAMETER];
     }
 
     public static function forceNativePlatform(&$pagetype, &$platform) {
@@ -439,8 +445,8 @@ class KurogoWebBridge
 
     public static function isNativeCall() {
         return self::hasNativePlatform() ||
-          Kurogo::deviceClassifier()->getPagetype() == self::NATIVE_PAGETYPE_COMPLIANT || 
-          Kurogo::deviceClassifier()->getPagetype() == self::NATIVE_PAGETYPE_TABLET;
+          Kurogo::deviceClassifier()->getPagetype() == self::PAGETYPE_COMPLIANT || 
+          Kurogo::deviceClassifier()->getPagetype() == self::PAGETYPE_TABLET;
     }
     
     public static function useNativeTemplatePageInitializer() {
