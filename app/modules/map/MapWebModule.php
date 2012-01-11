@@ -677,6 +677,8 @@ class MapWebModule extends WebModule {
                     $this->redirectTo('index', array());
                 }
 
+                $this->assignGroups(); // appears in searchbar
+
                 $places = array();
                 foreach ($this->getBookmarks() as $aBookmark) {
                     if ($aBookmark) { // prevent counting empty string
