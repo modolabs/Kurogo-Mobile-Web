@@ -14,6 +14,7 @@ class MapWebModule extends WebModule {
     protected $placemarkId;
     protected $mapDevice = null;
     protected $selectedPlacemarks;
+    protected $redirectSearch = true; // whether or not to redirect to detail page if there is one search result
 
     ////// inherited and conventional module functions
     
@@ -94,7 +95,6 @@ class MapWebModule extends WebModule {
 
     public function searchItems($searchTerms, $limit=null, $options=null)
     {
-        $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $mapSearch = $this->getSearchClass($options);
         $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
         if ($limit) {
@@ -126,6 +126,18 @@ class MapWebModule extends WebModule {
         );
     }
 
+    private function pageForPlacemark(Placemark $placemark) {
+        $page = 'detail';
+        $params = $placemark->getURLParams();
+        if (isset($params['feed']) && $this->isMapDrivenUI($params['feed'])) {
+            $fullscreen = ($this->numGroups > 1) ? 'campus' : 'index';
+            if ($this->page != $fullscreen) { // use detail page if we're already on a fullscreen map
+                $page = $fullscreen;
+            }
+        }
+        return $page;
+    }
+
     public function linkForItem(KurogoObject $mapItem, $options=null)
     {
         $result = array(
@@ -141,23 +153,10 @@ class MapWebModule extends WebModule {
                 $result['url'] = $url;
 
             } else {
-                /*
-                $urlArgs = array_merge($this->args, shortArrayFromMapFeature($mapItem));
-                if (!isset($urlArgs['group'])) {
-                    $urlArgs['group'] = $this->feedGroup;
-                }
-                */
                 $urlArgs = $mapItem->getURLParams();
                 $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
-                $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
-                // for map driven UI we want placemarks to show up on the full screen map
-                $category = key($mapItem->getCategoryIds());
-                if ($this->isMapDrivenUI($category)) {
-                    $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
-                    if ($this->page != $mapPage) {
-                        $result['url'] = $this->buildURL($mapPage, $urlArgs);
-                    }
-                }
+                $result['url'] = $this->buildBreadcrumbURL(
+                    $this->pageForPlacemark($mapItem), $urlArgs, $addBreadcrumb);
             }
 
             if (($distance = $mapItem->getField('distance')) && $this->getOptionalModuleVar('SHOW_DISTANCES', true)) {
@@ -254,7 +253,10 @@ class MapWebModule extends WebModule {
 
         $mapSearchClass = $this->getOptionalModuleVar($searchConfigName, $searchConfigDefault);
         $mapSearch = new $mapSearchClass($this->getFeedData());
-        $this->assign('poweredByGoogle', $mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces());
+        if ($mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces()) {
+            $this->assign('poweredByGoogle', true);
+            $this->redirectSearch = false;
+        }
         return $mapSearch;
     }
 
@@ -445,9 +447,8 @@ class MapWebModule extends WebModule {
     }
 
     private function assignSearchResults($searchTerms) {
-        $args = array_merge($this->args, array('addBreadcrumb' => true));
         // still need a way to show the Google logo if we use their search
-        $searchResults = $this->searchItems($searchTerms, null, $args);
+        $searchResults = $this->searchItems($searchTerms, null, $this->args);
         $places = array();
         foreach ($searchResults as $place) {
             $places[] = $this->linkForItem($place);
@@ -696,15 +697,20 @@ class MapWebModule extends WebModule {
                 $this->assign('places', $places);
                 break;
             
-            case 'bookmarkmap':
-                break;
-            
             case 'search':
-
+                $this->assignGroups(); // appears in searchbar
                 if ($searchTerms) {
-                    $places = $this->assignSearchResults($searchTerms);
-                    // TODO: redirect if there is only one result
-                  
+                    $searchResults = $this->searchItems($searchTerms, null, $this->args);
+                    if (count($searchResults) == 1) {
+                        $place = current($searchResults);
+                        $this->redirectTo($this->pageForPlacemark($place), $place->getURLParams());
+                    } else {
+                        $places = array();
+                        foreach ($searchResults as $place) {
+                            $places[] = $this->linkForItem($place);
+                        }
+                        $this->assign('places', $places);
+                    }
                 } else {
                     $this->redirectTo('index');
                 }
