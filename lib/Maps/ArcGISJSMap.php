@@ -233,7 +233,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
                     $width = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::WIDTH)
                         or $width = 20;
                     $height = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::HEIGHT)
-                        or $width = 20;
+                        or $height = 20;
                     $templateValues['___SYMBOL_ARGS___'] = "'$icon',$width,$height";
 
                 } else {
