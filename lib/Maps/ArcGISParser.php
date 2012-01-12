@@ -26,6 +26,22 @@ class ArcGISParser extends DataParser implements MapDataParser
     private $selectedLayer = null;
     private $isPopulated = false;
 
+    // forward compatibility functions
+
+    public function getId() {
+        return $this->getCategory();
+    }
+
+    public function placemarks() {
+        return $this->getAllPlacemarks();
+    }
+
+    public function categories() {
+        return $this->getChildCategories();
+    }
+
+    // 
+
     public function init($args)
     {
         parent::init($args);

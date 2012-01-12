@@ -30,6 +30,18 @@ class ArcGISLayer implements MapFolder, MapListElement {
     
     private $features = array();
     private $isPopulated = false;
+
+    // forward compatibility functions
+
+    public function placemarks() {
+        return $this->getAllPlacemarks();
+    }
+
+    public function categories() {
+        return $this->getChildCategories();
+    }
+
+    ///
     
     public function __construct($id, $name, ArcGISParser $parent) {
         $this->id = $id;

@@ -330,7 +330,7 @@ class MapDataController extends DataController implements MapFolder
             $this->getListItems(); // make sure we're populated
             $this->allPlacemarks = array();
             foreach ($this->parser->placemarks() as $placemark) {
-                $this->allPlacemarks[] = $this->getProjectedFeature($placemark);
+                $this->allPlacemarks[] = $placemark;
             }
         }
         return $this->allPlacemarks;

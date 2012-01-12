@@ -255,7 +255,6 @@ class ArcGISJSMap extends JavascriptMapImageController {
                     $templateValues['___SYMBOL_ARGS___'] = "$shape,$size,new esri.symbol.SimpleLineSymbol(),new dojo.Color(\"#$color\")";
                 }
             }
-
             if (isset($this->mapProjector)) {
                 $point = $this->mapProjector->projectPoint($point);
                 list($x, $y) = MapProjector::getXYFromPoint($point);
