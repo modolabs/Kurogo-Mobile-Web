@@ -234,7 +234,7 @@ if (typeof KGOMapLoader != 'undefined') {
                       '</div>' +
                       '<div class="calloutMain" style="float:left;">' + content + '</div>' +
                       '<div class="calloutDisclosure" style="flost:left;">' +
-                        '<a href="' + url + '"><img src="' + URL_BASE + '/modules/map/images/info.png" /></a>' +
+                        '<a href="' + url + '"><img src="' + URL_BASE.replace(/\/$/,'') + '/modules/map/images/info.png" /></a>' +
                       '</div></div>';
         }
         return content;
