@@ -230,7 +230,11 @@ class ArcGISJSMap extends JavascriptMapImageController {
                     // 1. icon image
                     // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/picturemarkersymbol.htm
                     $templateValues['___SYMBOL_TYPE___'] = 'PictureMarkerSymbol';
-                    $templateValues['___SYMBOL_ARGS___'] = '"'.$icon.'",20,20'; // TODO allow size to be changed
+                    $width = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::WIDTH)
+                        or $width = 20;
+                    $height = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::HEIGHT)
+                        or $width = 20;
+                    $templateValues['___SYMBOL_ARGS___'] = "'$icon',$width,$height";
 
                 } else {
                     // 2. either all four of (color, size, outline, style) are set or zero

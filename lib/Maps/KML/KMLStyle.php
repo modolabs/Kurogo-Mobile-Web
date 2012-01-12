@@ -83,8 +83,8 @@ class KMLStyle extends XMLElement implements MapStyle
                 $iconChild = $element->getChildElement('ICON');
                 $this->iconStyle = array(
                     MapStyle::ICON => $iconChild->getProperty('HREF'),
-                    MapStyle::WIDTH => $iconChild->getProperty('W'),
-                    MapStyle::HEIGHT => $iconChild->getProperty('H'),
+                    MapStyle::WIDTH => $element->getProperty('W'),
+                    MapStyle::HEIGHT => $element->getProperty('H'),
                     MapStyle::SCALE => $element->getProperty('SCALE'),
                     );
                 break;

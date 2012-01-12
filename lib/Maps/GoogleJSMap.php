@@ -82,7 +82,14 @@ class GoogleJSMap extends JavascriptMapImageController {
             $style = $marker->getStyle();
             if ($style) {
                 if (($icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON)) != null) {
-                    $options .= "icon: '$icon',\n";
+                    $width = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::WIDTH);
+                    $height = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::HEIGHT);
+                    if ($width && $height) {
+                        $displaySize = "new google.maps.Size($width, $height)";
+                        $options .= "icon: new google.maps.MarkerImage('$icon', null, null, null, $displaySize),\n";
+                    } else {
+                        $options .= "icon: '$icon',\n";
+                    }
                 }
             }
 
