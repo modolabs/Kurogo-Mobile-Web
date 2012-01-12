@@ -144,7 +144,7 @@ class MapDataController extends DataController implements MapFolder
     
     protected static function getLeafNodesForListItem(MapListElement $listItem, Array &$results) {
         if ($listItem instanceof MapFolder) {
-            foreach ($listItem->getListItems() as $innerItem) {
+            foreach ($listItem->categories() as $innerItem) {
                 self::getLeafNodesForListItem($innerItem, $results);
             }
         } else {
@@ -309,8 +309,9 @@ class MapDataController extends DataController implements MapFolder
         if (count($folders) >= 1) {
             // attempt to drill down if we are given a "subdirectory"
             if (isset($firstItem) && isset($folders[$firstItem])) {
-                return self::listItemsAtPath(
-                    $folders[$firstItem]->getListItems(), $path);
+                $folder = $folders[$firstItem];
+                $items = array_merge($folder->categories(), $folder->placemarks());
+                return self::listItemsAtPath($items, $path);
             }
             return $folders;
         }
