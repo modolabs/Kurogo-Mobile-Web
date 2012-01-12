@@ -63,17 +63,21 @@ abstract class MapImageController
             $baseMap = new $mapClass();
         }
 
-        $baseMap->init();
-
-        if (isset($params['center'])) {
-            $baseMap->setCenter(filterLatLon($params['center']));
-        }
+        $baseMap->init($params);
 
         return $baseMap;
     }
 
-    public function init()
+    public function init($params)
     {
+        if (isset($params['center'])) {
+            $this->setCenter(filterLatLon($params['center']));
+        }
+
+        if (isset($params['DEFAULT_ZOOM_LEVEL'])) {
+            $this->setZoomLevel($params['DEFAULT_ZOOM_LEVEL']);
+        }
+
         $this->bufferBox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
     }
 
