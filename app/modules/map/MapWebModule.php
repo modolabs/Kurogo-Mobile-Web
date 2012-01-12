@@ -285,18 +285,7 @@ class MapWebModule extends WebModule {
 
     protected function bookmarkIDForPlacemark($placemark) {
         if ($placemark) {
-            //$cookieParams = shortArrayFromMapFeature($placemark);
             $cookieParams = $placemark->getURLParams();
-            /*
-            if (($feedId = $this->getArg('feed'))) {
-                $cookieParams['feed'] = $feedId;
-            } else {
-                $feedId = current($placemark->getCategoryIds());
-                if ($feedId) {
-                    $cookieParams['feed'] = $feedId;
-                }
-            }
-            */
         }
         $title = $this->getArg('title');
         if ($title) {
@@ -308,17 +297,18 @@ class MapWebModule extends WebModule {
     ///////////// url builders
 
     private function groupURL($group, $addBreadcrumb=false) {
-        $args = $this->args;
-        $args['group'] = $group;
-        if (isset($args['worldmap'])) {
-            unset($args['worldmap']);
-        }
-        if (isset($args['listview'])) {
-            unset($args['listview']);
-        }
         if (!$group) {
             $topPage = 'index';
+            $args = array();
         } else {
+            $args = $this->args;
+            $args['group'] = $group;
+            if (isset($args['worldmap'])) {
+                unset($args['worldmap']);
+            }
+            if (isset($args['listview'])) {
+                unset($args['listview']);
+            }
             $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
         }
         return $this->buildBreadcrumbURL($topPage, $args, $addBreadcrumb);
