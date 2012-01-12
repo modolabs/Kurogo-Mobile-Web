@@ -719,17 +719,23 @@ class MapWebModule extends WebModule {
             case 'category':
 
                 $feedId = $this->getArg('feed');
+                $this->assign('feedId', $feedId);
+
                 $dataModel = $this->getDataModel($feedId);
                 $category = $this->getArg('category', null);
                 if ($category !== null) {
                     $dataModel->findCategory($category);
                 }
                 $title = $dataModel->getTitle();
-                $listItems = $dataModel->items();
-                while (count($listItems) == 1 && end($listItems) instanceof MapFolder) {
-                    $categoryId = end($listItems)->getId();
-                    $dataModel->findCategory($categoryId);
+                if ($searchTerms) {
+                    $listItems = $dataModel->search($searchTerms);
+                } else {
                     $listItems = $dataModel->items();
+                    while (count($listItems) == 1 && end($listItems) instanceof MapFolder) {
+                        $categoryId = end($listItems)->getId();
+                        $dataModel->findCategory($categoryId);
+                        $listItems = $dataModel->items();
+                    }
                 }
 
                 if (count($listItems) == 1) {

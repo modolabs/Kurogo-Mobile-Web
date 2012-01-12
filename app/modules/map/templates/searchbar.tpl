@@ -18,6 +18,9 @@
                     {if $group && !$campuses}
                         <input type="hidden" name="group" value="{$group}" />
                     {/if}
+                    {if $feedId}
+                        <input type="hidden" name="feed" value="{$feedId}" />
+                    {/if}
                     {if $mapURL}
                     <input type="hidden" name="listview" value=1 />
                     {/if}

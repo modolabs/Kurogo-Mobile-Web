@@ -21,12 +21,6 @@ class MapAPIModule extends APIModule
     protected function urlForPlacemark(Placemark $placemark)
     {
         $urlArgs = $placemark->getURLParams();
-        /*
-        $urlArgs = shortArrayFromMapFeature($placemark);
-        if ($this->feedGroup) {
-            $urlArgs['group'] = $this->feedGroup;
-        }
-        */
 
         // mimic getMergedConfigData in MapWebModule
         $categoryArg = isset($urlArgs['category']) ? $urlArgs['category'] : null;
