@@ -15,6 +15,9 @@ class MapSearch {
         $this->feeds = $feeds;
     }
     
+    public function init($args) {
+    }
+
     public function setFeedGroup($feedGroup) {
         $this->feedGroup = $feedGroup;
     }

@@ -233,21 +233,16 @@ class MapAPIModule extends APIModule
     }
 
     protected function getSearchClass($options=array()) {
+        $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
         if (isset($options['external']) && $options['external']) {
-            $searchConfigName = 'MAP_EXTERNAL_SEARCH_CLASS';
-            $searchConfigDefault = 'GoogleMapSearch';
-        } else { // includes federatedSearch
-            $searchConfigName = 'MAP_SEARCH_CLASS';
-            $searchConfigDefault = 'MapSearch';
+            // use the same search class by default
+            $mapSearchClass = $this->getOptionalModuleVar('MAP_EXTERNAL_SEARCH_CLASS', $mapSearchClass);
         }
-
-        $mapSearchClass = $this->getOptionalModuleVar($searchConfigName, $searchConfigDefault);
-        if (!$this->feeds)
+        if (!$this->feeds) {
             $this->feeds = $this->loadFeedData();
-        $mapSearch = new $mapSearchClass($this->feeds);
-        if ($mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces()) {
-            // TODO notify client that logo is required
         }
+        $mapSearch = new $mapSearchClass($this->feeds);
+        $mapSearch->init($this->getDataForGroup($this->feedGroup));
         return $mapSearch;
     }
 

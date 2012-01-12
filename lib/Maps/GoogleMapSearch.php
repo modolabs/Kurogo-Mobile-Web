@@ -2,9 +2,13 @@
 
 class GoogleMapSearch extends MapSearch {
 
-    protected $feedData = array(
-        'CONTROLLER_CLASS' => 'GoogleGeoDataController',
-        );
+    protected $dataModel;
+
+    public function init($args) {
+        parent::init($args);
+        $this->dataModel = new GoogleGeoDataModel();
+        $this->dataModel->init($args);
+    }
 
     public function isPlaces()
     {
@@ -13,15 +17,13 @@ class GoogleMapSearch extends MapSearch {
 
     public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null)
     {
-        $controller = MapDataController::factory($this->feedData['CONTROLLER_CLASS'], $this->feedData);
-        $this->searchResults = $controller->searchByProximity($center, $tolerance, $maxItems);
+        $this->searchResults = $this->dataModel->searchByProximity($center, $tolerance, $maxItems);
         return $this->searchResults;
     }
 
     public function searchCampusMap($query)
     {
-        $controller = MapDataController::factory($this->feedData['CONTROLLER_CLASS'], $this->feedData);
-        $this->searchResults = $controller->search($query);
+        $this->searchResults = $this->dataModel->search($query);
         return $this->searchResults;
     }
 }

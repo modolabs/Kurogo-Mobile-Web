@@ -130,9 +130,12 @@ class MapWebModule extends WebModule {
         $page = 'detail';
         $params = $placemark->getURLParams();
         if (isset($params['feed']) && $this->isMapDrivenUI($params['feed'])) {
-            $fullscreen = ($this->numGroups > 1) ? 'campus' : 'index';
-            if ($this->page != $fullscreen) { // use detail page if we're already on a fullscreen map
-                $page = $fullscreen;
+            //$fullscreen = ($this->numGroups > 1) ? 'campus' : 'index';
+            //if ($this->page != $fullscreen) { // use detail page if we're already on a fullscreen map
+            //    $page = $fullscreen;
+            //}
+            if ($this->page != 'campus') { // use detail page if we're already on a fullscreen map
+                $page = 'campus';
             }
         }
         return $page;
@@ -243,16 +246,13 @@ class MapWebModule extends WebModule {
     }
 
     protected function getSearchClass($options=array()) {
+        $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
         if (isset($options['external']) && $options['external']) {
-            $searchConfigName = 'MAP_EXTERNAL_SEARCH_CLASS';
-            $searchConfigDefault = 'GoogleMapSearch';
-        } else { // includes federatedSearch
-            $searchConfigName = 'MAP_SEARCH_CLASS';
-            $searchConfigDefault = 'MapSearch';
+            // use the same search class by default
+            $mapSearchClass = $this->getOptionalModuleVar('MAP_EXTERNAL_SEARCH_CLASS', $mapSearchClass);
         }
-
-        $mapSearchClass = $this->getOptionalModuleVar($searchConfigName, $searchConfigDefault);
         $mapSearch = new $mapSearchClass($this->getFeedData());
+        $mapSearch->init($this->getDataForGroup($this->feedGroup));
         if ($mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces()) {
             $this->assign('poweredByGoogle', true);
             $this->redirectSearch = false;
@@ -349,8 +349,9 @@ class MapWebModule extends WebModule {
                 if (!isset($params['group']) && $this->feedGroup) {
                     $params['group'] = $this->feedGroup;
                 }
-                $mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
-                return $this->buildURL($mapPage, $params);
+                //$mapPage = ($this->numGroups > 1) ? 'campus' : 'index';
+                //return $this->buildURL($mapPage, $params);
+                return $this->buildURL('campus', $params);
             }
             return $this->buildBreadcrumbURL('detail', $params, true);
         } else {
