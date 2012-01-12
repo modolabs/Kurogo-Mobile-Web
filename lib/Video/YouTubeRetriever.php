@@ -18,7 +18,6 @@
     }
     
     public function search($searchTerms, &$response=null) {
-        $this->setStandardFilters();
         $this->addFilter('q', $searchTerms); //set the query
         $this->addFilter('orderby', 'relevance');
         return $this->getData($response);
