@@ -138,8 +138,8 @@ function htmlColorForColorString($colorString) {
 // returns a value between 0 and 1
 // $colorString must be valid hex color
 function alphaFromColorString($colorString) {
-    if (strlen($color) == 8) {
-        $alphaHex = substr($color, 0, 2);
+    if (strlen($colorString) == 8) {
+        $alphaHex = substr($colorString, 0, 2);
         $alpha = hexdec($alphaHex) / 256;
         return round($alpha, 2);
     }
