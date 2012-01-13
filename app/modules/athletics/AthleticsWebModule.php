@@ -369,7 +369,7 @@ class AthleticsWebModule extends WebModule {
                 $this->setLogData($storyID, $story->getTitle());
         
                 if (!$content = $this->cleanContent($story->getContent())) {
-                  if ($url = $story->getLinks()) {
+                  if ($url = $story->getLink()) {
                       header("Location: $url");
                       exit();
                   } else {
