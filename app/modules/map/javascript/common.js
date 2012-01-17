@@ -152,24 +152,14 @@ function clearUpdateMapDimensionsTimeouts() {
 
 // resizing counterpart for dynamic maps
 function updateContainerDimensions() {
-    clearUpdateMapDimensionsTimeouts();
-    var timeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
-    updateMapDimensionsTimeoutIds.push(timeoutId);
-    timeoutId = window.setTimeout(doUpdateContainerDimensions, 500);
-    updateMapDimensionsTimeoutIds.push(timeoutId);
-    timeoutId = window.setTimeout(doUpdateContainerDimensions, 1000);
-    updateMapDimensionsTimeoutIds.push(timeoutId);
-}
-
-function doUpdateContainerDimensions() {
-    var mapimage = document.getElementById("mapimage");
-    if (mapimage) {
-        var topoffset = findPosY(mapimage);
-        mapimage.style.height = (getWindowHeight() - topoffset) + "px";
-    }
-
-    if (typeof mapLoader.resizeMapOnContainerResize == 'function') {
-        mapLoader.resizeMapOnContainerResize();
+    if (typeof doUpdateContainerDimensions == 'function') {
+        clearUpdateMapDimensionsTimeouts();
+        var timeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
+        updateMapDimensionsTimeoutIds.push(timeoutId);
+        timeoutId = window.setTimeout(doUpdateContainerDimensions, 500);
+        updateMapDimensionsTimeoutIds.push(timeoutId);
+        timeoutId = window.setTimeout(doUpdateContainerDimensions, 1000);
+        updateMapDimensionsTimeoutIds.push(timeoutId);
     }
 }
 
