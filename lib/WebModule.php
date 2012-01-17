@@ -126,6 +126,15 @@ abstract class WebModule extends Module {
   protected function urlForPage($pageNumber) {
     return '';
   }
+  
+  protected function getAccess() {
+    if (!$access = parent::getAccess()) {
+        if (KurogoWebBridge::shouldIgnoreAuth()) {
+            $access = true;
+        }
+    }
+    return $access;
+  }
     
   private function getPager() {
     $pager = array(
@@ -1630,7 +1639,7 @@ abstract class WebModule extends Module {
   }
 
   protected function buildNativeWebTemplates() {
-      if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1') {
+      if (!Kurogo::isLocalhost()) {
           throw new KurogoConfigurationException("{$this->page} command can only be run from localhost");
       }
   

@@ -235,6 +235,10 @@ class Kurogo
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
 
+    public static function isLocalhost() {
+        return isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'));
+    }
+
     private static function checkIP($ip) {
         if (!empty($ip) && ip2long($ip)!=-1 && ip2long($ip)!=false) {
             $private_ips = array (

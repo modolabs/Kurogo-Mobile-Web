@@ -452,6 +452,10 @@ class KurogoWebBridge
     public static function useNativeTemplatePageInitializer() {
         return self::isNativeCall() && (!self::isAjax() || self::isAssetCheck());
     }
+
+     public static function shouldIgnoreAuth() {
+        return Kurogo::isLocalhost() && self::isNativeCall() && (!self::isAjax() || self::isAssetCheck());
+    }
     
     public static function useWrapperPageTemplate() {
         return self::isNativeCall() && !self::isAjax();
