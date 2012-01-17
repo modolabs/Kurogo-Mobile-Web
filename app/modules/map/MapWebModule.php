@@ -659,6 +659,7 @@ class MapWebModule extends WebModule {
                     if ($this->getArg('worldmap')) {
                         $this->feedGroup = null;
                     }
+                    $this->setTemplatePage('fullscreen');
                     $this->initializeDynamicMap();
                 }
 
@@ -747,6 +748,7 @@ class MapWebModule extends WebModule {
 
                 if ($isMapView) {
                     $this->selectedPlacemarks = $places;
+                    $this->setTemplatePage('fullscreen');
                     $this->initializeDynamicMap();
                 } else {
                     $this->assign('title',  $title);
@@ -804,6 +806,11 @@ class MapWebModule extends WebModule {
                 $this->assign('tabKeys', $tabKeys);
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
 
+                break;
+            
+            case 'pane':
+                $this->args['worldmap'] = true;
+                $this->initializeDynamicMap();
                 break;
         }
     }
@@ -923,7 +930,6 @@ class MapWebModule extends WebModule {
 
     protected function initializeDynamicMap()
     {
-        $this->setTemplatePage('fullscreen');
         $this->addExternalJavascript($this->getInternalJavascriptURL('/common/javascript/maps.js'));
 
         // set up base map
