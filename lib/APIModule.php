@@ -263,6 +263,7 @@ abstract class APIModule extends Module
         $this->logCommand($size);
     }
     header("Content-Length: " . $size);
+    header("Content-Type: application/json; charset=utf-8");
     echo $json;
     exit();
   }

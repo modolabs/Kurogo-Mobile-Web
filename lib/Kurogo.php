@@ -30,6 +30,10 @@ class Kurogo
         $this->startTime = microtime(true);
     }
     
+    public static function KurogoUserAgent() {
+        return "Kurogo Server v" . KUROGO_VERSION;
+    }
+    
     public function setCurrentModule(Module $module) {
         $this->module = $module;
     }
