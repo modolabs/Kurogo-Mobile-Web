@@ -25,10 +25,9 @@ abstract class WebModule extends Module {
   protected $templateModule = 'none'; 
   protected $templatePage = 'index';
 
-    protected $deviceClassifier;  
+  protected $deviceClassifier;  
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
-  protected $supportsCerts = false;
   
   protected $imageExt = '.png';
   
@@ -447,11 +446,6 @@ abstract class WebModule extends Module {
         $this->loadDeviceClassifierIfNeeded();
         return $this->deviceClassifier->getPlatform();
     }
-
-    protected function getSupportsCerts() {
-        $this->loadDeviceClassifierIfNeeded();
-        return $this->deviceClassifier->getSupportsCerts();
-    }
     
     protected function loadDeviceClassifierIfNeeded() {
         $this->deviceClassifier = Kurogo::deviceClassifier();
@@ -466,11 +460,10 @@ abstract class WebModule extends Module {
             parent::init();
         }
 
-        $this->moduleName    = $this->getModuleVar('title','module');
+        $this->moduleName = $this->getModuleVar('title','module');
 
-        $this->pagetype      = $this->getPagetype();
-        $this->platform      = $this->getPlatform();
-        $this->supportsCerts = $this->getSupportsCerts();
+        $this->pagetype = $this->getPagetype();
+        $this->platform = $this->getPlatform();
 
         switch ($this->getPagetype()) {
             case 'compliant':
