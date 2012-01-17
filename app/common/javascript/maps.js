@@ -81,6 +81,7 @@ KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url
     if (subtitle !== null) {
         content += '<div class="smallprint map_address">' + subtitle + '</div>';
     }
+    // TODO don't reference an asset in a module directory here
     if (typeof url != 'undefined' && url !== null) {
         content = '<div class="calloutMain" style="float:left;">' + content + '</td>' +
                   '<div class="calloutDisclosure" style="flost:left;">' +
@@ -162,8 +163,9 @@ KGOGoogleMapLoader.prototype.loadMap = function() {
     if ("geolocation" in navigator && this.showUserLocation) {
         this.locateMeButton = document.createElement('a');
         this.locateMeButton.id = "locateMe";
+        var that = this;
         this.locateMeButton.onclick = function() {
-            this.toggleLocationUpdates();
+            that.toggleLocationUpdates();
         }
         controlDiv.appendChild(this.locateMeButton);
     }
@@ -175,7 +177,7 @@ KGOGoogleMapLoader.prototype.locationUpdated = function(location, firstLocation)
     var position = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
     if (this.userLocationMarker === null) {
         // TODO make these more customizable
-        var icon = new google.maps.MarkerImage(URL_BASE + API_URL_PREFIX + '/modules/map/images/map-location@2x.png',
+        var icon = new google.maps.MarkerImage(URL_BASE + '/common/images/map-location.png',
             null, // original size
             null, // origin (0, 0)
             new google.maps.Point(8, 8), // anchor
@@ -222,7 +224,7 @@ KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
     });
 
     var that = this;
-    google.maps.event.addListener(marker, 'click', function() {
+    google.maps.event.addListener(marker, 'mousedown', function() {
         that.showCalloutForMarker(marker);
     });
 
@@ -447,7 +449,7 @@ KGOEsriMapLoader.prototype.locationUpdated = function(location, firstLocation) {
 
         if (typeof this.userLocationMarker !== null) {
             // TODO make these more customizable
-            var pointSymbol = new esri.symbol.PictureMarkerSymbol(URL_BASE + 'modules/map/images/map-location@2x.png', 16, 16);
+            var pointSymbol = new esri.symbol.PictureMarkerSymbol(URL_BASE + '/common/images/map-location.png', 16, 16);
             this.userLocationMarker = new esri.Graphic(point, pointSymbol);
 
         } else {

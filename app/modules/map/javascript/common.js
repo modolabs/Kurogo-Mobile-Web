@@ -13,7 +13,7 @@ function sortGroupsByDistance() {
             }
 
             makeAPICall(
-                'GET', 'map', 'sortGroupsByDistance',
+                'GET', CONFIG_MODULE, 'sortGroupsByDistance',
                 {"lat": location.coords.latitude, "lon": location.coords.longitude},
                 function(response) {
                     var sortedGroups = [];
@@ -56,7 +56,7 @@ function submitMapSearch(form) {
         if ('projection' in mapLoader) {
             params['projection'] = mapLoader.projection;
         }
-        makeAPICall('GET', 'map', 'search', params, function(response) {
+        makeAPICall('GET', CONFIG_MODULE, 'search', params, function(response) {
             if (response.results.length > 0) {
                 // TODO: make the "browse" button bring up results in a list
                 var minLat = 10000000;
