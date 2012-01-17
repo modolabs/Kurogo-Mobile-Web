@@ -79,6 +79,7 @@
 #header .searchwrapper {
     left: 6px;
     right: 100px;
+    position: absolute;
 }
 
 #header.expanded .searchwrapper {
