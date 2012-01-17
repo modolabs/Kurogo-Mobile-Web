@@ -176,7 +176,11 @@ class URLDataRetriever extends DataRetriever {
     }
     
     protected function streamContextOpts($args) {
-        $streamContextOpts = array();
+        $streamContextOpts = array(
+            'http'=>array(
+                'user_agent'=>Kurogo::KurogoUserAgent()
+            )
+        );
         
         if (isset($args['HTTP_PROXY_URL'])) {
             $streamContextOpts['http'] = array(
