@@ -281,7 +281,7 @@ class PeopleWebModule extends WebModule {
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $cookieParams = array(
                                 'title' => $person->getName(),
-                                'uid' => urlencode($uid)
+                                'uid' => rawurlencode($uid)
                             );
             
                             $cookieID = http_build_query($cookieParams);
