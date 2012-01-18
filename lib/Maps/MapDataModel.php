@@ -109,7 +109,7 @@ class MapDataModel extends DataModel implements MapFolder
     }
 
     protected function setCategoryId($categoryId) {
-        if (!$categoryId) {
+        if (!strlen($categoryId)) {
             die();
         }
         foreach ($this->categories() as $category) {

@@ -1,6 +1,8 @@
 <?php
 
+// classes in here are required for unserialization
 Kurogo::includePackage('Maps', 'KML');
+Kurogo::includePackage('Maps', 'Shapefile');
 
 class MapSearch extends DataRetriever {
 
