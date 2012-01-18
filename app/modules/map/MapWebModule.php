@@ -168,8 +168,10 @@ class MapWebModule extends WebModule {
 
         } else {
             $external = $options && isset($options['external']) && $options['external'];
+            $feedId = $options && isset($options['feed']) ? $options['feed'] : null;
+            $groupId = $options && isset($options['group']) ? $options['group'] : null;
             $category = implode(MAP_CATEGORY_DELIMITER, $mapItem->getIdStack());
-            $result['url'] = $this->categoryURL($category, null, null, $external);
+            $result['url'] = $this->categoryURL($category, $feedId, $groupId, $external);
         }
 
         return $result;
@@ -399,6 +401,58 @@ class MapWebModule extends WebModule {
             $this->getMapDevice());
     }
 
+    private function assignItemsFromFeed($feedId, $searchTerms=null, $isMapView=false) {
+        $dataModel = $this->getDataModel($feedId);
+        $title = $dataModel->getTitle();
+
+        $categoryId = $this->getArg('category', null);
+        if ($categoryId !== null) {
+            $category = $dataModel->findCategory($categoryId);
+            $title = $category->getTitle();
+        }
+
+        if ($searchTerms) {
+            $listItems = $dataModel->search($searchTerms);
+        } else {
+            $listItems = $dataModel->items();
+            while (count($listItems) == 1 && end($listItems) instanceof MapFolder) {
+                $categoryId = end($listItems)->getId();
+                $category = $dataModel->findCategory($categoryId);
+                $title = $category->getTitle();
+                $listItems = $dataModel->items();
+            }
+        }
+
+        $linkOptions = array('feed' => $feedId, 'group' => $this->feedGroup);
+
+        if (count($listItems) == 1) {
+            $link = $this->linkForItem(current($listItems), $linkOptions);
+            $this->redirectTo($link['url']);
+            return;
+        }
+
+        $results = array();
+        foreach ($listItems as $listItem) {
+            if (!$isMapView) {
+                $results[] = $this->linkForItem($listItem, $linkOptions);
+            } elseif ($listItem instanceof Placemark) {
+                $results[] = $listItem;
+            }
+        }
+
+        if ($isMapView) {
+            $this->selectedPlacemarks = $results;
+            $this->setTemplatePage('fullscreen');
+            $this->initializeDynamicMap();
+        } else {
+            $this->assign('title',  $title);
+            $this->assign('navItems', $results);
+            if ($this->numGroups > 1) {
+                $this->assignClearLink();
+            }
+        }
+    }
+
     ///// template control
 
     private function assignGroups($templateArg='campuses') {
@@ -420,21 +474,26 @@ class MapWebModule extends WebModule {
     
     private function assignFeeds() {
         $categories = array();
-        foreach ($this->getFeedData() as $id => $feed) {
-            if (isset($feed['HIDDEN']) && $feed['HIDDEN']) {
-                continue;
+        $places = array();
+        $feeds = $this->getFeedData();
+        if (count($feeds) == 1) {
+            $this->assignItemsFromFeed(key($feeds));
+
+        } else {
+            foreach ($this->getFeedData() as $id => $feed) {
+                if (isset($feed['HIDDEN']) && $feed['HIDDEN']) {
+                    continue;
+                }
+                $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
+                $categories[] = array(
+                    'id'       => $id,
+                    'title'    => $feed['TITLE'],
+                    'subtitle' => $subtitle,
+                    'url'      => $this->feedURL($id),
+                    );
             }
-            $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
-            $categories[] = array(
-                'id'       => $id,
-                'title'    => $feed['TITLE'],
-                'subtitle' => $subtitle,
-                'url'      => $this->feedURL($id),
-                );
+            $this->assign('navItems', $categories);
         }
-        
-        $this->assign('categories', $categories);
-        return $categories;
     }
 
     private function assignSearchResults($searchTerms) {
@@ -686,7 +745,7 @@ class MapWebModule extends WebModule {
                             );
                     }
                 }
-                $this->assign('places', $places);
+                $this->assign('navItems', $places);
                 break;
             
             case 'search':
@@ -709,54 +768,11 @@ class MapWebModule extends WebModule {
                 break;
             
             case 'category':
-
-                $feedId = $this->getArg('feed');
-                $this->assign('feedId', $feedId);
-
-                $dataModel = $this->getDataModel($feedId);
-                $category = $this->getArg('category', null);
-                if ($category !== null) {
-                    $dataModel->findCategory($category);
-                }
-                $title = $dataModel->getTitle();
-                if ($searchTerms) {
-                    $listItems = $dataModel->search($searchTerms);
-                } else {
-                    $listItems = $dataModel->items();
-                    while (count($listItems) == 1 && end($listItems) instanceof MapFolder) {
-                        $categoryId = end($listItems)->getId();
-                        $dataModel->findCategory($categoryId);
-                        $listItems = $dataModel->items();
-                    }
-                }
-
-                if (count($listItems) == 1) {
-                    $link = $this->linkForItem(current($listItems));
-                    $this->redirectTo($link['url']);
-                }
                 
                 $isMapView = $this->getArg('mapview') && $this->isMapDrivenUI();
-
-                $places = array();
-                foreach ($listItems as $listItem) {
-                    if (!$isMapView) {
-                        $places[] = $this->linkForItem($listItem);
-                    } elseif ($listItem instanceof Placemark) {
-                        $places[] = $listItem;
-                    }
-                }
-
-                if ($isMapView) {
-                    $this->selectedPlacemarks = $places;
-                    $this->setTemplatePage('fullscreen');
-                    $this->initializeDynamicMap();
-                } else {
-                    $this->assign('title',  $title);
-                    $this->assign('places', $places);
-                    if ($this->numGroups > 1) {
-                        $this->assignClearLink();
-                    }
-                }
+                $feedId = $this->getArg('feed');
+                $this->assign('feedId', $feedId);
+                $this->assignItemsFromFeed($feedId, $searchTerms, $isMapView);
 
                 // link to "view all on map"
                 $mapArgs = $this->args;
@@ -895,7 +911,7 @@ class MapWebModule extends WebModule {
             $categories = array(array(
                 'title' => $this->getLocalizedString('NO_MAPS_FOUND'),
                 ));
-            $this->assign('categories', $categories);
+            $this->assign('else', $categories);
 
         } else if ($this->feedGroup === null) {
             // bookmarks and view all section
@@ -910,8 +926,9 @@ class MapWebModule extends WebModule {
             // feedgroups section
             $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS');
             $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
-            $this->assignGroups('categories');
+            $this->assignGroups('navItems');
 
+            $this->addInlineJavascriptFooter("var CONFIG_MODULE = '{$this->configModule}';");
             $this->addOnLoad('sortGroupsByDistance();');
         }
 

@@ -18,7 +18,7 @@
   <h2>{$title}</h2>
 </div>
 
-{include file="findInclude:common/templates/results.tpl" results=$places}
+{include file="findInclude:common/templates/results.tpl" results=$navItems}
 
 {if $categories|@count>1}
 <div class="nonfocal">

@@ -6,7 +6,7 @@
   <h3>{$browseHint}</h3>
 </div>
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories navlistID="categories"}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$navItems navlistID="categories"}
 
 {if $clearLink}
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$clearLink secondary=true}

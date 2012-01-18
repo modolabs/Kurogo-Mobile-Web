@@ -43,7 +43,6 @@ class MapDataModel extends DataModel implements MapFolder
         foreach ($placemarks as $placemark) {
             if ($placemark instanceof Placemark) {
                 $this->addURLParams($placemark);
-                //$placemark->addCategoryId($this->feedId);
                 $results[] = $placemark;
             }
         }
@@ -98,6 +97,11 @@ class MapDataModel extends DataModel implements MapFolder
                 $this->setCategoryId($categoryId);
             }
         }
+
+        if ($this->selectedCategory) {
+            return $this->selectedCategory;
+        }
+        return $this;
     }
 
     protected function clearCategoryId() {

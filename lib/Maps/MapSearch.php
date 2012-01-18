@@ -157,7 +157,6 @@ class MapSearch extends DataRetriever {
     protected function doSearchByText($query) {
         $allResults = array();
     	foreach ($this->feeds as $id => $feedData) {
-            //$controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller = mapModelFromFeedData($feedData);
             
             if ($controller->canSearch()) {
