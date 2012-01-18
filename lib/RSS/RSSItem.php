@@ -4,6 +4,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
+includePackage('News');
 class RSSItem extends XMLElement implements NewsItem
 {
     protected $name='item';
@@ -76,6 +77,12 @@ class RSSItem extends XMLElement implements NewsItem
     {
         return $this->pubDate;
     }
+    
+    public function getPubTimestamp() {
+        if ($this->pubDate) {
+            return $this->pubDate->format('U');
+        }
+    }
 
     public function getComments()
     {
@@ -99,7 +106,7 @@ class RSSItem extends XMLElement implements NewsItem
     
     public function getImage()
     {
-        if ( ($enclosure = $this->getEnclosure()) && $enclosure->isImage()) {
+        if ( ($enclosure = $this->getEnclosure()) && $enclosure instanceOf RSSImageEnclosure) {
             return $enclosure;
         } elseif (count($this->images)>0) {
             return $this->images[0];
@@ -117,6 +124,15 @@ class RSSItem extends XMLElement implements NewsItem
         {
             case 'LINK':
                 if (!$value) {
+                    if ($element->getAttrib('REL') == 'enclosure') {
+                        $this->enclosure = RSSEnclosure::factory(array(
+                            'URL' => $element->getAttrib('HREF'),
+                            'LENGTH' => $element->getAttrib('LENGTH'),
+                            'TYPE' => $element->getAttrib('TYPE'),
+                        ));
+                        break;
+                    }
+
                     if ($link = $element->getAttrib('HREF')) {
                         $element->setValue($link, true);
                     }

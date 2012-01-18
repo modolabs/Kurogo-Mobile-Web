@@ -139,7 +139,12 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
     protected $exdates = array();
     protected $recurrence_exceptions = array();
 
-    public function getEventCategories() {
+    public function getEventCategories(TimeRange $range = null) {
+        if($range && $this->range->contained_by($range)) {
+            return $this->categories;
+        }else {
+            return $this->categories;
+        }
         return array();
     }
 
@@ -570,6 +575,9 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
         $this->addLine($output_string, 'END', 'VEVENT');
         return $output_string;
     }
+    
+    public function init($args) {
+    }
 
     public function __construct($summary=NULL, TimeRange $range=NULL) {
         $this->classname = 'VEVENT';
@@ -850,6 +858,7 @@ class ICalendar extends ICalObject implements CalendarInterface {
     protected $events=array();
     protected $eventStartTimes=array();
     protected $recurrence_exceptions = array();
+    protected $initArgs=array();
 
     public function add_event(CalendarEvent $event) {
         if (!$event instanceOf ICalEvent) {
@@ -924,6 +933,11 @@ class ICalendar extends ICalObject implements CalendarInterface {
     public function set_attribute($attr, $value, $params=null) {
         $this->properties[$attr] = $value;
     }
+
+    public function init($args) {
+        $this->initArgs = $args;
+    }
+    
 
     public function __construct($url=FALSE) {
         $this->properties = Array();

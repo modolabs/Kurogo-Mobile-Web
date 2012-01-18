@@ -51,7 +51,7 @@ class EmergencyNoticeDataController extends DataController
             
             $items = $this->items();
             foreach ($items as $item) {
-                if ($now - strtotime($item->getPubDate()) > $this->NOTICE_EXPIRATION) {
+                if (($now - $item->getPubTimestamp()) > $this->NOTICE_EXPIRATION) {
                     break; // items too old
                 }
                 
