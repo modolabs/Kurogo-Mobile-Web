@@ -4,7 +4,8 @@
         "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "BOOKMARKS_ENABLED":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1}
+            "BOOKMARKS_ENABLED":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "TOPNEWS_FEED":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_DESCRIPTION", "type":"text","omitBlankValue":true,"config":"page-index","section":"topnews"}
        }
     },
     "feeds": {
