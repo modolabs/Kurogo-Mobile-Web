@@ -47,7 +47,7 @@ class ShapefilePlacemark extends BasePlacemark
 
     public function unserialize($data) {
         $data = unserialize($data);
-        parent::unserialize($data['parent');
+        parent::unserialize($data['parent']);
         $this->titleField = $data['titleField'];
         $this->subtitleField = $data['subtitleField'];
     }
