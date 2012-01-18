@@ -4,7 +4,7 @@ includePackage('DateTime');
 class EmergencyNoticeDataModel extends DataModel
 {
     protected $DEFAULT_PARSER_CLASS = 'RSSDataParser';
-    protected $NOTICE_EXPIRATION = NULL;
+    protected $NOTICE_EXPIRATION = 604800; // 1 week
     protected $NOTICE_MAX_COUNT = NULL; // unlimited
     protected $emergencyNotices = NULL;
     protected $cacheFolder = "Emergency";
@@ -16,9 +16,8 @@ class EmergencyNoticeDataModel extends DataModel
 
         if (isset($args['NOTICE_EXPIRATION'])) {
             $this->NOTICE_EXPIRATION = $args['NOTICE_EXPIRATION'];
-        } else {
-            $this->NOTICE_EXPIRATION = 7*24*60*60; // 1 week
         }
+        
         if (isset($args['NOTICE_MAX_COUNT'])) {
             $this->NOTICE_MAX_COUNT = $args['NOTICE_MAX_COUNT'];
         }
