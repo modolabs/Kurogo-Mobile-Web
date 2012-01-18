@@ -172,4 +172,34 @@ class KMLPlacemark extends XMLElement implements Placemark
                 break;
         }
     }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'index' => $this->index,
+                'title' => $this->title,
+                'description' => $this->description,
+                'address' => $this->address,
+                'snippet' => $this->snippet,
+                'urlParams' => serialize($this->urlParams),
+                'categories' => serialize($this->categories),
+                'fields' => serialize($this->fields),
+                'style' => serialize($this->style),
+                'geometry' => serialize($this->geometry),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->index = $data['index'];
+        $this->title = $data['title'];
+        $this->description = $data['description'];
+        $this->address = $data['address'];
+        $this->snippet = $data['snippet'];
+        $this->urlParams = unserialize($data['urlParams']);
+        $this->categories = unserialize($data['categories']);
+        $this->fields = unserialize($data['fields']);
+        $this->style = unserialize($data['style']);
+        $this->geometry = unserialize($data['geometry']);
+    }
 }

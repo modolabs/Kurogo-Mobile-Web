@@ -35,6 +35,22 @@ class ShapefilePlacemark extends BasePlacemark
     public function setFields($fields) {
         $this->fields = $fields;
     }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'subtitleField' => $this->subtitleField,
+                'titleField' => $this->titleField,
+                'parent' => parent::serialize(),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        parent::unserialize($data['parent');
+        $this->titleField = $data['titleField'];
+        $this->subtitleField = $data['subtitleField'];
+    }
 }
 
 

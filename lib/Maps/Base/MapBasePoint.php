@@ -2,7 +2,7 @@
 
 class MapBasePoint implements MapGeometry {
 
-    private $centroid;
+    protected $centroid;
 
     public function __construct($coordinates, $centroid=null) {
         $this->coordinates = $coordinates;
@@ -15,6 +15,18 @@ class MapBasePoint implements MapGeometry {
     
     public function getCenterCoordinate() {
         return $this->centroid;
+    }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'centroid' => serialize($this->centroid),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->centroid = unserialize($data['centroid']);
     }
 }
 

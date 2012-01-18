@@ -1,11 +1,18 @@
 <?php
 
-class MapSearch {
+Kurogo::includePackage('Maps', 'KML');
+
+class MapSearch extends DataRetriever {
 
     protected $searchResults;
     protected $resultCount;
     protected $feeds;
     protected $feedGroup;
+    protected $searchParams;
+
+    protected $searchMode;
+    const SEARCH_MODE_TEXT = 0;
+    const SEARCH_MODE_NEARBY = 1;
     
     public function __construct($feeds) {
         $this->setFeedData($feeds);
@@ -16,6 +23,8 @@ class MapSearch {
     }
     
     public function init($args) {
+        parent::init($args);
+        $this->setCacheGroup(get_class($this));
     }
 
     public function setFeedGroup($feedGroup) {
@@ -30,9 +39,63 @@ class MapSearch {
         return $this->resultCount;
     }
 
+    public function retrieveResponse() {
+        $response = $this->initResponse();
+        switch ($this->searchMode) {
+            case self::SEARCH_MODE_NEARBY:
+                if (is_array($this->searchParams)) {
+                    list($center, $tolerance, $maxItems, $dataSource) = $this->searchParams;
+                    $response->setResponse(
+                        $this->doSearchByProximity($center, $tolerance, $maxItems, $dataSource));
+                }
+                break;
+            case self::SEARCH_MODE_TEXT:
+            default:
+                if (is_string($this->searchParams)) {
+                    $response->setResponse(
+                        $this->doSearchByText($this->searchParams));
+                }
+                break;
+        }
+
+        return $response;
+    }
+
     // tolerance specified in meters
-    public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null) {
-        $this->searchResults = array();
+    public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataSource=null) {
+        $this->searchMode = self::SEARCH_MODE_NEARBY;
+        $this->setContext('mode', 'nearby');
+        if (isset($dataSource)) {
+            $id = $dataSource->getId();
+            $this->setCacheKey("c={$center['lat']},{$center['lon']}&t={$tolerance}&m={$maxItems}&d={$id}");
+        } else {
+            $this->setCacheKey("c={$center['lat']},{$center['lon']}&t={$tolerance}&m={$maxItems}");
+        }
+        $this->searchParams = array($center, $tolerance, $maxItems, $dataSource);
+
+        $this->searchResults = $this->getData();
+        if ($this->searchResults === null) {
+            $this->searchResults = array();
+        }
+        $this->resultCount = count($this->searchResults);
+        return $this->searchResults;
+    }
+
+    public function searchCampusMap($query) {
+        $this->searchMode = self::SEARCH_MODE_TEXT;
+        $this->setContext('mode', 'text');
+        $this->setCacheKey("q={$query}");
+        $this->searchParams = $query;
+
+        $this->searchResults = $this->getData();
+        if ($this->searchResults === null) {
+            $this->searchResults = array();
+        }
+        $this->resultCount = count($this->searchResults);
+        return $this->searchResults;
+    }
+
+    protected function doSearchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null) {
 
         $resultsByDistance = array();
         $controllers = array();
@@ -47,27 +110,34 @@ class MapSearch {
             }
         }
 
+        // keep track of duplicate placemarks
+        $unique = array();
+
         foreach ($controllers as $controller) {
             try {
                 $results = $controller->searchByProximity($center, $tolerance, $maxItems);
                 // merge arrays manually since keys are numeric
-                foreach($results as $mapFeature) {
-                    $toCenter = $mapFeature->getGeometry()->getCenterCoordinate();
+                foreach($results as $placemark) {
+                    $toCenter = $placemark->getGeometry()->getCenterCoordinate();
+
+                    // assume if placemarks have the same lat/lon
+                    // and title then they are the same place
+                    $testString = $toCenter['lat'].$toCenter['lon'].$placemark->getTitle();
+                    if (in_array($testString, $unique)) {
+                        continue;
+                    }
+                    $unique[] = $testString;
+
                     $distance = greatCircleDistance($center['lat'], $center['lon'], $toCenter['lat'], $toCenter['lon']);
-                    $mapFeature->setField('distance', $distance);
+                    $placemark->setField('distance', $distance);
                     // avoid distance collisions
                     if (isset($resultsByDistance[$distance])) {
-                        // don't add the same placemark twice
-                        if ($resultsByDistance[$distance]->getTitle() == $mapFeature->getTitle()) {
-                            continue;
-                        } else {
+                        $distance++;
+                        while(isset($resultsByDistance[$distance])) {
                             $distance++;
-                            while(isset($resultsByDistance[$distance])) {
-                                $distance++;
-                            }
                         }
                     }
-                    $resultsByDistance[$distance] = $mapFeature;
+                    $resultsByDistance[$distance] = $placemark;
                 }
 
             } catch (KurogoDataServerException $e) {
@@ -81,13 +151,11 @@ class MapSearch {
             array_splice($resultsByDistance, $maxItems);
         }
 
-        $this->searchResults = array_values($resultsByDistance);
-        return $this->searchResults;
+        return array_values($resultsByDistance);
     }
 
-    public function searchCampusMap($query) {
-        $this->searchResults = array();
-    
+    protected function doSearchByText($query) {
+        $allResults = array();
     	foreach ($this->feeds as $id => $feedData) {
             //$controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller = mapModelFromFeedData($feedData);
@@ -95,15 +163,14 @@ class MapSearch {
             if ($controller->canSearch()) {
                 try {
                     $results = $controller->search($query);
-                    $this->resultCount += count($results);
-                    $this->searchResults = array_merge($this->searchResults, $results);
+                    $allResults = array_merge($allResults, $results);
                 } catch (KurogoDataServerException $e) {
                     Kurogo::log(LOG_WARNING,'encountered KurogoDataServerException for feed config: ' . print_r($feedData, true) .  $e->getMessage(), 'maps');
                 }
             }
     	}
 
-    	return $this->searchResults;
+    	return $allResults;
     }
 }
 

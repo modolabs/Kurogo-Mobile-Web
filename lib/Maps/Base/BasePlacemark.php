@@ -166,4 +166,34 @@ class BasePlacemark implements Placemark
     public function setURL($url) {
         $this->url = $url;
     }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'id' => $this->id,
+                'title' => $this->title,
+                'subtitle' => $this->subtitle,
+                'address' => $this->address,
+                'url' => $this->url,
+                'urlParams' => serialize($this->urlParams),
+                'categories' => serialize($this->categories),
+                'fields' => serialize($this->fields),
+                'style' => serialize($this->style),
+                'geometry' => serialize($this->geometry),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->id = $data['id'];
+        $this->title = $data['title'];
+        $this->subtitle = $data['subtitle'];
+        $this->address = $data['address'];
+        $this->url = $data['url'];
+        $this->urlParams = unserialize($data['urlParams']);
+        $this->categories = unserialize($data['categories']);
+        $this->fields = unserialize($data['fields']);
+        $this->style = unserialize($data['style']);
+        $this->geometry = unserialize($data['geometry']);
+    }
 }

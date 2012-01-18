@@ -2,7 +2,8 @@
 
 class ArcGISPolyline implements MapPolyline
 {
-    private $points;
+    protected $points;
+    protected $centerCoordinate;
 
     public function getPoints()
     {
@@ -27,5 +28,19 @@ class ArcGISPolyline implements MapPolyline
     public function getCenterCoordinate()
     {
         return $this->centerCoordinate;
+    }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'points' => serialize($this->points),
+                'centerCoordinate' => serialize($this->centerCoordinate),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->points = unserialize($data['points']);
+        $this->centerCoordinate = unserialize($data['centerCoordinate']);
     }
 }

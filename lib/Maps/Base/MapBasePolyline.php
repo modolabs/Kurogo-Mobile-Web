@@ -2,8 +2,7 @@
 
 class MapBasePolyline extends MapBasePoint implements MapPolyline {
 
-    private $points;
-    private $centroid;
+    protected $points;
 
     public function __construct($points, $centroid=null) {
         $this->points = $points;
@@ -32,6 +31,20 @@ class MapBasePolyline extends MapBasePoint implements MapPolyline {
 
     public function getPoints() {
         return $this->points;
+    }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'centroid' => serialize($this->centroid),
+                'points' => serialize($this->points),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->centroid = unserialize($data['centroid']);
+        $this->points = unserialize($data['points']);
     }
 }
 
