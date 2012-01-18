@@ -18,7 +18,9 @@ class ArcGISDataModel extends MapDataModel
     protected function setCategoryId($categoryId) {
         $this->clearCategoryId();
         parent::setCategoryId($categoryId);
-        $this->retriever->setSelectedLayer($categoryId);
+        if ($this->selectedCategory) {
+            $this->retriever->setSelectedLayer($categoryId);
+        }
     }
 
     public function placemarks() {
