@@ -109,6 +109,8 @@ class MapDBDataController extends MapDataController implements MapFolder
     public function selectPlacemark($featureId)
     {
         $feature = $this->dbParser->getFeatureById($featureId, $this->drillDownPath);
+        $feature->setURLParam('feed', $this->categoryId);
+        $feature->setURLParam('group', $this->feedGroup);
         if ($feature) {
             $this->setSelectedPlacemarks(array($feature));
         }
@@ -119,9 +121,16 @@ class MapDBDataController extends MapDataController implements MapFolder
     {
         $this->getListItems(); // make sure we're populated
         if ($this->hasDBData) {
-            return $this->dbParser->getCategory()->getAllPlacemarks();
+            $placemarks = $this->dbParser->getCategory()->getAllPlacemarks();
+
+        } else {
+            $placemarks = $this->parser->getAllPlacemarks();
         }
-        return $this->parser->getAllPlacemarks();
+        foreach ($placemarks as $placemark) {
+            $placemark->setURLParam('feed', $this->categoryId);
+            $placemark->setURLParam('group', $this->feedGroup);
+        }
+        return $placemarks;
     }
 
     // TODO allow config of searchable fields

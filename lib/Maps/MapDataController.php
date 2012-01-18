@@ -170,7 +170,19 @@ class MapDataController extends DataController implements MapFolder
     }
 
     public function findCategory($categoryId) {
-        $this->addDisplayFilter('category', $categoryId);
+        $this->addDisplayFilter('category', $categoryId); // this sets drillDownPath
+
+        $selectedCategory = $this;
+        foreach ($this->drillDownPath as $pathElement) {
+            foreach ($selectedCategory->categories() as $category) {
+                if ($category->getId() == $pathElement) {
+                    $selectedCategory = $category;
+                    break;
+                }
+            }
+        }
+
+        return $selectedCategory;
     }
 
     public function items() {

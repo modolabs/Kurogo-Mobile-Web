@@ -134,5 +134,11 @@ class MapCategory implements MapFolder, MapListElement
         }   
         return true;     
     }
+
+    // backward compatibility
+
+    public function getListItems() {
+        return array_merge($this->placemarks(), $this->categories());
+    }
 }
 
