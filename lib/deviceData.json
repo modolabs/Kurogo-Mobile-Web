@@ -185,7 +185,7 @@
             },
             "match": [
                 {
-                    "regex" : "/Silk\\/.*Silk-Accelerated=/",
+                    "regex" : "Silk/.*Silk-Accelerated=",
                     "options": {
                         "CASE_INSENSITIVE": false
                     }
