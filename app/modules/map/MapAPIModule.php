@@ -15,6 +15,7 @@ class MapAPIModule extends APIModule
 
     protected $currentFeedData;
 
+    protected $dataModel;
     protected $mapProjector;
 
     // reimplements a subset of MapWebModule::linkForItem
@@ -173,40 +174,43 @@ class MapAPIModule extends APIModule
         return $this->feeds;
     }
 
-    private function getDataController($currentCategory=null)
+    private function getDataModel($feedId=null)
     {
         if (!$this->feeds) {
             $this->loadFeedData();
         }
 
-        if ($currentCategory === null) {
-            $drillPath = array();
-            $category = $this->getArg('category');
-            if (isset($this->feeds[$category])) {
-                 $currentCategory = $category;
-            } else {
-                // traces the parent categories that led the user to this category id
-                $references = $this->getCategoryReferences();
-                foreach ($references as $reference) {
-                    if ($currentCategory) {
-                        $drillPath[] = $reference;
-                    } elseif (isset($this->feeds[$reference])) {
-                        $currentCategory = $reference;
+        // re-instantiate DataModel if a different feed is requested.
+        if ($this->dataModel && $feedId !== $this->dataModel->getFeedId()) {
+            $this->dataModel = null;
+        }
+
+        $categoryId = $this->getArg('references');
+
+        if ($this->dataModel === null) {
+            if ($feedId === null) {
+                $testFeedId = $this->getArg('category');
+                if (isset($this->feeds[$feedId])) {
+                    $feedId = $testFeedId;
+                } else {
+                    foreach (explode(MAP_CATEGORY_DELIMITER, $categoryId) as $testId) {
+                        if (isset($this->feeds[$testId])) {
+                            $feedId = $testId;
+                            break;
+                        }
                     }
                 }
-                $drillPath[] = $category;
             }
+
+            $feedData = $this->getCurrentFeed($feedId);
+            $this->dataModel = mapModelFromFeedData($feedData);
         }
 
-        $dataController = null;
-        if (($feedData = $this->getCurrentFeed($currentCategory))) {
-            $dataController = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-
-            if ($drillPath) {
-                $dataController->addDisplayFilter('category', $drillPath);
-            }
+        if (isset($categoryId)) {
+            $this->dataModel->findCategory($categoryId);
         }
-        return $dataController;
+
+        return $this->dataModel;
     }
 
     private function getCurrentFeed($category=null)
@@ -248,6 +252,7 @@ class MapAPIModule extends APIModule
 
     // end of functions duped from mapwebmodule
 
+    /*
     private function getCategoryReferences() {
         $path = $this->getArg('references', array());
         if ($path !== array()) {
@@ -259,6 +264,7 @@ class MapAPIModule extends APIModule
         }
         return $path;
     }
+    */
 
     protected function getGeometryType(MapGeometry $geometry) {
         if ($geometry instanceof MapPolygon) {
@@ -369,11 +375,11 @@ class MapAPIModule extends APIModule
             
             case 'category':
                 $this->loadFeedData();
-                $category = $this->getArg('category');
+                $categoryId = $this->getArg('category');
                 $groups = $this->getFeedGroups();
 
-                if (isset($groups[$category])) {
-                    $this->feedGroup = $category;
+                if (isset($groups[$categoryId])) {
+                    $this->feedGroup = $categoryId;
                     $groupData = $this->loadFeedData();
                     $categories = array();
                     foreach ($groupData as $id => $feed) {
@@ -394,29 +400,30 @@ class MapAPIModule extends APIModule
                     $this->setResponseVersion(1);
 
                 } else {
-                    $dataController = $this->getDataController();
+                    $dataController = $this->getDataModel();
 
                     if ($dataController) {
-
-                        $listItems = $dataController->getListItems();
-
-                        $placemarks = array();
-                        $categories = array();
-                        foreach ($listItems as $listItem) {
-                            if ($listItem instanceof Placemark) {
-                                $placemarks[] = $this->shortArrayFromPlacemark($listItem);
-
-                            } else {
-                                $categories[] = $this->arrayFromCategory($listItem);
-                            }
-                        }
+                        //if ($categoryId) {
+                        //    $category = $dataController->findCategory($categoryId);
+                        //    $placemarks = $category->placemarks();
+                        //    $categories = $category->categories();
+                        //} else {
+                            $placemarks = $dataController->placemarks();
+                            $categories = $dataController->categories();
+                        //}
 
                         $response = array();
                         if ($placemarks) {
-                            $response['placemarks'] = $placemarks;
+                            $response['placemarks'] = array();
+                            foreach ($placemarks as $placemark) {
+                                $response['placemarks'][] = $this->arrayFromPlacemark($placemark);
+                            }
                         }
                         if ($categories) {
-                            $response['categories'] = $categories;
+                            $response['categories'] = array();
+                            foreach ($categories as $aCategory) {
+                                $response['categories'][] = $this->arrayFromCategory($aCategory);
+                            }
                         }
 
                         $this->setResponse($response);
@@ -431,7 +438,7 @@ class MapAPIModule extends APIModule
 
             case 'detail':
 
-                $dataController = $this->getDataController();
+                $dataController = $this->getDataModel();
                 $placemarkId = $this->getArg('id', null);
                 if ($dataController && $placemarkId !== null) {
                     $placemarks = $dataController->selectPlacemark($placemarkId);
