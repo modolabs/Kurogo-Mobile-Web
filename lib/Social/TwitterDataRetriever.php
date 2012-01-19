@@ -50,8 +50,8 @@ class TwitterDataParser extends DataParser
 {
     private function parsePost($entry) {
         $post = new TwitterPost();
-        $post->setID($entry['id']);
-        $post->setAuthor($entry['user']['id']);
+        $post->setID($entry['id_str']);
+        $post->setAuthor($entry['user']['id_str']);
         $post->setCreated(new DateTime($entry['created_at']));
         $post->setBody($entry['text']);
         $post->setParentID($entry['in_reply_to_status_id']);        
@@ -60,7 +60,7 @@ class TwitterDataParser extends DataParser
 
     private function parseUser($entry) {
         $user = new TwitterUser();
-        $user->setUserID($entry['id']);
+        $user->setUserID($entry['id_str']);
         $user->setName($entry['name']);
         $user->setImageURL(IS_SECURE ? $entry['profile_image_url_https'] : $entry['profile_image_url']);
         return $user;
@@ -86,7 +86,7 @@ class TwitterDataParser extends DataParser
                         }
                     }
                     return $return;
-                } elseif (isset($data['id'], $data['text'], $data['created_at'])) {
+                } elseif (isset($data['id_str'], $data['text'], $data['created_at'])) {
                     return $this->parsePost($data);
                 } elseif (isset($data['screen_name'])) {
                     return $this->parseUser($data);
