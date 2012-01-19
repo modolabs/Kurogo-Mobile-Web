@@ -11,6 +11,10 @@ class DataResponse
     protected $responseStatus;
     protected $responseError;
     protected $context=array(); // response defined.
+
+    public function getResponseFile() {
+        throw new KurogoDataException("getResponseFile() does not yet work with " . get_Class($this));
+    }
     
     public function setRetriever(DataRetriever $retriever) {
         $this->retriever = $retriever;
