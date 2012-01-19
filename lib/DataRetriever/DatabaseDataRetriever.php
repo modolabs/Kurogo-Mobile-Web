@@ -29,6 +29,7 @@ class DatabaseDataRetriever extends DataRetriever
     }
     
     public function sql() {
+        $this->initRequestIfNeeded();
         return $this->sql;
     }
 
@@ -37,6 +38,7 @@ class DatabaseDataRetriever extends DataRetriever
     }
 
     public function parameters() {
+        $this->initRequestIfNeeded();
         return $this->parameters;
     }
     
@@ -46,12 +48,9 @@ class DatabaseDataRetriever extends DataRetriever
         $this->setParameters($parameters);
     }
     
-    protected function initRequest() {
-    }
-
     protected function retrieveResponse() {
 
-        $this->initRequest();
+        $this->initRequestIfNeeded();
         $response = $this->initResponse();
 
         if ($sql = $this->sql()) {

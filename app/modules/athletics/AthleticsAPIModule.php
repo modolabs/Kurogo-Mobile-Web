@@ -1,6 +1,7 @@
 <?php
 
 Kurogo::includePackage('Athletics');
+Kurogo::includePackage('News');
 
 class AthleticsAPIModule extends APIModule
 {
@@ -31,7 +32,7 @@ class AthleticsAPIModule extends APIModule
                 
                 $sports = array();
                 foreach ($sportsConfig as $key => $sportData) {
-                    $sports[$key] = array('title' => $sportData['TITLE']);
+                    $sports[] = array('key'=>$key, 'title' => $sportData['TITLE']);
                 }
                 
                 $response = array(
@@ -110,6 +111,34 @@ class AthleticsAPIModule extends APIModule
                 
                 break;
 
+            case "search":
+                $searchTerms = $this->getArg('filter');
+                $start = $this->getArg('start', 0);
+                $section = $this->getArg('section', 'topnews');
+                $mode = $this->getArg('mode');
+
+                $newsFeed = $this->getNewsFeed($section);
+
+                $newsFeed->setStart($start);
+                $newsFeed->setLimit($this->maxPerPage);
+
+                $items = $newsFeed->search($searchTerms);
+                $totalItems = $newsFeed->getTotalItems();
+
+                $stories = array();
+                foreach ($items as $story) {
+                    $stories[] = $this->formatStory($story, $mode);
+                }
+
+                $response = array(
+                    'stories' => $stories,
+                    'moreStories' => ($totalItems - $start - $this->maxPerPage)
+                );
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                break;
+
             default:
                 $this->invalidCommand();
                 break;
@@ -120,8 +149,8 @@ class AthleticsAPIModule extends APIModule
         if ($image = $story->getImage()) {
             return array(
                 'src'    => $image->getURL(),
-                'width'  => $image->getProperty('width'),
-                'height' => $image->getProperty('height'),
+                'width'  => $image->getWidth(),
+                'height' => $image->getHeight()
             );
         } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
             return array(
@@ -135,25 +164,21 @@ class AthleticsAPIModule extends APIModule
     }
     
     protected function formatStory($story, $mode) {
+        
         $item = array(
             'GUID'        => $story->getGUID(),
             'link'        => $story->getLink(),
             'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
-            'pubDate'     => strtotime($story->getPubDate())
+            'pubDate'     => $story->getPubTimestamp()
         );
 
-        // like in the web module we
-        // use the existance of GUID
-        // to determine if we have content
-        if($story->getGUID()) {
-            $item['GUID'] = $story->getGUID();
+        if($story->getContent()) {
             if($mode == 'full') {
                 $item['body'] = $story->getContent();
             }
             $item['hasBody'] = TRUE;
         } else {
-            $item['GUID'] = $story->getLink();
             $item['hasBody'] = FALSE;
         }
 

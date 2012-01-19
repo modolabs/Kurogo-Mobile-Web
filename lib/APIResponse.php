@@ -61,7 +61,7 @@ class APIResponse
     public function display() {
         $json = $this->getJSONOutput();
         $size = strlen($json);
-        header("Content-Type: application/json;charset=utf-8");
+        header("Content-Type: application/json; charset=" . Kurogo::getCharset());
         header("Content-Length: " . $size);
         echo $json;
         return $json;

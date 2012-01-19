@@ -29,7 +29,7 @@ class DataCache
     }
     
     protected function createCacheFolderIfNeeded() {
-        $cacheFolder = $this->getCacheFolder();
+        $cacheFolder = $this->getCacheFolder($this->cacheGroup);
         if (!is_dir($cacheFolder)) {
             if (!mkdir($cacheFolder, 0700, true)) {
                 throw new KurogoDataException("Could not create cache folder $cacheFolder");
@@ -37,11 +37,11 @@ class DataCache
         }
     }
     
-    protected function getCacheFolder() {
+    protected function getCacheFolder($cacheGroup=null) {
 
         $return = rtrim($this->cacheFolder, DIRECTORY_SEPARATOR);
         
-        if ($this->cacheGroup) {
+        if ($cacheGroup) {
             $return .= DIRECTORY_SEPARATOR . $this->cacheGroup;
         }
 
@@ -123,7 +123,7 @@ class DataCache
     
     public function getFullPath($key) {
 
-        $return = $this->getCacheFolder() . DIRECTORY_SEPARATOR . $key;
+        $return = $this->getCacheFolder($this->cacheGroup) . DIRECTORY_SEPARATOR . $key;
         return $return;
     }
 
@@ -191,6 +191,19 @@ class DataCache
         }
         
         return $this->setValueToDisk($key, $data);
+    }
+
+    public function clearCache() {
+        $folder = $this->getCacheFolder();
+        return Kurogo::rmdir($folder);
+    }
+    
+    public function clearCacheGroup($cacheGroup) {
+        if (!$cacheGroup) {
+            return false;
+        }
+        $folder = $this->getCacheFolder($cacheGroup);
+        return Kurogo::rmdir($folder);
     }
     
     protected function setValueToDisk($key, $data) {

@@ -21,6 +21,10 @@ class URLDataRetriever extends DataRetriever {
     protected $requestData;
     protected $streamContext = null;
     
+    public function __wakeup() {
+        $this->initStreamContext($this->initArgs);
+    }
+    
     /**
      * Sets the base url for the request. This value will be set automatically if the BASE_URL argument
      * is included in the factory method. Subclasses that have fixed URLs (i.e. web service data controllers)
@@ -62,6 +66,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     protected function parameters() {
+        $this->initRequestIfNeeded();
         return $this->filters;
     }
 
@@ -114,21 +119,23 @@ class URLDataRetriever extends DataRetriever {
     }
 
     protected function headers() {
+        $this->initRequestIfNeeded();
         return $this->requestHeaders;
     }
     
     protected function method() {
+        $this->initRequestIfNeeded();
         return $this->requestMethod;
     }
     
     protected function setData($data) {
-        $this->data = $data;
+        $this->requestData = $data;
     }
 
     protected function data() {
+        $this->initRequestIfNeeded();
         return $this->requestData;
     }
-    
     
     public function setMethod($method) {
         if (!in_array($method, array('POST','GET','DELETE','PUT'))) {
@@ -210,6 +217,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     protected function baseURL() {
+        $this->initRequestIfNeeded();
         return $this->baseURL;
     }
          
@@ -219,18 +227,20 @@ class URLDataRetriever extends DataRetriever {
      * @return string
      */
     protected function cacheKey() {
-        if ($this->requestMethod == 'GET') {
-            if (!$url = $this->url()) {
-                throw new KurogoDataException("URL could not be determined");
-            }
-            return 'url_' . md5($url);
-        } 
+        if ($this->cacheKey) {
+            return $this->cacheKey;
+        }
         
-        //only cache GET requests
-        return null;
-    }
-    
-    protected function initRequest() {
+        if (!$url = $this->url()) {
+            throw new KurogoDataException("URL could not be determined");
+        }
+        
+        $key = 'url_' . md5($url);
+
+        if ($data = $this->data()) {
+            $key .= "_" . md5($data);
+        }
+        return $key;
     }
     
     /**
@@ -241,7 +251,7 @@ class URLDataRetriever extends DataRetriever {
      */
     protected function retrieveResponse() {
     
-        $this->initRequest();
+        $this->initRequestIfNeeded();
         if (!$this->requestURL = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }
@@ -252,16 +262,26 @@ class URLDataRetriever extends DataRetriever {
         $this->requestData = $this->setContextData();
         
         Kurogo::log(LOG_INFO, "Retrieving $this->requestURL", 'url_retriever');
-        $data = file_get_contents($this->requestURL, false, $this->streamContext);
-        $http_response_header = isset($http_response_header) ? $http_response_header : array();
 
+        $data = file_get_contents($this->requestURL, false, $this->streamContext);
+        $url_parts = parse_url($this->requestURL);
+
+        if (!isset($url_parts['scheme'])) {
+             $this->DEFAULT_RESPONSE_CLASS="FileDataResponse";
+        }
+        
         $response = $this->initResponse();
-        $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders);
+        if ($response instanceOf HTTPDataResponse) {
+            $http_response_header = isset($http_response_header) ? $http_response_header : array();
+            $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders, $this->requestData);
+            $response->setResponseHeaders($http_response_header);
+            Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
+        } elseif ($response instanceOf FileDataResponse) {
+            $response->setRequest($this->requestURL);
+        }
 
         $response->setResponse($data);
-        $response->setResponseHeaders($http_response_header);
         
-        Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
         if ($response->getResponseError()) {
             Kurogo::log(LOG_WARNING, sprintf("%s for %s", $response->getResponseError(), $this->requestURL), 'url_retriever');
         }

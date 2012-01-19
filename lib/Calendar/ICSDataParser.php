@@ -80,9 +80,21 @@ class ICSDataParser extends DataParser
 		}
     }
     
+    protected function initEvent() {
+        $event = new $this->eventClass();
+        $event->init($this->initArgs);
+        return $event;
+    }
+
+    protected function initCalendar() {
+        $calendar = new $this->calendarClass();
+        $calendar->init($this->initArgs);
+        return $calendar;
+    }
+    
     public function parseData($contents)
     {
-        $calendar = new $this->calendarClass;
+        $calendar = $this->initCalendar();
         if (!$calendar instanceOf CalendarInterface) {
             throw new KurogoConfigurationException("Calendar $class $this->calendarClass not a CalendarInterface");
         }
@@ -100,7 +112,8 @@ class ICSDataParser extends DataParser
                 switch ($value) {
                 case 'VEVENT':
                     $addEvent = true;
-                    $nesting[] = new $this->eventClass;
+                    $event = 
+                    $nesting[] = $this->initEvent();
                     break;
                 case 'VCALENDAR':
                     $nesting[] = $calendar;

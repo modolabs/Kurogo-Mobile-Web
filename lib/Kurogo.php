@@ -13,6 +13,7 @@ class Kurogo
 {
     private static $_instance = NULL;
     private function __clone() {}
+    protected $charset='UTF-8';
     protected $startTime;
     protected $libDirs = array();
     protected $siteConfig;
@@ -475,7 +476,9 @@ class Kurogo
         // Load configuration files
         //    
         $this->initSite($path);
+        $this->setCharset($this->siteConfig->getOptionalVar('DEFAULT_CHARSET', 'UTF-8'));
         
+        ini_set('default_charset', $this->charset());
         ini_set('display_errors', $this->siteConfig->getVar('DISPLAY_ERRORS'));
         if (!ini_get('error_log')) {
             ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
@@ -752,6 +755,18 @@ class Kurogo
         define('THEME_DIR', SITE_DIR . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $theme);
         $this->siteConfig = $siteConfig;
       }    
+      
+    public static function getCharset() {
+        return Kurogo::sharedInstance()->charset();
+    }   
+    
+    public function setCharset($charset) {
+        $this->charset = $charset;
+    }
+
+    public function charset() {
+        return $this->charset;
+    }
 
     public static function encrypt($string, $key=SITE_KEY) {
         if (strlen($string)==0) {
@@ -1022,7 +1037,7 @@ class Kurogo
         return trim(file_get_contents($url));
     }
     
-    private function rmdir($dir) {
+    public static function rmdir($dir) {
         if (strlen($dir) && is_dir($dir)) {
             if (is_file('/bin/rm')) {
                 $exec = sprintf("%s -rf %s", '/bin/rm', escapeshellarg($dir));
@@ -1054,7 +1069,7 @@ class Kurogo
         self::log(LOG_NOTICE, "Clearing site caches", "kurogo");
 
         if (strlen($type)>0) {
-            return $this->rmdir(CACHE_DIR . "/" . $type);
+            return self::rmdir(CACHE_DIR . "/" . $type);
         }
     
         //clear all folders
@@ -1064,7 +1079,7 @@ class Kurogo
         $dirs = scandir(CACHE_DIR);
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
-                $result = $this->rmdir(CACHE_DIR . "/" . $dir);
+                $result = self::rmdir(CACHE_DIR . "/" . $dir);
                 if ($result !==0) {
                     return $result;
                 }

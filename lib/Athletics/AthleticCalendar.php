@@ -6,6 +6,9 @@ class  AthleticCalendar implements CalendarInterface {
     public function addEvent(AthleticEvent $event) {
         $this->events[] = $event;
     }
+    
+    public function init($args) {
+    }
 
     /* CalendarInterface */
     public function add_event(CalendarEvent $event) {
@@ -20,7 +23,7 @@ class  AthleticCalendar implements CalendarInterface {
         $this->addEvent($athleticEvent);
     }
 
-    public function set_attribute($contentname, $value, $params) {
+    public function set_attribute($contentname, $value, $params=null) {
         // no op
     }
   
