@@ -1,6 +1,6 @@
 <?php
 
-interface NewsImage
+interface KurogoImage
 {
     public function getURL();
     public function getWidth();

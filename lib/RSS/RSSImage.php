@@ -3,8 +3,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
-includePackage('News');
-class RSSImage extends XMLElement implements NewsImage
+class RSSImage extends XMLElement implements KurogoImage
 {
     protected $name='image';
     protected $title;
