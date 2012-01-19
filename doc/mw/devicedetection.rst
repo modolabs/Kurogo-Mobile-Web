@@ -28,15 +28,15 @@ See :ref:`Device Detection Configuration <devicedetection_config>` for specific 
 Data Format
 ===========
 
-The Kruogo Framework queries the device detection service using the *user agent* of the user's browser.
+The Kurogo Framework queries the device detection service using the *user agent* of the user's browser.
 The service will then return a series of properties based on the device:
 
 * *pagetype* - String. One of the device *buckets* that determines which major source of HTML the device
   will received. Values include *basic*, *touch*, *compliant* and *tablet*
 * *platform* - The specific type of device. Values include *ANDROID*, *BBPLUS*, *BLACKBERRY*, *COMPUTER*, 
   *FEATUREPHONE*, *IPHONE*, *IPAD*, *PALMOS*, *SPIDER*, *SYMBIAN*, *WEBOS*, *WINMO*, *WINPHONE7*
-* *supports_certificates* - Boolean. Whether this devices supports certificate based authentication
 * *description* - a textual description of the device
+* *supports_certificates* - Boolean. This property is deprecated and should be ignored
 
 The *pagetype* and *platform* properties are assigned to the :doc:`module object <modules>` as properties. 
 

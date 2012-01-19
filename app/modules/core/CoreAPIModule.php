@@ -56,6 +56,19 @@ class CoreAPIModule extends APIModule
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
+                
+            case 'classify':
+                $userAgent = $this->getArg('useragent');
+                if (!$userAgent) {
+                    throw new KurogoException("useragent parameter not specified");
+                }
+                
+                $response = Kurogo::deviceClassifier()->classifyUserAgent($userAgent);
+                
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                break;
+                
             default:
                 $this->invalidCommand();
                 break;

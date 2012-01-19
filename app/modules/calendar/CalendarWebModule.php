@@ -572,10 +572,7 @@ class CalendarWebModule extends WebModule {
         $calendar= $this->getArg('calendar', $this->getDefaultFeed($type));
         $catid   = $this->getArg('catid', '');
         $name    = $this->getArg('name', '');
-        $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
-        $next    = strtotime("+1 day", $current);
-        $prev    = strtotime("-1 day", $current);
-
+        $feed = $this->getFeed($calendar, $type);
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
 
@@ -584,39 +581,42 @@ class CalendarWebModule extends WebModule {
         $this->assign('category', $catname);
         $this->setLogData($catid, $catname);
         
-        $dayRange = new DayRange(time());
-        
-        $this->assign('current', $current);
-        $this->assign('next',    $next);
-        $this->assign('prev',    $prev);
-        $this->assign('nextURL', $this->categoryDayURL($next, $catid, $name, false));
-        $this->assign('prevURL', $this->categoryDayURL($prev, $catid, $name, false));
         $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
         $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
-        $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
 
-        $events = array();
-        
-        if (strlen($catid) > 0) {
-            $feed = $this->getFeed($calendar, $type); // this allows us to have multiple feeds in the future
+        if($feed->isFilterCateByDay()) {
+            $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
+            $next    = strtotime("+1 day", $current);
+            $prev    = strtotime("-1 day", $current);
+
+            $dayRange = new DayRange(time());
+
+            $this->assign('current', $current);
+            $this->assign('next',    $next);
+            $this->assign('prev',    $prev);
+            $this->assign('nextURL', $this->categoryDayURL($next, $catid, $name, false));
+            $this->assign('prevURL', $this->categoryDayURL($prev, $catid, $name, false));
+            $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
+
             $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
             $start->setTime(0,0,0);
             $end = clone $start;
             $end->setTime(23,59,59);
-    
+
             $feed->setStartDate($start);
             $feed->setEndDate($end);
-            $feed->addFilter('category', $catid);
-            $iCalEvents = $feed->items();
-          
-            foreach($iCalEvents as $iCalEvent) {
-          
-                $events[] = $this->linkForItem($iCalEvent, array(
-                    'catid'    =>$catid,
-                    'calendar' =>$calendar,
-                    'type'     =>$type)
-                );
-            }          
+        }
+
+        // get events by category id
+        $iCalEvents = $feed->getEventsByCategory($catid);
+
+        $events = array();
+        foreach($iCalEvents as $iCalEvent) {
+            $events[] = $this->linkForItem($iCalEvent, array(
+                'catid'    =>$catid,
+                'calendar' =>$calendar,
+                'type'     =>$type)
+            );
         }
         
         $this->assign('events', $events);        
@@ -719,9 +719,11 @@ class CalendarWebModule extends WebModule {
             $feed->addFilter('search', $filter);
         }
 
-        if ($catid = $this->getArg('catid')) {
-            $feed->addFilter('category', $catid);
-        }
+        // no need to add this filter
+        // it will cause an error, if the ics file is a local file.
+        //if ($catid = $this->getArg('catid')) {
+            //$feed->addFilter('category', $catid);
+        //}
         
         $time = $this->getArg('time', time(), FILTER_VALIDATE_INT);
 

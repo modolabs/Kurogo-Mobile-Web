@@ -4,13 +4,15 @@ includePackage('DateTime');
 require_once(LIB_DIR . '/Calendar/ICalendar.php');
 
 interface CalendarInterface {
+    public function init($args);
     public function getEvents();
     public function getEventsInRange(TimeRange $range=null, $limit=null);
-    public function set_attribute($contentname, $value, $params);
+    public function set_attribute($contentname, $value, $params=null);
     public function add_event(CalendarEvent $event);
 }
 
 interface CalendarEvent {
+    public function init($args);
 }
 
 class Calendar 

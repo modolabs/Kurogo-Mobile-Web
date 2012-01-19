@@ -205,6 +205,10 @@ class AdminAPIModule extends APIModule
                     } else {
                         $sectionData['sections'] = $module->$sectionData['sectionsmethod']();
                     }
+                    $sectionindex = isset($sectionData['sectionindex']) ? $sectionData['sectionindex'] : null;
+                    if ($sectionindex=='numeric') {
+                        $sectionData['sections'] = array_values($sectionData['sections']);
+                    }
                     unset($sectionData['sectionsmethod']);
                 } elseif (in_array($type, array('site'))) {
                     throw new KurogoConfigurationException("Getting sections for $type is not written yet");

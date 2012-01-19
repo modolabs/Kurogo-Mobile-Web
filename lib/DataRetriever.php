@@ -24,7 +24,9 @@ abstract class DataRetriever {
     protected $cache;
     protected $cacheKey;
     protected $cacheGroup;
+    protected $cacheRequest = true;
     protected $cacheLifetime = null; //if null it will use cache default.
+    protected $requestInit = false; //whether initRequest has been called or not
     protected $parser;
 
     abstract protected function retrieveResponse();
@@ -36,16 +38,30 @@ abstract class DataRetriever {
     protected function setCacheKey($cacheKey) {
         $this->cacheKey = $cacheKey;
     }
+    
+    protected function setCacheRequest($cacheRequest) {
+        $this->cacheRequest = $cacheRequest ? true : false;
+    }
 
     protected function setCacheGroup($cacheGroup) {
         $this->cacheGroup = $cacheGroup;
     }
     
     protected function cacheKey() {
+        $this->initRequestIfNeeded();
         return $this->cacheKey;
     }
     
+    protected function clearCacheGroup($cacheGroup) {
+        $this->cache->clearCacheGroup($cacheGroup);
+    }
+
+    protected function clearCache() {
+        $this->cache->clearCache();
+    }
+    
     protected function cacheGroup() {
+        $this->initRequestIfNeeded();
         return $this->cacheGroup;
     }
 
@@ -81,8 +97,16 @@ abstract class DataRetriever {
         return $this->parser;
     }
     
+    public function getParser() {
+        return $this->parser();
+    }
+    
+    protected function shouldCacheRequest() {
+        return $this->cacheRequest;
+    }
+    
     public function getResponse() {
-        $cacheKey = $this->cacheKey();
+        $cacheKey = $this->shouldCacheRequest() ? $this->cacheKey() : null;
         $cacheGroup = $this->cacheGroup();
         
         if (!$response = $this->getCachedResponse($cacheKey, $cacheGroup)) {
@@ -91,6 +115,7 @@ abstract class DataRetriever {
             if (!$response instanceOf DataResponse) {
                 throw new KurogoDataException("Response must be instance of DataResponse");
             }
+            $response->setRetriever($this);
             if (!$response->getResponseError()) {
                 $this->cacheResponse($cacheKey, $cacheGroup, $response);
             }
@@ -142,6 +167,16 @@ abstract class DataRetriever {
     public function getOption($option) {
         return isset($this->options[$option]) ? $this->options[$option] : null;
     }
+
+    protected function initRequest() {
+    }
+    
+    protected function initRequestIfNeeded() {
+        if (!$this->requestInit) {
+            $this->initRequest();
+            $this->requestInit = true;
+        }
+    }
     
     protected function init($args) {
         $this->initArgs = $args;
@@ -181,6 +216,7 @@ abstract class DataRetriever {
     
     public function clearInternalCache() {
         $this->options = array();
+        $this->requestInit = false;
         $this->parser()->clearInternalCache();
     }
     
