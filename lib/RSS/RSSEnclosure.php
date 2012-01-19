@@ -66,7 +66,7 @@ class RSSEnclosure extends XMLElement
     }
 }
 
-class RSSImageEnclosure extends RSSEnclosure implements NewsImage
+class RSSImageEnclosure extends RSSEnclosure implements KurogoImage
 {
     public function __construct($attribs) {
         parent::__construct($attribs);

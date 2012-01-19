@@ -41,7 +41,7 @@ class PhotosAPIModule extends APIModule {
                     $photo['type'] = $defaultPhoto->getType();
                     $photo['totalItems'] = $controller->getAlbumSize();
                     $photo['img'] = $defaultPhoto->getThumbnailUrl();
-                    $albums['photos'][] = $photo;
+                    $albums['albums'][] = $photo;
                 }
                 $this->setResponse($albums);
                 break;
@@ -53,16 +53,7 @@ class PhotosAPIModule extends APIModule {
                     return false;
                 }
                 $limit = $this->getArg('limit', 10);
-                $totalItems = $controller->getAlbumSize();
-                $totalPage = ceil($totalItems / $limit);
-                $page = $this->getArg('page');
-                if($page < 0) {
-                    $page = 0;
-                }
-                if($page > $totalPage) {
-                    $page = $totalPage;
-                }
-                $start = $page * $limit;
+                $start = $this->getArg('start', 0);
                 $controller->setStart($start);
                 $controller->setLimit($limit);
         		$items = $controller->getPhotos();
@@ -81,10 +72,7 @@ class PhotosAPIModule extends APIModule {
                 $albumTitle = $controller->getTitle();
                 $response = array(
                     'photos' => $photos,
-                    'totalItems' => $totalItems,
-                    'totalPage' => $totalPage,
-                    'currentPage' => $page,
-                    'albumTitle' => $albumTitle,
+                    'totalItems' => $controller->getAlbumSize()
                 );
                 $this->setResponse($response);
                 break;

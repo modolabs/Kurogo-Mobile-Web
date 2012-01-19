@@ -35,6 +35,9 @@ class RSSItem extends XMLElement implements NewsItem
         return true;
     }
     
+    public function init($args) {
+    }
+    
     public function getContent()
     {
         return $this->content;

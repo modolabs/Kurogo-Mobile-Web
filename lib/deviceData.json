@@ -163,6 +163,30 @@
                 {
                     "regex": "PlayBook.+RIM Tablet",
                     "options": {
+                        "GLOBAL": true
+                    }
+                }
+            ]
+        },
+        {
+            "groupName" : "amazonSilk",
+            "description" : "Amazon's Silk Browser.  Currently exclusive to the Kindle Fire.",
+            "classification" : {
+                "2" : {
+                    "pagetype" : "compliant",
+                    "platform" : "android",
+                    "supports_certificate" : false
+                },
+                "1" : {
+                    "pagetype": "webkit",
+                    "platform": "android",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex" : "Silk/.*Silk-Accelerated=",
+                    "options": {
                         "CASE_INSENSITIVE": false
                     }
                 }

@@ -321,7 +321,7 @@ abstract class DataRetriever {
                 break;
         
            case DataParser::PARSE_MODE_FILE:
-                $file = $this->getDataFile();
+                $file = $response->getResponseFile();
                 $data =  $this->parseFile($file, $parser);
                 break;
 
