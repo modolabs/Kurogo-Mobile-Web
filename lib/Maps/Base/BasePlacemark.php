@@ -99,7 +99,7 @@ class BasePlacemark implements Placemark
         if (isset($this->id)) {
             $result['featureindex'] = $this->getId();
         } else {
-            $geometry = $feature->getGeometry();
+            $geometry = $this->getGeometry();
             if ($geometry) {
                 $coords = $geometry->getCenterCoordinate();
                 $result['lat'] = $coords['lat'];
