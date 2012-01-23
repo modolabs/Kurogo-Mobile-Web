@@ -200,8 +200,8 @@ abstract class MapImageController
                 ));
 
             if ($vRange > 0 && $hRange > 0) {
-                $vZoom = ceil(log(360 / $vRange, 2));
-                $hZoom = ceil(log(180 / $hRange, 2));
+                $vZoom = ceil(log(180 / $vRange, 2));
+                $hZoom = ceil(log(360 / $hRange, 2));
                 $this->setZoomLevel(min($vZoom, $hZoom));
             }
         }
