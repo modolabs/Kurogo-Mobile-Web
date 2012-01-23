@@ -18,7 +18,7 @@ abstract class JavascriptMapImageController extends MapImageController
     protected function urlForPlacemark(Placemark $placemark)
     {
         $url = '';
-        if ($this->webModule) {
+        if ($this->webModule && method_exists($this->webModule, 'linkForItem')) {
             $link = $this->webModule->linkForItem($placemark);
             if ($link && isset($link['url'])) {
                 $url = FULL_URL_PREFIX.$link['url'];
