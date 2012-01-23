@@ -28,6 +28,7 @@ abstract class WebModule extends Module {
   protected $deviceClassifier;  
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
+  protected $browser = 'unknown';
   
   protected $imageExt = '.png';
   
@@ -206,7 +207,7 @@ abstract class WebModule extends Module {
   
   private function getMinifyUrls($pageOnly=false) {
     $page = preg_replace('/[\s-]+/', '+', $this->page);
-    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(THEME_DIR);
+    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-{$this->browser}-".md5(THEME_DIR);
     
     return array(
       'css' => "/min/g=css-$minKey".$this->getMinifyArgString($pageOnly),
@@ -464,6 +465,7 @@ abstract class WebModule extends Module {
 
         $this->pagetype = $this->getPagetype();
         $this->platform = $this->getPlatform();
+        $this->browser  = $this->getBrowser();
 
         switch ($this->getPagetype()) {
             case 'compliant':

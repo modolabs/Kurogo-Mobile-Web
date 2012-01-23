@@ -467,6 +467,10 @@ class DeviceClassifier {
         return $this->classification['platform'];
     }
     
+    public function getBrowser() {
+        return $this->classification['browser'];
+    }
+    
     public function mailToLinkNeedsAtInToField() {
         // Some old BlackBerries will give you an error about unsupported protocol
         // if you have a mailto: link that doesn't have a "@" in the recipient 

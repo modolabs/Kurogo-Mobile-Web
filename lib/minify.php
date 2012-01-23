@@ -7,31 +7,9 @@
 // Handle CSS and Javascript a little differently:
 //
 
-// CSS supports overrides so include all available CSS files.
-function getCSSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs, $pageOnly=false) {
-  $config = array(
-    'include' => 'all',
-    'files' => array()
-  );
-  
-  foreach ($dirs as $dir) {
-    foreach ($subDirs as $subDir) {
-      if (!$pageOnly) {
-        $config['files'][] = "$dir$subDir/css/common.css";
-        $config['files'][] = "$dir$subDir/css/$pagetype.css";
-        $config['files'][] = "$dir$subDir/css/$pagetype-$platform.css"; 
-      }
-      $config['files'][] = "$dir$subDir/css/$page-common.css";
-      $config['files'][] = "$dir$subDir/css/$page-$pagetype.css";
-      $config['files'][] = "$dir$subDir/css/$page-$pagetype-$platform.css"; 
-    }
-  }
-  return $config;
-}
-
+// CSS supports overrides so include all available CSS files
 // Javascript overrides appear to work for all the platforms we support
-// Code to do overrides commented out below
-function getJSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs, $pageOnly=false) {
+function getFileConfigForDirs($ext, $page, $pagetype, $platform, $browser, $dirs, $subDirs, $pageOnly=false) {
   $config = array(
     'include' => 'all',
     'files' => array()
@@ -40,46 +18,29 @@ function getJSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs, $p
   foreach ($dirs as $dir) {
     foreach ($subDirs as $subDir) {
       if (!$pageOnly) {
-        $config['files'][] = "$dir$subDir/javascript/common.js";
-        $config['files'][] = "$dir$subDir/javascript/$pagetype.js";
-        $config['files'][] = "$dir$subDir/javascript/$pagetype-$platform.js";
+        $config['files'][] = "$dir$subDir/css/common.$ext";
+        $config['files'][] = "$dir$subDir/css/$pagetype.$ext";
+        
+        $config['files'][] = "$dir$subDir/css/common-$platform.$ext";
+        $config['files'][] = "$dir$subDir/css/$pagetype-$platform.$ext";
+        
+        $config['files'][] = "$dir$subDir/css/common-common-$browser.$ext";
+        $config['files'][] = "$dir$subDir/css/common-$platform-$browser.$ext";
+        $config['files'][] = "$dir$subDir/css/$pagetype-common-$browser.$ext";
+        $config['files'][] = "$dir$subDir/css/$pagetype-$platform-$browser.$ext";
       }
-      $config['files'][] = "$dir$subDir/javascript/$page-common.js";
-      $config['files'][] = "$dir$subDir/javascript/$page-$pagetype.js";
-      $config['files'][] = "$dir$subDir/javascript/$page-$pagetype-$platform.js";
-    }
-  }
-  /*
-  foreach ($subDirs as $subDir) {
-    $files = array(
-      "common.js",
-      "$pagetype-$platform.js",
-      "$pagetype.js",
-    );
-    
-    foreach ($files as $file) {
-      if (!$pageOnly) {
-        $dirConfig = array(
-          'include' => 'any',
-          'files' => array()
-        );
-        foreach ($dirs as $dir) {
-          $dirConfig['files'][] = "$dir$subDir/javascript/$file";
-        }
-      }
-      $config['files'][] = $dirConfig;
+      $config['files'][] = "$dir$subDir/css/$page-common.$ext";
+      $config['files'][] = "$dir$subDir/css/$page-$pagetype.$ext";
       
-      $dirConfig = array(
-        'include' => 'any',
-        'files' => array()
-      );
-      foreach ($dirs as $dir) {
-        $dirConfig['files'][] = "$dir$subDir/javascript/$page-$file";
-      }
-      $config['files'][] = $dirConfig;
+      $config['files'][] = "$dir$subDir/css/$page-common-$platform.$ext";
+      $config['files'][] = "$dir$subDir/css/$page-$pagetype-$platform.$ext";
+      
+      $config['files'][] = "$dir$subDir/css/$page-common-common-$browser.$ext";
+      $config['files'][] = "$dir$subDir/css/$page-common-$platform-$browser.$ext";
+      $config['files'][] = "$dir$subDir/css/$page-$pagetype-common-$browser.$ext";
+      $config['files'][] = "$dir$subDir/css/$page-$pagetype-$platform-$browser.$ext";
     }
   }
-  */
   return $config;
 }
 
@@ -132,7 +93,7 @@ function getMinifyGroupsConfig() {
   // if this is a copied module also pull in files from that module
   $configModule = isset($_GET['config']) ? $_GET['config'] : '';
 
-  list($ext, $module, $page, $pagetype, $platform, $pathHash) = explode('-', $key);
+  list($ext, $module, $page, $pagetype, $platform, $browser, $pathHash) = explode('-', $key);
 
   $cache = new DiskCache(CACHE_DIR.'/minify', Kurogo::getOptionalSiteVar('MINIFY_CACHE_TIMEOUT', 30), true);
   $cacheName = "group_$key";
@@ -170,15 +131,13 @@ function getMinifyGroupsConfig() {
     }
 
     $checkFiles = array(
-      'css' => getCSSFileConfigForDirs(
-          $page, $pagetype, $platform, $dirs, $subDirs, $pageOnly),
-      'js'  => getJSFileConfigForDirs (
-          $page, $pagetype, $platform, $dirs, $subDirs, $pageOnly),
+      'css' => getFileConfigForDirs('css', $page, $pagetype, $platform, $browser, $dirs, $subDirs, $pageOnly),
+      'js'  => getFileConfigForDirs('js',  $page, $pagetype, $platform, $browser, $dirs, $subDirs, $pageOnly),
     );
     //error_log(print_r($checkFiles, true));
     
     $minifyConfig[$key] = buildFileList($checkFiles[$ext]);
-    //error_log(__FUNCTION__."($pagetype-$platform) scanned filesystem for $key");
+    //error_log(__FUNCTION__."($pagetype-$platform-$browser) scanned filesystem for $key");
 
     $cache->write($minifyConfig, $cacheName);
   }
@@ -197,7 +156,7 @@ function getMinifyGroupsConfig() {
     }
   }
   
-  //error_log(__FUNCTION__."($pagetype-$platform) returning: ".print_r($minifyConfig, true));
+  //error_log(__FUNCTION__."($pagetype-$platform-$browser) returning: ".print_r($minifyConfig, true));
   return $minifyConfig;
 }
 
@@ -213,10 +172,12 @@ function minifyGetThemeVars() {
     
     $pagetype = Kurogo::deviceClassifier()->getPagetype();
     $platform = Kurogo::deviceClassifier()->getPlatform();
+    $browser  = Kurogo::deviceClassifier()->getBrowser();
     $sections = array(
       'common',
       $pagetype,
-      $pagetype . '-' . $platform
+      "$pagetype-$platform",
+      "$pagetype-$platform-$browser",
     );
     
     $themeVars = array();

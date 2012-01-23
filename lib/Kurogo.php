@@ -1056,15 +1056,18 @@ class Kurogo
     }
     
     public static function defaultModule() {
-      $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
-      $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
-
-      if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
-        if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
-            $module = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
+        $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
+        $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
+        $browser  = strtoupper(Kurogo::deviceClassifier()->getBrowser());
+  
+        if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}-{$browser}",'','urls')) {
+            if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
+                if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
+                    $module = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
+                }
+            }
         }
-      }
-      
+        
         return $module; 
     }
     
