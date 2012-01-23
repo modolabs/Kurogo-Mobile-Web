@@ -7,6 +7,11 @@
 {/block}
 
 {block name="analyticsJavascript"}
+  {if strlen($GOOGLE_ANALYTICS_ID)}
+    <script type="text/javascript">
+      var _gaq = _gaq || []; {* suppress event tracking errors *}
+    </script>
+  {/if}
 {/block}
 
 {block name="inlineJavascriptBlocks"}
