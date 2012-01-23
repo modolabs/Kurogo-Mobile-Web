@@ -113,16 +113,18 @@
 
 {block name="ajaxContentHeader"}
   <script type="text/javascript">
+      // These can all have per-content page behavior
+      {foreach $inlineJavascriptBlocks as $script}
+          {$script}
+      {/foreach}
+  </script>
+  <script type="text/javascript">
+      {foreach $inlineJavascriptFooterBlocks as $script}
+          {$script}
+      {/foreach}
+  </script>
+  <script type="text/javascript">
       function onAjaxLoad() {ldelim}
-          // These can all have per-content page behavior
-          {foreach $inlineJavascriptBlocks as $script}
-              {$script}
-          {/foreach}
-    
-          {foreach $inlineJavascriptFooterBlocks as $script}
-              {$script}
-          {/foreach}
-          
           {foreach $onLoadBlocks as $script}
               {$script}
           {/foreach}
