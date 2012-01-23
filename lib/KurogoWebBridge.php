@@ -14,6 +14,7 @@ class KurogoWebBridge
     
     const PAGETYPE_PARAMETER    = 'webBridgePagetype';
     const PLATFORM_PARAMETER    = 'webBridgePlatform';
+    const AJAX_PARAMETER        = 'webBridgeAjax';
     const ASSET_CHECK_PARAMETER = 'webBridgeAssetCheck';
     
     const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
@@ -295,7 +296,9 @@ class KurogoWebBridge
             $this->saveContentAndAssets();
             
             // Also check for inline content
-            $contents = $this->getAsset("{$this->module}/{$this->page}?ajax=1&".self::ASSET_CHECK_PARAMETER.'=1');
+            $contents = $this->getAsset("{$this->module}/{$this->page}?".
+                self::AJAX_PARAMETER."=1&".self::ASSET_CHECK_PARAMETER.'=1');
+            
             if ($contents) {
                 self::$currentInstance = $this;
                 $contents = $this->_rewriteURLsToFilePaths($contents, 'saveContentAndAssetsCallback', true);
@@ -364,7 +367,7 @@ class KurogoWebBridge
         } else {
             $url .= rtrim(FULL_URL_PREFIX, '/');
         }
-        $url .= "/{$id}/{$page}?ajax=1";
+        $url .= "/{$id}/{$page}?".self::AJAX_PARAMETER."=1";
         if (self::forceNativePlatform($pagetype, $platform)) {
             $url .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform));
         }
@@ -410,8 +413,8 @@ class KurogoWebBridge
         );
     }
 
-    private static function isAjax() {
-        return isset($_GET['ajax']) && $_GET['ajax'];
+    public static function isAjaxContentLoad() {
+        return isset($_GET[self::AJAX_PARAMETER]) && $_GET[self::AJAX_PARAMETER];
     }
 
     private static function isAssetCheck() {
@@ -434,7 +437,7 @@ class KurogoWebBridge
     }
     
     public static function shouldRewriteAssetPaths() {
-        return self::hasNativePlatform() && self::isAjax() && !self::isAssetCheck();
+        return self::hasNativePlatform() && self::isAjaxContentLoad() && !self::isAssetCheck();
     }
     
     public static function shouldRewriteInternalLinks() {
@@ -450,19 +453,23 @@ class KurogoWebBridge
     }
     
     public static function useNativeTemplatePageInitializer() {
-        return self::isNativeCall() && (!self::isAjax() || self::isAssetCheck());
+        return self::isNativeCall() && (!self::isAjaxContentLoad() || self::isAssetCheck());
     }
     
     public static function shouldRewriteRedirects() {
-        return self::isNativeCall() && self::isAjax() && !self::isAssetCheck();
+        return self::isNativeCall() && self::isAjaxContentLoad() && !self::isAssetCheck();
     }
     
     public static function shouldIgnoreAuth() {
-        return Kurogo::isLocalhost() && self::isNativeCall() && (!self::isAjax() || self::isAssetCheck());
+        return Kurogo::isLocalhost() && self::isNativeCall() && (!self::isAjaxContentLoad() || self::isAssetCheck());
     }
     
     public static function useWrapperPageTemplate() {
-        return self::isNativeCall() && !self::isAjax();
+        return self::isNativeCall() && !self::isAjaxContentLoad();
+    }
+    
+    public static function removeAddedParameters(&$args) {
+        unset($args[self::AJAX_PARAMETER]);
     }
     
     //

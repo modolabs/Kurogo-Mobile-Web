@@ -29,7 +29,6 @@ abstract class WebModule extends Module {
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
   
-  protected $ajaxContentLoad = false;
   protected $hasWebBridgePageRefresh = false;
   
   protected $imageExt = '.png';
@@ -319,9 +318,7 @@ abstract class WebModule extends Module {
   }
 
   public static function buildURLForModule($id, $page, $args=array()) {
-    if (KurogoWebBridge::isNativeCall() && isset($args['ajax'])) {
-      unset($args['ajax']);
-    }
+    KurogoWebBridge::removeAddedParameters($args);
     
     if (KurogoWebBridge::shouldRewriteInternalLinks()) {
       return KurogoWebBridge::getInternalLink($id, $page, $args);
@@ -496,8 +493,6 @@ abstract class WebModule extends Module {
         $this->pagetype      = $this->getPagetype();
         $this->platform      = $this->getPlatform();
         
-        $this->ajaxContentLoad = $this->getArg('ajax', false);
-
         switch ($this->getPagetype()) {
             case 'compliant':
                 $this->imageExt = '.png';
@@ -1204,9 +1199,7 @@ abstract class WebModule extends Module {
   }
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
-    if (KurogoWebBridge::isNativeCall() && isset($args['ajax'])) {
-      unset($args['ajax']);
-    }
+    KurogoWebBridge::removeAddedParameters($args);
     
     $args = array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb));
     
@@ -1457,8 +1450,9 @@ abstract class WebModule extends Module {
     $this->assign('isModuleHome', $this->page == 'index');
     $this->assign('request_uri' , $_SERVER['REQUEST_URI']);
     $this->assign('hideFooterLinks' , $this->hideFooterLinks);
-    $this->assign('ajaxContentLoad', $this->ajaxContentLoad);
     $this->assign('charset', Kurogo::getCharset());
+
+    $this->assign('webBridgeAjaxContentLoad', KurogoWebBridge::isAjaxContentLoad());
     
     // Font size for template
     $this->assign('fontsizes',    $this->fontsizes);
