@@ -1412,6 +1412,7 @@ h2.icon {
 	width: 220px;
 	margin-left: -130px;
 	-webkit-border-radius: 10px;
+	border-radius: 10px;
 	padding: 10px 20px;
 	background: #eee; /* Non-CSS3 browsers */
 	/* This doesn't work with the Palm Pre: 
@@ -1891,14 +1892,17 @@ table.section-search form {
 
 .landscape .splitview {
     -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
     display: -webkit-box;
+    display: -moz-box;
     height: 400px;
     position: relative;
 }
 
 .landscape .splitview-detailwrapper {
     border-top: 1px solid;
-	-webkit-box-flex:1;
+    -webkit-box-flex:1;
+    -moz-box-flex:1;
 }
 
 .landscape .splitview ul.results li.pagerlink {
