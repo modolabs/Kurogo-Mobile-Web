@@ -108,13 +108,17 @@ function KGOGoogleMapLoader(attribs) {
     }
 
     this.showCalloutForMarker = function(marker) {
-        marker.infoWindow.open(map, marker);
-        setCurrentInfoWindow(marker.infoWindow);
+        if (currentInfoWindow != marker.infoWindow) {
+            marker.infoWindow.open(map, marker);
+            setCurrentInfoWindow(marker.infoWindow);
+        }
     }
 
     this.showCalloutForOverlay = function(overlay) {
-        overlay.infoWindow.open(map);
-        setCurrentInfoWindow(overlay.infoWindow);
+        if (currentInfoWindow == overlay.infoWindow) {
+            overlay.infoWindow.open(map);
+            setCurrentInfoWindow(overlay.infoWindow);
+        }
     }
     
 }
