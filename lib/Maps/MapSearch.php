@@ -67,12 +67,15 @@ class MapSearch extends DataRetriever {
     public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataSource=null) {
         $this->searchMode = self::SEARCH_MODE_NEARBY;
         $this->setContext('mode', 'nearby');
+        $cacheKey = "c={$center['lat']},{$center['lon']}&t={$tolerance}&m={$maxItems}";
+        if (isset($this->feedGroup) && strlen($this->feedGroup)) {
+            $cacheKey .= "&g={$this->feedGroup}";
+        }
         if (isset($dataSource)) {
             $id = $dataSource->getId();
-            $this->setCacheKey("c={$center['lat']},{$center['lon']}&t={$tolerance}&m={$maxItems}&d={$id}");
-        } else {
-            $this->setCacheKey("c={$center['lat']},{$center['lon']}&t={$tolerance}&m={$maxItems}");
+            $cacheKey .= "&d={$id}";
         }
+        $this->setCacheKey($cacheKey);
         $this->searchParams = array($center, $tolerance, $maxItems, $dataSource);
 
         $this->searchResults = $this->getData();
@@ -86,7 +89,11 @@ class MapSearch extends DataRetriever {
     public function searchCampusMap($query) {
         $this->searchMode = self::SEARCH_MODE_TEXT;
         $this->setContext('mode', 'text');
-        $this->setCacheKey("q={$query}");
+        $cacheKey = "q={$query}";
+        if (isset($this->feedGroup) && strlen($this->feedGroup)) {
+            $cacheKey .= "&g={$this->feedGroup}";
+        }
+        $this->setCacheKey($cacheKey);
         $this->searchParams = $query;
 
         $this->searchResults = $this->getData();

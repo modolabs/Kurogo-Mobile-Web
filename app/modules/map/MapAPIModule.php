@@ -246,6 +246,7 @@ class MapAPIModule extends APIModule
             $this->feeds = $this->loadFeedData();
         }
         $mapSearch = new $mapSearchClass($this->feeds);
+        $mapSearch->setFeedGroup($this->feedGroup);
         $mapSearch->init($this->getDataForGroup($this->feedGroup));
         return $mapSearch;
     }
