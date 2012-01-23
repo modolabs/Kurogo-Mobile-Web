@@ -454,7 +454,7 @@ class KurogoWebBridge
     }
     
     public static function shouldRewriteRedirects() {
-        return self::isNativeCall() && self::isAjax();
+        return self::isNativeCall() && self::isAjax() && !self::isAssetCheck();
     }
     
     public static function shouldIgnoreAuth() {
