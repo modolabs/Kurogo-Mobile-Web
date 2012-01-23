@@ -367,14 +367,14 @@ abstract class WebModule extends Module {
   }
 
   public function redirectToModule($id, $page, $args=array()) {
-    $url = self::buildURLForModule($id, $page, $args);
+    $url = URL_PREFIX . ltrim(self::buildURLForModule($id, $page, $args), '/');
     
     //error_log('Redirecting to: '.$url);
-    if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+    if (KurogoWebBridge::shouldRewriteRedirects()) {
       KurogoWebBridge::redirectTo($url);
     } else {
-      Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url",'module');
-      header("Location: ". URL_PREFIX . ltrim($url, '/'));
+      Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url", 'module');
+      header("Location: ". $url);
     }
     exit;
   }
@@ -388,13 +388,14 @@ abstract class WebModule extends Module {
     } else {
       $url = $this->buildURL($page, $args);
     }
+    $url = URL_PREFIX . ltrim($url, '/');
     
     //error_log('Redirecting to: '.$url);
-    if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+    if (KurogoWebBridge::shouldRewriteRedirects()) {
       KurogoWebBridge::redirectTo($url);
     } else {
-      Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url",'module');
-      header("Location: ". URL_PREFIX . ltrim($url, '/'));
+      Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url", 'module');
+      header("Location: ". $url);
     }
     exit;
   }
