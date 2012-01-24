@@ -447,7 +447,12 @@ abstract class WebModule extends Module {
         $this->loadDeviceClassifierIfNeeded();
         return $this->deviceClassifier->getPlatform();
     }
-    
+
+    protected function getBrowser() {
+        $this->loadDeviceClassifierIfNeeded();
+        return $this->deviceClassifier->getBrowser();
+    }
+
     protected function loadDeviceClassifierIfNeeded() {
         $this->deviceClassifier = Kurogo::deviceClassifier();
     }
