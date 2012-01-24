@@ -29,10 +29,10 @@ function getFileConfigForDirs($ext, $extFolder, $page, $pagetype, $platform, $br
                 $config['files'][] = "{$pathPrefix}common-{$platform}.{$ext}";
                 $config['files'][] = "{$pathPrefix}{$pagetype}-{$platform}.{$ext}";
                 
-                //$config['files'][] = "{$pathPrefix}common-common-{$browser}.{$ext}";
-                //$config['files'][] = "{$pathPrefix}{$pagetype}-common-{$browser}.{$ext}";
-                //$config['files'][] = "{$pathPrefix}common-{$platform}-{$browser}.{$ext}";
-                //$config['files'][] = "{$pathPrefix}{$pagetype}-{$platform}-{$browser}.{$ext}";
+                $config['files'][] = "{$pathPrefix}common-common-{$browser}.{$ext}";
+                $config['files'][] = "{$pathPrefix}{$pagetype}-common-{$browser}.{$ext}";
+                $config['files'][] = "{$pathPrefix}common-{$platform}-{$browser}.{$ext}";
+                $config['files'][] = "{$pathPrefix}{$pagetype}-{$platform}-{$browser}.{$ext}";
             }
         }
     }
