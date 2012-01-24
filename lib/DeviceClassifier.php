@@ -90,7 +90,7 @@ class DeviceClassifier {
     
     protected function setDeviceFromCookieString($string) {
         $this->classification = $this->classificationForString($string, $stringIsJSON);
-        if (!$stringIsJSON) {error_log("Upgrading cookie");
+        if (!$stringIsJSON) {
             // old cookie format, overwrite
             $this->setDeviceCookie();
         }
@@ -126,7 +126,7 @@ class DeviceClassifier {
             if (get_magic_quotes_gpc()) {
                 $cookie = stripslashes($cookie);
             } 
-            error_log("Got cookie $cookie");
+            
             $this->setDeviceFromCookieString($cookie);
             Kurogo::log(LOG_DEBUG, "Setting device to ".$this->getDevice()." (cookie)", "deviceDetection");
           
