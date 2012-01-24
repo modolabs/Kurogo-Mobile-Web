@@ -29,8 +29,9 @@ class DeviceClassifier {
         );
     }
     
-    protected function classificationForString($string, $stringIsFromCookie=false) {
+    protected function classificationForString($string, &$stringIsJSON=null) {
         $classification = $this->unknownClassification();
+        $isJSON = true;
         
         if ((substr($string, 0, 1) == '{') && (($json = json_decode($string, true)) !== false)) {
             // JSON format used by new style cookies
@@ -48,6 +49,8 @@ class DeviceClassifier {
             
         } else {
             // Hyphen-separated format used by debugging device override and old cookies
+            $isJSON = false;
+            
             $parts = explode('-', $string);
             if (count($parts) && strlen($parts[0])) {
                 $classification['pagetype'] = $parts[0];
@@ -60,12 +63,12 @@ class DeviceClassifier {
                     }
                 }
             }
-            
-            if ($stringIsFromCookie) {error_log("Upgrading cookie");
-                $this->setDeviceCookie(); // Upgrade non-json cookie values to json
-            }
         }
-
+        
+        if (isset($stringIsJSON)) {
+            $stringIsJSON = $isJSON;
+        }
+        
         return $classification;        
     }
     
@@ -94,7 +97,11 @@ class DeviceClassifier {
     }
     
     protected function setDeviceFromCookieString($string) {
-        $this->classification = $this->classificationForString($string, true);
+        $this->classification = $this->classificationForString($string, $stringIsJSON);
+        if (!$stringIsJSON) {
+            // old cookie format, overwrite
+            $this->setDeviceCookie();
+        }
     }
     
     public function getDevice() {
