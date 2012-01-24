@@ -7,7 +7,7 @@
 }
 
 #navbar .forminput {
-  border-color: #036;
+	border-color: @@@search_border_color@@@;	
 }
 
 

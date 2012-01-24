@@ -7,25 +7,25 @@ body {
 
 h1 {
 	font-size: 142%; 
-	color: #036;
+	color: @@@primary_heading_color@@@;
 }
 
 h2 {
 	font-size: 133%; 
 	font-weight: normal;
-	color: #036;
+	color: @@@primary_heading_color@@@;
 }
 
 h3 {
 	font-size: 100%; 
 	font-weight: bold;
-	color: #333;
+	color: @@@secondary_heading_color@@@;
 }
 
 h4 {
 	font-size: 100%; 
 	font-weight: bold;
-	color: #333;
+	color: @@@secondary_heading_color@@@;
 }
 
 
@@ -34,13 +34,13 @@ h4 {
 
 .bottomnav {
 	/* Usually set apart in a foreground/background color combination different from normal and secondary nav lists  */
-	background-color: #4a4c4f;	
+	background-color: @@@navbar_background_color@@@;
 	font-size: 93%;
 }
 
 .bottomnav a, .bottomnav a:visited {
 	/* Navigation at bottom of page -- e.g., "Back to top" */
-	color: #fff; 
+	color: @@@navbar_text_color@@@;
 }
 
 
@@ -49,12 +49,12 @@ h4 {
 
 .tabs {
 	/* Text labels of unselected tab */
-	color: #999;
+	color: @@@secondary_text_color@@@;
 }
 
 .tabs .active {
 	/* Text label of currently selected tabs */
+	color: @@@emphasized_text_color@@@;
 	font-weight: bold;
-	color: #000;
 }
 
