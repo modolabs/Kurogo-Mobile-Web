@@ -36,7 +36,7 @@
             application includes all the features listed at right.
         </p>
         <p>
-          <a id="preview" href="/home/" target="UniversitasMobile">Click here to preview the site on your desktop or laptop.</a>
+          <a id="preview" href="#" onclick="javascript:window.open('/home/','KurogoMobile','width=350,height=550');">Click here to preview the site on your desktop or laptop.</a>
         </p>
     	<h2>Native iPhone Application</h2>
         <p>
