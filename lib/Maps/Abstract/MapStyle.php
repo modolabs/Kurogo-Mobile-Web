@@ -4,7 +4,7 @@
 // by type we really mean geometry type
 // by param we mean some UI parameter
 
-interface MapStyle
+interface MapStyle extends Serializable
 {
     // types
     const POINT = 0;

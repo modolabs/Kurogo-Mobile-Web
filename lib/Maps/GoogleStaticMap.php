@@ -90,7 +90,7 @@ class GoogleStaticMap extends StaticMapImageController {
 
     ////////////// overlays ///////////////
 
-    public function addPoint($placemark)
+    protected function addPoint($placemark)
     {
         parent::addPoint($placemark);
 
@@ -115,7 +115,7 @@ class GoogleStaticMap extends StaticMapImageController {
         $this->markers[$styleString][] = $center['lat'] . ',' . $center['lon'];
     }
 
-    public function addPath($placemark)
+    protected function addPath($placemark)
     {
         parent::addPath($placemark);
 

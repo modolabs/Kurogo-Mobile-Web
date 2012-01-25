@@ -5,6 +5,18 @@ class MapDBDataParser extends DataParser implements MapDataParser
     private $category = null;
     private $categoryId;
 
+    public function placemarks() {
+        return $this->getAllPlacemarks();
+    }
+
+    public function categories() {
+        return $this->getChildCategories();
+    }
+
+    public function getId() {
+        return $this->categoryId;
+    }
+
     // MapDataParser interface
 
     public function getProjection()

@@ -283,41 +283,44 @@ function toggleBookmark(name, item, expireseconds, path) {
 }
 
 // TODO this needs to handle encoded strings and parameter separators (&amp;)
-function apiRequest(baseURL, params, successCallback, errorCallback) {
-  var urlParts = [];
-  for (var paramName in params) {
-    urlParts.push(paramName + "=" + params[paramName]);
-  }
-  var url = baseURL + "?" + urlParts.join("&");
-  var httpRequest = new XMLHttpRequest();
+if (typeof makeAPICall === 'undefined' && typeof jQuery === 'undefined') {
+  function makeAPICall(type, module, command, data, callback) {
+    var urlParts = [];
+    for (var param in data) {
+      urlParts.push(param + "=" + data[param]);
+    }
+    url = URL_BASE + API_URL_PREFIX + '/' + module + '/' + command + '?' + urlParts.join('&');
+    var handleError = function(errorObj) {}
 
-  httpRequest.open("GET", url, true);
-  httpRequest.onreadystatechange = function() {
-    // TODO better definition of error conditions below
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      var obj;
-      if (window.JSON) {
-          obj = JSON.parse(httpRequest.responseText);
-          // TODO: catch SyntaxError
-      } else {
-          obj = eval('(' + httpRequest.responseText + ')');
-      }
-      if (obj !== undefined) {
-        if ("error" in obj && obj["error"] !== null) {
-          errorCallback(0, obj["error"]);
-        } else if ("response" in obj) {
-          successCallback(obj["response"]);
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open("GET", url, true);
+    httpRequest.onreadystatechange = function() {
+      if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        var obj;
+        if (window.JSON) {
+            obj = JSON.parse(httpRequest.responseText);
+            // TODO: catch SyntaxError
         } else {
-          errorCallback(1, "response not found");
+            obj = eval('(' + httpRequest.responseText + ')');
         }
-      } else {
-        errorCallback(2, "failed to parse response");
+        if (obj !== undefined) {
+          if ("response" in obj) {
+            callback(obj["response"]);
+          }
+
+          if ("error" in obj && obj["error"] !== null) {
+            handleError(obj["error"]);
+          } else {
+            handleError("response not found");
+          }
+        } else {
+          handleError("failed to parse response");
+        }
       }
     }
+    httpRequest.send(null);
   }
-  httpRequest.send(null);
 }
-
 
 
 

@@ -101,6 +101,25 @@ function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null
     return array('min' => $min, 'max' => $max, 'center' => $center);
 }
 
+function mapModelFromFeedData($feedData) {
+    if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
+        $modelClass = $feedData['CONTROLLER_CLASS'];
+    }
+    elseif (isset($feedData['MODEL_CLASS'])) {
+        $modelClass = $feedData['MODEL_CLASS'];
+    }
+    else {
+        $modelClass = 'MapDataModel';
+    }
+
+    try {
+        $model = MapDataModel::factory($modelClass, $feedData);
+    } catch (KurogoConfigurationException $e) {
+        $model = DataController::factory($modelClass, $feedData);
+    }
+    return $model;
+}
+
 function mapIdForFeedData(Array $feedData) {
     $identifier = $feedData['TITLE'];
     if (isset($feedData['BASE_URL'])) {
@@ -111,28 +130,20 @@ function mapIdForFeedData(Array $feedData) {
     return substr(md5($identifier), 0, 10);
 }
 
-function shortArrayFromMapFeature(Placemark $feature) {
-    $category = current($feature->getCategoryIds());
-    $result = array('category' => $category);
-
-    $id = $feature->getId();
-    if ($id) {
-        $result['featureindex'] = $id;
-    } else {
-        $geometry = $feature->getGeometry();
-        if ($geometry) {
-            $coords = $geometry->getCenterCoordinate();
-            $result['lat'] = $coords['lat'];
-            $result['lon'] = $coords['lon'];
-        }
-        $result['title'] = $feature->getTitle();
-    }
-
-    return $result;
-}
-
+// $colorString must be 6 or 8 digit hex color
 function htmlColorForColorString($colorString) {
     return substr($colorString, strlen($colorString)-6);
+}
+
+// returns a value between 0 and 1
+// $colorString must be valid hex color
+function alphaFromColorString($colorString) {
+    if (strlen($colorString) == 8) {
+        $alphaHex = substr($colorString, 0, 2);
+        $alpha = hexdec($alphaHex) / 256;
+        return round($alpha, 2);
+    }
+    return 1;
 }
 
 function isValidURL($urlString)
@@ -145,9 +156,11 @@ class MapsAdmin
 {
     public static function getMapControllerClasses() {
         return array(
-            'MapDataController' => 'default',
-            'MapDBDataController' => 'database',
+            //'MapDataController' => 'default',
+            //'MapDBDataController' => 'database',
             //'ArcGISDataController'=>'ArcGIS',
+            'MapDataModel' => 'default',
+            'ArcGISDataModel' => 'ArcGIS Server',
         );
     }
     
