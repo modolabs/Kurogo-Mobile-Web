@@ -15,25 +15,17 @@ function getFileConfigForDirs($ext, $extFolder, $page, $pagetype, $platform, $br
         'files' => array()
     );
     
-    // If $pageOnly is true we skip the non-page versions of these files
-    $pagePrefixes = $pageOnly ? array($page) : array('', $page);
-    
     foreach ($dirs as $dir) {
         foreach ($subDirs as $subDir) {
-            foreach ($pagePrefixes as $pagePrefix) {
-                $pathPrefix = "{$dir}{$subDir}/{$extFolder}/".($pagePrefix ? "{$pagePrefix}-" : '');
-                
-                $config['files'][] = "{$pathPrefix}common.{$ext}";
-                $config['files'][] = "{$pathPrefix}{$pagetype}.{$ext}";
-                
-                $config['files'][] = "{$pathPrefix}common-{$platform}.{$ext}";
-                $config['files'][] = "{$pathPrefix}{$pagetype}-{$platform}.{$ext}";
-                
-                $config['files'][] = "{$pathPrefix}common-common-{$browser}.{$ext}";
-                $config['files'][] = "{$pathPrefix}{$pagetype}-common-{$browser}.{$ext}";
-                $config['files'][] = "{$pathPrefix}common-{$platform}-{$browser}.{$ext}";
-                $config['files'][] = "{$pathPrefix}{$pagetype}-{$platform}-{$browser}.{$ext}";
+            $fullDir = "{$dir}{$subDir}/{$extFolder}/";
+            
+            if (!$pageOnly) {
+                $commonFiles = array_reverse(DeviceClassifier::buildFileSearchList($pagetype, $platform, $browser, '', $ext, $fullDir));
+                $config['files'] = array_merge($config['files'], $commonFiles);
             }
+            
+            $pageFiles = array_reverse(DeviceClassifier::buildFileSearchList($pagetype, $platform, $browser, $page, $ext, $fullDir));
+            $config['files'] = array_merge($config['files'], $pageFiles);
         }
     }
     
@@ -74,6 +66,7 @@ function getMinifyGroupsConfig() {
             'files' => array(
                 THEME_DIR.$path,
                 SITE_APP_DIR.$path,
+                SHARED_APP_DIR.$path,
                 APP_DIR.$path,
             ),
         );
@@ -106,6 +99,7 @@ function getMinifyGroupsConfig() {
     } else {
         $dirs = array(
             APP_DIR, 
+            SHARED_APP_DIR,
             SITE_APP_DIR,
             THEME_DIR,
         );

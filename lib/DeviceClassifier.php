@@ -484,4 +484,29 @@ class DeviceClassifier {
         }
         return false;
     }
+    
+    public static function buildFileSearchList($pagetype, $platform, $browser, $page, $ext, $prefix='') {
+        $base = '';
+        if ($ext == 'js' || $ext == 'css') {
+            $base = 'common';
+        }
+        
+        $searchOrder = array(
+            array($page,  $pagetype,  $platform,  $browser),
+            array($page,  'common',   $platform,  $browser),
+            array($page,  $pagetype,  'common',   $browser),
+            array($page,  'common',   'common',   $browser),
+            array($page,  $pagetype,  $platform),
+            array($page,  'common',   $platform),
+            array($page,  $pagetype),
+            array($page,  $base),
+        );
+        
+        $searchPath = array();
+        foreach ($searchOrder as $nameComponents) {
+            $searchPath[] = $prefix.implode('-', array_filter($nameComponents)).'.'.$ext;
+        }
+        
+        return $searchPath;
+    }
 }
