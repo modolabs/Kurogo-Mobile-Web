@@ -16,25 +16,26 @@ body, th, td, li, option, select, input {
 
 a, a:visited, .focal a, .focal a:visited, .tabbody a, .tabbody a:visited {
 	/* Primary text link color */
-	color: @@@link_color@@@;
+	color: @@@focal_link_color@@@;
 }
 
 .nonfocal a, .nonfocal a:visited {
 	/* Text link color on body background */
-	color: @@@link_color@@@;
+	color: @@@nonfocal_link_color@@@;
 }
 
 h1 {
 	font-family: @@@heading_font_family@@@;
 	font-size: 170.6%;
-	line-height: 1.25em;
+	line-height: 1.2em;
 	font-weight: normal;
 	color: @@@primary_heading_color@@@;
 }
 
 h2 {
 	font-family: @@@heading_font_family@@@;
-	font-size: 123.5%;
+	font-size: 129.4%;
+	line-height: 1.2em;
 	font-weight: normal;
 	color: @@@primary_heading_color@@@;
 }
@@ -85,7 +86,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 .nonfocal, .nonfocal .legend, .formlabel {
 	/* Text color for elements that sit on the overall body background */
-	color: @@@nonfocal_text_color@@@;
+	color: @@@nonprimary_text_color@@@;
 }
 
 .nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4 {
@@ -113,10 +114,6 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 	height: 45px; 
 	background: @@@navbar_background_color@@@ url(/common/images/navback.png) repeat-x;
 	font-size: 94.1%;
-	-webkit-box-shadow: 0 0 4px #000;
-	-moz-box-shadow: 0 0 4px #000;
-	-o-box-shadow: 0 0 4px #000;
-	box-shadow: 0 0 4px #000;
 }
 
 .breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited, .pagetitle {
@@ -189,7 +186,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 #footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited {
 	/* Color of actual text and text links in sitewide footers */
-	color: @@@nonfocal_text_color@@@;
+	color: @@@nonprimary_text_color@@@;
 }
 
 
@@ -202,7 +199,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 }
 
 .sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .paging a:visited {
-	color: @@@nonfocal_text_color@@@;
+	color: @@@nonprimary_text_color@@@;
 }
 
 

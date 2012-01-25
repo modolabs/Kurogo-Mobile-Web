@@ -327,7 +327,6 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 /* Top navigation/titlebar */
 
 #navbar {
-	height: 48px;
 	margin: 0 0 9px 0;
 	line-height: 44px;
 	overflow: hidden;

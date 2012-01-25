@@ -11,6 +11,7 @@ body {
 
 #navbar {
 	height: 48px; 
+	margin-bottom: 9px;
 	background: url(/common/images/navback.jpg) repeat-x;	/* Usually a JPG or GIF where compliant and tablet may use PNG */
 	font-size: 100%;
 }
