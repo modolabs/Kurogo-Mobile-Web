@@ -43,13 +43,6 @@
     height: 44px;
     margin: 0;
     padding: 0;
-    /* android doesn't understand linear-gradient */
-    background-image: -webkit-gradient(linear, left bottom, left top, from(#ABABAB), to(#DBDBDB));
-    background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-    background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-    background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-    background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-    background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
 }
 
 /* empty div behind the #header to align the top of the #mapimage */
@@ -154,13 +147,6 @@
    height: 30px;
    border-radius: 5px;
    width: 100%;
-    /* android doesn't understand linear-gradient */
-   background-image: -webkit-gradient(linear, left bottom, left top, from(#ABABAB), to(#DBDBDB));
-   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
 }
 
 
@@ -186,7 +172,7 @@ body.fullscreen #mapimage.image {
 /* don't want map to resize when this shows */
 body.fullscreen #header {
     position: absolute;
-    top: 44; /* this should be the same as the #navbar height */
+    top: 44px; /* this should be the same as the #navbar height */
     left: 0;
     right: 0;
     z-index: 1;
@@ -249,19 +235,4 @@ body.fullscreen #tabscontainer {
    border-radius: 8px;
    padding: 2px;
    border: 1px solid #999;
-   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
 }
-
-.buttonContainer div.pressed {
-   background-image: linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -o-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-}
-
-
