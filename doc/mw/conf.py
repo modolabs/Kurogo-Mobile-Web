@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Kurogo'
-copyright = u'2011, Modo Labs'
+copyright = u'2012, Modo Labs'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -225,7 +225,7 @@ man_pages = [
 epub_title = u'Kurogo'
 epub_author = u'Modo Labs'
 epub_publisher = u'Modo Labs'
-epub_copyright = u'2011, Modo Labs'
+epub_copyright = u'2012, Modo Labs'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
