@@ -1,6 +1,7 @@
 <?php
 
 Kurogo::includePackage('Athletics');
+Kurogo::includePackage('News');
 
 class AthleticsAPIModule extends APIModule
 {
@@ -148,8 +149,8 @@ class AthleticsAPIModule extends APIModule
         if ($image = $story->getImage()) {
             return array(
                 'src'    => $image->getURL(),
-                'width'  => $image->getProperty('width'),
-                'height' => $image->getProperty('height'),
+                'width'  => $image->getWidth(),
+                'height' => $image->getHeight()
             );
         } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
             return array(
@@ -163,18 +164,13 @@ class AthleticsAPIModule extends APIModule
     }
     
     protected function formatStory($story, $mode) {
-        if ($date = $story->getPubDate()) {
-            $pubDate = $date->format('U');
-        } else {
-            $pubDate = null;
-        }
         
         $item = array(
             'GUID'        => $story->getGUID(),
             'link'        => $story->getLink(),
             'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
-            'pubDate'     => $pubDate 
+            'pubDate'     => $story->getPubTimestamp()
         );
 
         if($story->getContent()) {

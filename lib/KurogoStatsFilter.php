@@ -28,6 +28,10 @@ class KurogoStatsFilter {
     public function getValue() {
         return $this->value;
     }
+
+    public function getField() {
+        return $this->field;
+    }
     
     protected function comparisonSymbol($comparison) {
         $Comparisons = array(

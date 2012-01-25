@@ -6,7 +6,7 @@ Video API
 sections
 ==========
 
-:kbd:`/rest/video/sections?v=1`
+:kbd:`/rest/video/sections?v=2`
 
 Sample *response* ::
 
@@ -25,7 +25,7 @@ Sample *response* ::
 videos
 ========
 
-:kbd:`/rest/video/videos?section=<section-id>&v=1`
+:kbd:`/rest/video/videos?section=<section-id>&v=2`
 
 Sample *response* ::
 
@@ -63,8 +63,9 @@ Sample *response* ::
             "mobileURL": "rtsp://v7.cache8.c.youtube.com/CiILENy73wIaGQkpL6JLXKzpfhMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp", 
             "published": {
                 "date": "2011-08-12 19:40:06", 
-                "timezone_type": 2, 
-                "timezone": "Z"
+                "timezone_type": 1, 
+                "timezone": "+00:00", 
+                "timestamp": "1313178006"
             }, 
             "date": "Aug 8, 2011", 
             "streamingURL": "rtsp://v3.cache8.c.youtube.com/CiILENy73wIaGQkpL6JLXKzpfhMYESARFEgGUgZ2aWRlb3MM/0/0/0/video.3gp", 
@@ -79,7 +80,7 @@ Sample *response* ::
 detail
 ======
 
-:kbd:`/rest/video/detail?section=<section-id>&videoid=<video-id>&v=1`
+:kbd:`/rest/video/detail?section=<section-id>&videoid=<video-id>&v=2`
 
 Sample *response* ::
 
@@ -108,8 +109,9 @@ Sample *response* ::
         "mobileURL": "rtsp://v5.cache8.c.youtube.com/CiILENy73wIaGQlosMQnzoSE0xMYDSANFEgGUgZ2aWRlb3MM/0/0/0/video.3gp", 
         "published": {
             "date": "2011-08-10 15:29:01", 
-            "timezone_type": 2, 
-            "timezone": "Z"
+            "timezone_type": 1, 
+            "timezone": "+00:00", 
+            "timestamp": "1312990141"
         }, 
         "date": "Aug 8, 2011", 
         "streamingURL": "rtsp://v6.cache8.c.youtube.com/CiILENy73wIaGQlosMQnzoSE0xMYESARFEgGUgZ2aWRlb3MM/0/0/0/video.3gp", 

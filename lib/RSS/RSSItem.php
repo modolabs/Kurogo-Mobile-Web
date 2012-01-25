@@ -4,6 +4,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
+includePackage('News');
 class RSSItem extends XMLElement implements NewsItem
 {
     protected $name='item';
@@ -18,6 +19,11 @@ class RSSItem extends XMLElement implements NewsItem
     protected $category=array();
     protected $enclosure;
     protected $images=array();
+    protected $fetchContent = false;
+    
+    public function setFetchContent($bool) {
+        $this->fetchContent =  $bool ? true : false;
+    }
     
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
@@ -34,8 +40,21 @@ class RSSItem extends XMLElement implements NewsItem
         return true;
     }
     
+    public function init($args) {
+        if (isset($args['FETCH_CONTENT'])) {
+            $this->setFetchContent($args['FETCH_CONTENT']);
+        }
+    }
+    
     public function getContent()
     {
+        if (strlen($this->content)==0) {
+            if ($this->fetchContent && ($url = $this->getLink())) {
+                $reader = new KurogoReader($url);
+                $this->content = $reader->getContent();
+            }
+        }
+
         return $this->content;
     }
 
@@ -76,6 +95,12 @@ class RSSItem extends XMLElement implements NewsItem
     {
         return $this->pubDate;
     }
+    
+    public function getPubTimestamp() {
+        if ($this->pubDate) {
+            return $this->pubDate->format('U');
+        }
+    }
 
     public function getComments()
     {
@@ -99,7 +124,7 @@ class RSSItem extends XMLElement implements NewsItem
     
     public function getImage()
     {
-        if ( ($enclosure = $this->getEnclosure()) && $enclosure->isImage()) {
+        if ( ($enclosure = $this->getEnclosure()) && $enclosure instanceOf RSSImageEnclosure) {
             return $enclosure;
         } elseif (count($this->images)>0) {
             return $this->images[0];
@@ -117,6 +142,15 @@ class RSSItem extends XMLElement implements NewsItem
         {
             case 'LINK':
                 if (!$value) {
+                    if ($element->getAttrib('REL') == 'enclosure') {
+                        $this->enclosure = RSSEnclosure::factory(array(
+                            'URL' => $element->getAttrib('HREF'),
+                            'LENGTH' => $element->getAttrib('LENGTH'),
+                            'TYPE' => $element->getAttrib('TYPE'),
+                        ));
+                        break;
+                    }
+
                     if ($link = $element->getAttrib('HREF')) {
                         $element->setValue($link, true);
                     }

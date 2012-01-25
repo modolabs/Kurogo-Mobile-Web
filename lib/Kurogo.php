@@ -30,6 +30,10 @@ class Kurogo
         $this->startTime = microtime(true);
     }
     
+    public static function KurogoUserAgent() {
+        return "Kurogo Server v" . KUROGO_VERSION;
+    }
+    
     public function setCurrentModule(Module $module) {
         $this->module = $module;
     }
@@ -584,6 +588,7 @@ class Kurogo
         includePackage('Cache');
         includePackage('Config');
         $siteConfig = new ConfigGroup();    
+        $saveCache = true;
         // Load main configuration file
         $kurogoConfig = ConfigFile::factory('kurogo', 'project', ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
         $siteConfig->addConfig($kurogoConfig);
@@ -665,7 +670,6 @@ class Kurogo
                 //
                 // Get URL base
                 //
-                $saveCache = true;
                 if ($urlBase = $siteConfig->getOptionalVar('URL_BASE','','kurogo')) {
                     $urlBase = rtrim($urlBase,'/').'/';
                 } elseif ($urlBase = Kurogo::getCache('URL_BASE')) {

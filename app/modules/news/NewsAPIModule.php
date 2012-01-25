@@ -1,5 +1,6 @@
 <?php
 
+includePackage('News');
 class NewsAPIModule extends APIModule {
 
     protected $id = 'news';
@@ -89,7 +90,7 @@ class NewsAPIModule extends APIModule {
             'link'        => $story->getLink(),
             'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
-            'pubDate'     => self::getPubDateUnixtime($story),
+            'pubDate'     => $story->getPubTimestamp()
        );
 
        if($story->getContent()) {
@@ -106,8 +107,8 @@ class NewsAPIModule extends APIModule {
        if($image && $image->getURL()) {
            $item['image'] = array(
                 'src'    => $image->getURL(),
-                'width'  => $image->getProperty('width'),
-                'height' => $image->getProperty('height'),
+                'width'  => $image->getWidth(),
+                'height' => $image->getHeight()
            );
        }
        $author = $story->getAuthor();
@@ -140,11 +141,4 @@ class NewsAPIModule extends APIModule {
     }
   }
 
-    private static function getPubDateUnixtime($story) {
-        if ($pubDate = $story->getPubDate()) {
-            return $pubDate->format('U');
-        }
-        
-        return null;
-    }
 }
