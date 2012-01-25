@@ -97,7 +97,7 @@ License
 *******
 
 | Copyright (c) 2010 Massachusetts Institute of Technology
-| Copyright (c) 2011 Modo Labs, Inc
+| Copyright (c) 2012 Modo Labs, Inc
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

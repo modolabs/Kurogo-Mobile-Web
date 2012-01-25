@@ -4,9 +4,6 @@
  * 
  * @uses WebModule
  * @package 
- * @version $id$
- * @copyright 2011
- * @author Jeffery You <jianfeng.you@symbio.com> 
  */
 
 includePackage('Photos');
