@@ -172,7 +172,6 @@ body.fullscreen #mapimage.image {
 /* don't want map to resize when this shows */
 body.fullscreen #header {
     position: absolute;
-    top: 44px; /* this should be the same as the #navbar height */
     left: 0;
     right: 0;
     z-index: 1;
