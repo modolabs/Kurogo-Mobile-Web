@@ -144,6 +144,7 @@
 
 #search-options input {
    margin: 7px 5px 0 0;
+   padding: 0;
    height: 30px;
    border-radius: 5px;
    width: 100%;
