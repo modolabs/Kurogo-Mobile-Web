@@ -217,7 +217,7 @@ class NewsWebModule extends WebModule {
       case 'story':
         $searchTerms = $this->getArg('filter', false);
         if ($searchTerms) {
-          $this->feed->addFilter('search', $searchTerms);
+          $this->feed->setOption('search', $searchTerms);
         }
 
         $storyID   = $this->getArg('storyID', false);
