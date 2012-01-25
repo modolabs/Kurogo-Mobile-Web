@@ -89,7 +89,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 	color: @@@nonprimary_text_color@@@;
 }
 
-.nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4 {
+.nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4, h1.nonfocal, h2.nonfocal, h3.nonfocal, h4.nonfocal {
 	/* Color for headings that sit on the overall body background */
 	color: @@@nonfocal_heading_color@@@;
 }
