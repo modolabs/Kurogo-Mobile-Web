@@ -198,8 +198,13 @@ class CalendarDataModel extends ItemListDataModel
         return end($items);
     }
     
-    public function getItem($id, $time=null)
-    {
+    public function getItem($id, $time=null) {
+    
+        if ($this->retriever instanceOf ItemDataRetriever) {
+            $item = $this->retriever->getItem($id, $response);
+            return $item;
+        }
+        
         //use the time to limit the range of events to seek (necessary for recurring events)
         if ($time = filter_var($time, FILTER_VALIDATE_INT)) {
             $start = new DateTime(date('Y-m-d H:i:s', $time));

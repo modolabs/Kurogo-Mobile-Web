@@ -16,6 +16,8 @@ you can learn more about these modules, what they do and how to configure them.
    modulenews
    moduleemergency
    modulemap
+   modulephotos
+   moduleathletics
    modulelinks
    modulecontent
    moduleurl
