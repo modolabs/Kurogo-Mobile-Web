@@ -70,7 +70,7 @@ class DeviceClassifier {
           
         } else if (isset($_SERVER['HTTP_USER_AGENT'])) {
             list($this->pagetype, $this->platform) = $this->detectDevice($this->userAgent);
-            //$this->setDeviceCookie();
+            $this->setDeviceCookie();
         }
         
         // Do this after caching and setting cookies or the value of TABLET_ENABLED would be effectively cached
