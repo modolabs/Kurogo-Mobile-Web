@@ -8,5 +8,6 @@ var addToHomeConfig = {
 		expire: 2,					// Minutes to wait before showing the popup again (0 = always displayed)
 		message: '',				// Customize your message or force a language ('' = automatic)
 		touchIcon: true,			// Display the touch icon
-		arrow: true				// Display the balloon arrow
+		arrow: true,			    // Display the balloon arrow
+		appname: 'Kurogo'
 }

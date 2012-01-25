@@ -28,7 +28,8 @@ var nav = navigator,
 		disableLoading: false,		// Disable loading of balloon
 		touchIcon: false,			// Display the touch icon
 		arrow: true,				// Display the balloon arrow
-		iterations:100				// Internal/debug use
+		iterations:100,				// Internal/debug use
+		appname: 'Kurogo'
 	},
 	/* Message in various languages, en_us is the default if a language does not exist */
 	intl = {
@@ -36,7 +37,7 @@ var nav = navigator,
 		da_dk: 'Tilføj denne side til din %device: tryk på %icon og derefter <strong>Tilføj til hjemmeskærm</strong>.',
 		de_de: 'Installieren Sie diese App auf Ihrem %device: %icon antippen und dann <strong>Zum Home-Bildschirm</strong>.',
 		el_gr: 'Εγκαταστήσετε αυτήν την Εφαρμογή στήν συσκευή σας %device: %icon μετά πατάτε <strong>Προσθήκη σε Αφετηρία</strong>.',
-		en_us: 'Install this web app on your %device: tap %icon and then <strong>Add to Home Screen</strong>.',
+		en_us: 'Install %appname on your %device: tap %icon and then <strong>Add to Home Screen</strong>.',
 		es_es: 'Para instalar esta app en su %device, pulse %icon y seleccione <strong>Añadir a pantalla de inicio</strong>.',
 		fi_fi: 'Asenna tämä web-sovellus laitteeseesi %device: paina %icon ja sen jälkeen valitse <strong>Lisää Koti-valikkoon</strong>.',
 		fr_fr: 'Ajoutez cette application sur votre %device en cliquant sur %icon, puis <strong>Ajouter à l\'écran d\'accueil</strong>.',
@@ -120,7 +121,7 @@ function ready () {
 	}
 
 	div.className = (isIPad ? 'ipad' : 'iphone') + (touchIcon ? ' wide' : '');
-	div.innerHTML = touchIcon + options.message.replace('%device', platform).replace('%icon', OSVersion >= 4.2 ? '<span class="share"></span>' : '<span class="plus">+</span>') + (options.arrow ? '<span class="arrow"></span>' : '') + '<span class="close">\u00D7</span>';
+	div.innerHTML = touchIcon + options.message.replace('%appname', options.appname).replace('%device', platform).replace('%icon', OSVersion >= 4.2 ? '<span class="share"></span>' : '<span class="plus">+</span>') + (options.arrow ? '<span class="arrow"></span>' : '') + '<span class="close">\u00D7</span>';
 
 	document.body.appendChild(div);
 	el = div;
