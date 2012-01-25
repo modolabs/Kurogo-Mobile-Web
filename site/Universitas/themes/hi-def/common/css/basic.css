@@ -51,6 +51,6 @@ h4 {
 .tabs .active {
 	/* Text label of currently selected tabs */
 	font-weight: bold;
-	color: @@@emphasized_text_color@@@;
+	color: @@@strong_text_color@@@;
 }
 

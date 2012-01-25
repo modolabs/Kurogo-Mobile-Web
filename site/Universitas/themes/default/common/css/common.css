@@ -86,7 +86,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 .nonfocal, .nonfocal .legend, .formlabel {
 	/* Text color for elements that sit on the overall body background */
-	color: @@@nonprimary_text_color@@@;
+	color: @@@nonfocal_text_color@@@;
 }
 
 .nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4, h1.nonfocal, h2.nonfocal, h3.nonfocal, h4.nonfocal {
@@ -186,7 +186,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 #footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited {
 	/* Color of actual text and text links in sitewide footers */
-	color: @@@nonprimary_text_color@@@;
+	color: @@@nonfocal_text_color@@@;
 }
 
 
@@ -199,7 +199,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 }
 
 .sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .paging a:visited {
-	color: @@@nonprimary_text_color@@@;
+	color: @@@nonfocal_text_color@@@;
 }
 
 
@@ -223,7 +223,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 #tabs li.active a {
 	/* Text label of currently selected tab */
-	color: @@@emphasized_text_color@@@;
+	color: @@@strong_text_color@@@;
 }
 
 #tabs li.greyedout {
