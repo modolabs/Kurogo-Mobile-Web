@@ -230,6 +230,10 @@ class CalendarWebModule extends WebModule {
         $calendar = isset($options['calendar']) ? $options['calendar'] : $this->getDefaultFeed($type);
         $feed     = $this->getFeed($calendar, $type);
         
+        if (isset($options['federatedSearch']) && $options['federatedSearch']) {
+            $options['timeframe'] = isset($options['timeframe']) ? $options['timeframe'] : $this->getDefaultTimeframe();
+        }
+
         if (isset($options['timeframe'])) {
           $searchRanges = $this->getModuleSections('searchranges');
           $selectedRange = $searchRanges[$options['timeframe']];
@@ -422,6 +426,10 @@ class CalendarWebModule extends WebModule {
  
     protected function initialize() {
         $this->timezone = Kurogo::siteTimezone();
+    }
+    
+    protected function getDefaultTimeframe() {
+        return 0;
     }
 
   protected function initializeForPage() {
@@ -800,7 +808,7 @@ class CalendarWebModule extends WebModule {
       case 'search':
         if ($filter = $this->getArg('filter')) {
           $searchTerms    = trim($filter);
-          $timeframe      = $this->getArg('timeframe', 0);
+          $timeframe      = $this->getArg('timeframe', $this->getDefaultTimeframe());
           $type           = $this->getArg('type', 'static');
           $searchCalendar = $this->getArg('calendar', $this->getDefaultFeed($type));
           
