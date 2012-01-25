@@ -29,8 +29,8 @@ class AthleticsWebModule extends WebModule {
     
     public static function getGenders() {
         return array(
-            'men'=>'Men',
-            'women'=>'Women'
+            'men'=>$this->getLocalizedString('GENDER_MEN'),
+            'women'=>$this->getLocalizedString('GENDER_WOMEN')
         );
         
     }
@@ -242,7 +242,7 @@ class AthleticsWebModule extends WebModule {
         if (isset($this->feeds[$sport])) {
             return $this->feeds[$sport];
         } else {  
-            throw new KurogoDataException($this->getLocalizedString('UNLOAD_SPORT', $sport));
+            throw new KurogoDataException($this->getLocalizedString('ERROR_INVALID_SPORT', $sport));
         }
     }
     
@@ -250,7 +250,7 @@ class AthleticsWebModule extends WebModule {
     
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         if (!$data) {
-            throw new KurogoDataException($this->getLocalizedString('UNLOAD_NAV', $tab));
+            throw new KurogoDataException($this->getLocalizedString('ERROR_NAV', $tab));
         }
         
         return $data;
@@ -271,10 +271,10 @@ class AthleticsWebModule extends WebModule {
     protected function getNewsFeed($sport, $gender=null) {
         if ($sport=='topnews') {
             $feedData = $this->getNavData('topnews');
+        } elseif (isset($this->feeds[$sport])) {
+            $feedData = $this->feeds[$sport];
         } else {
-            if (!$feedData = $this->getOptionalModuleSection($sport, 'feeds')) {
-                throw new KurogoDataException($this->getLocalizedString('UNLOAD_SPORT', $sport));
-            }
+            throw new KurogoDataException($this->getLocalizedString('ERROR_INVALID_SPORT', $sport));
         }
         
         if (isset($feedData['DATA_RETRIEVER']) || isset($feedData['BASE_URL'])) {

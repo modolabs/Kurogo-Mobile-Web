@@ -910,6 +910,12 @@ a.sidenav-next {
     word-wrap: break-word;
 }
 
+.email .value {
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    hyphens: noen;
+}
+
 .longlabel {
 	display: block;
 	font-size: 76.471%;
