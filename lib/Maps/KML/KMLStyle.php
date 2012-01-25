@@ -38,7 +38,8 @@ class KMLStyle extends XMLElement implements MapStyle
                 case MapStyle::POLYGON: $style = $this->polyStyle; break;
             }
         } else {
-            $styleRef = $this->styleContainer->getStyle($this->normalStyle);
+            //$styleRef = $this->styleContainer->getStyle($this->normalStyle);
+            $styleRef = $this->normalStyle;
             switch ($type) {
                 case MapStyle::POINT: $style = $styleRef->getIconStyle(); break;
                 case MapStyle::LINE: $style = $styleRef->getLineStyle(); break;
@@ -55,8 +56,9 @@ class KMLStyle extends XMLElement implements MapStyle
         if (isset($style[$param])) {
             return $style[$param];
         } else if ($type == MapStyle::POLYGON
-            && $this->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::SHOULD_OUTLINE))
-        {
+            && isset($style[MapStyle::SHOULD_OUTLINE])
+            && $style[MapStyle::SHOULD_OUTLINE]
+        ) {
             $outlineStyle = $this->getStyleForType(MapStyle::LINE);
             if (isset($outlineStyle[$param])) {
                 return $outlineStyle[$param];
@@ -82,8 +84,8 @@ class KMLStyle extends XMLElement implements MapStyle
                 $iconChild = $element->getChildElement('ICON');
                 $this->iconStyle = array(
                     MapStyle::ICON => $iconChild->getProperty('HREF'),
-                    MapStyle::WIDTH => $iconChild->getProperty('W'),
-                    MapStyle::HEIGHT => $iconChild->getProperty('H'),
+                    MapStyle::WIDTH => $element->getProperty('W'),
+                    MapStyle::HEIGHT => $element->getProperty('H'),
                     MapStyle::SCALE => $element->getProperty('SCALE'),
                     );
                 break;
@@ -117,10 +119,19 @@ class KMLStyle extends XMLElement implements MapStyle
                 break;
             case 'PAIR':
                 $state = $element->getProperty('KEY');
+                /*
                 if ($state == 'normal') {
                     $this->normalStyle = substr($element->getProperty('STYLEURL'), 1);
                 } else if ($state == 'highlighted') {
                     $this->highlightStyle = substr($element->getProperty('STYLEURL'), 1);
+                }
+                */
+                if ($state == 'normal') {
+                    $styleRef = substr($element->getProperty('STYLEURL'), 1);
+                    $this->normalStyle = $this->styleContainer->getStyle($styleRef);
+                } else if ($state == 'highlighted') {
+                    $styleRef = substr($element->getProperty('STYLEURL'), 1);
+                    $this->highlightStyle = $this->styleContainer->getStyle($styleRef);
                 }
                 break;
             default:
@@ -134,5 +145,31 @@ class KMLStyle extends XMLElement implements MapStyle
     {
         $this->isSimpleStyle = ($name === 'STYLE');
         $this->setAttribs($attribs);
+    }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'isSimpleStyle' => $this->isSimpleStyle,
+                'iconStyle' => serialize($this->iconStyle),
+                'balloonStyle' => serialize($this->balloonStyle),
+                'lineStyle' => serialize($this->lineStyle),
+                'listStyle' => serialize($this->listStyle),
+                'polyStyle' => serialize($this->polyStyle),
+                'normalStyle' => serialize($this->normalStyle),
+                'highlightStyle' => serialize($this->highlightStyle),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->isSimpleStyle = $data['isSimpleStyle'];
+        $this->iconStyle = unserialize($data['iconStyle']);
+        $this->balloonStyle = unserialize($data['balloonStyle']);
+        $this->lineStyle = unserialize($data['lineStyle']);
+        $this->listStyle = unserialize($data['listStyle']);
+        $this->polyStyle = unserialize($data['polyStyle']);
+        $this->normalStyle = unserialize($data['normalStyle']);
+        $this->highlightStyle = unserialize($data['highlightStyle']);
     }
 }

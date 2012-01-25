@@ -28,7 +28,7 @@ class RSSDataParser extends XMLDataParser
     protected static $startElements=array(
         'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'ENCLOSURE', 'IMAGE');
     protected static $endElements=array(
-        'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'DESCRIPTION');
+        'CHANNEL', 'FEED', 'ITEM', 'ENTRY');
     
     public function items()
     {
@@ -109,16 +109,6 @@ class RSSDataParser extends XMLDataParser
             case 'ITEM':
             case 'ENTRY': //for atom feeds
                 $this->items[] = $element;
-                break;
-            case 'DESCRIPTION':
-                /* dupe description to content if content is not defined */
-                if (is_a($parent, 'RSSItem') && !$parent->getContent()) {
-                    $contentElement = clone($element);
-                    $contentElement->setName('CONTENT');
-                    $contentElement->setValue($this->data, $this->shouldStripTags($contentElement));
-                    $parent->addElement($contentElement);
-                }
-                $parent->addElement($element);
                 break;
         }
     }

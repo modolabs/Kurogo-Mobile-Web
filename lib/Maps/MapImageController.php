@@ -25,45 +25,59 @@ abstract class MapImageController
     protected $mapProjection = GEOGRAPHIC_PROJECTION; // projection to pass to map image generator
     protected $mapProjector;
 
-    protected $mapDevice;
+    public static function basemapClassForDevice(MapDevice $mapDevice, $params=array())
+    {
+        $isStatic = false;
+
+        if (isset($params['JS_MAP_CLASS']) && $mapDevice->pageSupportsDynamicMap()) {
+            $mapClass = $params['JS_MAP_CLASS'];
+
+        } elseif (isset($params['STATIC_MAP_CLASS'])) {
+            $mapClass = $params['STATIC_MAP_CLASS'];
+            $isStatic = true;
+
+        } elseif ($mapDevice->pageSupportsDynamicMap()) {
+            $mapClass = self::$DEFAULT_JS_MAP_CLASS;
+
+        } else {
+            $mapClass = self::$DEFAULT_STATIC_MAP_CLASS;
+            $isStatic = true;
+        }
+
+        return array($mapClass, $isStatic);
+    }
 
     public static function factory($params, MapDevice $mapDevice)
     {
         $baseURL = null;
-        $baseURLParam = 'STATIC_MAP_BASE_URL';
-
-        if (isset($params['JS_MAP_CLASS']) && $mapDevice->pageSupportsDynamicMap()) {
-            $imageClass = $params['JS_MAP_CLASS'];
-            $baseURLParam = 'DYNAMIC_MAP_BASE_URL';
-
-        } elseif (isset($params['STATIC_MAP_CLASS'])) {
-            $imageClass = $params['STATIC_MAP_CLASS'];
-
-        } elseif ($mapDevice->pageSupportsDynamicMap()) {
-            $imageClass = self::$DEFAULT_JS_MAP_CLASS;
-            $baseURLParam = 'DYNAMIC_MAP_BASE_URL';
-
-        } else {
-            $imageClass = self::$DEFAULT_STATIC_MAP_CLASS;
-        }
+        list($mapClass, $isStatic) = self::basemapClassForDevice($mapDevice, $params);
+        $baseURLParam = $isStatic ? 'STATIC_MAP_BASE_URL' : 'DYNAMIC_MAP_BASE_URL';
 
         if (isset($params[$baseURLParam])) {
             $baseURL = $params[$baseURLParam];
         }
 
         if ($baseURL !== null) {
-            $controller = new $imageClass($baseURL);
+            $baseMap = new $mapClass($baseURL);
         } else {
-            $controller = new $imageClass();
+            $baseMap = new $mapClass();
         }
 
-        $controller->init();
+        $baseMap->init($params);
 
-        return $controller;
+        return $baseMap;
     }
 
-    public function init()
+    public function init($params)
     {
+        if (isset($params['center'])) {
+            $this->setCenter(filterLatLon($params['center']));
+        }
+
+        if (isset($params['DEFAULT_ZOOM_LEVEL'])) {
+            $this->setZoomLevel($params['DEFAULT_ZOOM_LEVEL']);
+        }
+
         $this->bufferBox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
     }
 
@@ -173,11 +187,24 @@ abstract class MapImageController
         if ($point['lon'] < $this->bufferBox['xmin']) {
             $this->bufferBox['xmin'] = $point['lon'];
         }
+    }
 
-        $this->setCenter(array(
-            'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
-            'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
-            ));
+    public function prepareForOutput()
+    {
+        $vRange = $this->bufferBox['ymax'] - $this->bufferBox['ymin'];
+        $hRange = $this->bufferBox['xmax'] - $this->bufferBox['xmin'];
+        if ($vRange >= 0 && $hRange >= 0) {
+            $this->setCenter(array(
+                'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
+                'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
+                ));
+
+            if ($vRange > 0 && $hRange > 0) {
+                $vZoom = ceil(log(180 / $vRange, 2));
+                $hZoom = ceil(log(360 / $hRange, 2));
+                $this->setZoomLevel(min($vZoom, $hZoom));
+            }
+        }
     }
 
     // overlays and annotations
@@ -320,11 +347,10 @@ class JavascriptTemplate
             foreach ($this->values as $values) {
                 $template = $this->template;
                 foreach ($values as $placeholder => $value) {
-                    $template = preg_replace('/\[?'.$placeholder.'\]?/', $value, $template);
-                }
-
-                while (preg_match('/\[___\w+___\]/', $template, $matches)) {
-                    $template = str_replace($matches[0], '', $template);
+                    if (!$value) {
+                        $value = ''; // nulls may show up as strings
+                    }
+                    $template = preg_replace('/'.$placeholder.'/', $value, $template);
                 }
 
                 $script .= $template;

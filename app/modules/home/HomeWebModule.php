@@ -126,6 +126,13 @@ class HomeWebModule extends WebModule {
             $this->assign('showFederatedSearch', true);
             $this->assign('placeholder', $this->getLocalizedString("SEARCH_PLACEHOLDER", Kurogo::getSiteString('SITE_NAME')));
         }
+        
+        if ($this->getPlatform()=='iphone' && $this->getOptionalModuleVar('ADD_TO_HOME', false)) {
+            $this->addInternalJavascript('/common/javascript/lib/add2homeConfig.js');
+            $this->addInternalJavascript('/common/javascript/lib/add2home.js');
+            $this->addInternalCSS('/common/css/add2home.css');
+        }
+        
         $this->assign('SHOW_DOWNLOAD_TEXT', DownloadWebModule::appDownloadText($this->platform));
         $this->assign('displayType', $this->getModuleVar('display_type'));
         break;

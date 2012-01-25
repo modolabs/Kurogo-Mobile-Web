@@ -23,6 +23,9 @@ class MapDataController extends DataController implements MapFolder
 
     protected $projectorReady = false;
     protected $projector = null;
+
+    protected $categoryId;
+    protected $feedGroup;
     
     ////// default, slow search implementation
     
@@ -141,12 +144,76 @@ class MapDataController extends DataController implements MapFolder
     
     protected static function getLeafNodesForListItem(MapListElement $listItem, Array &$results) {
         if ($listItem instanceof MapFolder) {
-            foreach ($listItem->getListItems() as $innerItem) {
+            foreach ($listItem->categories() as $innerItem) {
                 self::getLeafNodesForListItem($innerItem, $results);
             }
         } else {
             $results[] = $listItem;
         }
+    }
+
+    // forward compatibility
+
+    public function placemarks() {
+        if ($this->selectedPlacemarks) {
+            return $this->selectedPlacemarks;
+        }
+        return $this->getAllPlacemarks();
+    }
+
+    public function setPlacemarkId($id) {
+        $this->selectPlacemark($id);
+    }
+
+    public function categories() {
+        return $this->getChildCategories();
+    }
+
+    public function findCategory($categoryId) {
+        $this->addDisplayFilter('category', $categoryId); // this sets drillDownPath
+
+        $selectedCategory = $this;
+        foreach ($this->drillDownPath as $pathElement) {
+            foreach ($selectedCategory->categories() as $category) {
+                if ($category->getId() == $pathElement) {
+                    $selectedCategory = $category;
+                    break;
+                }
+            }
+        }
+
+        return $selectedCategory;
+    }
+
+    public function items() {
+        $items = array();
+        $rawItems = parent::items(); // invoke parse
+
+        if ($this->drillDownPath) {
+            $selectedCategory = $this;
+            foreach ($this->drillDownPath as $pathElement) {
+                foreach ($selectedCategory->categories() as $category) {
+                    if ($category->getId() == $pathElement) {
+                        $selectedCategory = $category;
+                        break;
+                    }
+                }
+            }
+            $items = array_merge($items, $selectedCategory->categories());
+            foreach ($selectedCategory->placemarks() as $placemark) {
+                $items[] = $this->getProjectedFeature($placemark);
+            }
+        } else {
+            foreach ($rawItems as $rawItem) {
+                if ($rawItem instanceof Placemark) {
+                    $items[] = $this->getProjectedFeature($rawItem);
+                } else {
+                    $items[] = $rawItem;
+                }
+            }
+        }
+
+        return $items;
     }
     
     /////// view functions
@@ -156,7 +223,7 @@ class MapDataController extends DataController implements MapFolder
         $result = null;
         foreach ($this->getAllPlacemarks() as $feature) {
             if ($feature->getId() == $featureId) {
-                $result = $this->getProjectedFeature($feature);
+                $result = $feature;
                 break;
             }
         }
@@ -185,7 +252,7 @@ class MapDataController extends DataController implements MapFolder
     {
         if ($type == 'category') {
             if ($value && !is_array($value)) {
-                $value = array($value);
+                $value = explode(MAP_CATEGORY_DELIMITER, $value);
             }
             $this->drillDownPath = $value;
         }
@@ -201,9 +268,9 @@ class MapDataController extends DataController implements MapFolder
         $features = array();
         foreach ($this->getAllPlacemarks() as $feature) {
             if (!$this->drillDownPath 
-                || in_array($this->drillDownPath, $feature->getCategories()))
+                || in_array($this->drillDownPath, $feature->getCategoryIds()))
             {
-                $features[] = $this->getProjectedFeature($feature);
+                $features[] = $feature;
             }
         }
         return $features;
@@ -220,6 +287,8 @@ class MapDataController extends DataController implements MapFolder
                 }
             }
         }
+        $placemark->setURLParam('feed', $this->categoryId);
+        $placemark->setURLParam('group', $this->feedGroup);
         return $placemark;
     }
 
@@ -252,8 +321,9 @@ class MapDataController extends DataController implements MapFolder
         if (count($folders) >= 1) {
             // attempt to drill down if we are given a "subdirectory"
             if (isset($firstItem) && isset($folders[$firstItem])) {
-                return self::listItemsAtPath(
-                    $folders[$firstItem]->getListItems(), $path);
+                $folder = $folders[$firstItem];
+                $items = array_merge($folder->categories(), $folder->placemarks());
+                return self::listItemsAtPath($items, $path);
             }
             return $folders;
         }
@@ -263,21 +333,30 @@ class MapDataController extends DataController implements MapFolder
 
     public function getChildCategories()
     {
-        return $this->parser->getChildCategories();
+        //return $this->parser->getChildCategories();
+        return $this->parser->categories();
     }
 
     public function getAllPlacemarks()
     {
         if (!$this->allPlacemarks) {
             $this->getListItems(); // make sure we're populated
-            $this->allPlacemarks = $this->parser->getAllPlacemarks();
+            $this->allPlacemarks = array();
+            foreach ($this->parser->placemarks() as $placemark) {
+                $this->allPlacemarks[] = $placemark;
+            }
         }
         return $this->allPlacemarks;
     }
 
     public function getListItems()
     {
-        return self::listItemsAtPath($this->items(), $this->drillDownPath, $this->categoryId);
+        // compensate for updated items() implementation
+        $drillPath = $this->drillDownPath;
+        $this->drillDownPath = null;
+        $results = self::listItemsAtPath($this->items(), $drillPath, $this->categoryId);
+        $this->drillDownPath = $drillPath;
+        return $results;
     }
 
     public function getProjection()
@@ -366,6 +445,10 @@ class MapDataController extends DataController implements MapFolder
 
         if (isset($args['DEFAULT_ZOOM_LEVEL']))
             $this->defaultZoomLevel = $args['DEFAULT_ZOOM_LEVEL'];
+
+        if (isset($args['group'])) {
+            $this->feedGroup = $args['group'];
+        }
         
         $this->categoryId = mapIdForFeedData($args);
     }

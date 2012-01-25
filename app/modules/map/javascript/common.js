@@ -1,11 +1,127 @@
-var loadedImages = {};
-var centerZoomBased;
-var staticMapOptions;
-var mapWidth;
-var mapHeight;
-var apiURL;
+var map;
+var mapLoader;
+var browseGroups = {};
 
-// id7 doesn't understand window.innerWidth and window.innerHeight
+function sortGroupsByDistance() {
+    if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(function(location) {
+            var navCategories = document.getElementById("categories").children;
+            for (var i = 0; i < navCategories.length; i++) {
+                var category = navCategories[i];
+                var categoryId = category.getAttribute("class");
+                browseGroups[categoryId] = category;
+            }
+
+            makeAPICall(
+                'GET', CONFIG_MODULE, 'sortGroupsByDistance',
+                {"lat": location.coords.latitude, "lon": location.coords.longitude},
+                function(response) {
+                    var sortedGroups = [];
+                    for (var i = 0; i < response.length; i++) {
+                        var id = response[i]["id"];
+                        if (id in browseGroups) {
+                            if ("distance" in response[i]) {
+                                browseGroups[id].innerHTML = browseGroups[id].innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
+                            }
+                            sortedGroups.push(browseGroups[id]);
+                        }
+                    }
+                    var navList = document.getElementById("categories");
+                    if (navList.children.length == sortedGroups.length) {
+                        while (navList.children.length > 0) {
+                            navList.removeChild(navList.children[0]);
+                        }
+                        for (var i = 0; i < sortedGroups.length; i++) {
+                            navList.appendChild(sortedGroups[i]);
+                        }
+                    }
+                }
+            );
+        },
+        function() {},
+        {maximumAge:3600000, timeout:5000});
+    }
+}
+
+////// expanding search bar
+
+function submitMapSearch(form) {
+    if (form.filter.value.length > 0) {
+        mapLoader.clearMarkers();
+        hideSearchFormButtons();
+        params = {'q': form.filter.value};
+        if (form.group.value) {
+            params['group'] = form.group.value;
+        }
+        if ('projection' in mapLoader) {
+            params['projection'] = mapLoader.projection;
+        }
+        makeAPICall('GET', CONFIG_MODULE, 'search', params, function(response) {
+            if (response.results.length > 0) {
+                // TODO: make the "browse" button bring up results in a list
+                var minLat = 10000000;
+                var maxLat = -10000000;
+                var minLon = 10000000;
+                var maxLon = -10000000;
+                for (var i = 0; i < response.results.length; i++) {
+                    var markerData = response.results[i];
+                    mapLoader.createMarker(
+                        markerData.title, markerData.subtitle,
+                        markerData.lat, markerData.lon, markerData.url);
+                    minLat = Math.min(minLat, markerData.lat);
+                    minLon = Math.min(minLon, markerData.lon);
+                    maxLat = Math.max(maxLat, markerData.lat);
+                    maxLon = Math.max(maxLon, markerData.lon);
+                }
+                mapLoader.setMapBounds(minLat, minLon, maxLat, maxLon);
+            }
+        });
+        var addFilterToHref = function(link) {
+            var reg = new RegExp('&?filter=.+(&|$)');
+            if (link.href.match(reg)) {
+                link.href = link.href.replace(reg, '&filter='+form.filter.value);
+            } else {
+                link.href = link.href + '&filter='+form.filter.value;
+            }
+        }
+        var mapButton = document.getElementById("mapLink");
+        if (mapButton) {
+            addFilterToHref(mapButton);
+        }
+        var browseButton = document.getElementById("browseLink");
+        if (browseButton) {
+            addFilterToHref(browseButton);
+        }
+    }
+}
+
+function clearSearch(form) {
+    form.filter.value = '';
+}
+
+function showSearchFormButtons() {
+    var header = document.getElementById("header");
+    addClass(header, "expanded");
+    if (document.getElementById("campus-select")) {
+        addClass(header, "multi-campus");
+    } else {
+        addClass(header, "single-campus");
+    }
+}
+
+function hideSearchFormButtons() {
+    var header = document.getElementById("header");
+    removeClass(header, "expanded");
+    if (document.getElementById("campus-select")) {
+        removeClass(header, "multi-campus");
+    } else {
+        removeClass(header, "single-campus");
+    }
+}
+
+///// window size
+
+// ie7 doesn't understand window.innerWidth and window.innerHeight
 function getWindowHeight() {
     if (window.innerHeight !== undefined) {
         return window.innerHeight;
@@ -22,236 +138,6 @@ function getWindowWidth() {
     }
 }
 
-function hideMapTabChildren() {
-    var mapImage = document.getElementById("mapimage");
-    if (mapImage) {
-        mapImage.className = "";
-    }
-    var staticMapImage = document.getElementById("staticmapimage");
-    if (staticMapImage) {
-        staticMapImage.parentNode.removeChild(staticMapImage);
-    }
-    var mapScrollers = document.getElementById("mapscrollers");
-    if (mapScrollers) {
-        mapScrollers.parentNode.removeChild(mapScrollers);
-    }
-}
-
-function loadImage(imageURL,imageID) {
-    if (!loadedImages[imageID]) {
-        // Loads an image from the given URL into the image with the specified ID
-        var img = document.getElementById(imageID);
-        if (img) {
-            if (imageURL != "") {
-                img.src = imageURL;
-            } else {
-                img.src = "/common/images/blank.png";
-            }
-        }
-        loadedImages[imageID] = true;
-    }
-}
-
-function loadMapImage(newSrc) {
-    var query = newSrc.substring(newSrc.indexOf("?") + 1, newSrc.length);
-    staticMapOptions["query"] = escape(query);
-
-    var mapImage = document.getElementById("staticmapimage");
-    var oldSrc = mapImage.src;
-    mapImage.src = newSrc;
-    if (oldSrc != mapImage.src) {
-        show("loadingimage");
-    }
-    mapImage.src = newSrc; // guarentee onload handler gets called at least 
-                           // once after showing the loading image (even for cached images)
-    mapImage.width = mapWidth;
-    mapImage.style.width = mapWidth + "px";
-    mapImage.height = mapHeight;
-    mapImage.style.height = mapHeight + "px";
-}
-
-function pixelsFromString(aString) {
-    if (aString.substring(aString.length - 2, aString.length) == "px") {
-        return aString.substring(0, aString.length - 2);
-    } else if (aString.substring(aString.length - 1, aString.length) == "%") {
-        return aString.substring(0, aString.length - 1);
-    }
-    return aString;
-}
-
-var mapControls = {
-    recenterMap: function() {},
-    locationUpdated: function(location) {},
-    locationUpdateStopped: function(error) {},
-    locationWatchId: null,
-    locationIsFirstPosition: true,
-    locateMeButton: null,
-    toggleLocationUpdates: function() {
-        if (this.locationWatchId === null) {
-            this.startLocationUpdates();
-        } else {
-            this.stopLocationUpdates();
-        }
-    },
-    startLocationUpdates: function() {
-        this.locateMeButton.style.backgroundPosition = "-200px 0px";
-
-        var that = this;
-        that.locationIsFirstPosition = true;
-        that.locationWatchId = navigator.geolocation.watchPosition(
-            function (location) {
-                that.locationUpdated(location, that.locationIsFirstPosition);
-                that.locationIsFirstPosition = false;
-            },
-            function (error) {}, // don't really want to stop trying to locate here
-            {enableHighAccuracy: true}
-        );
-    },
-    stopLocationUpdates: function() {
-        this.locateMeButton.style.backgroundPosition = "-160px 0px";
-        if (this.locationWatchId != null) {
-            navigator.geolocation.clearWatch(this.locationWatchId);
-            this.locationWatchId = null;
-            this.locationUpdateStopped(null);
-        }
-    },
-
-    // params: { zoomin:Function,zoomout:Function,recenter:Function,
-    //   ?locationUpdated:Function,?locationUpdateStopped:Function }
-    setup: function(args) {
-        this.recenterMap = args.recenter;
-        if ("locationUpdated" in args) {
-            this.locationUpdated = args.locationUpdated;
-        }
-        if ("locationUpdateStopped" in args) {
-            this.locationUpdateStopped = args.locationUpdateStopped;
-        }
-
-        var zoominButton = document.getElementById("zoomin");
-        zoominButton.onclick = args.zoomin;
-
-        var zoomoutButton = document.getElementById("zoomout");
-        zoomoutButton.onclick = args.zoomout;
-
-        var recenterButton = document.getElementById("recenter");
-        recenterButton.onclick = this.recenterMap;
-
-        this.locateMeButton = document.getElementById("locateMe");
-        if ("geolocation" in navigator && typeof(showUserLocation) != 'undefined') {
-            var that = this;
-            this.locateMeButton.onclick = function() {
-                that.toggleLocationUpdates();
-            };
-        } else {
-            this.locateMeButton.parentNode.removeChild(this.locateMeButton);
-            // realign other buttons
-            zoomoutButton.style.left = "35%";
-            recenterButton.style.left = "64%";
-        }
-    }
-}
-
-function addStaticMapControls() {
-    if (!staticMapOptions) {
-        return;
-    }
-
-    var objMap = document.getElementById("staticmapimage");
-    mapWidth = objMap.clientWidth;
-    mapHeight = objMap.clientHeight;
-
-    var query = objMap.src;
-    query = query.substring(query.indexOf("?") + 1, query.length);
-    staticMapOptions["query"] = escape(query);
-
-    centerZoomBased = ("center" in staticMapOptions);
-
-    var recenter;
-
-    if (centerZoomBased) {
-        var initCenterLat = staticMapOptions['center']['lat'];
-        var initCenterLon = staticMapOptions['center']['lon'];
-        var initZoom = staticMapOptions['zoom'];
-
-        recenter = function() {
-            updateMapImage(null, null, {
-                "center": initCenterLat + "," + initCenterLon,
-                "zoom": initZoom
-            });
-        }
-
-    } else {
-        var initBBox = staticMapOptions['bbox'];
-
-        recenter = function() {
-            var bboxStr = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
-            updateMapImage(null, null, {"bbox": bboxStr});
-        }
-    }
-
-    mapControls.setup({
-        zoomin: function() {
-            updateMapImage("in", null, null);
-        },
-        zoomout: function() {
-            updateMapImage("out", null, null);
-        },
-        recenter: recenter,
-        locationUpdated: function(location, firstLocation) {
-            var params = {
-                'userLat': location.coords.latitude,
-                'userLon': location.coords.longitude
-            };
-            
-            // only recenter on first location so we don't rubber band on scrolling
-            if (firstLocation) {
-                params['center'] = location.coords.latitude + "," + location.coords.longitude;
-            }
-            
-            updateMapImage(null, null, params);
-        },
-        locationUpdateStopped: function(error) {
-            recenter();
-        }
-    });
-}
-
-// n, s, e, w, ne, nw, se, sw
-function scrollMap(direction) {
-    updateMapImage(null, direction, null);
-}
-
-function updateMapImage(zoomDir, scrollDir, overrides) {
-    if (!("query" in staticMapOptions)) {
-        return;
-    }
-
-    params = {
-        "baseURL": staticMapOptions["baseURL"],
-        "mapClass": staticMapOptions["mapClass"],
-        "query": staticMapOptions["query"]};
-
-    if (zoomDir) {
-        params["zoom"] = zoomDir;
-    }
-    if (scrollDir) {
-        params["scroll"] = scrollDir;
-    }
-    if (overrides) {
-        overrideParams = [];
-        for (var override in overrides) {
-            overrideParams.push(override + "=" + overrides[override]);
-        }
-        if (overrideParams.length) {
-            params["overrides"] = escape(overrideParams.join("&"));
-        }
-    }
-    apiRequest(apiURL, params, function(response) {
-        loadMapImage(response);
-    }, function(code, message) {});
-}
-
-
 // assuming only one of updateMapDimensions or updateContainerDimensions
 // gets used so they can reference the same ids
 // updateMapDimensions is called for static maps
@@ -264,142 +150,83 @@ function clearUpdateMapDimensionsTimeouts() {
     updateMapDimensionsTimeoutIds = [];
 }
 
-// Prevent firebombing the browser with Ajax calls on browsers which fire lots
-// of resize events
-function updateMapDimensions() {
-    clearUpdateMapDimensionsTimeouts();
-    var timeoutId = window.setTimeout(doUpdateMapDimensions, 200);
-    updateMapDimensionsTimeoutIds.push(timeoutId);
-    timeoutId = window.setTimeout(doUpdateMapDimensions, 500);
-    updateMapDimensionsTimeoutIds.push(timeoutId);
-}
-
-function doUpdateMapDimensions() {
-    var oldHeight = mapHeight;
-    var oldWidth = mapWidth;
-
-    // TODO google static maps does not generate maps
-    // larger than 1000px in either direction
-    // need to set caps on mapWidth and mapHeight
-    var mapImage = document.getElementById("mapimage");
-    var mapTab = document.getElementById("mapTab");
-    if (mapImage && mapTab) { // not fullscreen
-        mapTab.style.height="auto";
-
-        var topoffset = findPosY(document.getElementById("tabbodies"));
-        var bottomoffset = 56;
-        
-        document.getElementById("mapzoom").style.height = bottomoffset + "px";
-
-        // tablets need to account for bottom nav
-        var tabletFoot = document.getElementById("footernav");
-        if (tabletFoot) {
-            bottomoffset += tabletFoot.clientHeight;
-        }
-
-        // 16 is top + bottom padding of mapimage
-        // TODO don't hard code these numbers
-        mapHeight = (getWindowHeight() - topoffset - bottomoffset - 16);
-        mapWidth = getWindowWidth() - 30;
-
-        mapImage.style.width = (mapWidth + 2) + "px"; // border
-
-    } else { // fullscreen
-        mapHeight = getWindowHeight();
-        mapWidth = getWindowWidth();
-        mapImage.style.width = mapWidth+"px";
-
-        var objContainer = document.getElementById("container");
-        if (objContainer) {
-            objContainer.style.width = mapWidth+"px";
-            objContainer.style.height = mapHeight+"px";
-        }
-    }
-    mapImage.style.height = mapHeight + "px";
-
-    var objScrollers = document.getElementById("mapscrollers");
-    if (objScrollers) {
-        if (mapTab) {
-            objScrollers.style.height = mapHeight+"px";
-            objScrollers.style.width = mapWidth+"px";
-
-        } else {
-            switch (getOrientation()) {
-                case 'portrait':
-                  objScrollers.style.height = (mapHeight-42)+"px";
-                  objScrollers.style.width = mapWidth+"px";
-                 break;
-        
-                case 'landscape':
-                  objScrollers.style.height = mapHeight+"px";
-                  objScrollers.style.width = (mapWidth-42)+"px";
-                break;
-            }
-        }
-    }
-
-    // request new map image if needed
-
-    var overrides = {};
-
-    if ((oldWidth && oldWidth != mapWidth) || (oldHeight && oldHeight != mapHeight)) {
-        // sometimes centerZoomBased gets defined later
-        if (!centerZoomBased && "bbox" in staticMapOptions) {
-            // if width and height changed, we need to update the bbox
-            var bbox = staticMapOptions['bbox'];
-            var bboxWidth = bbox['xmax'] - bbox['xmin'];
-            var bboxHeight = bbox['ymax'] - bbox['ymin'];
-            var newBBoxWidth = bboxWidth * mapWidth / oldWidth;
-            var newBBoxHeight = bboxHeight * mapHeight / oldHeight;
-            
-            var dWidth = (newBBoxWidth - bboxWidth) / 2;
-            var dHeight = (newBBoxHeight - bboxHeight) / 2;
-            
-            bbox['xmax'] += dWidth;
-            bbox['xmin'] -= dWidth;
-            bbox['ymax'] += dHeight;
-            bbox['ymin'] -= dHeight;
-            
-            staticMapOptions['bbox'] = bbox;
-
-            overrides["bbox"] = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
-            overrides["size"] = mapWidth + "," + mapHeight;
-            overrides["width"] = mapWidth;
-            overrides["height"] = mapHeight;
-        } else {
-            overrides["size"] = mapWidth + "x" + mapHeight;
-        }
-    
-        updateMapImage(null, null, overrides);
-    }
-}
-
 // resizing counterpart for dynamic maps
 function updateContainerDimensions() {
-    clearUpdateMapDimensionsTimeouts();
-    var timeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
-    updateMapDimensionsTimeoutIds.push(timeoutId);
-    timeoutId = window.setTimeout(doUpdateContainerDimensions, 500);
-    updateMapDimensionsTimeoutIds.push(timeoutId);
-    timeoutId = window.setTimeout(doUpdateContainerDimensions, 1000);
-    updateMapDimensionsTimeoutIds.push(timeoutId);
-}
-
-// doUpdateContainerDimensions is split into detail-common.js and fullscreen-common.js
-
-function addDirectionsLink() {
-    if ("geolocation" in navigator) {
-        var directionsLink = document.getElementById("directionsLink");
-        if (directionsLink) {
-            navigator.geolocation.getCurrentPosition(
-                function(location) {
-                    directionsLink.href += "&saddr=" + location.coords.latitude + "," + location.coords.longitude;
-                },
-                function() {}, {}
-            );
-        }
+    if (typeof doUpdateContainerDimensions == 'function') {
+        clearUpdateMapDimensionsTimeouts();
+        var timeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
+        updateMapDimensionsTimeoutIds.push(timeoutId);
+        timeoutId = window.setTimeout(doUpdateContainerDimensions, 500);
+        updateMapDimensionsTimeoutIds.push(timeoutId);
+        timeoutId = window.setTimeout(doUpdateContainerDimensions, 1000);
+        updateMapDimensionsTimeoutIds.push(timeoutId);
     }
 }
 
+function findPosY(obj) {
+// Function for finding the y coordinate of the object passed as an argument.
+// Returns the y coordinate as an integer, relative to the top left origin of the document.
+    var intCurlTop = 0;
+    if (obj.offsetParent) {
+        while (obj.offsetParent) {
+            intCurlTop += obj.offsetTop;
+            obj = obj.offsetParent;
+        }
+    }
+    return intCurlTop;
+}
 
+if (typeof KGOMapLoader != 'undefined') {
+    KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url) {
+        var content = '';
+        if (title !== null) {
+            content += '<div class="map_name">' + title + '</div>';
+        }
+        if (subtitle !== null) {
+            content += '<div class="smallprint map_address">' + subtitle + '</div>';
+        }
+        if (typeof url != 'undefined' && url !== null && typeof COOKIE_PATH != 'undefined' && typeof BOOKMARK_LIFESPAN != 'undefined') {
+            // we need to match the parameter order produced by php
+            if (typeof this.regexes == 'undefined') {
+                this.regexes = [
+                    /[?&](category=[\w\.\,\+\-:%]+)/,
+                    /[?&](featureindex=[\w\.\,\+\-:%]+)/,
+                    /[?&](lat=[\w\.\,\+\-:%]+)/,
+                    /[?&](lon=[\w\.\,\+\-:%]+)/,
+                    /[?&](feed=[\w\.\,\+\-:%]+)/,
+                    /[?&](title=[\w\.\,\+\-:%]+)/
+                ];
+            }
 
+            var parts = [];
+            for (var i = 0; i < this.regexes.length; i++) {
+                var match = url.match(this.regexes[i]);
+                if (match) {
+                    parts.push(match[1]);
+                }
+            }
+            query = parts.join('&').replace(/\+/g, ' ').replace(/%3A/g, ':');
+            var items = getCookieArrayValue("mapbookmarks");
+            var bookmarkState = "";
+            for (var i = 0; i < items.length; i++) {
+                if (items[i] == query) {
+                    bookmarkState = "on";
+                    break;
+                }
+            }
+
+            content = '<div id="calloutWrapper"><div id="bookmarkWrapper" style="float:left;">' +
+                        '<a onclick="toggleBookmark(\'mapbookmarks\', \'' + query + '\', BOOKMARK_LIFESPAN, COOKIE_PATH)">' +
+                          '<div id="bookmark"' +
+                              ' ontouchend="toggleClass(this, \'on\');"' +
+                              ' class="' + bookmarkState + '"></div>' +
+                        '</a>' + 
+                      '</div>' +
+                      '<div class="calloutMain" style="float:left;">' + content + '</div>' +
+                      '<div class="calloutDisclosure" style="flost:left;">' +
+                        '<a href="' + url + '"><img src="' + URL_BASE.replace(/\/$/,'') + '/modules/map/images/info.png" /></a>' +
+                      '</div></div>';
+        }
+        return content;
+    }
+}
