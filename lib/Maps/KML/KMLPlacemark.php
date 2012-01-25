@@ -21,7 +21,7 @@ class KMLPlacemark extends XMLElement implements Placemark
         foreach ($filters as $filter=>$value) {
             switch ($filter) {
                 case 'search':
-                    if (stripos($this->getTitle(), $value) === FALSE && stripos($this->getSubTitle(), $value) === FALSE) {
+                    if (stripos($this->getTitle(), $value) === FALSE && stripos($this->getSubTitle(), $value) === FALSE && stripos($this->getDescription(), $value) === FALSE) {
                         return false;
                     }
                     break;
@@ -75,6 +75,10 @@ class KMLPlacemark extends XMLElement implements Placemark
             return $this->address;
         }
         return $this->snippet;
+    }
+    
+    public function getDescription() {
+        return $this->description;
     }
     
     public function getId() {
