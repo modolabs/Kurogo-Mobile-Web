@@ -52,3 +52,7 @@ li.noimage {
     background-size: 5.5em;
 }
 
+#bookmarkContainer {
+	margin: -2px -4px 6px 8px;
+}
+

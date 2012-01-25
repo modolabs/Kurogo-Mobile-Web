@@ -7,25 +7,21 @@ body {
 
 h1 {
 	font-size: 142%; 
-	color: @@@primary_heading_color@@@;
 }
 
 h2 {
 	font-size: 133%; 
 	font-weight: normal;
-	color: @@@primary_heading_color@@@;
 }
 
 h3 {
 	font-size: 100%; 
 	font-weight: bold;
-	color: @@@secondary_heading_color@@@;
 }
 
 h4 {
 	font-size: 100%; 
 	font-weight: bold;
-	color: @@@secondary_heading_color@@@;
 }
 
 
@@ -54,7 +50,7 @@ h4 {
 
 .tabs .active {
 	/* Text label of currently selected tabs */
-	color: @@@emphasized_text_color@@@;
 	font-weight: bold;
+	color: @@@emphasized_text_color@@@;
 }
 

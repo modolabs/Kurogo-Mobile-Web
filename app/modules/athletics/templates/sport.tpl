@@ -1,14 +1,16 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-<h1 class="nonfocal">{$sportTitle}</h1>
-{include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
+<div class="nonfocal">
+  {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
+  <h2>{$sportTitle}</h2>
+</div>
 
 {if $scheduleItems}
-<h2 class="nonfocal">{"SCHEDULE_TITLE"|getLocalizedString}</h2>
+<h3 class="nonfocal">{"SCHEDULE_TITLE"|getLocalizedString}</h3>
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$scheduleItems subTitleNewline=true}
 {/if}
 {if $newsItems}
-    <h2 class="nonfocal">{"NEWS_TITLE"|getLocalizedString}</h2>
+    <h3 class="nonfocal">{"NEWS_TITLE"|getLocalizedString}</h3>
     {include file="findInclude:modules/athletics/templates/stories.tpl" stories=$newsItems} 
 {/if}
 
