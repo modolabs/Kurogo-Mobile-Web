@@ -19,6 +19,11 @@ class RSSItem extends XMLElement implements NewsItem
     protected $category=array();
     protected $enclosure;
     protected $images=array();
+    protected $fetchContent = false;
+    
+    public function setFetchContent($bool) {
+        $this->fetchContent =  $bool ? true : false;
+    }
     
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
@@ -36,10 +41,20 @@ class RSSItem extends XMLElement implements NewsItem
     }
     
     public function init($args) {
+        if (isset($args['FETCH_CONTENT'])) {
+            $this->setFetchContent($args['FETCH_CONTENT']);
+        }
     }
     
     public function getContent()
     {
+        if (strlen($this->content)==0) {
+            if ($this->fetchContent && ($url = $this->getLink())) {
+                $reader = new KurogoReader($url);
+                $this->content = $reader->getContent();
+            }
+        }
+
         return $this->content;
     }
 
