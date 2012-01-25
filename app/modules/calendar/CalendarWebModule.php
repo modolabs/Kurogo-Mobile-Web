@@ -723,16 +723,14 @@ class CalendarWebModule extends WebModule {
         
         $feed = $this->getFeed($calendar, $type);
         
-        if ($filter = $this->getArg('filter')) {
-            $feed->addFilter('search', $filter);
+         if ($filter = $this->getArg('filter')) {
+            $feed->setOption('search', $filter);
+        }
+ 
+        if ($catid = $this->getArg('catid')) {
+            $feed->setOption('category', $catid);
         }
 
-        // no need to add this filter
-        // it will cause an error, if the ics file is a local file.
-        //if ($catid = $this->getArg('catid')) {
-            //$feed->addFilter('category', $catid);
-        //}
-        
         $time = $this->getArg('time', time(), FILTER_VALIDATE_INT);
 
         if ($event = $feed->getItem($this->getArg('id'), $time)) {
