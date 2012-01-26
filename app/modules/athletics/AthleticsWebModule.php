@@ -641,7 +641,7 @@ class AthleticsWebModule extends WebModule {
                     $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                     $this->addOnLoad('setupNewsListing();');
                     
-                    $tabs[] = $newsFeedData['TITLE'];
+                    $tabs[] = 'topnews';
                     $this->assign('topNewsTitle', $newsFeedData['TITLE']);
                     $this->assign('topNews', $topNews);
                     $this->assign('extraArgs', $extraArgs);
@@ -666,7 +666,7 @@ class AthleticsWebModule extends WebModule {
                             $sports[] = $sport;
                         }
                     
-                        $tabs[] = $sportsData['TITLE'];
+                        $tabs[] = $gender;
                         $this->assign($gender. 'SportsTitle', $sportsData['TITLE']);
                         $this->assign($gender.'Sports', $sports);
                     }
@@ -689,7 +689,7 @@ class AthleticsWebModule extends WebModule {
                     }
                 }
                 
-                $tabs[] = $bookmarkData['TITLE'];
+                $tabs[] = 'bookmarks';
                 
                 $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
                 $this->assign('bookmarksTitle', $bookmarkData['TITLE']);
