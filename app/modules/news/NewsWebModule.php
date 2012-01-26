@@ -217,7 +217,7 @@ class NewsWebModule extends WebModule {
       case 'story':
         $searchTerms = $this->getArg('filter', false);
         if ($searchTerms) {
-          $this->feed->addFilter('search', $searchTerms);
+          $this->feed->setOption('search', $searchTerms);
         }
 
         $storyID   = $this->getArg('storyID', false);
@@ -234,7 +234,10 @@ class NewsWebModule extends WebModule {
           if ($url = $story->getLink()) {
               header("Location: $url");
               exit();
-          } else {
+          } 
+          
+          // no content or link. Attempt to get description
+          if (!$content = $story->getDescription()) {
               throw new KurogoDataException($this->getLocalizedString('ERROR_CONTENT_NOT_FOUND', $storyID));
           }
         }
