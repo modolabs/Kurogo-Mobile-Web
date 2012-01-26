@@ -1,4 +1,4 @@
-{if !$webBridgeAjaxContentLoad}<?xml version="1.0" encoding="UTF-8"?>
+{if !$webBridgeAjaxContentLoad && !$ajaxContentLoad}<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
@@ -116,7 +116,7 @@
     {/block}
   {/capture}
   
-{if !$webBridgeAjaxContentLoad}
+{if !$webBridgeAjaxContentLoad && !$ajaxContentLoad}
   {block name="css"}
     {$headerCSS}
   {/block}
