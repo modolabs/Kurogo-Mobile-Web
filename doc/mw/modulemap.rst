@@ -52,6 +52,19 @@ STATIC_MAP_BASE_URL, NEARBY_THRESHOLD, and NEARBY_ITEMS may be set by indiviual
 feeds in the feeds-GROUP.ini files, in which case they will override options
 set in the feed group.
 
+===========================
+Configuring Display Options
+===========================
+
+* *SHOW_DISTANCES* - (optional, defaults to true) Whether or not to show the current distance to an item.
+* *DISTANCE_MEASUREMENT_UNITS* - (optional, defaults to 'Metric') Changes the distance units, valid values
+  are `Imperial` or `Metric`.
+* *MAP_SHOWS_USER_LOCATION* - (optional, defaults to false) Whether or not to show the user's location on
+  the map.
+* *BOOKMARKS_ENABLED* - (optional, defaults to true) If set to true, a link to bookmarked entries will
+  appear. Note that if you have not bookmarked any entries, this link will not appear until an entry is
+  bookmarked.
+
 .. _section-base-map-types:
 
 =====================

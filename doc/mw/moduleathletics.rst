@@ -14,8 +14,10 @@ General Options
 There are a few options in *SITE_DIR/config/photos/module.ini* that can configure basic operations of
 the athletics module:
 
-* *BOOKMARKS_ENABLED* - Set to 1 to enable or 2 to disable bookmarking photos
-* *SHARING_ENABLED* -  Set to 1 to enable or 2 to disable sharing photos
+* *BOOKMARKS_ENABLED* - (optional) If set to true, a link to bookmarked entries will appear. Note that if
+  you have not bookmarked any entries, this link will not appear until an entry is bookmarked. Defaults
+  to true.
+* *SHARING_ENABLED* -  Set to true to enable or false to disable sharing photos
 
 
 ===================
