@@ -230,6 +230,10 @@ class CalendarWebModule extends WebModule {
         $calendar = isset($options['calendar']) ? $options['calendar'] : $this->getDefaultFeed($type);
         $feed     = $this->getFeed($calendar, $type);
         
+        if (isset($options['federatedSearch']) && $options['federatedSearch']) {
+            $options['timeframe'] = isset($options['timeframe']) ? $options['timeframe'] : $this->getDefaultTimeframe();
+        }
+
         if (isset($options['timeframe'])) {
           $searchRanges = $this->getModuleSections('searchranges');
           $selectedRange = $searchRanges[$options['timeframe']];
@@ -422,6 +426,10 @@ class CalendarWebModule extends WebModule {
  
     protected function initialize() {
         $this->timezone = Kurogo::siteTimezone();
+    }
+    
+    protected function getDefaultTimeframe() {
+        return 0;
     }
 
   protected function initializeForPage() {
@@ -715,16 +723,14 @@ class CalendarWebModule extends WebModule {
         
         $feed = $this->getFeed($calendar, $type);
         
-        if ($filter = $this->getArg('filter')) {
-            $feed->addFilter('search', $filter);
+         if ($filter = $this->getArg('filter')) {
+            $feed->setOption('search', $filter);
+        }
+ 
+        if ($catid = $this->getArg('catid')) {
+            $feed->setOption('category', $catid);
         }
 
-        // no need to add this filter
-        // it will cause an error, if the ics file is a local file.
-        //if ($catid = $this->getArg('catid')) {
-            //$feed->addFilter('category', $catid);
-        //}
-        
         $time = $this->getArg('time', time(), FILTER_VALIDATE_INT);
 
         if ($event = $feed->getItem($this->getArg('id'), $time)) {
@@ -800,7 +806,7 @@ class CalendarWebModule extends WebModule {
       case 'search':
         if ($filter = $this->getArg('filter')) {
           $searchTerms    = trim($filter);
-          $timeframe      = $this->getArg('timeframe', 0);
+          $timeframe      = $this->getArg('timeframe', $this->getDefaultTimeframe());
           $type           = $this->getArg('type', 'static');
           $searchCalendar = $this->getArg('calendar', $this->getDefaultFeed($type));
           

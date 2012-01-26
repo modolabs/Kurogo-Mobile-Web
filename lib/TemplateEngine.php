@@ -76,25 +76,24 @@ class TemplateEngine extends Smarty {
     
     $pagetype = Kurogo::deviceClassifier()->getPagetype();
     $platform = Kurogo::deviceClassifier()->getPlatform();
+    $browser  = Kurogo::deviceClassifier()->getBrowser();
 
     if (strlen($subDir)) { $subDir .= '/'; }
   
     $checkDirs = array(
-      'THEME_DIR'    => THEME_DIR,
-      'SITE_APP_DIR' => SITE_APP_DIR,
-      'APP_DIR'      => APP_DIR,
-    );
-    $checkFiles = array(
-      "$subDir$page-$pagetype-$platform.tpl", // platform-specific
-      "$subDir$page-$pagetype.tpl",           // pagetype-specific
-      "$subDir$page.tpl"                      // default
+      'THEME_DIR'      => THEME_DIR,
+      'SITE_APP_DIR'   => SITE_APP_DIR,
+      'SHARED_APP_DIR' => SHARED_APP_DIR,
+      'APP_DIR'        => APP_DIR,
     );
     
-    foreach ($checkFiles as $file) {
+    $searchFiles = DeviceClassifier::buildFileSearchList($pagetype, $platform, $browser, $page, 'tpl');
+    
+    foreach ($searchFiles as $file) {
       foreach ($checkDirs as $type => $dir) {
-        $test = realpath_exists("$dir/$file");
+        $test = realpath_exists("$dir/$subDir$file");
         if ($test) {
-          Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform) choosing '$type/$file' for '$name'", 'template');
+          Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform-$browser) choosing '$type/$file' for '$name'", 'template');
           return addslashes($test);
         }
       }
@@ -109,17 +108,19 @@ class TemplateEngine extends Smarty {
   static private function getExtendsFile($name, $template) {
     $pagetype = Kurogo::deviceClassifier()->getPagetype();
     $platform = Kurogo::deviceClassifier()->getPlatform();
+    $browser  = Kurogo::deviceClassifier()->getBrowser();
     
     $checkDirs = array(
-      'THEME_DIR'    => THEME_DIR,
-      'SITE_APP_DIR' => SITE_APP_DIR,
-      'APP_DIR'      => APP_DIR,
+      'THEME_DIR'      => THEME_DIR,
+      'SITE_APP_DIR'   => SITE_APP_DIR,
+      'SHARED_APP_DIR' => SHARED_APP_DIR,
+      'APP_DIR'        => APP_DIR,
     );
         
     foreach ($checkDirs as $type => $dir) {
       $test = realpath_exists("$dir/$name");
       if ($test && !$template->smarty->extendsTrackerSeenFile($test)) {
-        Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform) choosing     '$type/$name' for '$name'", 'template');
+        Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform-$browser) choosing     '$type/$name' for '$name'", 'template');
         $template->smarty->extendsTrackerAddFile($test);
         return addslashes($test);
       }
@@ -341,11 +342,12 @@ class TemplateEngine extends Smarty {
     // Device info
     $pagetype = Kurogo::deviceClassifier()->getPagetype();
     $platform = Kurogo::deviceClassifier()->getPlatform();
+    $browser  = Kurogo::deviceClassifier()->getBrowser();
     
     // Smarty configuration
     $this->setCompileDir (CACHE_DIR.'/smarty/templates');
     $this->setCacheDir   (CACHE_DIR.'/smarty/html');
-    $this->setCompileId  ("$pagetype-$platform");
+    $this->setCompileId  ("$pagetype-$platform-$browser");
     
     $this->registerPlugin('modifier', 'sanitize_html', array('TemplateEngine',
       'smartyModifierSanitizeHTML'));
@@ -373,6 +375,7 @@ class TemplateEngine extends Smarty {
     // variables common to all modules
     $this->assign('pagetype', $pagetype);
     $this->assign('platform', $platform);
+    $this->assign('browser',  $browser);
     $this->assign('showDeviceDetection', Kurogo::getSiteVar('DEVICE_DETECTION_DEBUG'));
     $this->assign('moduleDebug', Kurogo::getSiteVar('MODULE_DEBUG'));
   }

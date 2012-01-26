@@ -50,14 +50,17 @@ function _outputTypeFile($matches) {
 
   $platform = Kurogo::deviceClassifier()->getPlatform();
   $pagetype = Kurogo::deviceClassifier()->getPagetype();
+  $browser  = Kurogo::deviceClassifier()->getBrowser();
   
   $testDirs = array(
     THEME_DIR.'/'.$matches[1].$matches[2],
     SITE_APP_DIR.'/'.$matches[1].$matches[2],
+    SHARED_APP_DIR.'/'.$matches[1].$matches[2],
     APP_DIR.'/'.$matches[1].$matches[2],
   );
   
   $testFiles = array(
+    "$pagetype-$platform-$browser/$file",
     "$pagetype-$platform/$file",
     "$pagetype/$file",
     "$file",
