@@ -254,7 +254,7 @@ KGOGoogleMapLoader.prototype.addOverlay = function(overlay, attribs) {
 
 KGOGoogleMapLoader.prototype.clearMarkers = function() {
     for (var i = 0; i < this.placemarks.length; i++) {
-        placemarks[i].setMap(null);
+        this.placemarks[i].setMap(null);
     }
     this.placemarks = [];
 }
