@@ -106,6 +106,20 @@ possible values to influence how a field is displayed:
 * *parse* - (optional) A function which will be run on the value before display. Generated with 
   *create_function*. Gets the argument "$value" and returns the formatted output.
 
+===========================
+Configuring Display Options
+===========================
+
+The options listed here relate to the appearence of the people module.
+
+* *BOOKMARKS_ENABLED* - (optional) If set to true, a link to bookmarked entries will appear. Note that if
+  you have not bookmarked any entries, this link will not appear until an entry is bookmarked. Defaults
+  to true.
+* *CONTACTS_SUBTITLE_NEWLINE* - (optional) Set to true to display contacts subtitles on a new line. Defaults
+  to false.
+* *SEARCH_TIP* - (optional) A string to be shown near the search bar providing a tip about searching.
+  By default this string is empty, and not shown.
+
 =============================
 Configuring the Fixed Entries
 =============================
