@@ -38,6 +38,29 @@ appear smaller, but cannot be rearranged or removed by the user. Keep in mind th
 not on the home screen, users can still manually navigate to the url. So if you have a modules that you
 do not wish to use, ensure they have been *disabled* in their module configuration file.
 
+=============
+Configuration
+=============
+
+The following configuration values are available to customize the behaviour of the home module.
+
+* *SHOW_LOGIN* - (optional) If set to true and :doc:`authentication` is enabled, a link allowing users to login will
+  be displayed. Defaults to true.
+* *HIDE_IMAGES* - (optional) Set to true to disable icons when homepage *display_type* is "list". Defaults to false.
+* *SHOW_FEDERATED_SEARCH* - (optional) Enables/disables showing of the federated search bar on the homepage.
+  Defaults to true.
+
+===================
+Banner Alert System
+===================
+
+-------------
+Configuration
+-------------
+
+* *BANNER_ALERT* -
+* *BANNER_ALERT_MODULE_LINK* -
+
 =====
 Icons
 =====
