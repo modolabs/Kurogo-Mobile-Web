@@ -802,6 +802,11 @@ a.sidenav-prev {
 	background-position: left top;
 	padding-left: 44px;
 }
+.sidenavlabel {
+	font-size: 88.3%;
+	text-align: center;
+	padding: 4px 30px;
+}
 
 span.sidenav-current {
     font-weight: bold;

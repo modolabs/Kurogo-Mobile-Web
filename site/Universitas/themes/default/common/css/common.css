@@ -198,7 +198,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 	color: #fff;
 }
 
-.sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .paging a:visited {
+.sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .sidenavlabel, .paging a, .paging a:visited {
 	color: @@@nonfocal_text_color@@@;
 }
 

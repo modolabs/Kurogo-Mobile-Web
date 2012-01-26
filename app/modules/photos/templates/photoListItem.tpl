@@ -33,7 +33,7 @@
       <span class="badge">{$item['badge']}</span>
     {/if}
     {if $item['type']}
-    	<div class="smallprint">{$item['type']}</div>
+    	<div class="smallprint serviceicon {$item['type']}">{$item['type']}</div>
 	{/if}
 	{if $item['albumcount']}
     	<div class="smallprint">{$item['albumcount']}</div>
