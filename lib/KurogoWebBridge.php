@@ -9,11 +9,13 @@ class KurogoWebBridge
     protected $path = '';
     protected $pathExists = false;
     
-    const PAGETYPE_COMPLIANT = 'native';
-    const PAGETYPE_TABLET    = 'native_tablet';
-    
+    const PAGETYPE_PHONE  = 'compliant';
+    const PAGETYPE_TABLET = 'tablet';
+    const BROWSER         = 'native';
+
     const PAGETYPE_PARAMETER    = 'webBridgePagetype';
     const PLATFORM_PARAMETER    = 'webBridgePlatform';
+    const BROWSER_PARAMETER     = 'webBridgeBrowser';
     const AJAX_PARAMETER        = 'webBridgeAjax';
     const ASSET_CHECK_PARAMETER = 'webBridgeAssetCheck';
     
@@ -30,15 +32,19 @@ class KurogoWebBridge
     static protected $currentInstance = null;
     protected $processingFileType = self::FILE_TYPE_HTML;
     
-    public function __construct($module, $pagetype=null, $platform=null) {
+    public function __construct($module, $pagetype=null, $platform=null, $browser=null) {
         if (!$pagetype) {
             $pagetype = Kurogo::deviceClassifier()->getPagetype();
         }
         if (!$platform) {
             $platform = Kurogo::deviceClassifier()->getPlatform();
         }
+        if (!$platform) {
+            $browser = Kurogo::deviceClassifier()->getBrowser();
+        }
         $this->pagetype = $pagetype;
         $this->platform = $platform;
+        $this->browser  = $browser;
         $this->module = $module;
         $this->path = WEB_BRIDGE_DIR.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR.$module.
             ($pagetype == self::PAGETYPE_TABLET ? '-tablet' : '');
@@ -49,7 +55,7 @@ class KurogoWebBridge
     }
     
     protected function nativeParams() {
-        return self::pagetypeAndPlatformToParams($this->pagetype, $this->platform);
+        return self::pagetypeAndPlatformToParams($this->pagetype, $this->platform, $this->browser);
     }
 
     protected function rmPath($path) {
@@ -368,8 +374,8 @@ class KurogoWebBridge
             $url .= rtrim(FULL_URL_PREFIX, '/');
         }
         $url .= "/{$id}/{$page}?".self::AJAX_PARAMETER."=1";
-        if (self::forceNativePlatform($pagetype, $platform)) {
-            $url .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform));
+        if (self::forceNativePlatform($pagetype, $platform, $browser)) {
+            $url .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform, $browser));
         }
         return $url;
     }
@@ -393,12 +399,14 @@ class KurogoWebBridge
 
     // Note: the following functions may be called before the device classifier is initialized
 
-    private static function paramsToPagetypeAndPlatform(&$pagetype, &$platform) {
+    private static function paramsToPagetypeAndPlatform(&$pagetype, &$platform, &$browser) {
         if (isset($_GET[self::PAGETYPE_PARAMETER]) && $_GET[self::PAGETYPE_PARAMETER] && 
-            isset($_GET[self::PLATFORM_PARAMETER]) && $_GET[self::PLATFORM_PARAMETER]) {
+            isset($_GET[self::PLATFORM_PARAMETER]) && $_GET[self::PLATFORM_PARAMETER] &&
+            isset($_GET[self::BROWSER_PARAMETER]) && $_GET[self::BROWSER_PARAMETER]) {
 
             $pagetype = $_GET[self::PAGETYPE_PARAMETER];
             $platform = $_GET[self::PLATFORM_PARAMETER];
+            $browser  = $_GET[self::BROWSER_PARAMETER];
             
             return true;
         } else {
@@ -406,10 +414,11 @@ class KurogoWebBridge
         }
     }
 
-    private static function pagetypeAndPlatformToParams($pagetype, $platform) {
+    private static function pagetypeAndPlatformToParams($pagetype, $platform, $browser) {
         return array(
             self::PAGETYPE_PARAMETER => $pagetype,
             self::PLATFORM_PARAMETER => $platform,
+            self::BROWSER_PARAMETER  => $browser,
         );
     }
 
@@ -423,12 +432,13 @@ class KurogoWebBridge
 
     private static function hasNativePlatform() {
         return isset($_GET[self::PAGETYPE_PARAMETER]) && $_GET[self::PAGETYPE_PARAMETER] && 
-               isset($_GET[self::PLATFORM_PARAMETER]) && $_GET[self::PLATFORM_PARAMETER];
+               isset($_GET[self::PLATFORM_PARAMETER]) && $_GET[self::PLATFORM_PARAMETER] && 
+               isset($_GET[self::BROWSER_PARAMETER])  && $_GET[self::BROWSER_PARAMETER];
     }
 
-    public static function forceNativePlatform(&$pagetype, &$platform) {
+    public static function forceNativePlatform(&$pagetype, &$platform, &$browser) {
         if (self::hasNativePlatform()) {
-            self::paramsToPagetypeAndPlatform($pagetype, $platform);
+            self::paramsToPagetypeAndPlatform($pagetype, $platform, $browser);
             return true;
             
         } else {
@@ -447,9 +457,7 @@ class KurogoWebBridge
     // Note: the following functions can only be used after the device classifier initializes
 
     public static function isNativeCall() {
-        return self::hasNativePlatform() ||
-          Kurogo::deviceClassifier()->getPagetype() == self::PAGETYPE_COMPLIANT || 
-          Kurogo::deviceClassifier()->getPagetype() == self::PAGETYPE_TABLET;
+        return self::hasNativePlatform() || Kurogo::deviceClassifier()->getBrowser() == 'native';
     }
     
     public static function useNativeTemplatePageInitializer() {
@@ -506,13 +514,24 @@ class KurogoWebBridge
         if ($files) {
             foreach ($files as $file) {
                 $parts = explode(DIRECTORY_SEPARATOR, dirname($file));
-                if ($parts) {
-                    $platform = end($parts);
-                    $contents = file_get_contents($file);
-                    if ($platform && $contents) {
-                        $info[$platform] = array(
-                            'md5' => md5($contents),
-                            'url' => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$module.zip",
+                if (!$parts) { continue; }
+
+                $platform = end($parts);
+                $contents = file_get_contents($file);
+                if (!$platform || !$contents) { continue; }
+
+                $info[$platform] = array(
+                    'md5' => md5($contents),
+                    'url' => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$module.zip",
+                );
+                
+                $tabletFile = dirname($file)."/$module-tablet.zip";
+                if (file_exists(dirname($file)."/$module-tablet.zip")) {
+                    $tabletContents = file_get_contents($file);
+                    if ($tabletContents) {
+                        $info["$platform-tablet"] = array(
+                            'md5' => md5($tabletContents),
+                            'url' => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$module-tablet.zip",
                         );
                     }
                 }

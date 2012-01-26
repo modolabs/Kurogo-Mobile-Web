@@ -1655,12 +1655,12 @@ abstract class WebModule extends Module {
       }
       
       // Phone version
-      $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_COMPLIANT, $platform);
+      $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_PHONE, $platform, KurogoWebBridge::BROWSER);
       $rewriter->saveTemplates($pages, $additionalAssets);
       
       if (Kurogo::getOptionalSiteVar('NATIVE_TABLET_ENABLED', 1)) {
           // Tablet version
-          $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_TABLET, $platform);
+          $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_TABLET, $platform, KurogoWebBridge::BROWSER);
           $rewriter->saveTemplates($pages, $additionalAssets);
       }
   }

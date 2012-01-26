@@ -117,8 +117,8 @@ class DeviceClassifier {
         
         $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
         
-        if (KurogoWebBridge::forceNativePlatform($pagetype, $platform)) {
-            $this->setDevice("$pagetype-$platform");
+        if (KurogoWebBridge::forceNativePlatform($pagetype, $platform, $browser)) {
+            $this->setDevice("$pagetype-$platform-$browser");
       
         } else if ($device && strlen($device)) {
             Kurogo::log(LOG_DEBUG, "Setting device to $device (override)", "deviceDetection");
