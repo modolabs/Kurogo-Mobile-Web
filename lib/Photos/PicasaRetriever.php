@@ -10,7 +10,7 @@ class PicasaRetriever extends URLDataRetriever {
         $url = "https://picasaweb.google.com/data/feed/api/";
 
         if (isset($args['USER'], $args['ALBUM'])) {
-            $url .= sprintf("user/%s/albumid/%s", $args['USER'], $args['ALBUM'], thumbsize=72c");
+            $url .= sprintf("user/%s/albumid/%s", $args['USER'], $args['ALBUM']);
         } else {
             throw new KurogoConfigurationException("USER and ALBUM values must be set for Picasa albums");
         }
