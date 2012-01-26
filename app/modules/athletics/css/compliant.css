@@ -2,6 +2,18 @@ h1.slugline a {
     text-decoration: none;
 }
 
+#TopNewsTab {
+	padding: 0;
+}
+
+.tabbody:first-child {
+	padding: 0;
+}
+
+.tabbody .results {
+	margin: 0;
+}
+
 li.story {
     height: 5.5em;
 	  margin: 0;
