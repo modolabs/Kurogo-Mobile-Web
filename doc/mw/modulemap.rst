@@ -289,6 +289,19 @@ See Wikipedia's entry on the
 `Shapefile specification <http://en.wikipedia.org/wiki/Shapefile>`_
 for more information.
 
+===========================
+Configuring Display Options
+===========================
+
+* *SHOW_DISTANCES* - (optional, defaults to true) Whether or not to show the current distance to an item.
+* *DISTANCE_MEASUREMENT_UNITS* - (optional, defaults to 'Metric') Changes the distance units, valid values
+  are `Imperial` or `Metric`.
+* *MAP_SHOWS_USER_LOCATION* - (optional, defaults to false) Whether or not to show the user's location on
+  the map.
+* *BOOKMARKS_ENABLED* - (optional, defaults to true) If set to true, a link to bookmarked entries will
+  appear. Note that if you have not bookmarked any entries, this link will not appear until an entry is
+  bookmarked.
+
 .. _section-base-map-types:
 
 ------------
