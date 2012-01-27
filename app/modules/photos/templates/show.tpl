@@ -3,9 +3,11 @@
 <img class="fullimage" src="{$photoURL}" />
 
 <div class="nonfocal smallprint">
-	<p>{$photoTitle}<br/>
+	<h2>{$photoTitle}</h2>
+	<p>
 	{$photoAuthor}<br/>
-    {$photoDate}</p>
+    {$photoDate}
+    </p>
 	{include file="findInclude:common/templates/share.tpl" shareURL={$storyURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
 </div>
 

@@ -58,7 +58,6 @@
 
 .fullimage{
 	max-width: 100%;
-	margin-left: auto;
-    margin-right: auto;
+	margin: 20px auto;
     display: block;
 }
