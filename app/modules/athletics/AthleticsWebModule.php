@@ -687,9 +687,10 @@ class AthleticsWebModule extends WebModule {
                             );
                         }
                     }
+
+                    $tabs[] = 'bookmarks';
                 }
                 
-                $tabs[] = 'bookmarks';
                 
                 $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
                 $this->assign('bookmarksTitle', $bookmarkData['TITLE']);
