@@ -16,8 +16,11 @@ class KurogoWebBridge
     const PAGETYPE_PARAMETER    = 'webBridgePagetype';
     const PLATFORM_PARAMETER    = 'webBridgePlatform';
     const BROWSER_PARAMETER     = 'webBridgeBrowser';
-    const AJAX_PARAMETER        = 'webBridgeAjax';
     const ASSET_CHECK_PARAMETER = 'webBridgeAssetCheck';
+
+    // use same ajax param used by web modules so that module ajax calls
+    // also disable web bridge ajax loader (otherwise we would get double-loads)
+    const AJAX_PARAMETER        = 'ajax';
     
     const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
     const BRIDGE_URL_EVENT_ONLOAD  = 'kgobridge://event/load';

@@ -10,14 +10,16 @@ function onDOMChange() {
 
 // Update the nav slide indicators
 function updateNavSlider() {
-  var current = Math.abs(navScroller.x);
-  var max = Math.abs(navScroller.maxScrollX);
-
-  var canScrollLeft = (current > 0);
-  var canScrollRight = (current < max-1);
-  
-  document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
-  document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
+    if (navScroller) {
+        var current = Math.abs(navScroller.x);
+        var max = Math.abs(navScroller.maxScrollX);
+      
+        var canScrollLeft = (current > 0);
+        var canScrollRight = (current < max-1);
+        
+        document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
+        document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
+    }
 }
 
 function navSliderScrollLeft() {
@@ -384,8 +386,10 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
         }
     }
     
-    containerScroller.destroy();
-    containerScroller = null;
+    if (containerScroller != null) {
+        containerScroller.destroy();
+        containerScroller = null;
+    }
     
     moduleHandleWindowResize();
 

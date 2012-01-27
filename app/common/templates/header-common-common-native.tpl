@@ -93,6 +93,10 @@
               window.location = "{$webBridgeOnLoadErrorURL}"+status;
           {/if}
       {rdelim}
+      
+      function webBridgeLinkToAjaxLink(href) {ldelim}
+          return href.replace(/kgobridge:\/\/link\//, '{$webBridgeServerURLBase}');
+      {rdelim}
   </script>
   
   {$smarty.block.parent}
