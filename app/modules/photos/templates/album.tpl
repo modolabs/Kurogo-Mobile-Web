@@ -9,6 +9,7 @@
           {$prev}
       </a>{block name="sidenavSpacer"} {/block}
     {/if}
+      <div class="sidenavlabel">{$albumcount} {if $albumcount == 1} {"PICTURE_TEXT"|getLocalizedString} {else} {"PICTURES_TEXT"|getLocalizedString} {/if}</div>
     {if $nextURL && $next}
       <a href="{$nextURL}" class="sidenav-next">
           {$next}
@@ -19,13 +20,7 @@
 {/if}
 {/capture}
 
-{block name="navheader"}
-  <div class="nonfocal">
-    <h2>{$fullTitle}</h2>
-    <p class="smallprint">{$albumcount} {if $albumcount == 1} {"PICTURE_TEXT"|getLocalizedString} {else} {"PICTURES_TEXT"|getLocalizedString} {/if}</p>
-  </div>
-  {$sideNav}
-{/block}
+{$sideNav}
 
 {block name="springboard"}
   {include file="findInclude:modules/photos/templates/springboard.tpl" springboardItems=$photos}

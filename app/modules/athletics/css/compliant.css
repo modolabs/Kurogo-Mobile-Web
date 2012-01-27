@@ -2,6 +2,14 @@ h1.slugline a {
     text-decoration: none;
 }
 
+#topnewsTab {
+	padding: 0;
+}
+
+.tabbody .results {
+	margin: 0;
+}
+
 li.story {
     height: 5.5em;
 	  margin: 0;
@@ -50,5 +58,9 @@ li.noimage {
     height: 5.5em;
     background: transparent url('/modules/athletics/images/athletics-placeholder.png') no-repeat left top;
     background-size: 5.5em;
+}
+
+#bookmarkContainer {
+	margin: -2px -4px 6px 8px;
 }
 

@@ -11,7 +11,7 @@
 class LinksAPIModule extends APIModule {
     protected $id = 'links';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
     protected $linkGroups;
 
     protected function getLinkGroup($group) {
@@ -25,7 +25,11 @@ class LinksAPIModule extends APIModule {
             }
 
             if (!isset($this->linkGroups[$group]['description'])) {
-                $this->linkGroups[$group]['description'] = $this->getModuleVar('description','strings');
+                $this->linkGroups[$group]['description'] = $this->getOptionalModuleVar('description','', 'strings');
+            }
+
+            if (!isset($this->linkGroups[$group]['description_footer'])) {
+                $this->linkGroups[$group]['description_footer'] = $this->getModuleVar('description_footer','', 'strings');
             }
 
             return $this->linkGroups[$group];
@@ -67,22 +71,25 @@ class LinksAPIModule extends APIModule {
                 $response = array();
                 $displayType = isset($group['display_type']) ? $group['display_type'] : $this->getModuleVar('display_type');
                 $response['links'] = array_values($group['links']);
+                $response['title'] = $group['title'];
                 $response['displayType'] = $displayType;
                 $response['description'] = $group['description'];
+                $response['description_footer'] = $group['description_footer'];
 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion(2);
                 break;
 
            case 'index':
                 $links = $this->getLinkData();
-               $response = array();
-                $response['description'] = $this->getModuleVar('description','strings');
+                $response = array();
+                $response['description'] = $this->getOptionalModuleVar('description','', 'strings');
+                $response['description_footer'] = $this->getOptionalModuleVar('description_footer','','strings');
                 $response['displayType'] =  $this->getModuleVar('display_type');
                 $response['links'] =  array_values($links);
                 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion(2);
                 break;
 
 

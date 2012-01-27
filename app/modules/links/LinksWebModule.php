@@ -20,7 +20,11 @@ class LinksWebModule extends WebModule {
         if (isset($this->linkGroups[$group])) {
 
             if (!isset($this->linkGroups[$group]['description'])) {
-                $this->linkGroups[$group]['description'] = $this->getModuleVar('description','strings');
+                $this->linkGroups[$group]['description'] = $this->getOptionalModuleVar('description','', 'strings');
+            }
+
+            if (!isset($this->linkGroups[$group]['description_footer'])) {
+                $this->linkGroups[$group]['description_footer'] = $this->getOptionalModuleVar('description_footer','', 'strings');
             }
             
             return $this->linkGroups[$group];            
@@ -69,12 +73,14 @@ class LinksWebModule extends WebModule {
                 $this->assign('links', $this->getLinkData($groupSection));
                 $this->assign('displayType', $displayType);
                 $this->assign('description', $group['description']);
+                $this->assign('description_footer', $group['description_footer']);
                 break;
             
             case 'index':
             
                 $links = $this->getLinkData();
-                $this->assign('description', $this->getModuleVar('description','strings'));
+                $this->assign('description', $this->getOptionalModuleVar('description','', 'strings'));
+                $this->assign('description_footer', $this->getOptionalModuleVar('description_footer','', 'strings'));
                 $this->assign('displayType', $this->getModuleVar('display_type'));
                 $this->assign('links',       $links);
         }

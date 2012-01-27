@@ -327,7 +327,6 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 /* Top navigation/titlebar */
 
 #navbar {
-	height: 48px;
 	margin: 0 0 9px 0;
 	line-height: 44px;
 	overflow: hidden;
@@ -803,6 +802,11 @@ a.sidenav-prev {
 	background-position: left top;
 	padding-left: 44px;
 }
+.sidenavlabel {
+	font-size: 88.3%;
+	text-align: center;
+	padding: 4px 30px;
+}
 
 span.sidenav-current {
     font-weight: bold;
@@ -1149,18 +1153,18 @@ h2.icon {
 #tabs {
 	list-style-type: none;
 	margin: 0;
-	padding: 0;
+	padding: 6px 0 0 0;
 }
 
 #tabs li {
 	position: relative;
 	float: left;
 	margin-bottom: -1px;
-	margin-right: 4px;
-	-webkit-border-top-right-radius: 7px;	
-	-webkit-border-top-left-radius: 7px;	
-	border-top-right-radius: 7px;	
-	border-top-left-radius: 7px;	
+	margin-right: 3px;
+	-webkit-border-top-right-radius: 6px;	
+	-webkit-border-top-left-radius: 6px;	
+	border-top-right-radius: 6px;	
+	border-top-left-radius: 6px;	
 	text-align: center;
 }
 
@@ -1183,26 +1187,17 @@ h2.icon {
 	display: block;
 	text-decoration: none;
 	min-width: 30px;
-	padding: 7px 10px 8px 10px;
+	padding: 8px 10px 10px 10px;
 }
 
 #tabs.smalltabs li {
 	font-size: 88.26%;
-	margin-right: 3px;
+	margin-right: 2px;
 }
 
 #tabs.smalltabs li a {
 	padding-right: 7px;
 	padding-left: 7px;
-}
-
-#tabs li.active {
-	margin-top: -1px;
-}
-
-#tabs li.active a {
-	padding-top: 8px;
-	padding-bottom: 9px;
 }
 
 #tabbodies {
@@ -1221,7 +1216,7 @@ h2.icon {
 
 .tabbody {
 	position: relative;
-	min-height: 230px;
+	min-height: 280px;
 	padding: 8px;
 }
 
