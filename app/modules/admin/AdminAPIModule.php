@@ -60,7 +60,7 @@ class AdminAPIModule extends APIModule
     }
     
     private function getTypeStr($type) {
-        if (in_array($type, array('site'))) {
+        if (in_array($type, array('site','module'))) {
             return $type;
         } elseif ($type instanceOf Module) {
             return $type->getConfigModule();
@@ -837,20 +837,21 @@ class AdminAPIModule extends APIModule
                         $module = WebModule::factory($moduleID);
                         $sectionData = $this->getAdminData($module, $section);
                         $config = $module->getConfig($sectionData['config']);
+                        $subsection = $moduleID;
                         break;
                     default:
                         throw new KurogoConfigurationException(__LINE__ . ": Invalid type $type");
                 }
                         
                 if (!isset($sectionData['sections']) || (!isset($sectionData['sectiondelete']) || !$sectionData['sectiondelete'])) {
-                    throw new KurogoConfigurationException(__LINE__ . ": Config '$section' of module '$moduleID' does not permit removal of items");
+                    throw new KurogoConfigurationException(__LINE__ . ": Section '$section' does not permit removal of items");
                 }
 
                 if (!isset($sectionData['sections'][$key])) {
-                    throw new KurogoConfigurationException(__LINE__ . ": Section $key not found in config '$section' of module '$moduleID'");
+                    throw new KurogoConfigurationException(__LINE__ . ": Section $key not found in config '$section' of $type $subsection");
                 }
 
-                Kurogo::log(LOG_NOTICE, "Removing section $section from ". $this->getTypeStr($type) . " $subsection", 'admin');
+                Kurogo::log(LOG_NOTICE, "Removing section $key from $type $section $subsection", 'admin');
                 if (!$result = $config->removeSection($key)) {
                     throw new KurogoException(__LINE__ . ": Error removing item $key from config '" . $sectionData['config'] ."'");
                 } else {
