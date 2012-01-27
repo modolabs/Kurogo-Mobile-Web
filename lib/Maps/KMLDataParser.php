@@ -182,7 +182,7 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
 
     public function clearInternalCache()
     {
-        $this->docuemtn = null;
+        $this->document = null;
         $this->folders = array();
         $this->placemarks = array();
         $this->otherCategory = null;
