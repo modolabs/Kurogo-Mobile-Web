@@ -56,8 +56,13 @@
 	max-height: 71px;
 }
 
-.fullimage{
+.fullimage-wrapper {
+	padding: 3px 10px;
+	text-align: center;
+}
+
+.fullimage {
 	max-width: 100%;
-	margin: 20px auto;
+	margin: 0 auto;
     display: block;
 }
