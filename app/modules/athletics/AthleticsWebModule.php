@@ -27,7 +27,7 @@ class AthleticsWebModule extends WebModule {
         return $scheduleFeeds;
     }
     
-    public static function getGenders() {
+    public function getGenders() {
         return array(
             'men'=>$this->getLocalizedString('GENDER_MEN'),
             'women'=>$this->getLocalizedString('GENDER_WOMEN')
