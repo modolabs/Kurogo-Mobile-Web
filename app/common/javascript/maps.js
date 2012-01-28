@@ -181,7 +181,7 @@ KGOGoogleMapLoader.prototype.locationUpdated = function(location, firstLocation)
     var position = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
     if (this.userLocationMarker === null) {
         // TODO make these more customizable
-        var icon = new google.maps.MarkerImage(URL_BASE + '/common/images/map-location.png',
+        var icon = new google.maps.MarkerImage(URL_BASE + 'common/images/map-location.png',
             null, // original size
             null, // origin (0, 0)
             new google.maps.Point(8, 8), // anchor
@@ -448,27 +448,28 @@ KGOEsriMapLoader.prototype.locationUpdated = function(location, firstLocation) {
         'from': 4326,
         'to': this.projection
     };
+    that = this
     makeAPICall('GET', 'map', 'projectPoint', params, function(response) {
-        var point = new esri.geometry.Point(response.lon, response.lat, this.spatialRef);
+        var point = new esri.geometry.Point(response.lon, response.lat, that.spatialRef);
 
-        if (typeof this.userLocationMarker !== null) {
+        if (typeof that.userLocationMarker !== null) {
             // TODO make these more customizable
-            var pointSymbol = new esri.symbol.PictureMarkerSymbol(URL_BASE + '/common/images/map-location.png', 16, 16);
-            this.userLocationMarker = new esri.Graphic(point, pointSymbol);
+            var pointSymbol = new esri.symbol.PictureMarkerSymbol(URL_BASE + 'common/images/map-location.png', 16, 16);
+            that.userLocationMarker = new esri.Graphic(point, pointSymbol);
 
         } else {
-            this.userLocationMarker.setGeometry(point);
+            that.userLocationMarker.setGeometry(point);
         }
         
-        if (!this.userLocationMarkerOnMap) {
-            map.graphics.add(this.userLocationMarker);
-            this.userLocationMarkerOnMap = true;
+        if (!that.userLocationMarkerOnMap) {
+            map.graphics.add(that.userLocationMarker);
+            that.userLocationMarkerOnMap = true;
         }
 
         if (firstLocation) {
             // only recenter on first location so we don't rubber band on scrolling
-            var points = esri.geometry.Multipoint(this.spatialRef);
-            points.addPoint(this.center);
+            var points = esri.geometry.Multipoint(that.spatialRef);
+            points.addPoint(that.center);
             points.addPoint(point);
             
             var extent = points.getExtent();
