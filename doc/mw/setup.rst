@@ -57,7 +57,7 @@ web server.
    
 #. In the root *config* directory, make a copy of the *kurogo-default.ini* file called *kurogo.ini*
 #. Edit the new kurogo.ini file and change the *ACTIVE_SITE* option to match the name of *SITE_FOLDER*
-#. (re)Start your webserver and direct your web browser to the server/port that you specified.
+#. (re)Start your webserver and direct your web browser to http://yourhost/admin to complete the setup.
 
 
 .. _setup_subfolder:

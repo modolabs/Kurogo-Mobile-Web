@@ -32,7 +32,7 @@ class RSSItem extends XMLElement implements NewsItem
                 case 'search':
                     return  (stripos($this->getTitle(), $value)!==FALSE) ||
                          (stripos($this->getDescription(), $value)!==FALSE) ||
-                         (stripos($this->getContent(),     $value)!==FALSE);
+                         (stripos($this->getContent(false),     $value)!==FALSE);
                     break;
             }
         }
@@ -46,10 +46,10 @@ class RSSItem extends XMLElement implements NewsItem
         }
     }
     
-    public function getContent()
+    public function getContent($fetch=true)
     {
         if (strlen($this->content)==0) {
-            if ($this->fetchContent && ($url = $this->getLink())) {
+            if ($this->fetchContent && $fetch && ($url = $this->getLink())) {
                 $reader = new KurogoReader($url);
                 $this->content = $reader->getContent();
             }

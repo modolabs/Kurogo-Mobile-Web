@@ -33,24 +33,28 @@ Kurogo is a PHP application. It is currently qualified for use with
     * mod_rewrite, and .htaccess support (AllowOverride)
 * IIS 7.5
    * URL Rewrite Module 2.0
-* PHP 5.2 or higher with the following extensions
+* PHP 5.2 (5.3 recommended) or higher with the following extensions
     * zlib, xml, dom, json, pdo, mbstring, LDAP, curl
 
-To install, simply copy the files to your webserver, and point your site's document root to the included www
-folder. For more detailed setup information, please see the developer's guide.
+To install, simply copy the files to your webserver, and set the document root to the www
+folder. For more detailed setup information, please see the Developer's guide on kurogo.org/docs
 
-## Version 1.3
+## Version 1.4
 
 This version includes a number of fixes and improvements, including:
 
-* The REST API has now reached 1.0 status. [Documentation](http://kurogo.org/docs/rest/)
-* Kurogo is now localized. Version 1.3 only includes English values. 
-* Kurogo can now host multiple sites. The Multi-site option allows for multiple sites to be hosted on the same server. 
-* An updated logging facility has been created to include logging messages in Kurogo. 
-* The internal statistics engine and stats module has been overhauled. 
-* The Map module has been significantly updated. Support for directions, arbitrary addresses and UI improvements among other improvements.
-* Improved support for recurring events
-* Many other bug fixes and improvements.
+* NEW MODULE: Photos. Show photos from Flickr or Picassa
+* NEW MODULE: Athletics. Show news and score information
+* Updated map module interface
+* Overhauled Data access classes for simpler creation of new data retrieval methods including support for SOAP and Database calls.
+* Added support for more types of recurring events
+* Federated search will be asynchronous in supported devices
+* You can define an alert banner to show on the home screen (i.e. from emergency module)
+* Added option to fetch RSS content if there is not full text in the feed
+* Most of the theme colors and options can now be easily customized by editing the config.ini in the theme folder. This requires copying either the default or hi-def themes from Universitas
+* Added basic encryption functions to store sensitive data
+* Added support for in-memory caching using APC or Memcache
+* Many other fixes and improvements to the included modules
 
 ## History
 

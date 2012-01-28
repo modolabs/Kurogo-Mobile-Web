@@ -27,7 +27,7 @@ class AthleticsWebModule extends WebModule {
         return $scheduleFeeds;
     }
     
-    public static function getGenders() {
+    public function getGenders() {
         return array(
             'men'=>$this->getLocalizedString('GENDER_MEN'),
             'women'=>$this->getLocalizedString('GENDER_WOMEN')
@@ -284,6 +284,23 @@ class AthleticsWebModule extends WebModule {
         }
         
         return null;
+    }
+    
+    public function searchItems($searchTerms, $limit=null, $options=null) {  
+        
+        $start = isset($options['start']) ? $options['start'] : 0;
+        if ($feed = $this->getNewsFeed('topnews')) {
+            $feed->setStart($start);
+            $feed->setLimit($limit);
+            return $feed->search($searchTerms);
+        }
+    }
+    
+    public function linkForItem(KurogoObject $story, $data=null) {
+        if (isset($data['federatedSearch']) && $data['federatedSearch']) {
+            $data['section'] = 'topnews';
+        }
+        return $this->linkForNewsItem($story, $data);
     }
     
     protected function loadFeedData() {
