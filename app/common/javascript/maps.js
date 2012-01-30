@@ -115,7 +115,7 @@ function KGOGoogleMapLoader(attribs) {
     }
 
     this.showCalloutForOverlay = function(overlay) {
-        if (currentInfoWindow == overlay.infoWindow) {
+        if (currentInfoWindow != overlay.infoWindow) {
             overlay.infoWindow.open(map);
             setCurrentInfoWindow(overlay.infoWindow);
         }
@@ -244,7 +244,7 @@ KGOGoogleMapLoader.prototype.addOverlay = function(overlay, attribs) {
     });
 
     var that = this;
-    google.maps.event.addListener(overlay, 'click', function() {
+    google.maps.event.addListener(overlay, 'mousedown', function() {
         that.showCalloutForOverlay(overlay);
     });
 

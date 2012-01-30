@@ -189,7 +189,7 @@ class MapDataController extends DataController implements MapFolder
         return $selectedCategory;
     }
 
-    public function items() {
+    public function items($start=0, $limit=null) {
         $items = array();
         $rawItems = parent::items(); // invoke parse
 
