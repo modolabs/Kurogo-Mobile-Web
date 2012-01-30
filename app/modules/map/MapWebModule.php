@@ -978,7 +978,8 @@ class MapWebModule extends WebModule {
         $this->addInlineJavascriptFooter(
             "var COOKIE_PATH = '".COOKIE_PATH."';\n".
             "var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
-            "var CONFIG_MODULE = '{$this->configModule}';");
+            "var CONFIG_MODULE = '{$this->configModule}';\n".
+            'var NO_RESULTS_FOUND = "'.$this->getLocalizedString('NO_RESULTS').'";');
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
         $this->configureUserLocation();
