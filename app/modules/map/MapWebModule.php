@@ -865,18 +865,18 @@ class MapWebModule extends WebModule {
             $dataModel = $this->getDataModel($feedId);
             $category = $this->getArg('category', null);
             $featureIndex = $this->getArg('featureindex', null);
-            $selectedCategory = null;
+            //$selectedCategory = null;
             if ($category !== null) {
                 $selectedCategory = $dataModel->findCategory($category);
             }
             if ($this->placemarkId !== null) {
                 $dataModel->setPlacemarkId($this->placemarkId);
             }
-            if ($selectedCategory) {
-                $placemarks = $selectedCategory->placemarks();
-            } else {
+            //if ($selectedCategory) {
+            //    $placemarks = $selectedCategory->placemarks();
+            //} else {
                 $placemarks = $dataModel->placemarks();
-            }
+            //}
             if ($featureIndex !== null && intval($featureIndex) < count($placemarks)) {
                 $placemarks = array_slice($placemarks, intval($featureIndex), 1);
             }
