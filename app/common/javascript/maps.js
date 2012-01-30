@@ -126,6 +126,7 @@ function KGOGoogleMapLoader(attribs) {
 KGOGoogleMapLoader.prototype = new KGOMapLoader();
 
 KGOGoogleMapLoader.prototype.loadMap = function() {
+    var that = this;    
     var mapImage = document.getElementById(this.mapElement);
     var initCoord = new google.maps.LatLng(this.initLat, this.initLon);
     var options = {
@@ -160,14 +161,13 @@ KGOGoogleMapLoader.prototype.loadMap = function() {
     recenterButton.id = "recenter";
     recenterButton.onclick = function() {
         map.setCenter(initCoord);
-        map.setZoom(this.initZoom);
+        map.setZoom(that.initZoom);
     }
     controlDiv.appendChild(recenterButton);
 
     if ("geolocation" in navigator && this.showUserLocation) {
         this.locateMeButton = document.createElement('a');
         this.locateMeButton.id = "locateMe";
-        var that = this;
         this.locateMeButton.onclick = function() {
             that.toggleLocationUpdates();
         }
