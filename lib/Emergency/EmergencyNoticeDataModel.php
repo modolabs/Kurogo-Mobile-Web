@@ -1,9 +1,10 @@
 <?php
 
+includePackage('DateTime');
 class EmergencyNoticeDataModel extends DataModel
 {
     protected $DEFAULT_PARSER_CLASS = 'RSSDataParser';
-    protected $NOTICE_EXPIRATION = NULL;
+    protected $NOTICE_EXPIRATION = 604800; // 1 week
     protected $NOTICE_MAX_COUNT = NULL; // unlimited
     protected $emergencyNotices = NULL;
     protected $cacheFolder = "Emergency";
@@ -15,9 +16,8 @@ class EmergencyNoticeDataModel extends DataModel
 
         if (isset($args['NOTICE_EXPIRATION'])) {
             $this->NOTICE_EXPIRATION = $args['NOTICE_EXPIRATION'];
-        } else {
-            $this->NOTICE_EXPIRATION = 7*24*60*60; // 1 week
         }
+        
         if (isset($args['NOTICE_MAX_COUNT'])) {
             $this->NOTICE_MAX_COUNT = $args['NOTICE_MAX_COUNT'];
         }
@@ -37,15 +37,15 @@ class EmergencyNoticeDataModel extends DataModel
             
             $items = $this->getData();
             foreach ($items as $item) {
-                if ($now - strtotime($item->getPubDate()) > $this->NOTICE_EXPIRATION) {
+                if (($now - $item->getPubTimestamp()) > $this->NOTICE_EXPIRATION) {
                     break; // items too old
                 }
                 
                 $this->emergencyNotices[] = array(
                    'title' => $item->getTitle(),
                    'text' => $item->getDescription(),
-                   'date' => $item->getPubDate(),
-                   'unixtime' => strtotime($item->getPubDate()),
+                   'date' => DateFormatter::formatDate($item->getPubDate(), DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE),
+                   'unixtime' => $item->getPubTimestamp(),
                 );
                 
                 if (isset($this->NOTICE_MAX_COUNT) && count($this->emergencyNotices) >= $this->NOTICE_MAX_COUNT) {

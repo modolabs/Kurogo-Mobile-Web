@@ -46,6 +46,10 @@ a `secondary` section for secondary contacts. Each contact is formatted as follo
   subtitle[] = ""  
   phone[] = "6173332893"  
 
+In the case that you have added a `secondary` contacts section you may change the title of the secondary
+contacts link by changing the module variable *MORE_CONTACTS*. By default this variable is set to "More
+Emergency Contacts".
+
 =======================================
 Using Drupal Emergency Module
 =======================================

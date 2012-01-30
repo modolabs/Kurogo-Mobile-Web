@@ -24,7 +24,9 @@
         "descriptionKey":"EMERGENCY_ADMIN_NOTICE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "BASE_URL":{"labelKey":"EMERGENCY_ADMIN_NOTICE_BASEURL_TITLE","descriptionKey":"EMERGENCY_ADMIN_NOTICE_BASEURL_DESCRIPTION","type":"text","config":"feeds","section":"notice"}
+            "BASE_URL":{"labelKey":"EMERGENCY_ADMIN_NOTICE_BASEURL_TITLE","descriptionKey":"EMERGENCY_ADMIN_NOTICE_BASEURL_DESCRIPTION","type":"text","config":"feeds","section":"notice"},
+            "NOTICE_MAX_COUNT":{"labelKey":"EMERGENCY_ADMIN_NOTICE_MAX_COUNT_TITLE","descriptionKey":"EMERGENCY_ADMIN_NOTICE_MAX_COUNT_DESCRIPTION","type":"number","config":"feeds","section":"notice","omitBlankValue":true},
+            "NOTICE_EXPIRATION":{"labelKey":"EMERGENCY_ADMIN_NOTICE_EXPIRATION_TITLE","descriptionKey":"EMERGENCY_ADMIN_NOTICE_EXPIRATION_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"feeds","section":"notice","omitBlankValue":true}
      }
     }
     

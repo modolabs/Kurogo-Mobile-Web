@@ -2,7 +2,7 @@
 
 class KMLLineString extends XMLElement implements MapPolyline
 {
-    private $coordinates = array();
+    protected $coordinates = array();
 
     public function getCenterCoordinate()
     {
@@ -48,5 +48,17 @@ class KMLLineString extends XMLElement implements MapPolyline
                 parent::addElement($element);
                 break;
         }
+    }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'coordinates' => serialize($this->coordinates),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->coordinates = unserialize($data['coordinates']);
     }
 }

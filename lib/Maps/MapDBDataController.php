@@ -48,6 +48,7 @@ class MapDBDataController extends MapDataController implements MapFolder
     }
 
     public function getData() {
+        // TODO: this should be taken care of by PARSE_MODE_FILE
         if ($this->parser instanceof ShapefileDataParser) {
             return;
         }
@@ -61,9 +62,18 @@ class MapDBDataController extends MapDataController implements MapFolder
         }
     }
 
-    protected function parseResponse(DataResponse $response, DataParser $parser=null)
-    {
-        return $this->parseData($response->getResponse(), $parser);
+    public function getParsedData(DataParser $parser=null) {
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+
+        switch ($parser->getParseMode()) {
+            case DataParser::PARSE_MODE_FILE:
+                break;
+            default:
+                $data = $this->getData();
+                return $this->parseData($data, $parser);
+        }
     }
 
     protected function parseData($data, DataParser $parser=null) {
@@ -99,6 +109,8 @@ class MapDBDataController extends MapDataController implements MapFolder
     public function selectPlacemark($featureId)
     {
         $feature = $this->dbParser->getFeatureById($featureId, $this->drillDownPath);
+        $feature->setURLParam('feed', $this->categoryId);
+        $feature->setURLParam('group', $this->feedGroup);
         if ($feature) {
             $this->setSelectedPlacemarks(array($feature));
         }
@@ -109,9 +121,16 @@ class MapDBDataController extends MapDataController implements MapFolder
     {
         $this->getListItems(); // make sure we're populated
         if ($this->hasDBData) {
-            return $this->dbParser->getCategory()->getAllPlacemarks();
+            $placemarks = $this->dbParser->getCategory()->getAllPlacemarks();
+
+        } else {
+            $placemarks = $this->parser->getAllPlacemarks();
         }
-        return $this->parser->getAllPlacemarks();
+        foreach ($placemarks as $placemark) {
+            $placemark->setURLParam('feed', $this->categoryId);
+            $placemark->setURLParam('group', $this->feedGroup);
+        }
+        return $placemarks;
     }
 
     // TODO allow config of searchable fields

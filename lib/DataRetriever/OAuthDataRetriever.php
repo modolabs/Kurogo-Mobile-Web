@@ -299,7 +299,7 @@ class OAuthDataRetriever extends URLDataRetriever
             case 'GET':
                 break;
             case 'POST':
-                $headers['Content-type'] = 'application/x-www-form-urlencoded';
+                $headers['Content-type'] = 'application/x-www-form-urlencoded; charset=' . Kurogo::getCharset();
                 break;
         }
         

@@ -6,14 +6,16 @@ class HTTPDataResponse extends DataResponse
     protected $requestURL;
     protected $requestParameters=array();
     protected $requestHeaders=array();
+    protected $requestData;
     protected $responseStatus;
     protected $responseHeaders=array();
         
-    public function setRequest($method, $url, $parameters, $headers) {
+    public function setRequest($method, $url, $parameters=null, $headers=null, $data=null) {
         $this->requestMethod = $method;
         $this->requestURL = $url;
         $this->requestParameters = $parameters;
         $this->requestHeaders = $headers;
+        $this->requestData = $data;
     }
     public function getRequest()
     {
@@ -21,7 +23,8 @@ class HTTPDataResponse extends DataResponse
             'method'     => $this->requestMethod,
             'url'        => $this->requestURL,
             'parameters' => $this->requestParameters,
-            'headers'    => $this->requestHeaders
+            'headers'    => $this->requestHeaders,
+            'data'       => $this->requestData
         );
     }
     
@@ -43,6 +46,10 @@ class HTTPDataResponse extends DataResponse
                     $this->responseError = $bits[3];
                 }
             }
+        }
+        
+        if (!$this->responseCode) { 
+            $this->responseError = 'Error Retrieving Data';
         }
     }
     

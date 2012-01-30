@@ -7,10 +7,13 @@ For more detailed release notes, see the included CHANGELOG file
 
 Version 1.4 (January, 2012)
 ===========================
+* NEW Module: :doc:`Athletics <moduleathletics>`
+* NEW Module: :doc:`Photos <modulephotos>`
+* Updated :doc:`Map module <modulemap>`
 * Overhauled the :doc:`Data Retrieval <dataretrieval>` classes to better support SOAP and Database retrieval methods and complex data models
 * Better client side caching headers
 * Added support for in-memory caching of Kurogo data structures using Memcache or APC
-* Added support for encrypting data on disk (requires mcrypt)
+* Added developer support for encrypting data on disk (requires mcrypt)
 * Added option to locally save user credentials so they can be passed on to external services
 * Added support for Google Analytics domain names
 * Added support to show emergency notifications on the home screen

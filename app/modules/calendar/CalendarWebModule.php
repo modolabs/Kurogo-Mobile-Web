@@ -230,6 +230,10 @@ class CalendarWebModule extends WebModule {
         $calendar = isset($options['calendar']) ? $options['calendar'] : $this->getDefaultFeed($type);
         $feed     = $this->getFeed($calendar, $type);
         
+        if (isset($options['federatedSearch']) && $options['federatedSearch']) {
+            $options['timeframe'] = isset($options['timeframe']) ? $options['timeframe'] : $this->getDefaultTimeframe();
+        }
+
         if (isset($options['timeframe'])) {
           $searchRanges = $this->getModuleSections('searchranges');
           $selectedRange = $searchRanges[$options['timeframe']];
@@ -423,6 +427,10 @@ class CalendarWebModule extends WebModule {
     protected function initialize() {
         $this->timezone = Kurogo::siteTimezone();
     }
+    
+    protected function getDefaultTimeframe() {
+        return 0;
+    }
 
   protected function initializeForPage() {
     switch ($this->page) {
@@ -572,10 +580,7 @@ class CalendarWebModule extends WebModule {
         $calendar= $this->getArg('calendar', $this->getDefaultFeed($type));
         $catid   = $this->getArg('catid', '');
         $name    = $this->getArg('name', '');
-        $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
-        $next    = strtotime("+1 day", $current);
-        $prev    = strtotime("-1 day", $current);
-
+        $feed = $this->getFeed($calendar, $type);
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
 
@@ -584,39 +589,42 @@ class CalendarWebModule extends WebModule {
         $this->assign('category', $catname);
         $this->setLogData($catid, $catname);
         
-        $dayRange = new DayRange(time());
-        
-        $this->assign('current', $current);
-        $this->assign('next',    $next);
-        $this->assign('prev',    $prev);
-        $this->assign('nextURL', $this->categoryDayURL($next, $catid, $name, false));
-        $this->assign('prevURL', $this->categoryDayURL($prev, $catid, $name, false));
         $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
         $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
-        $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
 
-        $events = array();
-        
-        if (strlen($catid) > 0) {
-            $feed = $this->getFeed($calendar, $type); // this allows us to have multiple feeds in the future
+        if($feed->isFilterCateByDay()) {
+            $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
+            $next    = strtotime("+1 day", $current);
+            $prev    = strtotime("-1 day", $current);
+
+            $dayRange = new DayRange(time());
+
+            $this->assign('current', $current);
+            $this->assign('next',    $next);
+            $this->assign('prev',    $prev);
+            $this->assign('nextURL', $this->categoryDayURL($next, $catid, $name, false));
+            $this->assign('prevURL', $this->categoryDayURL($prev, $catid, $name, false));
+            $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
+
             $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
             $start->setTime(0,0,0);
             $end = clone $start;
             $end->setTime(23,59,59);
-    
+
             $feed->setStartDate($start);
             $feed->setEndDate($end);
-            $feed->addFilter('category', $catid);
-            $iCalEvents = $feed->items();
-          
-            foreach($iCalEvents as $iCalEvent) {
-          
-                $events[] = $this->linkForItem($iCalEvent, array(
-                    'catid'    =>$catid,
-                    'calendar' =>$calendar,
-                    'type'     =>$type)
-                );
-            }          
+        }
+
+        // get events by category id
+        $iCalEvents = $feed->getEventsByCategory($catid);
+
+        $events = array();
+        foreach($iCalEvents as $iCalEvent) {
+            $events[] = $this->linkForItem($iCalEvent, array(
+                'catid'    =>$catid,
+                'calendar' =>$calendar,
+                'type'     =>$type)
+            );
         }
         
         $this->assign('events', $events);        
@@ -715,14 +723,14 @@ class CalendarWebModule extends WebModule {
         
         $feed = $this->getFeed($calendar, $type);
         
-        if ($filter = $this->getArg('filter')) {
-            $feed->addFilter('search', $filter);
+         if ($filter = $this->getArg('filter')) {
+            $feed->setOption('search', $filter);
+        }
+ 
+        if ($catid = $this->getArg('catid')) {
+            $feed->setOption('category', $catid);
         }
 
-        if ($catid = $this->getArg('catid')) {
-            $feed->addFilter('category', $catid);
-        }
-        
         $time = $this->getArg('time', time(), FILTER_VALIDATE_INT);
 
         if ($event = $feed->getItem($this->getArg('id'), $time)) {
@@ -798,7 +806,7 @@ class CalendarWebModule extends WebModule {
       case 'search':
         if ($filter = $this->getArg('filter')) {
           $searchTerms    = trim($filter);
-          $timeframe      = $this->getArg('timeframe', 0);
+          $timeframe      = $this->getArg('timeframe', $this->getDefaultTimeframe());
           $type           = $this->getArg('type', 'static');
           $searchCalendar = $this->getArg('calendar', $this->getDefaultFeed($type));
           

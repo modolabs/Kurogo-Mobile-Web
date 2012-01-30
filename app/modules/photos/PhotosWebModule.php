@@ -4,9 +4,6 @@
  * 
  * @uses WebModule
  * @package 
- * @version $id$
- * @copyright 2011
- * @author Jeffery You <jianfeng.you@symbio.com> 
  */
 
 includePackage('Photos');
@@ -135,7 +132,6 @@ class PhotosWebModule extends WebModule {
             	$controller = $this->getFeed($album);
                 $id = base64_decode($this->getArg('id'));
                 $photo = $controller->getPhoto($id);
-                $this->setPageTitles($photo->getTitle());
                 $this->assign('photoURL',    $photo->getUrl());
                 $this->assign('photoTitle',  $photo->getTitle());
                 $this->assign('photoAuthor', $photo->getAuthor());

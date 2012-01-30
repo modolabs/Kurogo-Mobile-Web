@@ -13,6 +13,8 @@ if (!function_exists('mb_convert_encoding')) {
     die('Multibyte String Functions not available (mbstring)');
 }
 
+includePackage('News');
+includePackage('DateTime');
 class NewsWebModule extends WebModule {
   protected static $defaultModel = 'NewsDataModel';
   protected static $defaultController = 'RSSDataController'; // legacy
@@ -58,8 +60,8 @@ class NewsWebModule extends WebModule {
         if ($image) {
           return array(
             'src'    => $image->getURL(),
-            'width'  => $image->getProperty('width'),
-            'height' => $image->getProperty('height'),
+            'width'  => $image->getWidth(),
+            'height' => $image->getHeight()
           );
         }
     }
@@ -137,8 +139,12 @@ class NewsWebModule extends WebModule {
 
     public function linkForItem(KurogoObject $story, $data=null) {
         
-        $pubDate = strtotime($story->getProperty("pubDate"));
-        $date = date("M d, Y", $pubDate);
+        if ($pubDate = $story->getPubDate()) {
+            $date = DateFormatter::formatDate($pubDate, DateFormatter::MEDIUM_STYLE, DateFormatter::NO_STYLE);
+        } else {
+            $date = "";
+        }              
+
         $image = $this->showImages ? $story->getImage() : false;
         
         $link = array(
@@ -169,7 +175,7 @@ class NewsWebModule extends WebModule {
               $link['url'] = $this->buildBreadcrumbURL('story', $options, $addBreadcrumb);
             }
 
-        } elseif ($url = $story->getProperty('link')) {
+        } elseif ($url = $story->getLink()) {
             $link['url'] = $url;
         }
 
@@ -211,7 +217,7 @@ class NewsWebModule extends WebModule {
       case 'story':
         $searchTerms = $this->getArg('filter', false);
         if ($searchTerms) {
-          $this->feed->addFilter('search', $searchTerms);
+          $this->feed->setOption('search', $searchTerms);
         }
 
         $storyID   = $this->getArg('storyID', false);
@@ -224,11 +230,14 @@ class NewsWebModule extends WebModule {
 
         $this->setLogData($storyID, $story->getTitle());
         
-        if (!$content = $this->cleanContent($story->getProperty('content'))) {
-          if ($url = $story->getProperty('link')) {
+        if (!$content = $this->cleanContent($story->getContent())) {
+          if ($url = $story->getLink()) {
               header("Location: $url");
               exit();
-          } else {
+          } 
+          
+          // no content or link. Attempt to get description
+          if (!$content = $story->getDescription()) {
               throw new KurogoDataException($this->getLocalizedString('ERROR_CONTENT_NOT_FOUND', $storyID));
           }
         }
@@ -242,8 +251,11 @@ class NewsWebModule extends WebModule {
             $this->assign('storyURL',      $story->getLink());
         }
 
-        $pubDate = strtotime($story->getProperty("pubDate"));
-        $date = date("M d, Y", $pubDate);
+        if ($pubDate = $story->getPubDate()) {
+            $date = DateFormatter::formatDate($pubDate, DateFormatter::LONG_STYLE, DateFormatter::NO_STYLE);
+        } else {
+            $date = "";
+        }              
         
         $this->enablePager($content, $this->feed->getEncoding(), $storyPage);
         

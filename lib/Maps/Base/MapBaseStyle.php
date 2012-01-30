@@ -18,5 +18,17 @@ class MapBaseStyle implements MapStyle
         }
         $this->styleParams[$type][$param] = $value;
     }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'styleParams' => serialize($this->styleParams),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->styleParams = unserialize($data['styleParams']);
+    }
 }
 

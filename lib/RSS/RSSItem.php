@@ -4,7 +4,8 @@
   * @package ExternalData
   * @subpackage RSS
   */
-class RSSItem extends XMLElement implements KurogoObject
+includePackage('News');
+class RSSItem extends XMLElement implements NewsItem
 {
     protected $name='item';
     protected $title;
@@ -18,6 +19,11 @@ class RSSItem extends XMLElement implements KurogoObject
     protected $category=array();
     protected $enclosure;
     protected $images=array();
+    protected $fetchContent = false;
+    
+    public function setFetchContent($bool) {
+        $this->fetchContent =  $bool ? true : false;
+    }
     
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
@@ -26,7 +32,7 @@ class RSSItem extends XMLElement implements KurogoObject
                 case 'search':
                     return  (stripos($this->getTitle(), $value)!==FALSE) ||
                          (stripos($this->getDescription(), $value)!==FALSE) ||
-                         (stripos($this->getContent(),     $value)!==FALSE);
+                         (stripos($this->getContent(false),     $value)!==FALSE);
                     break;
             }
         }
@@ -34,8 +40,21 @@ class RSSItem extends XMLElement implements KurogoObject
         return true;
     }
     
-    public function getContent()
+    public function init($args) {
+        if (isset($args['FETCH_CONTENT'])) {
+            $this->setFetchContent($args['FETCH_CONTENT']);
+        }
+    }
+    
+    public function getContent($fetch=true)
     {
+        if (strlen($this->content)==0) {
+            if ($this->fetchContent && $fetch && ($url = $this->getLink())) {
+                $reader = new KurogoReader($url);
+                $this->content = $reader->getContent();
+            }
+        }
+
         return $this->content;
     }
 
@@ -76,6 +95,12 @@ class RSSItem extends XMLElement implements KurogoObject
     {
         return $this->pubDate;
     }
+    
+    public function getPubTimestamp() {
+        if ($this->pubDate) {
+            return $this->pubDate->format('U');
+        }
+    }
 
     public function getComments()
     {
@@ -99,7 +124,7 @@ class RSSItem extends XMLElement implements KurogoObject
     
     public function getImage()
     {
-        if ( ($enclosure = $this->getEnclosure()) && $enclosure->isImage()) {
+        if ( ($enclosure = $this->getEnclosure()) && $enclosure instanceOf RSSImageEnclosure) {
             return $enclosure;
         } elseif (count($this->images)>0) {
             return $this->images[0];
@@ -117,6 +142,15 @@ class RSSItem extends XMLElement implements KurogoObject
         {
             case 'LINK':
                 if (!$value) {
+                    if ($element->getAttrib('REL') == 'enclosure') {
+                        $this->enclosure = RSSEnclosure::factory(array(
+                            'URL' => $element->getAttrib('HREF'),
+                            'LENGTH' => $element->getAttrib('LENGTH'),
+                            'TYPE' => $element->getAttrib('TYPE'),
+                        ));
+                        break;
+                    }
+
                     if ($link = $element->getAttrib('HREF')) {
                         $element->setValue($link, true);
                     }
@@ -132,6 +166,19 @@ class RSSItem extends XMLElement implements KurogoObject
             case 'CATEGORY':
                 $name = strtolower($name);
                 array_push($this->$name, $value);
+                break;
+            case 'PUBDATE':
+            case 'DC:DATE':
+            case 'PUBLISHED':
+                if ($value = $element->value()) {
+                    try {
+                        if ($date = new DateTime($value)) {
+                            $this->pubDate = $date;
+                        }
+                    } catch (Exception $e) {
+                    }
+                }
+                
                 break;
             default:
                 parent::addElement($element);

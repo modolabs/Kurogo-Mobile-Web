@@ -1,5 +1,7 @@
 <form method="POST" id="loginForm" action="login">
-<input type="hidden" name="url" value="{$url|escape}" />
+{foreach $urlArray as $key=>$val}
+<input type="hidden" name="{$key}" value="{$val|escape}" />
+{/foreach}
 <input type="hidden" name="startOver" value="1" />
 {if $authority}
 {if !$message}

@@ -281,7 +281,7 @@ class PeopleWebModule extends WebModule {
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $cookieParams = array(
                                 'title' => $person->getName(),
-                                'uid' => urlencode($uid)
+                                'uid' => rawurlencode($uid)
                             );
             
                             $cookieID = http_build_query($cookieParams);
@@ -371,6 +371,7 @@ class PeopleWebModule extends WebModule {
                 
                 $this->assign('contacts', $group['contacts']);
                 $this->assign('description', $group['description']);
+                $this->assign('contactsSubTitleNewline', $this->getOptionalModuleVar('CONTACTS_SUBTITLE_NEWLINE', false));
                 break;
         
             case 'index':
@@ -384,6 +385,7 @@ class PeopleWebModule extends WebModule {
                 }
                 $this->assign('placeholder', $this->getLocalizedString("SEARCH"));
                 $this->assign('searchTip', $this->getOptionalModuleVar('SEARCH_TIP'));
+                $this->assign('contactsSubTitleNewline', $this->getOptionalModuleVar('CONTACTS_SUBTITLE_NEWLINE', false));
                 break;
         }  
     }

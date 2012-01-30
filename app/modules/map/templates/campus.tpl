@@ -1,17 +1,15 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{include file="findInclude:common/templates/search.tpl" placeholder="Search Map" tip=$searchTip}
+{include file="findInclude:modules/map/templates/searchbar.tpl"}
 
 <div class="nonfocal">
-  <h2>{$browseHint}</h2>
+  <h3>{$browseHint}</h3>
 </div>
 
-{include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$navItems navlistID="categories"}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories}
-
-{if $hasBookmarks}
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
+{if $clearLink}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$clearLink secondary=true}
 {/if}
 
 {include file="findInclude:common/templates/footer.tpl"}

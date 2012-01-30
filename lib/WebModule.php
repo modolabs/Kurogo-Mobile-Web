@@ -25,10 +25,9 @@ abstract class WebModule extends Module {
   protected $templateModule = 'none'; 
   protected $templatePage = 'index';
 
-    protected $deviceClassifier;  
+  protected $deviceClassifier;  
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
-  protected $supportsCerts = false;
   
   protected $imageExt = '.png';
   
@@ -332,6 +331,20 @@ abstract class WebModule extends Module {
     return $url;
   }
 
+  protected function redirectToArray($params) {
+        $id = isset($params['id']) ? $params['id'] : '';
+        $page = isset($params['page']) ? $params['page'] : '';
+        $args = isset($params['args']) ? $params['args'] : array();
+        
+        if ($id) {
+            self::redirectToModule($id, $page, $args);
+        } elseif ($page) {
+            self::redirectTo($page, $args);
+        }
+        
+        return false;
+  }
+
   public function redirectToModule($id, $page, $args=array()) {
     $url = self::buildURLForModule($id, $page, $args);
     //error_log('Redirecting to: '.$url);
@@ -433,11 +446,6 @@ abstract class WebModule extends Module {
         $this->loadDeviceClassifierIfNeeded();
         return $this->deviceClassifier->getPlatform();
     }
-
-    protected function getSupportsCerts() {
-        $this->loadDeviceClassifierIfNeeded();
-        return $this->deviceClassifier->getSupportsCerts();
-    }
     
     protected function loadDeviceClassifierIfNeeded() {
         $this->deviceClassifier = Kurogo::deviceClassifier();
@@ -452,11 +460,10 @@ abstract class WebModule extends Module {
             parent::init();
         }
 
-        $this->moduleName    = $this->getModuleVar('title','module');
+        $this->moduleName = $this->getModuleVar('title','module');
 
-        $this->pagetype      = $this->getPagetype();
-        $this->platform      = $this->getPlatform();
-        $this->supportsCerts = $this->getSupportsCerts();
+        $this->pagetype = $this->getPagetype();
+        $this->platform = $this->getPlatform();
 
         switch ($this->getPagetype()) {
             case 'compliant':
@@ -960,6 +967,10 @@ abstract class WebModule extends Module {
         return in_array($aBookmark, $this->getBookmarks());
     }
 
+    protected function hasBookmarks(){
+        return count($this->getBookmarks()) > 0;
+    }
+
     private function bookmarkToggleURL($toggle) {
         $args = $this->args;
         $args['bookmark'] = $toggle;
@@ -1035,7 +1046,7 @@ abstract class WebModule extends Module {
     }
     
     protected function generateBookmarkLink() {
-        $hasBookmarks = count($this->getBookmarks()) > 0;
+        $hasBookmarks = $this->hasBookmarks();
         $bookmarkLink = array(array(
             'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
             'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
@@ -1306,7 +1317,6 @@ abstract class WebModule extends Module {
 
   protected function loadPageConfigFile($page, $keyName=null, $opts=0) {
     $config = $this->getPageConfig($page, $opts);
-    if ($keyName === null) { $keyName = $name; }
     return $this->loadConfigFile($config, $keyName);
   }
   
@@ -1315,7 +1325,7 @@ abstract class WebModule extends Module {
 
     $themeVars = $config->getSectionVars(Config::EXPAND_VALUE);
     
-    if ($keyName === false) {
+    if (!$keyName) { // false, null, empty string, etc
       foreach($themeVars as $key => $value) {
         $this->templateEngine->assign($key, $value);
       }
@@ -1382,6 +1392,7 @@ abstract class WebModule extends Module {
     $this->assign('isModuleHome', $this->page == 'index');
     $this->assign('request_uri' , $_SERVER['REQUEST_URI']);
     $this->assign('hideFooterLinks' , $this->hideFooterLinks);
+    $this->assign('charset', Kurogo::getCharset());
     
     // Font size for template
     $this->assign('fontsizes',    $this->fontsizes);

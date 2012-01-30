@@ -1,6 +1,8 @@
 <?php
 
 includePackage('Athletics');
+includePackage('News');
+includePackage('DateTime');
 class AthleticsWebModule extends WebModule {
 
     protected $id = 'athletics';
@@ -25,10 +27,10 @@ class AthleticsWebModule extends WebModule {
         return $scheduleFeeds;
     }
     
-    public static function getGenders() {
+    public function getGenders() {
         return array(
-            'men'=>'Men',
-            'women'=>'Women'
+            'men'=>$this->getLocalizedString('GENDER_MEN'),
+            'women'=>$this->getLocalizedString('GENDER_WOMEN')
         );
         
     }
@@ -57,8 +59,8 @@ class AthleticsWebModule extends WebModule {
             if ($image = $story->getImage()) {
                 return array(
                     'src'    => $image->getURL(),
-                    'width'  => $image->getProperty('width'),
-                    'height' => $image->getProperty('height'),
+                    'width'  => $image->getWidth(),
+                    'height' => $image->getHeight()
                 );
             } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
                 return array(
@@ -72,8 +74,12 @@ class AthleticsWebModule extends WebModule {
     }
     
     protected function linkForNewsItem($story, $data = array()) {
-        $pubDate = strtotime($story->getProperty("pubDate"));
-        $date = date("M d, Y", $pubDate);
+        if ($pubDate = $story->getPubDate()) {
+            $date = DateFormatter::formatDate($pubDate, DateFormatter::MEDIUM_STYLE, DateFormatter::NO_STYLE);
+        } else {
+            $date = "";
+        }              
+
         $image = $this->getImageForStory($story);
 
         $link = array(
@@ -96,7 +102,7 @@ class AthleticsWebModule extends WebModule {
             }
     
             $link['url'] = $this->buildBreadcrumbURL('news_detail', $options, true);
-        } elseif ($url = $story->getProperty('link')) {
+        } elseif ($url = $story->getLink()) {
             $link['url'] = $url;
         }
         return $link;
@@ -236,7 +242,7 @@ class AthleticsWebModule extends WebModule {
         if (isset($this->feeds[$sport])) {
             return $this->feeds[$sport];
         } else {  
-            throw new KurogoDataException($this->getLocalizedString('UNLOAD_SPORT', $sport));
+            throw new KurogoDataException($this->getLocalizedString('ERROR_INVALID_SPORT', $sport));
         }
     }
     
@@ -244,7 +250,7 @@ class AthleticsWebModule extends WebModule {
     
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         if (!$data) {
-            throw new KurogoDataException($this->getLocalizedString('UNLOAD_NAV', $tab));
+            throw new KurogoDataException($this->getLocalizedString('ERROR_NAV', $tab));
         }
         
         return $data;
@@ -265,10 +271,10 @@ class AthleticsWebModule extends WebModule {
     protected function getNewsFeed($sport, $gender=null) {
         if ($sport=='topnews') {
             $feedData = $this->getNavData('topnews');
+        } elseif (isset($this->feeds[$sport])) {
+            $feedData = $this->feeds[$sport];
         } else {
-            if (!$feedData = $this->getOptionalModuleSection($sport, 'feeds')) {
-                throw new KurogoDataException($this->getLocalizedString('UNLOAD_SPORT', $sport));
-            }
+            throw new KurogoDataException($this->getLocalizedString('ERROR_INVALID_SPORT', $sport));
         }
         
         if (isset($feedData['DATA_RETRIEVER']) || isset($feedData['BASE_URL'])) {
@@ -278,6 +284,23 @@ class AthleticsWebModule extends WebModule {
         }
         
         return null;
+    }
+    
+    public function searchItems($searchTerms, $limit=null, $options=null) {  
+        
+        $start = isset($options['start']) ? $options['start'] : 0;
+        if ($feed = $this->getNewsFeed('topnews')) {
+            $feed->setStart($start);
+            $feed->setLimit($limit);
+            return $feed->search($searchTerms);
+        }
+    }
+    
+    public function linkForItem(KurogoObject $story, $data=null) {
+        if (isset($data['federatedSearch']) && $data['federatedSearch']) {
+            $data['section'] = 'topnews';
+        }
+        return $this->linkForNewsItem($story, $data);
     }
     
     protected function loadFeedData() {
@@ -362,8 +385,8 @@ class AthleticsWebModule extends WebModule {
                 }
                 $this->setLogData($storyID, $story->getTitle());
         
-                if (!$content = $this->cleanContent($story->getProperty('content'))) {
-                  if ($url = $story->getProperty('link')) {
+                if (!$content = $this->cleanContent($story->getContent())) {
+                  if ($url = $story->getLink()) {
                       header("Location: $url");
                       exit();
                   } else {
@@ -380,8 +403,11 @@ class AthleticsWebModule extends WebModule {
                     $this->assign('storyURL',      $story->getLink());
                 }
         
-                $pubDate = strtotime($story->getProperty("pubDate"));
-                $date = date("M d, Y", $pubDate);
+                if ($pubDate = $story->getPubDate()) {
+                    $date = DateFormatter::formatDate($pubDate, DateFormatter::MEDIUM_STYLE, DateFormatter::NO_STYLE);
+                } else {
+                    $date = "";
+                }              
 
                 $this->enablePager($content, $this->newsFeed->getEncoding(), $storyPage);
                 $this->assign('date',   $date);
@@ -632,7 +658,7 @@ class AthleticsWebModule extends WebModule {
                     $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                     $this->addOnLoad('setupNewsListing();');
                     
-                    $tabs[] = $newsFeedData['TITLE'];
+                    $tabs[] = 'topnews';
                     $this->assign('topNewsTitle', $newsFeedData['TITLE']);
                     $this->assign('topNews', $topNews);
                     $this->assign('extraArgs', $extraArgs);
@@ -657,7 +683,7 @@ class AthleticsWebModule extends WebModule {
                             $sports[] = $sport;
                         }
                     
-                        $tabs[] = $sportsData['TITLE'];
+                        $tabs[] = $gender;
                         $this->assign($gender. 'SportsTitle', $sportsData['TITLE']);
                         $this->assign($gender.'Sports', $sports);
                     }
@@ -678,9 +704,10 @@ class AthleticsWebModule extends WebModule {
                             );
                         }
                     }
+
+                    $tabs[] = 'bookmarks';
                 }
                 
-                $tabs[] = $bookmarkData['TITLE'];
                 
                 $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
                 $this->assign('bookmarksTitle', $bookmarkData['TITLE']);

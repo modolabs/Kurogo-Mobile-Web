@@ -20,33 +20,26 @@ class RSSEnclosure extends XMLElement
         );
     }
     
+    public static function factory($attribs) {
+        $type = isset($attribs['TYPE']) ? $attribs['TYPE'] : null;
+        $class = 'RSSEnclosure';
+        if (self::isImage($type)) {
+            $class = 'RSSImageEnclosure';
+        }
+        
+        $element = new $class($attribs);
+        return $element;
+    }
+    
     public function __construct($attribs)
     {
         $this->setAttribs($attribs);
         $this->length = $this->getAttrib('LENGTH');
         $this->type = $this->getAttrib('TYPE');
-        if ($this->isImage()) {
-            $url = $this->getAttrib('URL');
-            $options = array();
-            if(isset($attribs['THUMB_MAX_WIDTH'])) {
-                $options['max_width'] = $attribs['THUMB_MAX_WIDTH'];
-            }
-            if(isset($attribs['THUMB_MAX_HEIGHT'])) {
-                $options['max_height'] = $attribs['THUMB_MAX_HEIGHT'];
-            }
-            if(isset($attribs['THUMB_CROP'])) {
-                $options['crop'] = $attribs['THUMB_CROP'];
-            }
-            if(isset($attribs['THUMB_BACKGROUND_RGB'])) {
-                $options['rgb'] = $attribs['THUMB_BACKGROUND_RGB'];
-            }
-            $this->url = ImageLoader::cacheImage($url, $options);
-        } else {
-            $this->url = $this->getAttrib('URL');
-        }
+        $this->url = $this->getAttrib('URL');
     }
     
-    public function isImage()
+    protected static function isImage($type)
     {
         $image_types = array(
             'image/jpeg',
@@ -54,7 +47,7 @@ class RSSEnclosure extends XMLElement
             'image/gif',
             'image/png'
             );
-        return in_array($this->type, $image_types);
+        return in_array($type, $image_types);
     }
     
     public function getType()
@@ -71,5 +64,35 @@ class RSSEnclosure extends XMLElement
     {
         return $this->length;
     }
+}
+
+class RSSImageEnclosure extends RSSEnclosure implements KurogoImage
+{
+    public function __construct($attribs) {
+        parent::__construct($attribs);
+        $url = $this->getAttrib('URL');
+
+        $options = array();
+        if(isset($attribs['THUMB_MAX_WIDTH'])) {
+            $options['max_width'] = $attribs['THUMB_MAX_WIDTH'];
+        }
+        if(isset($attribs['THUMB_MAX_HEIGHT'])) {
+            $options['max_height'] = $attribs['THUMB_MAX_HEIGHT'];
+        }
+        if(isset($attribs['THUMB_CROP'])) {
+            $options['crop'] = $attribs['THUMB_CROP'];
+        }
+        if(isset($attribs['THUMB_BACKGROUND_RGB'])) {
+            $options['rgb'] = $attribs['THUMB_BACKGROUND_RGB'];
+        }
+        $this->url = ImageLoader::cacheImage($url, $options);
+    }
+    
+    public function getWidth() {
+    }
+    
+    public function getHeight() {
+    }
+    
 }
 

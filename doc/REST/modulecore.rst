@@ -7,13 +7,11 @@ provides the list of modules available on the server and their availability
 status.  It is the only module that is accessed via REST endpoint without a
 module id:
 
-:kbd:`http[s]://<host>/rest/hello?`
-
 =======
 hello
 =======
 
-:kbd:`/rest/hello?`
+:kbd:`http[s]://<host>/rest/hello?`
 
 The *hello* command is used to establish the initial connection between the
 server and client app.
@@ -64,7 +62,42 @@ where
     is either primary or secondary, and the order is a 0 based number for its order on the
     home screen. If home is false then it does not appear on the home screen.
 
+=======
+classify
+=======
+
+:kbd:`http[s]://<host>/rest/classify?useragent=<client user agent>`
+
+The *classify* command is used by web servers to determine if they should forward a 
+particular client browser to the Kurogo Mobile Web.  This command uses the 
+Kurogo Framework to query the device detection service using the *user agent* 
+of the mobile client's browser provided via the *useragent* parameter. 
+The service will then return a series of properties based on the device:
+
+Parameters
+
+* *useragent* - the client browser's user agent.
 
 
+Sample *response* ::
 
+    {
+        "mobile":true,
+        "pagetype":"compliant",
+        "platform":"iphone"
+    }
 
+where
+
+* *mobile* - Boolean.  Whether or not the user agent corresponds to a mobile device supported 
+  by the Kurogo Mobile Web installation.  Whether or not this returns true or false for tablet 
+  devices is determined by the value of the *TABLET_ENABLED* site configuration option.  Web 
+  servers should only forward clients to the Kurogo Mobile Web if this is true.
+* *pagetype* - String. One of the device *buckets* that determines which major source of HTML the device
+  will received. Values include *basic*, *touch*, *compliant* and *tablet*.  This is provided so 
+  that web servers can provide custom forwarding behavior for a specific device bucket (e.g. displaying 
+  a "Check out our mobile optimized website" link specifically for tablet devices).
+* *platform* - String. The specific type of device. Values include *android*, *bbplus*, *blackberry*, 
+  *computer*, *featurephone*, *iphone*, *ipad*, *palmos*, *spider*, *symbian*, *webos*, *winmo*, 
+  *winphone7*.  This is provided so that web servers can provide custom forwarding behavior for a 
+  specific platform.

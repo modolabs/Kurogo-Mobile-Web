@@ -1,3 +1,23 @@
+1.4 (Jan 27, 2012)
+* NEW MODULE: Photos. Show photos from Flickr or Picassa
+* NEW MODULE: Athletics. Show news and score information
+* Updated map module interface
+* Fixed various encoding related options to more reliably indicate the output encoding (UTF-8 by default)
+* Any option in the module [feeds] section will be added to each feed when using loadFeedData()
+* Added support for more types of recurring events
+* If you need to use RSS in your custom module, then you should include the RSS package
+* Federated search will be asynchronous in supported devices
+* Do not put : before ? in urls because it causes problems with apache on windows
+* Calendar: Various fixes for date formatting and also workarounds for Windows servers
+* You can define an alert banner to show on the home screen. (See Dev guide for more info)
+* Added option to fetch RSS content if there is not full text in the feed
+* Most of the theme colors and options can now be easily customized by editing the config.ini in the theme folder. This requires copying either the default or hi-def themes from Universitas
+* Added option to save user credentials at login
+* Added basic encryption functions to Kurogo object (requires mcrypt support)
+* Add support for theme config variables to be references in CSS via @@@variable_name@@@ Note that changing variables requires deleting the minify cache for now
+* Added new DataModel/DataRetriever access classes. This permits simpler creation of new data retrieval methods including support for SOAP and Database calls. (See Dev guide for more info)
+* Added support for in-memory caching using APC or Memcache
+* Many other fixes and improvements to the included modules
 
 1.3 (Oct 13, 2011)
 * IMPORTANT NOTE: After upgrading to 1.3, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 

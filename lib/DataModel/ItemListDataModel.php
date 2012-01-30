@@ -11,7 +11,7 @@
  
 abstract class ItemListDataModel extends DataModel {
     
-    protected $totalItems = null;
+    protected $totalItems = 0;
     protected $items = array();
     
     public function setStart($start) {

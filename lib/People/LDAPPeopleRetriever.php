@@ -31,6 +31,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $filter;
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
+    protected $baseAttributes = array();
     
     protected function retrieveResponse() {
         $response = $this->initResponse();
@@ -119,7 +120,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     }
     
     public function setAttributes($attributes) {
-        $this->attributes = $attributes;
+        $this->attributes = array_merge($this->baseAttributes, $attributes);
     }
 
     public function getAttributes() {
@@ -253,6 +254,11 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         $this->adminPassword = isset($args['ADMIN_PASSWORD']) ? $args['ADMIN_PASSWORD'] : null;
         $this->searchTimelimit = isset($args['SEARCH_TIMELIMIT']) ? $args['SEARCH_TIMELIMIT'] : 30;
         $this->readTimelimit = isset($args['READ_TIMELIMIT']) ? $args['READ_TIMELIMIT'] : 30;
+        
+        if (isset($args['ATTRIBUTES'])) {
+            $this->attributes = $args['ATTRIBUTES'];
+            $this->baseAttributes = $args['ATTRIBUTES'];
+        }
 
         $this->fieldMap = array(
             'userid'=>isset($args['LDAP_USERID_FIELD']) ? $args['LDAP_USERID_FIELD'] : 'uid',
