@@ -254,8 +254,9 @@ class MapWebModule extends WebModule {
             $mapSearchClass = $this->getOptionalModuleVar('MAP_EXTERNAL_SEARCH_CLASS', $mapSearchClass);
         }
         $mapSearch = new $mapSearchClass($this->getFeedData());
-        $mapSearch->setFeedGroup($this->feedGroup);
-        $mapSearch->init($this->getDataForGroup($this->feedGroup));
+        $group = isset($options['group']) ? $options['group'] : $this->feedGroup;
+        $mapSearch->setFeedGroup($group);
+        $mapSearch->init($this->getDataForGroup($group));
         if ($mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces()) {
             $this->assign('poweredByGoogle', true);
             $this->redirectSearch = false;

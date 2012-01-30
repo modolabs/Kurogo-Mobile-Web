@@ -112,6 +112,7 @@ class MapSearch extends DataRetriever {
             $controllers[] = $dataController;
         } else {
             foreach ($this->feeds as $categoryID => $feedData) {
+                $feedData['group'] = $this->feedGroup;
                 $controller = mapModelFromFeedData($feedData);
                 if ($controller->canSearch()) { // respect config settings
                     $controllers[] = $controller;
@@ -166,8 +167,9 @@ class MapSearch extends DataRetriever {
     protected function doSearchByText($query) {
         $allResults = array();
     	foreach ($this->feeds as $id => $feedData) {
+            $feedData['group'] = $this->feedGroup;
             $controller = mapModelFromFeedData($feedData);
-            
+
             if ($controller->canSearch()) {
                 try {
                     $results = $controller->search($query);
