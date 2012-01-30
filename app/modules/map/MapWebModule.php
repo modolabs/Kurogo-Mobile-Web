@@ -269,10 +269,11 @@ class MapWebModule extends WebModule {
             $index = $params['featureindex'];
             $feedId = $params['feed'];
             $dataController = $this->getDataModel($feedId);
-            $placemarks = $dataController->selectPlacemark($index);
-            if (count($placemarks)) {
-                return array($placemarks[0]->getTitle(), $dataController->getTitle());
+            $placemark = $dataController->selectPlacemark($index);
+            if (is_array($placemark)) { // MapDataModel always returns arrays of placemarks
+                $placemark = $placemark[0];
             }
+            return array($placemark->getTitle(), $dataController->getTitle());
         
         } else if (isset($params['title'])) {
             $result = array($params['title']);
