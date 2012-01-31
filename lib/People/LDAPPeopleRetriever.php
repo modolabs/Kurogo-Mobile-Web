@@ -63,7 +63,12 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         }
         
         if (is_array($this->filters)) {
-            $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_AND, $this->filters);
+            if (count($this->filters)>1) {
+                $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_AND, $this->filters);
+            } else {
+                $filter = current($this->filters);
+            }
+            
             $result = ldap_search($ds, $this->searchBase,
                 strval($filter), $this->getAttributes(), 0, 0, 
                 $this->searchTimelimit);
