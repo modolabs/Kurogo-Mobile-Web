@@ -363,8 +363,9 @@ function KGOEsriMapLoader(attribs) {
             mapElement.appendChild(controlDiv);
         }
 
-        // this line doesn't seem to work if placed anywhere other than here
-        dojo.connect(map, "onLoad", plotFeatures);
+        map.infoWindow.setFixedAnchor(esri.dijit.InfoWindow.ANCHOR_UPPERRIGHT);
+
+        // put all dojo.connect actions here
 
         dojo.connect(map, "onClick", function(evt) {
             if (map.infoWindow.isShowing) {
@@ -378,9 +379,8 @@ function KGOEsriMapLoader(attribs) {
             }
         });
 
-        map.infoWindow.setFixedAnchor(esri.dijit.InfoWindow.ANCHOR_UPPERRIGHT);
-
         dojo.connect(map.infoWindow, "onShow", that.recenterCallout);
+        dojo.connect(map, "onLoad", plotFeatures);
     }
 }
 
@@ -393,19 +393,15 @@ KGOEsriMapLoader.prototype.recenterCallout = function() {
         var screenPoint = map.toScreen(anchorPoint).offset(-135, 0);
         map.infoWindow.move(screenPoint);
         map.centerAt(anchorPoint); // original corner
+        //map.infoWindow.resize(250, 100);
     }
 }
 
 // annotations
 KGOEsriMapLoader.prototype.showCalloutForMarker = function(marker) {
     map.infoWindow.setContent(marker.getContent());
-
-    this.anchorPoint = marker.geometry;
-    var screenPoint = map.toScreen(this.anchorPoint).offset(-135, 0);
-    var anchorPoint = map.toMap(screenPoint);
-
-    map.infoWindow.show(anchorPoint);
-    //map.infoWindow.resize(250, 100);
+    map.infoWindow.show(marker.geometry);
+    this.recenterCallout();
 }
 
 KGOEsriMapLoader.prototype.showCalloutForOverlay = function(overlay) {
@@ -462,7 +458,6 @@ KGOEsriMapLoader.prototype.resizeMapOnContainerResize = function() {
             map.reposition();
             map.resize();
         }
-        this.recenterCallout();
     }
 }
 
