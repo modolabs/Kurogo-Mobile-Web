@@ -10,6 +10,9 @@ class GoogleStaticMap extends StaticMapImageController {
     protected $maxZoomLevel = 21;
     protected $minZoomLevel = 0;
 
+    protected $googleClientID;
+    protected $googlePrivateKey;
+
     // image format
     protected $supportedImageFormats = array( // default: png8
         'png', 'jpg', 'gif', 'png32', 'png8', 'jpg-baseline');
@@ -404,12 +407,16 @@ class GoogleStaticMap extends StaticMapImageController {
             'sensor' => ($this->sensor ? 'true' : 'false'),
             'format' => $this->imageFormat,
             );
+        
+        if ($this->googleClientID) {
+            $params['client'] = $this->googleClientID;
+        }
 
         $query = http_build_query($params);
         // remove brackets
         $query = preg_replace('/%5B\d+%5D/', '', $query);
 
-        return $this->baseURL . '?' . $query;
+        return signURLForGoogle($this->baseURL . '?' . $query);
     }
 
     public function getJavascriptControlOptions() {

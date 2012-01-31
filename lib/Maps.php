@@ -152,6 +152,46 @@ function isValidURL($urlString)
     return filter_var(strtr($urlString, '-', '.'), FILTER_VALIDATE_URL);
 }
 
+/* The following three functions are from Google Maps sample code at 
+ * http://gmaps-samples.googlecode.com/svn/trunk/urlsigning/UrlSigner.php-source
+ */
+
+// Sign a URL with a given crypto key
+// Note that this URL must be properly URL-encoded
+function signURLForGoogle($urlToSign) {
+    $clientID = Kurogo::getOptionalSiteVar('GOOGLE_MAPS_CLIENT_ID', false, 'maps');
+    $privateKey = Kurogo::getOptionalSiteVar('GOOGLE_MAPS_PRIVATE_KEY', false, 'maps');
+    if ($clientID && $privateKey) {
+        // parse the url
+        $url = parse_url($myUrlToSign);
+        if (strpos($url['query'], 'client=') === false) {
+            $url['query'] .= "client={$clientID}";
+        }
+        $urlPartToSign = $url['path'] . "?" . $url['query'];
+
+        // Decode the private key into its binary format
+        $decodedKey = decodeBase64UrlSafe($privateKey);
+
+        // Create a signature using the private key and the URL-encoded
+        // string using HMAC SHA1. This signature will be binary.
+        $signature = hash_hmac("sha1", $urlPartToSign, $decodedKey, true);
+
+        $encodedSignature = encodeBase64UrlSafe($signature);
+        return $urlToSign."&signature=".$encodedSignature;
+    }
+    return $urlToSign;
+}
+
+// Encode a string to URL-safe base64
+function encodeBase64URLSafe($value) {
+    return str_replace(array('+', '/'), array('-', '_'), base64_encode($value));
+}
+
+// Decode a string from URL-safe base64
+function decodeBase64URLSafe($value) {
+    return base64_decode(str_replace(array('-', '_'), array('+', '/'), $value));
+}
+
 class MapsAdmin
 {
     public static function getMapControllerClasses() {
