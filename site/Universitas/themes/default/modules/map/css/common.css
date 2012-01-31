@@ -1,4 +1,4 @@
-#header {
+#toolbar {
     /* android doesn't understand linear-gradient */
     background-image: -webkit-gradient(linear, left bottom, left top, from(#ABABAB), to(#DBDBDB));
     background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
