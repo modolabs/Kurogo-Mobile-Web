@@ -63,7 +63,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         $this->feedId = mapIdForFeedData($args);
     }
 
-    public function parseResponse($response) {
+    public function parseResponse(DataResponse $response) {
         // this parser doesn't depend on any internal state, so never re-parse
         if ($this->features) {
             return $this->features;

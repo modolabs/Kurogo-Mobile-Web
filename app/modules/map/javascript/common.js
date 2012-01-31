@@ -104,22 +104,22 @@ function clearSearch(form) {
 }
 
 function showSearchFormButtons() {
-    var header = document.getElementById("header");
-    addClass(header, "expanded");
+    var toolbar = document.getElementById("toolbar");
+    addClass(toolbar, "expanded");
     if (document.getElementById("campus-select")) {
-        addClass(header, "multi-campus");
+        addClass(toolbar, "multi-campus");
     } else {
-        addClass(header, "single-campus");
+        addClass(toolbar, "single-campus");
     }
 }
 
 function hideSearchFormButtons() {
-    var header = document.getElementById("header");
-    removeClass(header, "expanded");
+    var toolbar = document.getElementById("toolbar");
+    removeClass(toolbar, "expanded");
     if (document.getElementById("campus-select")) {
-        removeClass(header, "multi-campus");
+        removeClass(toolbar, "multi-campus");
     } else {
-        removeClass(header, "single-campus");
+        removeClass(toolbar, "single-campus");
     }
 }
 
