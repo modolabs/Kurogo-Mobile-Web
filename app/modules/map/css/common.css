@@ -217,6 +217,10 @@ body.fullscreen #tabscontainer {
     max-height: 80px;
 }
 
+#mapimage .simpleInfoWindow .close {
+    display: none;
+}
+
 /* buttons */
 .nonfocal .buttonContainer {
     float: right;
