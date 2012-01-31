@@ -28,7 +28,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $adminPassword;
     protected $errorNo;
     protected $errorMsg;
-    protected $filter;
+    protected $filters=array();
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
     protected $baseAttributes = array();
@@ -37,7 +37,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         $response = $this->initResponse();
         $response->setCode($this->errorNo);
         $response->setResponseError($this->errorMsg);
-        if (!$this->filter) {
+        if (!$this->filters) {
             return $response;
         }
 
@@ -62,12 +62,14 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             error_reporting($error_reporting & ~E_WARNING);
         }
         
-        if ($this->filter instanceOf LDAPFilter) {
+        if (is_array($this->filters)) {
+            $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_AND, $this->filters);
             $result = ldap_search($ds, $this->searchBase,
-                strval($this->filter), $this->getAttributes(), 0, 0, 
+                strval($filter), $this->getAttributes(), 0, 0, 
                 $this->searchTimelimit);
         } else {
-            $result = ldap_read($ds, $this->filter, "(objectclass=*)", $this->getAttributes(), 
+            $filter = $this->filters;
+            $result = ldap_read($ds, $filter, "(objectclass=*)", $this->getAttributes(), 
                 0, 0, $this->readTimelimit);
         }
         
@@ -113,7 +115,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     }
 
     public function search($searchString, &$response=null) {
-        $this->filter = $this->buildSearchFilter($searchString);
+        $this->addFilter($this->buildSearchFilter($searchString));
         $this->setOption('action', 'search');
 
         return $this->getData($response);
@@ -213,9 +215,9 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         $this->setOption('action', 'user');
         if (strstr($id, '=')) { 
             // assume we're looking up person by "dn" (distinct ldap name)
-            $this->filter = $id;
+            $this->filters = $id;
         } else {
-            $this->filter = $this->buildUserFilter($id);
+            $this->addFilter($this->buildUserFilter($id));
         }
 
         return $this->getData();
@@ -240,6 +242,10 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             return "Your request cannot be processed at this time. ($error_name)";
         }
     }
+    
+    protected function addFilter(LDAPFilter $filter) {
+        $this->filters[] = $filter;
+    }
 
     protected function init($args) {
         parent::init($args);
@@ -258,6 +264,13 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         if (isset($args['ATTRIBUTES'])) {
             $this->attributes = $args['ATTRIBUTES'];
             $this->baseAttributes = $args['ATTRIBUTES'];
+        }
+        
+        if (isset($args['FILTER'])) {
+            foreach ($args['FILTER'] as $field=>$value) {
+                $filter = new LDAPFilter($field, $value, LDAPFilter::FILTER_OPTION_NO_ESCAPE);
+                $this->addFilter($filter);
+            }
         }
 
         $this->fieldMap = array(
@@ -352,7 +365,7 @@ class LDAPCompoundFilter extends LDAPFilter
             default:
                 throw new KurogoConfigurationException("Invalid join type $joinType");                
         }
-    
+        
         for ($i=1; $i < func_num_args(); $i++) {
             $filter = func_get_arg($i);
             if ($filter instanceOF LDAPFilter) { 
