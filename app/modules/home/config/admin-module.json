@@ -5,6 +5,7 @@
         "sectiontype":"fields",
         "fields":{
             "display_type":{"labelKey":"HOME_ADMIN_OPTIONS_DISPLAYTYPE_TITLE","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"descriptionKey":"HOME_ADMIN_OPTIONS_DISPLAYTYPE_DESCRIPTION"},
+            "ADD_TO_HOME":{"labelKey":"HOME_ADMIN_OPTIONS_ADD_TO_HOME_TITLE","type":"checkbox","config":"module","section":"module","descriptionKey":"HOME_ADMIN_OPTIONS_ADD_TO_HOME_DESCRIPTION"},
             "SHOW_FEDERATED_SEARCH":{"labelKey":"HOME_ADMIN_OPTIONS_FEDERATED_SEARCH_TITLE","type":"checkbox","config":"module","section":"module","descriptionKey":"HOME_ADMIN_OPTIONS_FEDERATED_SEARCH_DESCRIPTION","default":1}
         }
     },

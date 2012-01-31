@@ -1,0 +1,38 @@
+#header {
+    /* android doesn't understand linear-gradient */
+    background-image: -webkit-gradient(linear, left bottom, left top, from(#ABABAB), to(#DBDBDB));
+    background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+    background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+}
+
+#search-options input {
+    /* android doesn't understand linear-gradient */
+    
+   background-image: -webkit-gradient(linear, left bottom, left top, from(#ABABAB), to(#DBDBDB));
+   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+}
+
+.buttonContainer div {
+   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+}
+
+.buttonContainer div.pressed {
+   background-image: linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+   background-image: -o-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+   background-image: -moz-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+   background-image: -webkit-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+   background-image: -ms-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+}
+
+

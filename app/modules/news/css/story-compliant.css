@@ -1,9 +1,12 @@
-body.NewsModule #navbar, .news {
+body.NewsModule, .news {
 	/* Background color for news listing and story; should be white in most cases */
-    background-color: #fff;
+	background-color: #fff;
 }
+body.NewsModule #navbar {
+	margin-bottom: 5px;
+}
+
 .news {
-    margin-top: -9px;
     padding: 10px;
 }
 

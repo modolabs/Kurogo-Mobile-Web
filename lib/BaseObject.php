@@ -5,8 +5,6 @@
  * 
  * @package 
  * @version $id$
- * @copyright 2011 Symbio
- * @author Jeffery You <jianfeng.you@symbio.com> 
  * @license 
  */
 class BaseObject {

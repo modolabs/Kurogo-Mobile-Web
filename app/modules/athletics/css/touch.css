@@ -1,0 +1,38 @@
+li.story {
+    height: 70pt;
+	margin: 0;
+    padding: 1px;
+    overflow: hidden;
+    position: relative;
+}
+.results li.story a {
+    overflow: hidden;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    height: 70pt;
+}
+.results li.story a .ellipsis {
+    overflow: hidden;
+    margin: 0;
+    padding: 3px 25px 3px 0;
+    font-size: 82.35%;
+    line-height: 1.1em;
+    padding-bottom: .25em;
+    height: 66pt;
+}
+
+.results li.story a .title {
+    font-size: 114.29%;
+	color: #000;
+    padding: 3px 0;
+}
+
+.thumbnail {
+    float:left;
+    margin: 0 8px 0 0;
+    width: 70pt;
+    height: 70pt;
+    background: transparent url('/modules/news/images/news-placeholder.png') no-repeat left top;
+    background-size: 70pt;
+}

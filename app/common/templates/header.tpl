@@ -32,7 +32,10 @@
   
   {capture name="headerJavascript" assign="headerJavascript"}
     {block name="urlBaseJavascript"}
-      <script type="text/javascript">var URL_BASE='{$smarty.const.URL_BASE}';</script>
+      <script type="text/javascript">
+        var URL_BASE='{$smarty.const.URL_BASE}';
+        var API_URL_PREFIX='{$smarty.const.API_URL_PREFIX}';
+      </script>
     {/block}
     
     {block name="analyticsJavascript"}

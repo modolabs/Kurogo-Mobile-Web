@@ -17,7 +17,7 @@
         "fields":{
             "section":{"labelKey":"ATHLETICS_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
             "TITLE":{"labelKey":"ATHLETICS_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"ATHLETICS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
-            "GENDER":{"labelKey":"ATHLETICS_ADMIN_FEEDS_GENDER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_GENDER_DESCRIPTION", "type":"select","optionsMethod":["AthleticsWebModule","getGenders"],"optionsFirst":"--"},
+            "GENDER":{"labelKey":"ATHLETICS_ADMIN_FEEDS_GENDER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_GENDER_DESCRIPTION", "type":"select","optionsMethod":"getGenders","optionsFirst":"--"},
             "BASE_URL":{"labelKey":"ATHLETICS_ADMIN_FEEDS_URL_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_URL_DESCRIPTION", "type":"text","omitBlankValue":true},
             "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_FEEDS_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true}
         },

@@ -27,7 +27,7 @@ class AthleticsWebModule extends WebModule {
         return $scheduleFeeds;
     }
     
-    public static function getGenders() {
+    public function getGenders() {
         return array(
             'men'=>$this->getLocalizedString('GENDER_MEN'),
             'women'=>$this->getLocalizedString('GENDER_WOMEN')
@@ -284,6 +284,23 @@ class AthleticsWebModule extends WebModule {
         }
         
         return null;
+    }
+    
+    public function searchItems($searchTerms, $limit=null, $options=null) {  
+        
+        $start = isset($options['start']) ? $options['start'] : 0;
+        if ($feed = $this->getNewsFeed('topnews')) {
+            $feed->setStart($start);
+            $feed->setLimit($limit);
+            return $feed->search($searchTerms);
+        }
+    }
+    
+    public function linkForItem(KurogoObject $story, $data=null) {
+        if (isset($data['federatedSearch']) && $data['federatedSearch']) {
+            $data['section'] = 'topnews';
+        }
+        return $this->linkForNewsItem($story, $data);
     }
     
     protected function loadFeedData() {
@@ -641,7 +658,7 @@ class AthleticsWebModule extends WebModule {
                     $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                     $this->addOnLoad('setupNewsListing();');
                     
-                    $tabs[] = $newsFeedData['TITLE'];
+                    $tabs[] = 'topnews';
                     $this->assign('topNewsTitle', $newsFeedData['TITLE']);
                     $this->assign('topNews', $topNews);
                     $this->assign('extraArgs', $extraArgs);
@@ -666,7 +683,7 @@ class AthleticsWebModule extends WebModule {
                             $sports[] = $sport;
                         }
                     
-                        $tabs[] = $sportsData['TITLE'];
+                        $tabs[] = $gender;
                         $this->assign($gender. 'SportsTitle', $sportsData['TITLE']);
                         $this->assign($gender.'Sports', $sports);
                     }
@@ -687,9 +704,10 @@ class AthleticsWebModule extends WebModule {
                             );
                         }
                     }
+
+                    $tabs[] = 'bookmarks';
                 }
                 
-                $tabs[] = $bookmarkData['TITLE'];
                 
                 $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
                 $this->assign('bookmarksTitle', $bookmarkData['TITLE']);

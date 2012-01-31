@@ -26,6 +26,22 @@ class ArcGISParser extends DataParser implements MapDataParser
     private $selectedLayer = null;
     private $isPopulated = false;
 
+    // forward compatibility functions
+
+    public function getId() {
+        return $this->getCategory();
+    }
+
+    public function placemarks() {
+        return $this->getAllPlacemarks();
+    }
+
+    public function categories() {
+        return $this->getChildCategories();
+    }
+
+    // 
+
     public function init($args)
     {
         parent::init($args);
@@ -39,6 +55,8 @@ class ArcGISParser extends DataParser implements MapDataParser
         if (isset($args['ID_FIELD'])) {
             $this->idField = $args['ID_FIELD'];
         }
+
+        $this->category = array(mapIdForFeedData($args));
     }
 
     public function addSearchFilter($key, $value)
@@ -135,10 +153,6 @@ class ArcGISParser extends DataParser implements MapDataParser
     
     public function getTitle() {
         return $this->mapName;
-    }
-
-    public function setCategory($category) {
-        $this->category = $category;
     }
 
     public function getCategory() {
