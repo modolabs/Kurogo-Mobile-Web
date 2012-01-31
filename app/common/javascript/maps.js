@@ -115,7 +115,7 @@ function KGOGoogleMapLoader(attribs) {
     }
 
     this.showCalloutForOverlay = function(overlay) {
-        if (currentInfoWindow == overlay.infoWindow) {
+        if (currentInfoWindow != overlay.infoWindow) {
             overlay.infoWindow.open(map);
             setCurrentInfoWindow(overlay.infoWindow);
         }
@@ -126,6 +126,7 @@ function KGOGoogleMapLoader(attribs) {
 KGOGoogleMapLoader.prototype = new KGOMapLoader();
 
 KGOGoogleMapLoader.prototype.loadMap = function() {
+    var that = this;    
     var mapImage = document.getElementById(this.mapElement);
     var initCoord = new google.maps.LatLng(this.initLat, this.initLon);
     var options = {
@@ -160,14 +161,13 @@ KGOGoogleMapLoader.prototype.loadMap = function() {
     recenterButton.id = "recenter";
     recenterButton.onclick = function() {
         map.setCenter(initCoord);
-        map.setZoom(this.initZoom);
+        map.setZoom(that.initZoom);
     }
     controlDiv.appendChild(recenterButton);
 
     if ("geolocation" in navigator && this.showUserLocation) {
         this.locateMeButton = document.createElement('a');
         this.locateMeButton.id = "locateMe";
-        var that = this;
         this.locateMeButton.onclick = function() {
             that.toggleLocationUpdates();
         }
@@ -244,7 +244,7 @@ KGOGoogleMapLoader.prototype.addOverlay = function(overlay, attribs) {
     });
 
     var that = this;
-    google.maps.event.addListener(overlay, 'click', function() {
+    google.maps.event.addListener(overlay, 'mousedown', function() {
         that.showCalloutForOverlay(overlay);
     });
 
@@ -363,17 +363,45 @@ function KGOEsriMapLoader(attribs) {
             mapElement.appendChild(controlDiv);
         }
 
-        // this line doesn't seem to work if placed anywhere other than here
+        map.infoWindow.setFixedAnchor(esri.dijit.InfoWindow.ANCHOR_UPPERRIGHT);
+
+        // put all dojo.connect actions here
+
+        dojo.connect(map, "onClick", function(evt) {
+            if (map.infoWindow.isShowing) {
+                if (evt.screenPoint.x < map.infoWindow.coords.x
+                    || evt.screenPoint.x > map.infoWindow.coords.x + 250
+                    || evt.screenPoint.y < map.infoWindow.coords.y - 100
+                    || evt.screenPoint.y > map.infoWindow.coords.y
+                ) {
+                    map.infoWindow.hide();
+                }
+            }
+        });
+
+        dojo.connect(map.infoWindow, "onShow", that.recenterCallout);
         dojo.connect(map, "onLoad", plotFeatures);
     }
 }
 
 KGOEsriMapLoader.prototype = new KGOMapLoader();
 
+KGOEsriMapLoader.prototype.recenterCallout = function() {
+    if (map.infoWindow.isShowing) {
+        var anchorPoint = map.toMap(map.infoWindow.coords);
+        var dx = (map.extent.xmax - map.extent.xmin) / 2;
+        var screenPoint = map.toScreen(anchorPoint).offset(-135, 0);
+        map.infoWindow.move(screenPoint);
+        map.centerAt(anchorPoint); // original corner
+        //map.infoWindow.resize(250, 100);
+    }
+}
+
 // annotations
 KGOEsriMapLoader.prototype.showCalloutForMarker = function(marker) {
     map.infoWindow.setContent(marker.getContent());
     map.infoWindow.show(marker.geometry);
+    this.recenterCallout();
 }
 
 KGOEsriMapLoader.prototype.showCalloutForOverlay = function(overlay) {

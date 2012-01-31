@@ -71,7 +71,21 @@ class RSSImageEnclosure extends RSSEnclosure implements KurogoImage
     public function __construct($attribs) {
         parent::__construct($attribs);
         $url = $this->getAttrib('URL');
-        $this->url = ImageLoader::precache($url);
+
+        $options = array();
+        if(isset($attribs['THUMB_MAX_WIDTH'])) {
+            $options['max_width'] = $attribs['THUMB_MAX_WIDTH'];
+        }
+        if(isset($attribs['THUMB_MAX_HEIGHT'])) {
+            $options['max_height'] = $attribs['THUMB_MAX_HEIGHT'];
+        }
+        if(isset($attribs['THUMB_CROP'])) {
+            $options['crop'] = $attribs['THUMB_CROP'];
+        }
+        if(isset($attribs['THUMB_BACKGROUND_RGB'])) {
+            $options['rgb'] = $attribs['THUMB_BACKGROUND_RGB'];
+        }
+        $this->url = ImageLoader::cacheImage($url, $options);
     }
     
     public function getWidth() {

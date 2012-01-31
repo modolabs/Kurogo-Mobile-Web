@@ -39,13 +39,13 @@
 
 /*** expanding search bar ***/
 
-#header {
+#toolbar {
     height: 44px;
     margin: 0;
     padding: 0;
 }
 
-/* empty div behind the #header to align the top of the #mapimage */
+/* empty div behind the #toolbar to align the top of the #mapimage */
 #spacer {
     height: 44px;
 }
@@ -61,21 +61,21 @@
     margin: 0;
 }
 
-#header.single-campus {
+#toolbar.single-campus {
     height: 80px;
 }
 
-#header.multi-campus {
+#toolbar.multi-campus {
     height: 112px;
 }
 
-#header .searchwrapper {
+#toolbar .searchwrapper {
     left: 6px;
     right: 100px;
     position: absolute;
 }
 
-#header.expanded .searchwrapper {
+#toolbar.expanded .searchwrapper {
     left: 6px;
     right: 20px;
 }
@@ -94,7 +94,7 @@
 }
 
 /* toolbar: browse/bookmark buttons to the right of the search field */
-#header.expanded #toolbar-buttons {
+#toolbar.expanded #toolbar-buttons {
     display: none;
 }
 
@@ -138,7 +138,7 @@
     top: 33px;
 }
 
-#header.expanded #search-options {
+#toolbar.expanded #search-options {
     display: block;
 }
 
@@ -171,7 +171,7 @@ body.fullscreen #mapimage.image {
 }
 
 /* don't want map to resize when this shows */
-body.fullscreen #header {
+body.fullscreen #toolbar {
     position: absolute;
     left: 0;
     right: 0;
@@ -215,6 +215,10 @@ body.fullscreen #tabscontainer {
 
 #mapimage .simpleInfoWindow {
     max-height: 80px;
+}
+
+#mapimage .simpleInfoWindow .close {
+    display: none;
 }
 
 /* buttons */

@@ -1,4 +1,4 @@
-<div id="header">
+<div id="toolbar">
     <div id="searchbar" class="searchbar">
         <form id="search-form"
               method="get"

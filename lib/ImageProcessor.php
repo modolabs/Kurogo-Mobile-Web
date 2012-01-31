@@ -97,10 +97,38 @@ class ImageProcessor
                 throw new KurogoDataException("Unable to save files of this type");
         }
         
-        if ($this->width != $width || $this->height != $height) {
-            imagecopyresampled ( $dest, $src, 0, 0, 0, 0, $width, $height, $this->width, $this->height );
-        } else {
-            $dest &= $src;
+        $crop = false;
+        if (isset($boundingBox[2]) && isset($boundingBox[3]) && !isset($boundingBox[4])) {
+        	//do crop
+            $crop = true;
+            $srcWidth = $boundingBox[2];
+            $srcHeight = $boundingBox[3];
+	        if($this->width == $srcWidth) {
+	            $y = ($this->height - $srcHeight) / 2;
+	            $x = 0;
+	        }
+	        if($this->height == $srcHeight) {
+	            $x = ($this->width - $srcWidth) / 2;
+	            $y = 0;
+	        }
+	        imagecopyresampled($dest, $src, 0, 0, $x, $y, $width, $height, $srcWidth, $srcHeight);
+    	}elseif (isset($boundingBox[2]) && isset($boundingBox[3]) && isset($boundingBox[4])){
+    		$crop = true;
+            // do fill
+			$rgb = $boundingBox[5]?$boundingBox[5]:"ffffff";
+            $bg = imagecolorallocate($dest, hexdec(substr($rgb,0,2)), hexdec(substr($rgb,2,2)), hexdec(substr($rgb,4,2)));
+            // fill white color on bg
+            imagefill($dest, 0, 0, $bg);
+            $y = ($height - $this->height) / 2;
+            $x = ($width - $this->width) / 2;
+            imagecopy($dest,$src, $x, $y, 0, 0, $this->width, $this->height);
+        }
+        if(!$crop){
+			if ($this->width != $width || $this->height != $height) {
+	            imagecopyresampled($dest, $src, 0, 0, 0, 0, $width, $height, $this->width, $this->height);
+	        } else {
+	            $dest &= $src;
+	        }
         }
         
         return call_user_func($saveFunc, $dest, $file);
