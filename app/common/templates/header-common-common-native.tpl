@@ -3,7 +3,7 @@
 {block name="pageTitle"}{$pageTitle|strip_tags|escape:'htmlall'}{/block}
 
 {block name="urlBaseJavascript"}
-  <script type="text/javascript">var URL_BASE='{$webBridgeServerURLBase}';</script>
+  <script type="text/javascript">var URL_BASE="{$webBridgeConfig['base']}";</script>
 {/block}
 
 {block name="analyticsJavascript"}
@@ -29,14 +29,15 @@
       //
       
       function ajaxLoad() {ldelim}
-          var kurogoServerURL  = "{$webBridgeServerURL}{$webBridgeServerAjaxPath}";
-          var kurogoServerArgs = "{$webBridgeServerAjaxArgs}";
-          if (kurogoServerArgs.length) {ldelim}
-              kurogoServerURL += "&"+kurogoServerArgs; // optional args set by native wrapper
+          var kurogoServerPageURL  = 
+              "{$webBridgeConfig['url']}{$webBridgeConfig['pagePath']}?{$webBridgeConfig['ajaxArgs']}";
+          var kurogoServerPageArgs = "{$webBridgeConfig['pageArgs']}";
+          if (kurogoServerPageArgs.length) {ldelim}
+              kurogoServerPageURL += "&"+kurogoServerPageArgs; // optional args set by native wrapper
           {rdelim}
 
           var httpRequest = new XMLHttpRequest();
-          httpRequest.open("GET", kurogoServerURL, true);
+          httpRequest.open("GET", kurogoServerPageURL, true);
           
           var requestTimer = setTimeout(function() {ldelim}
               // some browsers set readyState to 4 on abort so remove handler first
@@ -44,7 +45,7 @@
               httpRequest.abort();
               
               onAjaxError(408); // http request timeout status code
-          {rdelim}, {$webBridgeServerTimeout*1000});
+          {rdelim}, {$webBridgeConfig['timeout']*1000});
           
           httpRequest.onreadystatechange = function() {ldelim}
               // return if still in progress
@@ -89,14 +90,26 @@
       {rdelim}
     
       function onAjaxError(status) {ldelim}
-          {if $webBridgeOnLoadErrorURL}
-              window.location = "{$webBridgeOnLoadErrorURL}"+status;
+          {if $webBridgeConfig['onError']}
+              window.location = "{$webBridgeConfig['onError']}"+status;
           {/if}
       {rdelim}
       
       function webBridgeLinkToAjaxLinkIfNeeded(href) {ldelim}
           // must be able to pass through non-kgobridge links
-          return href.replace(/kgobridge:\/\/link\//, "{$webBridgeServerURL}/");
+          var bridgePrefix = "kgobridge://link/";
+          if (href.search(bridgePrefix) == 0) {ldelim}
+              href = "{$webBridgeConfig['url']}/"+href.slice(bridgePrefix.length);
+              
+              var anchor = '';
+              var anchorPos = href.search("#");
+              if (anchorPos > 0) {
+                  anchor = href.slice(anchorPos);
+                  href = href.slice(0, anchorPos);
+              }
+              href = href+(href.search("?") > 0 ? "&" : "?")+"{$webBridgeConfig['ajaxArgs']}"+anchor;
+          {rdelim}
+          return href;
       {rdelim}
   </script>
   

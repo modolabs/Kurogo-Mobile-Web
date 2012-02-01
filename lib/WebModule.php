@@ -1310,15 +1310,6 @@ abstract class WebModule extends Module {
     $this->hasWebBridgePageRefresh = $hasPageRefresh;
   }
 
-  protected function getWebBridgeOnPageLoadURL() {
-    return KurogoWebBridge::getOnPageLoadURL(
-      $this->pageTitle, $this->breadcrumbTitle, $this->hasWebBridgePageRefresh);
-  }
-
-  protected function getWebBridgeOnPageLoadErrorURL() {
-    return KurogoWebBridge::getOnPageLoadErrorURL();
-  }
-  
   //
   // Module debugging
   //
@@ -1543,13 +1534,11 @@ abstract class WebModule extends Module {
     
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
 
-    $this->assign('webBridgeOnPageLoadURL',  $this->getWebBridgeOnPageLoadURL());
-    $this->assign('webBridgeOnLoadErrorURL', $this->getWebBridgeOnPageLoadErrorURL());
-    $this->assign('webBridgeServerURLBase',  KurogoWebBridge::getURLBase());
-    $this->assign('webBridgeServerURL',      KurogoWebBridge::getServerURL());
-    $this->assign('webBridgeServerAjaxPath', KurogoWebBridge::getServerAjaxPath($this->configModule, $this->page));
-    $this->assign('webBridgeServerAjaxArgs', KurogoWebBridge::getServerAjaxArgs($this->args));
-    $this->assign('webBridgeServerTimeout',  KurogoWebBridge::getServerTimeout());
+    $this->assign('webBridgeOnPageLoadURL', KurogoWebBridge::getOnPageLoadURL(
+          $this->pageTitle, $this->breadcrumbTitle, $this->hasWebBridgePageRefresh));
+    
+    $this->assign('webBridgeConfig', KurogoWebBridge::getServerConfig(
+          $this->configModule, $this->page, $this->args));
     
     $moduleStrings = $this->getOptionalModuleSection('strings');
     $this->assign('moduleStrings', $moduleStrings);

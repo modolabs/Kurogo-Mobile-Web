@@ -352,52 +352,37 @@ class KurogoWebBridge
     }
     
     //
-    // Config URL for HTTP errors
+    // Server template configuration
     //
 
-    public static function getOnPageLoadErrorURL() {
-        if (!self::hasNativePlatform()) {
-            return '';
+    public static function getServerConfig($id, $page, $args) {
+        // config values for debugging web mode on browser:
+        $base     = URL_BASE;
+        $url      = rtrim(FULL_URL_PREFIX, '/');
+        $ajaxArgs = self::AJAX_PARAMETER."=1";
+        $pageArgs = http_build_query($args);
+        $onError  = '';
+        
+        // config values for web bridge mode on device:
+        if (self::hasNativePlatform()) {
+            $base     = '';
+            $url      = '__KUROGO_SERVER_URL__';
+            $pageArgs = '__KUROGO_MODULE_EXTRA_ARGS__';
+            $onError  = self::BRIDGE_URL_EVENT_ERROR.'?type=load&code='; // http status appended by javascript
+        }
+        if (self::forceNativePlatform($pagetype, $platform, $browser)) {
+            $ajaxArgs .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform, $browser));
         }
         
-        // http status code will be appended by javascript
-        return self::BRIDGE_URL_EVENT_ERROR.'?type=load&code=';
-    }
-
-    public static function getURLBase() {
-        if (self::hasNativePlatform()) {
-            return '';
-        } else {
-            return URL_BASE;
-        }
-    }
-
-    public static function getServerURL() {
-        if (self::hasNativePlatform()) {
-            return '__KUROGO_SERVER_URL__';
-        } else {
-            return rtrim(FULL_URL_PREFIX, '/');
-        }
-    }
-    
-    public static function getServerTimeout() {
-        return Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 30);
-    }
-    
-    public static function getServerAjaxPath($id, $page) {
-       $ajaxPath = "/{$id}/{$page}?".self::AJAX_PARAMETER."=1";
-        if (self::forceNativePlatform($pagetype, $platform, $browser)) {
-            $ajaxPath .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform, $browser));
-        }
-        return $ajaxPath;
-    }
-
-    public static function getServerAjaxArgs($args) {
-        if (self::hasNativePlatform()) {
-            return '__KUROGO_MODULE_EXTRA_ARGS__';
-        } else {
-            return http_build_query($args);
-        }
+        return array(
+            'base'     => $base,
+            'url'      => $url,
+            'ajaxArgs' => $ajaxArgs,
+            'pagePath' => "/{$id}/{$page}",
+            'pageArgs' => $pageArgs,
+            'timeout'  => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 30),
+            'onError'  => $onError,
+        );
     }
 
 
