@@ -126,7 +126,7 @@ class MapWebModule extends WebModule {
         );
     }
 
-    private function pageForPlacemark(Placemark $placemark) {
+    protected function pageForPlacemark(Placemark $placemark) {
         $page = 'detail';
         $params = $placemark->getURLParams();
         if (isset($params['feed']) && $this->isMapDrivenUI($params['feed'])) {
