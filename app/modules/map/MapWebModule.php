@@ -426,6 +426,10 @@ class MapWebModule extends WebModule {
             }
         }
 
+        if ($title) {
+            $this->setPageTitles($title);
+        }
+
         $linkOptions = array('feed' => $feedId, 'group' => $this->feedGroup);
 
         if (count($listItems) == 1) {
@@ -723,6 +727,13 @@ class MapWebModule extends WebModule {
                     }
                     $this->setTemplatePage('fullscreen');
                     $this->initializeDynamicMap();
+                }
+
+                if ($this->feedGroup && $this->numGroups > 1) {
+                    $data = $this->getDataForGroup($this->feedGroup);
+                    if (isset($data['title'])) {
+                        $this->setPageTitles($data['title']);
+                    }
                 }
 
                 break;
