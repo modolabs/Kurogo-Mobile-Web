@@ -29,8 +29,8 @@
       //
       
       function ajaxLoad() {ldelim}
-          var kurogoServerURL  = "{$webBridgeServerURL}";
-          var kurogoServerArgs = "{$webBridgeServerArgs}";
+          var kurogoServerURL  = "{$webBridgeServerURL}{$webBridgeServerAjaxPath}";
+          var kurogoServerArgs = "{$webBridgeServerAjaxArgs}";
           if (kurogoServerArgs.length) {ldelim}
               kurogoServerURL += "&"+kurogoServerArgs; // optional args set by native wrapper
           {rdelim}
@@ -94,8 +94,9 @@
           {/if}
       {rdelim}
       
-      function webBridgeLinkToAjaxLink(href) {ldelim}
-          return href.replace(/kgobridge:\/\/link\//, '{$webBridgeServerURLBase}');
+      function webBridgeLinkToAjaxLinkIfNeeded(href) {ldelim}
+          // must be able to pass through non-kgobridge links
+          return href.replace(/kgobridge:\/\/link\//, "{$webBridgeServerURL}/");
       {rdelim}
   </script>
   

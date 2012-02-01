@@ -1546,8 +1546,9 @@ abstract class WebModule extends Module {
     $this->assign('webBridgeOnPageLoadURL',  $this->getWebBridgeOnPageLoadURL());
     $this->assign('webBridgeOnLoadErrorURL', $this->getWebBridgeOnPageLoadErrorURL());
     $this->assign('webBridgeServerURLBase',  KurogoWebBridge::getURLBase());
-    $this->assign('webBridgeServerURL',      KurogoWebBridge::getServerURL($this->configModule, $this->page));
-    $this->assign('webBridgeServerArgs',     KurogoWebBridge::getServerArgs($this->args));
+    $this->assign('webBridgeServerURL',      KurogoWebBridge::getServerURL());
+    $this->assign('webBridgeServerAjaxPath', KurogoWebBridge::getServerAjaxPath($this->configModule, $this->page));
+    $this->assign('webBridgeServerAjaxArgs', KurogoWebBridge::getServerAjaxArgs($this->args));
     $this->assign('webBridgeServerTimeout',  KurogoWebBridge::getServerTimeout());
     
     $moduleStrings = $this->getOptionalModuleSection('strings');

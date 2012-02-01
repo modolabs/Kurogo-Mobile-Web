@@ -1,7 +1,7 @@
 function tabletInit() {
     window.splitView.prototype.oldLinkSelect = window.splitView.prototype.linkSelect;
     window.splitView.prototype.linkSelect = function(e, link) {
-        link.href = webBridgeLinkToAjaxLink(link.href);
+        link.href = webBridgeLinkToAjaxLinkIfNeeded(link.href);
         this.oldLinkSelect(e, link);
     };
 

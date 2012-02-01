@@ -314,6 +314,9 @@ class KurogoWebBridge
             }
         }
         
+        // make sure to get loading spinner
+        $additionalAssets[] = "/common/images/loading.gif";
+        
         foreach ($additionalAssets as $asset) {
             $contents = $this->getAsset($asset);
             $file = $this->urlSuffixToFile($asset);
@@ -363,36 +366,38 @@ class KurogoWebBridge
 
     public static function getURLBase() {
         if (self::hasNativePlatform()) {
-            return '__KUROGO_URL_BASE__';
+            return '';
         } else {
             return URL_BASE;
         }
     }
 
-    public static function getServerURL($id, $page) {
-        $url = '';
+    public static function getServerURL() {
         if (self::hasNativePlatform()) {
-            $url .= '__KUROGO_SERVER_URL__';
+            return '__KUROGO_SERVER_URL__';
         } else {
-            $url .= rtrim(FULL_URL_PREFIX, '/');
-        }
-        $url .= "/{$id}/{$page}?".self::AJAX_PARAMETER."=1";
-        if (self::forceNativePlatform($pagetype, $platform, $browser)) {
-            $url .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform, $browser));
-        }
-        return $url;
-    }
-
-    public static function getServerArgs($args) {
-        if (self::hasNativePlatform()) {
-            return '__KUROGO_MODULE_EXTRA_ARGS__';
-        } else {
-            return http_build_query($args);
+            return rtrim(FULL_URL_PREFIX, '/');
         }
     }
     
     public static function getServerTimeout() {
         return Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 30);
+    }
+    
+    public static function getServerAjaxPath($id, $page) {
+       $ajaxPath = "/{$id}/{$page}?".self::AJAX_PARAMETER."=1";
+        if (self::forceNativePlatform($pagetype, $platform, $browser)) {
+            $ajaxPath .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform, $browser));
+        }
+        return $ajaxPath;
+    }
+
+    public static function getServerAjaxArgs($args) {
+        if (self::hasNativePlatform()) {
+            return '__KUROGO_MODULE_EXTRA_ARGS__';
+        } else {
+            return http_build_query($args);
+        }
     }
 
 
@@ -512,33 +517,31 @@ class KurogoWebBridge
     }
     
     public static function getAssetsConfiguration($module) {
+        $files = array_merge(
+            (array)glob(WEB_BRIDGE_DIR."/*/$module.zip"), 
+            (array)glob(WEB_BRIDGE_DIR."/*/$module-tablet.zip")
+        );
+        
         $info = array();
-        $files = glob(WEB_BRIDGE_DIR."/*/$module.zip");
-        if ($files) {
-            foreach ($files as $file) {
-                $parts = explode(DIRECTORY_SEPARATOR, dirname($file));
-                if (!$parts) { continue; }
-
-                $platform = end($parts);
-                $contents = file_get_contents($file);
-                if (!$platform || !$contents) { continue; }
-
-                $info[$platform] = array(
-                    'md5' => md5($contents),
-                    'url' => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$module.zip",
-                );
-                
-                $tabletFile = dirname($file)."/$module-tablet.zip";
-                if (file_exists(dirname($file)."/$module-tablet.zip")) {
-                    $tabletContents = file_get_contents($file);
-                    if ($tabletContents) {
-                        $info["$platform-tablet"] = array(
-                            'md5' => md5($tabletContents),
-                            'url' => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$module-tablet.zip",
-                        );
-                    }
-                }
+        foreach ($files as $file) {
+            $name = basename($file, '.zip');
+            $dir = realpath(dirname($file));
+            
+            $parts = explode(DIRECTORY_SEPARATOR, $dir);
+            if (!$parts) { continue; }
+            
+            $platform = end($parts);
+            if (!$platform) { continue; }
+            
+            $key = $platform;
+            if ($name == "$module-tablet") {
+                $key .= "-tablet";
             }
+            
+            $info[$key] = array(
+                'md5' => md5_file(realpath_exists($file)),
+                'url' => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$name.zip",
+            );
         }
         return $info ? $info : null;
     }
