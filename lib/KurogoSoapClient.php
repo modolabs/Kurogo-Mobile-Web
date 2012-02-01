@@ -125,7 +125,7 @@ class KurogoSoapClient extends SoapClient
         //use curl if there is auth
 		if ($this->auth) {
             $headers = array(
-                'Content-Type: text/xml; charset=' . Kurogo::getCharset();
+                'Content-Type: text/xml; charset=' . Kurogo::getCharset()
             );
 
             $ch = curl_init($location); 
