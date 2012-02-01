@@ -379,29 +379,41 @@ function KGOEsriMapLoader(attribs) {
             }
         });
 
-        dojo.connect(map.infoWindow, "onShow", that.recenterCallout);
+        var recenterCallout = function() {
+            if (map.infoWindow.isShowing) {
+                var anchorPoint = map.toMap(map.infoWindow.coords);
+                var screenPoint = map.toScreen(anchorPoint).offset(-135, 0);
+//alert(screenPoint.x);
+                map.infoWindow.move(screenPoint);
+                map.centerAt(anchorPoint); // original corner
+                //map.infoWindow.resize(250, 100);
+            }
+        }
+
+        dojo.connect(map.infoWindow, "onShow", recenterCallout);
         dojo.connect(map, "onLoad", plotFeatures);
+
+        var lastWidth;
+        var lastHeight;
+        var firstResize = function(extent, width, height) {
+            recenterCallout();
+            if (width == lastWidth || height == lastHeight) {
+                dojo.disconnect(that.resizeHandler);
+            }
+            lastWidth = width;
+            lastHeight = height;
+        }
+
+        that.resizeHandler = dojo.connect(map, "onResize", firstResize);
     }
 }
 
 KGOEsriMapLoader.prototype = new KGOMapLoader();
 
-KGOEsriMapLoader.prototype.recenterCallout = function() {
-    if (map.infoWindow.isShowing) {
-        var anchorPoint = map.toMap(map.infoWindow.coords);
-        var dx = (map.extent.xmax - map.extent.xmin) / 2;
-        var screenPoint = map.toScreen(anchorPoint).offset(-135, 0);
-        map.infoWindow.move(screenPoint);
-        map.centerAt(anchorPoint); // original corner
-        //map.infoWindow.resize(250, 100);
-    }
-}
-
 // annotations
 KGOEsriMapLoader.prototype.showCalloutForMarker = function(marker) {
     map.infoWindow.setContent(marker.getContent());
     map.infoWindow.show(marker.geometry);
-    this.recenterCallout();
 }
 
 KGOEsriMapLoader.prototype.showCalloutForOverlay = function(overlay) {
