@@ -1,4 +1,8 @@
-
+function doUpdateContainerDimensions() {
+    if (typeof mapLoader.resizeMapOnContainerResize == 'function') {
+        mapLoader.resizeMapOnContainerResize();
+    }
+}
 
 function setTabsHeight() {
     // Set the height of the tabs container to fill the browser window height

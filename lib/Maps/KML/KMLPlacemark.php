@@ -12,20 +12,37 @@ class KMLPlacemark extends XMLElement implements Placemark
     protected $snippet;
     protected $style;
     protected $geometry;
-    //protected $category;
-    protected $categories;
+    protected $urlParams = array();
+    protected $categories = array();
 
     private $fields = array();
-    
+
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
-            switch ($filter)
-            {
-                case 'search': //case insensitive
-                    return  (stripos($this->getTitle(), $value)!==FALSE) || (stripos($this->getSubTitle(), $value)!==FALSE);
+            switch ($filter) {
+                case 'search':
+                    if (stripos($this->getTitle(), $value) === FALSE && stripos($this->getSubTitle(), $value) === FALSE && stripos($this->getDescription(), $value) === FALSE) {
+                        return false;
+                    }
+                    break;
+                case 'min':
+                    if (!isset($center)) {
+                        $center = $this->getGeometry()->getCenterCoordinate();
+                    }
+                    if ($center['lat'] < $value['lat'] || $center['lon'] < $value['lon']) {
+                        return false;
+                    }
+                    break;
+                case 'max':
+                    if (!isset($center)) {
+                        $center = $this->getGeometry()->getCenterCoordinate();
+                    }
+                    if ($center['lat'] > $value['lat'] || $center['lon'] > $value['lon']) {
+                        return false;
+                    }
                     break;
             }
-        }   
+        }
         
         return true;     
     }
@@ -60,6 +77,10 @@ class KMLPlacemark extends XMLElement implements Placemark
         return $this->snippet;
     }
     
+    public function getDescription() {
+        return $this->description;
+    }
+    
     public function getId() {
         return $this->index;
     }
@@ -70,6 +91,21 @@ class KMLPlacemark extends XMLElement implements Placemark
 
     // Placemark interface
 
+    public function getURLParams() {
+        $result = $this->urlParams;
+        $result['featureindex'] = $this->getId();
+        $categories = $this->getCategoryIds();
+        $category = implode(MAP_CATEGORY_DELIMITER, $categories);
+        if ($category) {
+            $result['category'] = $category;
+        }
+        return $result;
+    }
+
+    public function setURLParam($name, $value) {
+        $this->urlParams[$name] = $value;
+    }
+
     public function getAddress() {
         return null;
     }
@@ -79,7 +115,9 @@ class KMLPlacemark extends XMLElement implements Placemark
     }
 
     public function addCategoryId($id) {
-        $this->categories[] = $id;
+        if ($id && !in_array($id, $this->categories)) {
+            $this->categories[] = $id;
+        }
     }
 
     public function getGeometry() {
@@ -137,5 +175,35 @@ class KMLPlacemark extends XMLElement implements Placemark
                 parent::addElement($element);
                 break;
         }
+    }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'index' => $this->index,
+                'title' => $this->title,
+                'description' => $this->description,
+                'address' => $this->address,
+                'snippet' => $this->snippet,
+                'urlParams' => serialize($this->urlParams),
+                'categories' => serialize($this->categories),
+                'fields' => serialize($this->fields),
+                'style' => serialize($this->style),
+                'geometry' => serialize($this->geometry),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->index = $data['index'];
+        $this->title = $data['title'];
+        $this->description = $data['description'];
+        $this->address = $data['address'];
+        $this->snippet = $data['snippet'];
+        $this->urlParams = unserialize($data['urlParams']);
+        $this->categories = unserialize($data['categories']);
+        $this->fields = unserialize($data['fields']);
+        $this->style = unserialize($data['style']);
+        $this->geometry = unserialize($data['geometry']);
     }
 }

@@ -12,25 +12,36 @@ class HomeAPIModule extends APIModule
             case 'notice':
                 $response = null;
                 $responseVersion = 1;
-                $notice = $this->getOptionalModuleSection('notice');
-                if ($notice) {
-                    $bannerNotice = null;
-                    // notice can either take a module or data model class or retriever class. The section is passed on. It must implement the HomeAlertInterface interface
-                    if (isset($notice['MODULE'])) {
-                        $moduleID = $notice['MODULE'];
-                        $controller = WebModule::factory($moduleID);
-                    } elseif (isset($notice['MODEL_CLASS'])) {
-                        $controller = DataModel::factory($notice['MODEL_CLASS'], $notice);
-                    } elseif (isset($notice['RETRIEVER_CLASS'])) {
-                        $controller = DataRetriever::factory($notice['RETRIEVER_CLASS'], $notice);
-                    }
-    
-                    if (!$controller instanceOf HomeAlertInterface) {
-                        throw new KurogoConfigurationException("Module $moduleID does not implement HomeAlertModule interface");
-                    } 
-    
-                    if ($bannerNotice = $controller->getHomeScreenAlert()) {
-                        $response = $bannerNotice;
+                if ($this->getOptionalModuleVar('BANNER_ALERT', false, 'notice')) {
+                    $noticeData = $this->getOptionalModuleSection('notice');
+                    if ($noticeData) {
+                        $response = array(
+                            'notice'=>'',
+                            'moduleID'=>null,
+                            'link'=>$this->getOptionalModuleVar('BANNER_ALERT_MODULE_LINK', false, 'notice')
+                        );
+                        // notice can either take a module or data model class or retriever class. The section is passed on. It must implement the HomeAlertInterface interface
+        
+                        if (isset($noticeData['BANNER_ALERT_MODULE'])) {
+                            $moduleID = $noticeData['BANNER_ALERT_MODULE'];
+                            $controller = WebModule::factory($moduleID);
+                            $response['moduleID'] = $moduleID;
+                            $string = "Module $moduleID";
+                        } elseif (isset($noticeData['BANNER_ALERT_MODEL_CLASS'])) {
+                            $controller = DataModel::factory($noticeData['BANNER_ALERT_MODEL_CLASS'], $noticeData);
+                            $string = $noticeData['BANNER_ALERT_MODEL_CLASS'];
+                        } elseif (isset($noticeData['BANNER_ALERT_RETRIEVER_CLASS'])) {
+                            $controller = DataRetriever::factory($noticeData['BANNER_ALERT_RETRIEVER_CLASS'], $noticeData);
+                            $string = $noticeData['BANNER_ALERT_RETRIEVER_CLASS'];
+                        } else {
+                            throw new KurogoConfigurationException("Banner alert not properly configured");
+                        }
+        
+                        if (!$controller instanceOf HomeAlertInterface) {
+                            throw new KurogoConfigurationException("$string does not implement HomeAlertModule interface");
+                        } 
+        
+                        $response['notice'] = $controller->getHomeScreenAlert();
                     }
                 }
 

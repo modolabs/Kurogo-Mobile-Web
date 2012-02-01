@@ -2,6 +2,7 @@
 
 interface NewsItem extends KurogoObject
 {
+    public function init($args);
     public function getTitle();
     public function getAuthor();
     public function getDescription();

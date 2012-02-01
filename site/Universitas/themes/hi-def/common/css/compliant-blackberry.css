@@ -54,3 +54,14 @@
 	margin-left: -2px;
 	margin-right: -2px;
 }
+
+
+/* Nav bar at top of all screens other than home screen */
+
+#navbar {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-o-box-shadow: none;
+	box-shadow: none;
+	height: 48px;
+}

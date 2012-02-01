@@ -10,6 +10,9 @@ class GoogleStaticMap extends StaticMapImageController {
     protected $maxZoomLevel = 21;
     protected $minZoomLevel = 0;
 
+    protected $googleClientID;
+    protected $googlePrivateKey;
+
     // image format
     protected $supportedImageFormats = array( // default: png8
         'png', 'jpg', 'gif', 'png32', 'png8', 'jpg-baseline');
@@ -90,22 +93,52 @@ class GoogleStaticMap extends StaticMapImageController {
 
     ////////////// overlays ///////////////
 
-    public function addPoint($placemark)
+    protected function addPolygon(Placemark $placemark)
+    {
+        parent::addPolygon($placemark);
+
+        $pointArr = array();
+        $rings = $placemark->getGeometry()->getRings();
+        foreach ($rings[0]->getPoints() as $point) {
+            $pointArr[] = array($point['lat'], $point['lon']);
+        }
+        $polyline = Polyline::encodeFromArray($pointArr);
+
+        $styleArgs = array();
+        $style = $placemark->getStyle();
+        if ($style !== null) {
+            $color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR);
+            if ($color) $styleArgs[] = 'color:0x'.htmlColorForColorString($color);
+            $weight = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::WEIGHT);
+            if ($weight) $styleArgs[] = 'weight:'.$weight;
+        }
+        
+        if (!$styleArgs) {
+            // color can be 0xRRGGBB or
+            // {black, brown, green, purple, yellow, blue, gray, orange, red, white}
+            $styleArgs = array('color:red', 'weight:4');
+        }
+        $this->paths[] = implode('|', $styleArgs).'|enc:'.$polyline;
+    }
+
+    protected function addPoint(Placemark $placemark)
     {
         parent::addPoint($placemark);
 
+        $styleArgs = array();
         $style = $placemark->getStyle();
         $center = $placemark->getGeometry()->getCenterCoordinate();
         if ($style) {
-            $styleArgs = array();
             $color = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::COLOR);
             if ($color) $styleArgs[] = 'color:'.htmlColorForColorString($color);
             $size = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SIZE);
             if ($size) $styleArgs[] = 'size:'.$size;
             $icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON);
             if ($icon) $styleArgs[] = 'icon:'.$icon;
-        } else {
-            $styleArgs = array('color:red');
+        }
+        
+        if (!$styleArgs) {
+            $styleArgs = array('color:red', 'weight:4');
         }
         $styleString = implode('|', $styleArgs);
 
@@ -115,7 +148,7 @@ class GoogleStaticMap extends StaticMapImageController {
         $this->markers[$styleString][] = $center['lat'] . ',' . $center['lon'];
     }
 
-    public function addPath($placemark)
+    protected function addPath(Placemark $placemark)
     {
         parent::addPath($placemark);
 
@@ -126,17 +159,18 @@ class GoogleStaticMap extends StaticMapImageController {
         $polyline = Polyline::encodeFromArray($pointArr);
 
         $style = $placemark->getStyle();
-        if ($style === null) {
-            // color can be 0xRRGGBB or
-            // {black, brown, green, purple, yellow, blue, gray, orange, red, white}
-            $styleArgs = array('color:red');
-        } else {
-            $styleArgs = array();
+        if ($style) {
             $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR);
             if ($color) $styleArgs[] = 'color:0x'.htmlColorForColorString($color);
             $weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT);
             if ($weight) $styleArgs[] = 'weight:'.$weight;
         }
+        
+        if (!$styleArgs) {
+            // color can be 0xRRGGBB or
+            // {black, brown, green, purple, yellow, blue, gray, orange, red, white}
+            $styleArgs = array('color:red', 'weight:4');
+        } 
 
         $this->paths[] = implode('|', $styleArgs).'|enc:'.$polyline;
     }
@@ -373,12 +407,16 @@ class GoogleStaticMap extends StaticMapImageController {
             'sensor' => ($this->sensor ? 'true' : 'false'),
             'format' => $this->imageFormat,
             );
+        
+        if ($this->googleClientID) {
+            $params['client'] = $this->googleClientID;
+        }
 
         $query = http_build_query($params);
         // remove brackets
         $query = preg_replace('/%5B\d+%5D/', '', $query);
 
-        return $this->baseURL . '?' . $query;
+        return signURLForGoogle($this->baseURL . '?' . $query);
     }
 
     public function getJavascriptControlOptions() {

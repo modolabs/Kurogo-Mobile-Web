@@ -1,4 +1,4 @@
-<div class="springboard"{if $springboardID} id="{$springboardID}"{/if}>
+<div class="gallery"{if $springboardID} id="{$springboardID}"{/if}>
   {foreach $springboardItems as $item}
     {if $item['separator']}
       {block name="separator"}

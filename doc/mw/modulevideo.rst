@@ -53,3 +53,17 @@ values are available from Brightcove`
 * token
 * playerKey
 * playerId 
+
+===========================
+Configuring Display Options
+===========================
+
+* *MAX_PANE_RESULTS* - (optional) Defines the maximum number of videos to display when viewing the site's
+  home page on a tablet device. Defaults to 5.
+* *MAX_RESULTS* - (optional) Defines the maximum number of results when viewing the index page of the video
+  module. Defaults to 10.
+* *BOOKMARKS_ENABLED* - (optional) If set to true, a link to bookmarked entries will appear. Note that if
+  you have not bookmarked any entries, this link will not appear until an entry is bookmarked. Defaults
+  to true.
+* *SHARING_ENABLED* - (optional) If set to true a link to share the current video will be display on the
+  detail page. Defaults to true.

@@ -41,15 +41,3 @@ class FlickrAPIRetriever extends URLDataRetriever {
     }
 
 }
-/*
-
-        $photo->setTitle($entry['title']);
-        $photo->setDescription($entry['description']);
-        $photo->setAuthor($entry['author_name']);
-        $photo->setMimeType($entry['photo_mime']);
-        $photo->setURL($entry['photo_url']);
-        $photo->setHeight($entry['height']);
-        $photo->setWidth($entry['width']);
-        $photo->setTags($entry['tags']);
-        $photo->setThumbnailURL($entry['thumb_url']);
-*/

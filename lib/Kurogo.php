@@ -1,7 +1,7 @@
 <?php
 
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
-define('KUROGO_VERSION', '1.3');
+define('KUROGO_VERSION', '1.4 RC1');
 
 //
 // And a double quote define for ini files (php 5.1 can't escape them)
@@ -588,6 +588,7 @@ class Kurogo
         includePackage('Cache');
         includePackage('Config');
         $siteConfig = new ConfigGroup();    
+        $saveCache = true;
         // Load main configuration file
         $kurogoConfig = ConfigFile::factory('kurogo', 'project', ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
         $siteConfig->addConfig($kurogoConfig);
@@ -669,7 +670,6 @@ class Kurogo
                 //
                 // Get URL base
                 //
-                $saveCache = true;
                 if ($urlBase = $siteConfig->getOptionalVar('URL_BASE','','kurogo')) {
                     $urlBase = rtrim($urlBase,'/').'/';
                 } elseif ($urlBase = Kurogo::getCache('URL_BASE')) {

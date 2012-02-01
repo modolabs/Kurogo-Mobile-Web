@@ -13,6 +13,8 @@ class GoogleJSMap extends JavascriptMapImageController {
     protected $paths = array();
     protected $polygons = array();
 
+    protected $placemarkCount = 0; // number of placemarks we've already processed
+
     public function setImageWidth($width) {
         if (strpos($width, '%') === FALSE) {
             $width = $width.'px';
@@ -33,127 +35,22 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     ////////////// overlays ///////////////
 
-    public function addPoint(Placemark $placemark)
+    protected function addPoint(Placemark $placemark)
     {
         parent::addPoint($placemark);
-
-        $geometry = $placemark->getGeometry();
-        $coord = $geometry->getCenterCoordinate();
-        if (isset($this->mapProjector)) {
-            $coord = $this->mapProjector->projectPoint($coord);
-        }
-
-        // http://code.google.com/apis/maps/documentation/javascript/reference.html#MarkerOptions
-        $options = '';
-        $style = $placemark->getStyle();
-        if ($style) {
-            if (($icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON)) != null) {
-                $options .= "icon: '$icon',\n";
-            }
-        }
-
-        $fields = $placemark->getFields();
-        if ($fields && isset($fields['description'])) {
-            // TODO truncate overly long descriptions
-            $subtitle = $fields['description'];
-        } else {
-            $subtitle = $placemark->getSubtitle();
-        }
-
-        if (!$subtitle) {
-            $subtitle = ''; // "null" will show up on screen
-        }
-
-        $values = array(
-            '___IDENTIFIER___' => count($this->markers),
-            '___LATITUDE___' => $coord['lat'],
-            '___LONGITUDE___' => $coord['lon'],
-            '___TITLE___' => json_encode($placemark->getTitle()),
-            '___OPTIONS___' => $options,
-            '___SUBTITLE___' => json_encode($subtitle),
-            );
-
-        $this->markers[] = $values;
+        $this->markers[] = $placemark;
     }
 
-    public function addPath(Placemark $placemark)
+    protected function addPath(Placemark $placemark)
     {
         parent::addPath($placemark);
-
-        $geometry = $placemark->getGeometry();
-        $coordString = $this->coordsToGoogleArray($geometry->getPoints());
-
-        $properties = array('path: coordinates');
-        $style = $placemark->getStyle();
-        if ($style) {
-            if (($color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR)) !== null) {
-                $properties[] = 'strokeColor: "#'.htmlColorForColorString($color).'"';
-                if (strlen($color) == 8) {
-                    $alphaHex = substr($color, 0, 2);
-                    $alpha = hexdec($alphaHex) / 256;
-                    $properties[] = 'strokeOpacity: '.round($alpha, 2);
-                }
-            }
-            if ($style && ($weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT)) !== null) {
-                $properties[] = "strokeWeight: $weight";
-            }
-        }
-        $propString = implode(',', $properties);
-
-        $this->paths[] = <<<JS
-
-coordinates = [{$coordString}];
-path = new google.maps.Polyline({{$propString}});
-path.setMap(map);
-
-JS;
+        $this->paths[] = $placemark;
     }
     
-    public function addPolygon(Placemark $placemark)
+    protected function addPolygon(Placemark $placemark)
     {
         parent::addPolygon($placemark);
-
-        $rings = $placemark->getGeometry()->getRings();
-        $polyStrings = array();
-        foreach ($rings as $ring) {
-            $polyString[] = '['.$this->coordsToGoogleArray($ring->getPoints()).']';
-        }
-        $multiPathString = implode(',', $polyString);
-
-        $properties = array('paths: polypaths');
-
-        $style = $placemark->getStyle();
-        if ($style !== null) {
-            if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR)) !== null) {
-                $properties[] = 'strokeColor: "#'.htmlColorForColorString($color).'"';
-                if (strlen($color) == 8) {
-                    $alphaHex = substr($color, 0, 2);
-                    $alpha = hexdec($alphaHex) / 256;
-                    $properties[] = 'strokeOpacity: '.round($alpha, 2);
-                }
-            }
-            if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::FILLCOLOR)) !== null) {
-                $properties[] = 'fillColor: "#'.htmlColorForColorString($color).'"';
-                if (strlen($color) == 8) {
-                    $alphaHex = substr($color, 0, 2);
-                    $alpha = hexdec($alphaHex) / 256;
-                    $properties[] = 'fillOpacity: '.round($alpha, 2);
-                }
-            }
-            if (($weight = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::WEIGHT)) !== null) {
-                $properties[] = "strokeWeight: $weight";
-            }
-        }
-
-        $propString = implode(',', $properties);
-
-        $this->polygons[] = <<<JS
-
-polypaths = [{$multiPathString}];
-polygon = new google.maps.Polygon({{$propString}});
-polygon.setMap(map);
-
-JS;
+        $this->polygons[] = $placemark;
     }
 
     private function coordsToGoogleArray($coords) {
@@ -169,19 +66,132 @@ JS;
         }
         return implode(',', $gCoords);
     }
-    
-    private function getPolygonJS() {
-        if (!$this->polygons) {
-            return '';
+
+    private function getMarkerJS()
+    {
+        $template = $this->prepareJavascriptTemplate('GoogleJSMapMarkers', true);
+        foreach ($this->markers as $marker) {
+            $geometry = $marker->getGeometry();
+            $coord = $geometry->getCenterCoordinate();
+            if (isset($this->mapProjector)) {
+                $coord = $this->mapProjector->projectPoint($coord);
+            }
+
+            // http://code.google.com/apis/maps/documentation/javascript/reference.html#MarkerOptions
+            $options = '';
+            $style = $marker->getStyle();
+            if ($style) {
+                if (($icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON)) != null) {
+                    $width = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::WIDTH);
+                    $height = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::HEIGHT);
+                    if ($width && $height) {
+                        $displaySize = "new google.maps.Size($width, $height)";
+                        $options .= "icon: new google.maps.MarkerImage('$icon', null, null, null, $displaySize),\n";
+                    } else {
+                        $options .= "icon: '$icon',\n";
+                    }
+                }
+            }
+
+            // TODO: what fields should show on the index page?
+            $fields = $marker->getFields();
+
+            $template->appendValues(array(
+                '___LATITUDE___' => $coord['lat'],
+                '___LONGITUDE___' => $coord['lon'],
+                '___TITLE___' => json_encode($marker->getTitle()),
+                '___OPTIONS___' => $options,
+                '___SUBTITLE___' => json_encode($marker->getSubtitle()),
+                '___URL___' => $this->urlForPlacemark($marker),
+                ));
         }
-        return "var polypaths;\nvar polygon;" . implode('', $this->polygons);
+
+        return $template->getScript();
+    }
+    
+    private function getPolygonJS()
+    {
+        $template = $this->prepareJavascriptTemplate('GoogleJSMapPolygons', true);
+        foreach ($this->polygons as $placemark) {
+            $rings = $placemark->getGeometry()->getRings();
+            $polyStrings = array();
+            foreach ($rings as $ring) {
+                $polyString[] = '['.$this->coordsToGoogleArray($ring->getPoints()).']';
+            }
+
+            $options = array('map: map');
+            $style = $placemark->getStyle();
+            if ($style !== null) {
+                if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR)) !== null) {
+                    $options[] = 'strokeColor: "#'.htmlColorForColorString($color).'"';
+                    $options[] = 'strokeOpacity: '.alphaFromColorString($color);
+                }
+                if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::FILLCOLOR)) !== null) {
+                    $options[] = 'fillColor: "#'.htmlColorForColorString($color).'"';
+                    $options[] = 'fillOpacity: '.alphaFromColorString($color);
+                }
+                if (($weight = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::WEIGHT)) !== null) {
+                    $options[] = "strokeWeight: $weight";
+                }
+            }
+
+            $coord = $placemark->getGeometry()->getCenterCoordinate();
+            if (isset($this->mapProjector)) {
+                $coord = $this->mapProjector->projectPoint($coord);
+            }
+            $template->appendValues(array(
+                '___LATITUDE___' => $coord['lat'],
+                '___LONGITUDE___' => $coord['lon'],
+                '___MULTIPATHSTRING___' => implode(',', $polyString),
+                '___TITLE___' => json_encode($placemark->getTitle()),
+                '___OPTIONS___' => implode(',', $options),
+                '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
+                '___URL___' => $this->urlForPlacemark($placemark),
+                ));
+        }
+        return $template->getScript();
     }
 
-    private function getPathJS() {
-        if (!$this->paths) {
-            return '';
+    private function getPathJS()
+    {
+        $template = $this->prepareJavascriptTemplate('GoogleJSMapPaths', true);
+        foreach ($this->paths as $placemark) {
+            $geometry = $placemark->getGeometry();
+            $coordString = $this->coordsToGoogleArray($geometry->getPoints());
+
+            $options = array('map: map');
+            $style = $placemark->getStyle();
+            if ($style) {
+                if (($color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR)) !== null) {
+                    $options[] = 'strokeColor: "#'.htmlColorForColorString($color).'"';
+                    $options[] = 'strokeOpacity: '.alphaFromColorString($color);
+                }
+                if ($style && ($weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT)) !== null) {
+                    $options[] = "strokeWeight: $weight";
+                }
+            }
+            $propString = implode(',', $options);
+
+            $subtitle = $placemark->getSubtitle();
+            if (!$subtitle) {
+                $subtitle = ''; // "null" will show up on screen
+            }
+
+            $coord = $geometry->getCenterCoordinate();
+            if (isset($this->mapProjector)) {
+                $coord = $this->mapProjector->projectPoint($coord);
+            }
+            $template->appendValues(array(
+                '___LATITUDE___' => $coord['lat'],
+                '___LONGITUDE___' => $coord['lon'],
+                '___PATHSTRING___' => $coordString,
+                '___TITLE___' => json_encode($placemark->getTitle()),
+                '___OPTIONS___' => implode(',', $options),
+                '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
+                '___URL___' => $this->urlForPlacemark($placemark),
+                ));
         }
-        return "var coordinates;\nvar path;" . implode('', $this->paths);
+        return $template->getScript();
     }
 
     ////////////// output ///////////////
@@ -192,38 +202,20 @@ JS;
              . ($this->locatesUser ? 'true' : 'false'));
     }
 
-    public function getHeaderScript() {
+    public function getFooterScript() {
+        $footer = $this->prepareJavascriptTemplate('GoogleJSMapFooter');
         if (isset($this->mapProjector)) {
             $center = $this->mapProjector->projectPoint($this->center);
         } else {
             $center = $this->center;
         }
-        $template = $this->prepareJavascriptTemplate('GoogleJSMapHeader');
-        $template->setValues(array(
-            '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
-            '___INITIAL_LATITUDE___' => $center['lat'],
-            '___INITIAL_LONGITUDE___' => $center['lon'],
+        $footer->setValues(array(
             '___MAPELEMENT___' => $this->mapElement,
             '___CENTER_LATITUDE___' => $center['lat'],
             '___CENTER_LONGITUDE___' => $center['lon'],
-            //'___IMAGE_WIDTH___' => $this->imageWidth,
-            //'___IMAGE_HEIGHT___' => $this->imageHeight,
             '___ZOOMLEVEL___' => $this->zoomLevel,
-            ));
-        
-        return $template->getScript();
-    }
-
-    public function getFooterScript() {
-        $markers = $this->prepareJavascriptTemplate('GoogleJSMapMarkers', true);
-        foreach ($this->markers as $index => $marker) {
-            $markers->appendValues($marker);
-        }
-
-        $footer = $this->prepareJavascriptTemplate('GoogleJSMapFooter');
-        $footer->setValues(array(
             '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
-            '___MARKER_SCRIPT___' => $markers->getScript(),
+            '___MARKER_SCRIPT___' => $this->getMarkerJS(),
             '___POLYGON_SCRIPT___' => $this->getPolygonJS(),
             '___PATH_SCRIPT___' => $this->getPathJS()));
         return $footer->getScript();

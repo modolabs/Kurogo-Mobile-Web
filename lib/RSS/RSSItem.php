@@ -19,6 +19,11 @@ class RSSItem extends XMLElement implements NewsItem
     protected $category=array();
     protected $enclosure;
     protected $images=array();
+    protected $fetchContent = false;
+    
+    public function setFetchContent($bool) {
+        $this->fetchContent =  $bool ? true : false;
+    }
     
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
@@ -27,7 +32,7 @@ class RSSItem extends XMLElement implements NewsItem
                 case 'search':
                     return  (stripos($this->getTitle(), $value)!==FALSE) ||
                          (stripos($this->getDescription(), $value)!==FALSE) ||
-                         (stripos($this->getContent(),     $value)!==FALSE);
+                         (stripos($this->getContent(false),     $value)!==FALSE);
                     break;
             }
         }
@@ -35,8 +40,21 @@ class RSSItem extends XMLElement implements NewsItem
         return true;
     }
     
-    public function getContent()
+    public function init($args) {
+        if (isset($args['FETCH_CONTENT'])) {
+            $this->setFetchContent($args['FETCH_CONTENT']);
+        }
+    }
+    
+    public function getContent($fetch=true)
     {
+        if (strlen($this->content)==0) {
+            if ($this->fetchContent && $fetch && ($url = $this->getLink())) {
+                $reader = new KurogoReader($url);
+                $this->content = $reader->getContent();
+            }
+        }
+
         return $this->content;
     }
 
