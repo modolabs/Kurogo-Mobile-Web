@@ -23,7 +23,9 @@ class RSSDataParser extends XMLDataParser
     protected $itemClass='RSSItem';
     protected $imageClass='RSSImage';
     protected $enclosureClass='RSSEnclosure';
+    protected $removeDuplicates = false;
     protected $items=array();
+    protected $guids=array();
 
     protected static $startElements=array(
         'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'ENCLOSURE', 'IMAGE');
@@ -72,6 +74,10 @@ class RSSDataParser extends XMLDataParser
         }
         if (isset($args['THUMB_BACKGROUND_RGB'])) {
             $this->setOption("thumb_background_rgb", (string)($args['THUMB_BACKGROUND_RGB']));
+        }
+
+        if (isset($args['REMOVE_DUPLICATES'])) {
+            $this->removeDuplicates = $args['REMOVE_DUPLICATES'];
         }
     }
 
@@ -130,7 +136,10 @@ class RSSDataParser extends XMLDataParser
                 break;
             case 'ITEM':
             case 'ENTRY': //for atom feeds
-                $this->items[] = $element;
+                if (!$this->removeDuplicates || !in_array($element->getGUID(), $this->guids)) {
+                    $this->guids[] = $element->getGUID();
+                    $this->items[] = $element;
+                }
                 break;
         }
     }
