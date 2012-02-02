@@ -126,7 +126,7 @@ class MapWebModule extends WebModule {
         );
     }
 
-    private function pageForPlacemark(Placemark $placemark) {
+    protected function pageForPlacemark(Placemark $placemark) {
         $page = 'detail';
         $params = $placemark->getURLParams();
         if (isset($params['feed']) && $this->isMapDrivenUI($params['feed'])) {
@@ -424,6 +424,10 @@ class MapWebModule extends WebModule {
                 $title = $category->getTitle();
                 $listItems = $dataModel->items();
             }
+        }
+
+        if ($title) {
+            $this->setPageTitles($title);
         }
 
         $linkOptions = array('feed' => $feedId, 'group' => $this->feedGroup);
@@ -725,6 +729,13 @@ class MapWebModule extends WebModule {
                     $this->initializeDynamicMap();
                 }
 
+                if ($this->feedGroup && $this->numGroups > 1) {
+                    $data = $this->getDataForGroup($this->feedGroup);
+                    if (isset($data['title'])) {
+                        $this->setPageTitles($data['title']);
+                    }
+                }
+
                 break;
             
             case 'bookmarks':
@@ -779,9 +790,15 @@ class MapWebModule extends WebModule {
 
                 // link to "view all on map"
                 $mapArgs = $this->args;
-                $mapArgs['mapview'] = true;
-                $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
-                $this->assign('mapURL', $mapURL);
+                if (isset($mapArgs['mapview']) && $mapArgs['mapview']) {
+                    unset($mapArgs['mapview']);
+                    $browseURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
+                    $this->assign('browseURL', $browseURL);
+                } else {
+                    $mapArgs['mapview'] = true;
+                    $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
+                    $this->assign('mapURL', $mapURL);
+                }
 
                 break;
           

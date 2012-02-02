@@ -17,8 +17,11 @@ class ArcGISJSMap extends JavascriptMapImageController {
     protected $levelsOfDetail = array();    
     
     // TODO: fix zoom level problem
-    public function __construct($baseURL)
-    {
+    public function init($args) {
+        parent::init($args);
+
+        $baseURL = $args['BASE_URL'];
+
         if (is_array($baseURL)) {
             $this->baseURL = array_shift($baseURL);
         } else {

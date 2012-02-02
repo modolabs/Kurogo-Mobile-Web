@@ -81,7 +81,7 @@ class PeopleWebModule extends WebModule {
                 if (strpos($value, '+1') !== 0) { 
                     $value = "+1$value"; 
                 }
-                $detail['url'] = 'tel:'.strtr($value, '-', '');
+                $detail['url'] = PhoneFormatter::getPhoneURL($value);
                 $detail['class'] = 'phone';
                 break;
  
