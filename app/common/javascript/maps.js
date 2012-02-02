@@ -275,9 +275,11 @@ KGOGoogleMapLoader.prototype.createMarker = function(title, subtitle, lat, lon, 
 
 KGOGoogleMapLoader.prototype.resizeMapOnContainerResize = function() {
     if (map) {
-        var center = map.getCenter();
+        // the recentering code causes placemarks to appear un-centered
+        // sometimes on ios and android depending on when the address bar disappears
+        //var center = map.getCenter();
         google.maps.event.trigger(map, 'resize');
-        map.setCenter(center);
+        //map.setCenter(center);
     }
 }
 

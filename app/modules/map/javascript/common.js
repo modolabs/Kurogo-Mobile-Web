@@ -158,11 +158,11 @@ function clearUpdateMapDimensionsTimeouts() {
 function updateContainerDimensions() {
     if (typeof doUpdateContainerDimensions == 'function') {
         clearUpdateMapDimensionsTimeouts();
-        var timeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
-        updateMapDimensionsTimeoutIds.push(timeoutId);
-        timeoutId = window.setTimeout(doUpdateContainerDimensions, 500);
-        updateMapDimensionsTimeoutIds.push(timeoutId);
-        timeoutId = window.setTimeout(doUpdateContainerDimensions, 1000);
+        //var timeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
+        //updateMapDimensionsTimeoutIds.push(timeoutId);
+        //var timeoutId = window.setTimeout(doUpdateContainerDimensions, 500);
+        //updateMapDimensionsTimeoutIds.push(timeoutId);
+        var timeoutId = window.setTimeout(doUpdateContainerDimensions, 1000);
         updateMapDimensionsTimeoutIds.push(timeoutId);
     }
 }
