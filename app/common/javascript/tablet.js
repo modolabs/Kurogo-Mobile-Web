@@ -247,8 +247,8 @@ function scrollToTop() {
                     var hash = '#'+encodeURIComponent(removeBreadcrumbParameter(link.href));
                     if (window.history && window.history.pushState && window.history.replaceState && // Regexs from history js plugin
                       !((/ Mobile\/([1-7][a-z]|(8([abcde]|f(1[0-8]))))/i).test(navigator.userAgent) || // disable for versions of iOS < 4.3 (8F190)
-                         (/AppleWebKit\/5([0-2]|3[0-2])/i).test(navigator.userAgent))) { // disable for the mercury iOS browser and older webkit
-                      history.pushState({}, document.title, hash);
+                         (/AppleWebKit\/5([0-2]|3[0-3])/i).test(navigator.userAgent))) { // disable for the mercury iOS browser and older webkit/uiwebview
+                      window.history.pushState({}, document.title, hash);
                     } else {
                       location.hash = hash;
                     }
