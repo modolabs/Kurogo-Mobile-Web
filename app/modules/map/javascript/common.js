@@ -180,6 +180,7 @@ function findPosY(obj) {
     return intCurlTop;
 }
 
+/*
 if (typeof KGOMapLoader != 'undefined') {
     KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url) {
         var content = '';
@@ -234,3 +235,4 @@ if (typeof KGOMapLoader != 'undefined') {
         return content;
     }
 }
+*/

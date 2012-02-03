@@ -73,6 +73,7 @@ KGOMapLoader.prototype.stopLocationUpdates = function() {
         this.locationUpdateStopped(null);
     }
 }
+
 KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url) {
     var content = '';
     if (title !== null) {
@@ -83,9 +84,8 @@ KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url
     }
     // TODO don't reference an asset in a module directory here
     if (typeof url != 'undefined' && url !== null) {
-        content = '<div class="calloutMain" style="float:left;">' + content + '</td>' +
-                  '<div class="calloutDisclosure" style="flost:left;">' +
-                      '<a href="' + url + '"><img src="' + URL_BASE + '/modules/map/images/info.png" /></a>' +
+        content = '<div class="calloutMain" style="float:left;">' +
+                      '<a href="' + url + '">'  + content + '</a>' +
                   '</div>';
     }
     return content;
@@ -385,7 +385,6 @@ function KGOEsriMapLoader(attribs) {
             if (map.infoWindow.isShowing) {
                 var anchorPoint = map.toMap(map.infoWindow.coords);
                 var screenPoint = map.toScreen(anchorPoint).offset(-135, 0);
-//alert(screenPoint.x);
                 map.infoWindow.move(screenPoint);
                 map.centerAt(anchorPoint); // original corner
                 //map.infoWindow.resize(250, 100);
