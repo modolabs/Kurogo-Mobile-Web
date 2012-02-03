@@ -1,9 +1,8 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{include file="findInclude:modules/map/templates/searchbar.tpl"}
+{* {include file="findInclude:modules/map/templates/searchbar.tpl"} *}
 
 <div class="nonfocal">
-  <!--
   <div class="buttonContainer">
     <a href="{$mapURL}">
       <div id="viewOnMapButton"
@@ -14,7 +13,6 @@
       </div>
     </a>
   </div>
-  -->
   <h2>{$title}</h2>
 </div>
 
