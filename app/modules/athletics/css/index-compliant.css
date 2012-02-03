@@ -1,0 +1,10 @@
+.nav li.icon {
+  min-height: 0;
+}
+.nav li.icon a {
+  min-height: 28px;
+}
+.nav li.icon a img {
+    width: 28px;
+    height: 28px;
+}
