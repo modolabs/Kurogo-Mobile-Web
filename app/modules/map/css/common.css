@@ -1,3 +1,12 @@
+/* override common style so buttons don't fall off the screen on android */
+body.fullscreen #navbar {
+	margin-bottom: 2px;
+}
+
+body.fullscreen #container {
+    min-height: 0;
+}
+
 /* used in detail page and index when swapping to list view with search query */
 #tabscontainer {
     position: relative;
@@ -47,14 +56,18 @@
 
 /* empty div behind the #toolbar to align the top of the #mapimage */
 #spacer {
-    height: 44px;
+    height: 48px;
 }
 
 #searchbar {
     margin: 0;
-    padding: 0;
+    padding: 6px 0 0 0;
     width: 100%;
     float: left;
+}
+
+#searchbar form {
+	padding-top: 2px;
 }
 
 #searchbar fieldset {
@@ -66,7 +79,7 @@
 }
 
 #toolbar.multi-campus {
-    height: 112px;
+    height: 118px;
 }
 
 #toolbar .searchwrapper {

@@ -63,6 +63,6 @@
                 </div>
             </fieldset>
         </form>
-    </div>
-</div>
+    </div> <!-- id="searchbar" -->
+</div> <!-- id="toolbar" -->
 
