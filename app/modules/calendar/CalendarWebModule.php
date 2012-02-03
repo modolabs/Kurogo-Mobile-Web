@@ -566,7 +566,9 @@ class CalendarWebModule extends WebModule {
         $type       = $this->getArg('type', 'static');
         $calendar   = $this->getArg('calendar', $this->getDefaultFeed($type));
         $feed       = $this->getFeed($calendar, $type);
-        $categoryObjects = $feed->getEventCategories();
+        $limit    = $this->getArg('limit', null);
+        
+        $categoryObjects = $feed->getEventCategories($limit);
 
         foreach ($categoryObjects as $categoryObject) {
           $categories[] = $this->linkForCategory($categoryObject);
