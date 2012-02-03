@@ -676,8 +676,12 @@ class AthleticsWebModule extends WebModule {
                     if ($sportsConfig = $this->getSportsForGender($gender)) {
                         $sports = array();
                         foreach ($sportsConfig as $key => $sportData) {
+                            $image = "modules/{$this->configModule}/images/".
+                              (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])).
+                              $this->imageExt;
                             $sport = array(
                                 'title' =>$sportData['TITLE'],
+                                'img'   =>$image,
                                 'url'   =>$this->buildURL('sport', array('sport' => $key))
                             );
                             $sports[] = $sport;
