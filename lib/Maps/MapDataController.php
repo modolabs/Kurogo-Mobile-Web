@@ -164,7 +164,10 @@ class MapDataController extends DataController implements MapFolder
             return $this->selectedPlacemarks;
         }
         if ($this->selectedCategory) {
-            $placemarks = $this->selectedCategory->placemarks();
+            $placemarks = array();
+            foreach ($this->selectedCategory->placemarks() as $aPlacemark) {
+                $placemarks[] = $this->getProjectedFeature($aPlacemark);
+            }
             if ($placemarks) {
                 return $placemarks;
             }
@@ -355,7 +358,7 @@ class MapDataController extends DataController implements MapFolder
             $this->getListItems(); // make sure we're populated
             $this->allPlacemarks = array();
             foreach ($this->parser->placemarks() as $placemark) {
-                $this->allPlacemarks[] = $placemark;
+                $this->allPlacemarks[] = $this->getProjectedFeature($placemark);
             }
         }
         return $this->allPlacemarks;
