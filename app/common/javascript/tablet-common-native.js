@@ -15,6 +15,14 @@ function tabletInit() {
   
     document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
     
+    containerScroller = new iScroll('wrapper', { 
+        checkDOMChanges: false, 
+        hScrollbar: false,
+        desktopCompatibility: true,
+        bounce: false,
+        bounceLock: true
+    });
+
     handleWindowResize();
   
     //run module init if present
