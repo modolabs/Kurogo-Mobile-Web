@@ -172,7 +172,7 @@ class CalendarDataModel extends ItemListDataModel
         }
     }
 
-    public function isFilterCateByDay() {
+    public function filterCategoryByDay() {
         return $this->filterCategoryByDay;
     }
 
