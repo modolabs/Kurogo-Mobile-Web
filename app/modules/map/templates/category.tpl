@@ -3,6 +3,7 @@
 {* {include file="findInclude:modules/map/templates/searchbar.tpl"} *}
 
 <div class="nonfocal">
+  {block name="viewAllOnMap"}
   {if $mapURL}
     <div class="buttonContainer">
       <a href="{$mapURL}">
@@ -15,6 +16,7 @@
       </a>
     </div>
   {/if}
+  {/block}
   <h2>{$title}</h2>
 </div>
 
