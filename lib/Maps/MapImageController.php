@@ -54,15 +54,10 @@ abstract class MapImageController
         $baseURLParam = $isStatic ? 'STATIC_MAP_BASE_URL' : 'DYNAMIC_MAP_BASE_URL';
 
         if (isset($params[$baseURLParam])) {
-            $baseURL = $params[$baseURLParam];
+            $params['BASE_URL'] = $params[$baseURLParam];
         }
 
-        if ($baseURL !== null) {
-            $baseMap = new $mapClass($baseURL);
-        } else {
-            $baseMap = new $mapClass();
-        }
-
+        $baseMap = new $mapClass();
         $baseMap->init($params);
 
         return $baseMap;

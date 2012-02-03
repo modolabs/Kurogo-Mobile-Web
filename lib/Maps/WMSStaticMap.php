@@ -13,8 +13,8 @@ class WMSStaticMap extends StaticMapImageController {
     private $wmsParser;
     private $diskCache;
 
-    public function __construct($baseURL) {
-        $this->baseURL = $baseURL;
+    public function init($args) {
+        $this->baseURL = $args['BASE_URL'];
         $this->diskCache = new DiskCache(Kurogo::getSiteVar('WMS_CACHE','maps'), 86400 * 7, true);
         $this->diskCache->preserveFormat();
         $filename = md5($this->baseURL);

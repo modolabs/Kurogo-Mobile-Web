@@ -2,10 +2,14 @@ function doUpdateContainerDimensions() {
     var mapimage = document.getElementById("mapimage");
     if (mapimage) {
         var topoffset = findPosY(mapimage);
-        mapimage.style.height = (getWindowHeight() - topoffset) + "px";
-        var container = document.getElementById("container");
-        if (container) {
-            container.style.minHeight = 0;
+        var mapTargetHeight = (getWindowHeight() - topoffset) + "px";
+        if (mapimage.style.height != mapTargetHeight) {
+            mapimage.style.height = mapTargetHeight;
+        } else {
+            var container = document.getElementById("container");
+            if (container) {
+                container.style.minHeight = 0;
+            }
         }
     }
 
