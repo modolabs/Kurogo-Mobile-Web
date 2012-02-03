@@ -311,8 +311,8 @@ abstract class DataRetriever {
      */
     public function getData(&$response=null) {
 
-        $parser = $this->parser();
         $response = $this->getResponse();
+        $parser = $this->parser();
                 
         switch ($parser->getParseMode()) {
             case DataParser::PARSE_MODE_STRING:
