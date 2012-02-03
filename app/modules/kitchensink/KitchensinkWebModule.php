@@ -40,15 +40,6 @@ class KitchensinkWebModule extends WebModule {
         return $lists;
     }
     
-    protected function initializeForWebBridgePage() {
-        // Native template support
-        // specify anything that goes into the header or footer here
-        // and force the appearance of assets so they get loaded into the template
-        
-        // All the data in this module is static!
-        $this->initializeForPage();
-    }
-    
     protected function initializeForPage() {
         switch ($this->page) {
             case 'index':
@@ -100,7 +91,7 @@ class KitchensinkWebModule extends WebModule {
                 $this->assign('prev',    'Prev');
                 $this->assign('nextURL', $this->buildBreadcrumbURL($this->page, $this->args, false));
                 $this->assign('prevURL', $this->buildBreadcrumbURL($this->page, $this->args, false));
-                $this->assign('lists', $this->getListsForPage($this->page));
+                $this->assign('lists',   $this->getListsForPage($this->page));
                 break;
 
             case 'nav':
