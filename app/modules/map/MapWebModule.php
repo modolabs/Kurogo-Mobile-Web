@@ -794,7 +794,7 @@ class MapWebModule extends WebModule {
                     unset($mapArgs['mapview']);
                     $browseURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
                     $this->assign('browseURL', $browseURL);
-                } else {
+                } else if ($this->getSelectedPlacemarks()) {
                     $mapArgs['mapview'] = true;
                     $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
                     $this->assign('mapURL', $mapURL);
