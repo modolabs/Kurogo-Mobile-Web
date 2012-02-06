@@ -5,6 +5,7 @@
 #search-options input {
     /* android doesn't understand linear-gradient */
     
+ -webkit-appearance: none;
    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.2)));
 /*
    background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);

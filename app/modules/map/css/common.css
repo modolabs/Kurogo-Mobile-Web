@@ -18,10 +18,12 @@ body.fullscreen #container {
 }
 
 /* used in map view - custom controls overlaying google maps, detail - controls below map image */
+
 #mapcontrols a {
     width: 40px;
     height: 34px;
     display: block;
+    margin-top: 4px;
     background-image: url(/modules/map/images/buttons.png);
 }
 
@@ -145,7 +147,8 @@ body.fullscreen #container {
 #search-options {
     display: none;
     left: 0;
-    padding: 0 5px 8px;
+    padding-bottom: 10px;
+    margin: 0 2px;
     position: absolute;
     right: 0;
     top: 33px;
@@ -156,11 +159,11 @@ body.fullscreen #container {
 }
 
 #search-options input {
-   margin: 7px 5px 0 0;
+   margin: 7px 2% 0 2%;
    padding: 0;
    height: 30px;
    border-radius: 5px;
-   width: 100%;
+   width: 96%;
 }
 
 
@@ -169,7 +172,7 @@ body.fullscreen #container {
 }
 
 #searchbar-buttons div {
-    width: 33.33%;
+    width: 33%;
     float: left;
 }
 
@@ -195,39 +198,31 @@ body.fullscreen #tabscontainer {
     padding: 6px 12px;
 }
 
-#calloutWrapper {
-    width: 210px;
-}
-
 #bookmarkWrapper {
     margin: 6px 0;
 }
 
-.calloutMain {
-    max-width: 110px;
-    margin: 6px 8px;
+.calloutMain a {
+	display: block;
+	text-decoration: none;
+	color: #333;
+	font-size: 13px;
+	text-align: center;
 }
 
 .calloutDisclosure {
     margin: 6px 0;
 }
 
-/* ESRI maps have wider callouts */
-.simpleInfoWindow #calloutWrapper {
-    width: 230px;
-}
-
-.simpleInfoWindow .calloutMain {
-    max-width: 130px;
+#mapimage_infowindow {
+	border: none;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+	margin-left: 50px;
 }
 
 #mapimage .simpleInfoWindow .title {
     border: none;
     padding: 0;
-}
-
-#mapimage .simpleInfoWindow {
-    max-height: 80px;
 }
 
 #mapimage .simpleInfoWindow .close {

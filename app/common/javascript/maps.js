@@ -84,7 +84,7 @@ KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url
     }
     // TODO don't reference an asset in a module directory here
     if (typeof url != 'undefined' && url !== null) {
-        content = '<div class="calloutMain" style="float:left;">' +
+        content = '<div class="calloutMain">' +
                       '<a href="' + url + '">'  + content + '</a>' +
                   '</div>';
     }
@@ -321,7 +321,7 @@ function KGOEsriMapLoader(attribs) {
         var controlDiv = document.createElement('div');
         controlDiv.id = "mapcontrols"
         controlDiv.style.position = "absolute";
-        controlDiv.style.right = "10px";
+        controlDiv.style.right = "5px";
         controlDiv.style.bottom = "10px";
 
         var zoominButton = document.createElement('a');
@@ -387,7 +387,7 @@ function KGOEsriMapLoader(attribs) {
                 var screenPoint = map.toScreen(anchorPoint).offset(-135, 0);
                 map.infoWindow.move(screenPoint);
                 map.centerAt(anchorPoint); // original corner
-                //map.infoWindow.resize(250, 100);
+                map.infoWindow.resize(200, 50); 
             }
         }
 
