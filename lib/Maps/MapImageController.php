@@ -153,11 +153,11 @@ abstract class MapImageController
         // just pick a few sample points to calculate buffer
         $points = $polyline->getPoints();
         $count = count($points);
-        if ($count < 4) {
+        if ($count < 20) {
             $sample = $points;
         } else {
             $sample = array();
-            $interval = $count / 4;
+            $interval = $count / 20;
             for ($i = 0; $i < $count; $i += $interval) {
                 $index = intval($i);
                 $sample[] = $points[$i];
@@ -193,11 +193,13 @@ abstract class MapImageController
                 'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
                 'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
                 ));
-
             if ($vRange > 0 && $hRange > 0) {
                 $vZoom = ceil(log(180 / $vRange, 2));
                 $hZoom = ceil(log(360 / $hRange, 2));
-                $this->setZoomLevel(min($vZoom, $hZoom));
+                $zoom = min($vZoom, $hZoom);
+                if ($zoom < $this->zoomLevel) {
+                    $this->setZoomLevel(min($vZoom, $hZoom));
+                }
             }
         }
     }
