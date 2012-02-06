@@ -1110,4 +1110,8 @@ JS;
         }
         return $result;
     }
+
+    public function getInternalJavascriptURL($path) {
+        return parent::getInternalJavascriptURL($path);
+    }
 }
