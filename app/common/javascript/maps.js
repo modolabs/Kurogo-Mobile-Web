@@ -101,10 +101,16 @@ function KGOGoogleMapLoader(attribs) {
         }
         currentInfoWindow = infoWindow;
         var calloutListener = google.maps.event.addDomListener(map, 'click', function() {
-            currentInfoWindow.close();
-            currentInfoWindow = null;
+            if (currentInfoWindow !== null) {
+                currentInfoWindow.close();
+                currentInfoWindow = null;
+            }
             google.maps.event.removeListener(calloutListener);
         });
+    }
+
+    this.closeCurrentInfoWindow = function() {
+        setCurrentInfoWindow(null);
     }
 
     this.showCalloutForMarker = function(marker) {
@@ -135,8 +141,11 @@ KGOGoogleMapLoader.prototype.loadMap = function() {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: true
     };
-
     map = new google.maps.Map(mapImage, options);
+    var tilesLoadedListener = google.maps.event.addListener(map, 'tilesloaded', function() {
+        map.setCenter(initCoord);
+        google.maps.event.removeListener(tilesLoadedListener);
+    });
 
     // setup zoom and other controls
 
@@ -222,10 +231,30 @@ KGOGoogleMapLoader.prototype.locationUpdateStopped = function() {
 // annotations
 
 KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
-    marker.infoWindow = new google.maps.InfoWindow({
-        'content' : this.generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']),
-        'maxWidth' : 200
-    });
+    var content = this.generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']);
+    if (typeof InfoBox != 'undefined') {
+        var options = {
+            content: content,
+            boxStyle: {
+                background: "#ffc",
+                width: "180px",
+                opacity: 0.9,
+            },
+            alignBottom: true,
+            pixelOffset: new google.maps.Size(-90, -35),
+            closeBoxMargin: "4px 2px 2px 2px",
+            closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif",
+            infoBoxClearance: new google.maps.Size(1, 1),
+            pane: "floatPane",
+            enableEventPropagation: false
+        };
+        marker.infoWindow = new InfoBox(options);
+    } else {
+        marker.infoWindow = new google.maps.InfoWindow({
+            'content' : content,
+            'maxWidth' : 200
+        });
+    }
 
     var that = this;
     google.maps.event.addListener(marker, 'mousedown', function() {
@@ -257,6 +286,7 @@ KGOGoogleMapLoader.prototype.clearMarkers = function() {
         this.placemarks[i].setMap(null);
     }
     this.placemarks = [];
+    this.closeCurrentInfoWindow();
 }
 
 KGOGoogleMapLoader.prototype.createMarker = function(title, subtitle, lat, lon, url) {
@@ -277,9 +307,9 @@ KGOGoogleMapLoader.prototype.resizeMapOnContainerResize = function() {
     if (map) {
         // the recentering code causes placemarks to appear un-centered
         // sometimes on ios and android depending on when the address bar disappears
-        //var center = map.getCenter();
+        var center = map.getCenter();
         google.maps.event.trigger(map, 'resize');
-        //map.setCenter(center);
+        map.setCenter(center);
     }
 }
 
