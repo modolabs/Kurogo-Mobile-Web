@@ -1,3 +1,12 @@
+/* override common style so buttons don't fall off the screen on android */
+body.fullscreen #navbar {
+	margin-bottom: 2px;
+}
+
+body.fullscreen #container {
+    min-height: 0;
+}
+
 /* used in detail page and index when swapping to list view with search query */
 #tabscontainer {
     position: relative;
@@ -9,10 +18,12 @@
 }
 
 /* used in map view - custom controls overlaying google maps, detail - controls below map image */
+
 #mapcontrols a {
     width: 40px;
     height: 34px;
     display: block;
+    margin-top: 4px;
     background-image: url(/modules/map/images/buttons.png);
 }
 
@@ -40,21 +51,25 @@
 /*** expanding search bar ***/
 
 #toolbar {
-    height: 44px;
+    height: 48px;
     margin: 0;
     padding: 0;
 }
 
 /* empty div behind the #toolbar to align the top of the #mapimage */
 #spacer {
-    height: 44px;
+    height: 48px;
 }
 
 #searchbar {
     margin: 0;
-    padding: 0;
+    padding: 6px 0 0 0;
     width: 100%;
     float: left;
+}
+
+#searchbar form {
+	padding-top: 2px;
 }
 
 #searchbar fieldset {
@@ -66,7 +81,7 @@
 }
 
 #toolbar.multi-campus {
-    height: 112px;
+    height: 118px;
 }
 
 #toolbar .searchwrapper {
@@ -132,7 +147,8 @@
 #search-options {
     display: none;
     left: 0;
-    padding: 0 5px 8px;
+    padding-bottom: 10px;
+    margin: 0 2px;
     position: absolute;
     right: 0;
     top: 33px;
@@ -143,11 +159,11 @@
 }
 
 #search-options input {
-   margin: 7px 5px 0 0;
+   margin: 7px 2% 0 2%;
    padding: 0;
    height: 30px;
    border-radius: 5px;
-   width: 100%;
+   width: 96%;
 }
 
 
@@ -156,7 +172,7 @@
 }
 
 #searchbar-buttons div {
-    width: 33.33%;
+    width: 33%;
     float: left;
 }
 
@@ -182,39 +198,50 @@ body.fullscreen #tabscontainer {
     padding: 6px 12px;
 }
 
-#calloutWrapper {
-    width: 210px;
-}
-
 #bookmarkWrapper {
     margin: 6px 0;
 }
 
-.calloutMain {
-    max-width: 110px;
-    margin: 6px 8px;
+.infoBox {
+	border-radius: 6px;
+	padding: 8px 0px 8px 6px;
+	line-height: 1em;	
+	box-shadow: 0 1px 6px #000;
+}
+
+.infoBox img {
+	display: none;
+}
+
+.calloutMain a {
+	display: block;
+	height: 44px;
+	text-decoration: none;
+	font-size: 13px;
+	text-align: center;
+	padding-right: 18px;
+	background: url(/common/images/action-arrow.png) no-repeat right;
+}
+
+.calloutMain a, .calloutMain a:visited {
+	color: #111;
 }
 
 .calloutDisclosure {
     margin: 6px 0;
 }
 
-/* ESRI maps have wider callouts */
-.simpleInfoWindow #calloutWrapper {
-    width: 230px;
-}
-
-.simpleInfoWindow .calloutMain {
-    max-width: 130px;
+#mapimage_infowindow {
+	border: none;
+	padding: 6px 0px 6px 4px;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+	margin-left: 50px;
+	line-height: 1.2em;	
 }
 
 #mapimage .simpleInfoWindow .title {
     border: none;
     padding: 0;
-}
-
-#mapimage .simpleInfoWindow {
-    max-height: 80px;
 }
 
 #mapimage .simpleInfoWindow .close {
