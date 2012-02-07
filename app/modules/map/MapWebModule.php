@@ -434,7 +434,7 @@ class MapWebModule extends WebModule {
 
         if (count($listItems) == 1) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
-            $this->redirectTo($link['url']);
+            header("Location: " . $link['url']);
             return;
         }
 
