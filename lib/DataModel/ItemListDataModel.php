@@ -131,10 +131,6 @@ abstract class ItemListDataModel extends DataModel {
     public function limitItems($items, $start=0, $limit=null) {
         $start = intval($start);
         $limit = is_null($limit) ? null : intval($limit);
-
-        if ($limit && $start % $limit != 0) {
-            $start = floor($start/$limit)*$limit;
-        }
         
         if (!is_array($items)) {
             throw new KurogoDataException("Items list is not an array");

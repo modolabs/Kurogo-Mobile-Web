@@ -1,20 +1,22 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{include file="findInclude:modules/map/templates/searchbar.tpl"}
+{* {include file="findInclude:modules/map/templates/searchbar.tpl"} *}
 
 <div class="nonfocal">
-  <!--
-  <div class="buttonContainer">
-    <a href="{$mapURL}">
-      <div id="viewOnMapButton"
-           ontouchstart="addClass(this, 'pressed')"
-           ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
-          <img src="/modules/map/images/map-button-map.png" width="24" height="24" />
-          {"VIEW_ALL_ON_MAP"|getLocalizedString}
-      </div>
-    </a>
-  </div>
-  -->
+  {block name="viewAllOnMap"}
+  {if $mapURL}
+    <div class="buttonContainer">
+      <a href="{$mapURL}">
+        <div id="viewOnMapButton"
+             ontouchstart="addClass(this, 'pressed')"
+             ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
+            <img src="/modules/map/images/map-button-map.png" width="24" height="24" />
+            {"VIEW_ALL_ON_MAP"|getLocalizedString}
+        </div>
+      </a>
+    </div>
+  {/if}
+  {/block}
   <h2>{$title}</h2>
 </div>
 

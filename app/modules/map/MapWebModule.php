@@ -134,7 +134,7 @@ class MapWebModule extends WebModule {
             //if ($this->page != $fullscreen) { // use detail page if we're already on a fullscreen map
             //    $page = $fullscreen;
             //}
-            if ($this->page != 'campus') { // use detail page if we're already on a fullscreen map
+            if ($this->page != 'campus' && !$this->getArg('mapview')) { // use detail page if we're already on a fullscreen map
                 $page = 'campus';
             }
         }
@@ -794,7 +794,7 @@ class MapWebModule extends WebModule {
                     unset($mapArgs['mapview']);
                     $browseURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
                     $this->assign('browseURL', $browseURL);
-                } else {
+                } else if ($this->getSelectedPlacemarks()) {
                     $mapArgs['mapview'] = true;
                     $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
                     $this->assign('mapURL', $mapURL);
@@ -1109,5 +1109,9 @@ JS;
                 break;
         }
         return $result;
+    }
+
+    public function getInternalJavascriptURL($path) {
+        return parent::getInternalJavascriptURL($path);
     }
 }

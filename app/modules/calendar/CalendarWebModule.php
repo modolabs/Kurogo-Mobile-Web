@@ -566,7 +566,9 @@ class CalendarWebModule extends WebModule {
         $type       = $this->getArg('type', 'static');
         $calendar   = $this->getArg('calendar', $this->getDefaultFeed($type));
         $feed       = $this->getFeed($calendar, $type);
-        $categoryObjects = $feed->getEventCategories();
+        $limit    = $this->getArg('limit', null);
+        
+        $categoryObjects = $feed->getEventCategories($limit);
 
         foreach ($categoryObjects as $categoryObject) {
           $categories[] = $this->linkForCategory($categoryObject);
@@ -592,26 +594,28 @@ class CalendarWebModule extends WebModule {
         $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
         $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
 
-        if($feed->isFilterCateByDay()) {
-            $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
+        $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
+        $this->assign('current', $current);
+        // only get future events
+        $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
+        $start->setTime(0,0,0);
+        $feed->setStartDate($start);
+
+        //if FILTER_CATEGORY_BY_DAY is set then it will only get 1 day at a time
+        if($feed->filterCategoryByDay()) {
             $next    = strtotime("+1 day", $current);
             $prev    = strtotime("-1 day", $current);
 
             $dayRange = new DayRange(time());
 
-            $this->assign('current', $current);
             $this->assign('next',    $next);
             $this->assign('prev',    $prev);
             $this->assign('nextURL', $this->categoryDayURL($next, $catid, $name, false));
             $this->assign('prevURL', $this->categoryDayURL($prev, $catid, $name, false));
             $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
 
-            $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
-            $start->setTime(0,0,0);
             $end = clone $start;
             $end->setTime(23,59,59);
-
-            $feed->setStartDate($start);
             $feed->setEndDate($end);
         }
 

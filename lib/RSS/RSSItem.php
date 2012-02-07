@@ -20,7 +20,8 @@ class RSSItem extends XMLElement implements NewsItem
     protected $enclosure;
     protected $images=array();
     protected $fetchContent = false;
-    
+    protected $enclosures = array();
+
     public function setFetchContent($bool) {
         $this->fetchContent =  $bool ? true : false;
     }
@@ -121,15 +122,21 @@ class RSSItem extends XMLElement implements NewsItem
     {
         return $this->enclosure;
     }
+
+    public function getEnclosures() {
+        return $this->enclosures;
+    }
     
     public function getImage()
     {
-        if ( ($enclosure = $this->getEnclosure()) && $enclosure instanceOf RSSImageEnclosure) {
-            return $enclosure;
-        } elseif (count($this->images)>0) {
+        foreach ($this->enclosures as $enclosure) {
+            if ($enclosure instanceOf RSSImageEnclosure) {
+                return $enclosure;
+            }
+        }
+        if (count($this->images)>0) {
             return $this->images[0];
         }
-
         return null;
     }
     
@@ -159,6 +166,7 @@ class RSSItem extends XMLElement implements NewsItem
                 break;
             case 'enclosure':
                 $this->enclosure = $element;
+                $this->enclosures[] = $element;
                 break;
             case 'image':
                 $this->images[] = $element;

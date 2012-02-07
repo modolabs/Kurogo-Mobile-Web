@@ -57,7 +57,12 @@ class ImageLoader extends FileLoader {
 
         $file = isset($options['file']) ? $options['file'] : '';
         if (!$file) {
-            $extension = pathinfo($url, PATHINFO_EXTENSION);
+            $urlparts = parse_url($url);
+            if ($urlparts) {
+                $extension = pathinfo($urlparts['path'], PATHINFO_EXTENSION);
+            } else {
+                $extension = pathinfo($url, PATHINFO_EXTENSION);
+            }
 
             // if no extension found, do not use extension
             if($extension) {
