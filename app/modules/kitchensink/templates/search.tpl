@@ -13,7 +13,7 @@
 <div class="nonfocal">
   <h3>Advanced search form:</h3>
 </div>
-<form method="get" id="advancedSearchForm" action="search.php">
+<form method="get" id="advancedSearchForm" action="search">
   {include file="findInclude:common/templates/formlist.tpl" advancedFields=$formFields}
   <div class="formbuttons">
     {include file="findInclude:common/templates/formButtonSubmit.tpl" buttonTitle="Search"}
