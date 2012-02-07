@@ -50,7 +50,7 @@ class MapAPIModule extends APIModule
             $page = 'detail';
         }
 
-        return FULL_URL_PREFIX.'/'.$this->configModule.'/'.$page.'?'.http_build_query($urlArgs);
+        return rtrim(FULL_URL_PREFIX, '/'). '/'. $this->configModule.'/'.$page.'?'.http_build_query($urlArgs);
     }
 
     protected function shortArrayFromPlacemark(Placemark $placemark)
