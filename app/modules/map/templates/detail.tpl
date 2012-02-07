@@ -61,8 +61,8 @@
 {/if}
 
 {block name="tabView"}
-  <div id="tabscontainer">
-    <h2>{$name|escape}</h2>
+  <h2 class="nonfocal">{$name|escape}</h2>
+  <div class="nonfocal">
     <p class="address">{$address|escape}</p>
     <div id="buttonWrapper">
       {if !$isStatic}
@@ -79,6 +79,8 @@
       {/if}
       {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
     </div>
+  </div>
+  <div id="tabscontainer">
     {include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}

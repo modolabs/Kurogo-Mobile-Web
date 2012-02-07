@@ -13,10 +13,6 @@ body.fullscreen #container {
     padding: 0 12px;
 }
 
-.results a.placemark {
-    background-image: url(/modules/map/images/map-button-map.png);
-}
-
 /* used in map view - custom controls overlaying google maps, detail - controls below map image */
 
 #mapcontrols a {
@@ -77,22 +73,22 @@ body.fullscreen #container {
 }
 
 #toolbar.single-campus {
-    height: 80px;
+    height: 100px;
 }
 
 #toolbar.multi-campus {
-    height: 118px;
+    height: 132px;
 }
 
 #toolbar .searchwrapper {
     left: 6px;
-    right: 100px;
+    right: 88px;
     position: absolute;
 }
 
 #toolbar.expanded .searchwrapper {
     left: 6px;
-    right: 20px;
+    right: 6px;
 }
 
 #search-form {
@@ -102,10 +98,11 @@ body.fullscreen #container {
 
 #search-form input[type="text"] {
     border-radius: 8px;
-    width: 100%;
+    border: 1px solid #888;
+    width: 96%;
     line-height: 1em;
     height: 18px;
-    padding: 5px 4px 6px 7px;
+    padding: 4px 2% 6px 2%;
 }
 
 /* toolbar: browse/bookmark buttons to the right of the search field */
@@ -130,16 +127,12 @@ body.fullscreen #container {
 }
 
 /* campus-select: the drop-down menu in multi-campus case */
-#campus-select {
-    height: 33px;
-}
-
 #campus-select td {
-    padding: 4px 0 5px;
+    padding: 0;
 }
 
 #campus-select .formlabel {
-    width: 82px;
+    width: 84px;
     vertical-align: middle;
 }
 
@@ -147,32 +140,38 @@ body.fullscreen #container {
 #search-options {
     display: none;
     left: 0;
-    padding-bottom: 10px;
-    margin: 0 2px;
+    padding: 6px;
     position: absolute;
     right: 0;
-    top: 33px;
+    top: 32px;
 }
 
 #toolbar.expanded #search-options {
     display: block;
 }
 
-#search-options input {
-   margin: 7px 2% 0 2%;
+#search-options input[type="button"] {
+   -webkit-appearance: none;
    padding: 0;
    height: 30px;
+   border: 1px solid #666;
    border-radius: 5px;
-   width: 96%;
+   width: 90%;
+   font: 16px/1em sans-serif;
+   background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.2)), to(rgba(0,0,0,0.15)));
+   -webkit-box-shadow: 0px 0.5px 1px #000;
+   box-shadow: 0px 1px 2px #000;
 }
-
 
 #searchbar-buttons {
     clear: both;
+    height: 32px;
+    margin: 0 -4px 0 -4px;
 }
 
 #searchbar-buttons div {
-    width: 33%;
+	text-align: center;
+    width: 33.3%;
     float: left;
 }
 
@@ -204,23 +203,33 @@ body.fullscreen #tabscontainer {
 
 .infoBox {
 	border-radius: 6px;
-	padding: 8px 0px 8px 6px;
-	line-height: 1em;	
+	padding: 0;
 	box-shadow: 0 1px 6px #000;
+	height: auto!important;
 }
 
 .infoBox img {
 	display: none;
 }
 
+.calloutMain {
+	display: table;
+	height: 100%;
+	width: 100%;
+}
+
 .calloutMain a {
-	display: block;
-	height: 44px;
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	height: 100%;
 	text-decoration: none;
-	font-size: 13px;
-	text-align: center;
-	padding-right: 18px;
+	font-size: 15px;
+	line-height: 18px;	
+	text-align: left;
+	padding: 8px 20px 8px 8px;
 	background: url(/common/images/action-arrow.png) no-repeat right;
+	overflow: hidden;
 }
 
 .calloutMain a, .calloutMain a:visited {
@@ -233,10 +242,14 @@ body.fullscreen #tabscontainer {
 
 #mapimage_infowindow {
 	border: none;
-	padding: 6px 0px 6px 4px;
-	box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-	margin-left: 50px;
-	line-height: 1.2em;	
+	padding: 0;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+	margin-left: 55px;
+	line-height: 1.2em;
+}
+
+#mapimage .content {
+	overflow: hidden;
 }
 
 #mapimage .simpleInfoWindow .title {

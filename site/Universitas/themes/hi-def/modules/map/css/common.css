@@ -2,18 +2,12 @@
 	background-color: @@@body_background_color@@@;
 }
 
-#search-options input {
-    /* android doesn't understand linear-gradient */
-    
- -webkit-appearance: none;
-   background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.2)));
-/*
-   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-*/
+#search-form input[type="text"] {
+    border-color: @@@search_border_color@@@;
+}
+
+#search-options input[type="button"] {
+    border-color: @@@focal_border_color@@@;
 }
 
 .buttonContainer div {

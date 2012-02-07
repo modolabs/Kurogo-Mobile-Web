@@ -237,8 +237,8 @@ KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
             content: content,
             boxStyle: {
                 background: "#fff",
-                width: "160px",
-                height: "52px",
+                width: "180px",
+                height: "65px",
                 opacity: 0.85,
             },
             alignBottom: true,
