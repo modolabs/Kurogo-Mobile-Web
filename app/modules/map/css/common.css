@@ -252,6 +252,12 @@ body.fullscreen #tabscontainer {
 	overflow: hidden;
 }
 
+#mapimage .simpleInfoWindow .calloutMain a {
+	font-size: 14px; 
+	line-height: 16px;
+	padding-top: 6px;
+}
+
 #mapimage .simpleInfoWindow .title {
     border: none;
     padding: 0;
