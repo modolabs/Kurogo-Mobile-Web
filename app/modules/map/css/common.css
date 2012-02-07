@@ -204,7 +204,7 @@ body.fullscreen #tabscontainer {
 
 .infoBox {
 	border-radius: 6px;
-	padding: 7px;
+	padding: 8px 0px 8px 6px;
 	line-height: 1em;	
 	box-shadow: 0 1px 6px #000;
 }
@@ -215,13 +215,16 @@ body.fullscreen #tabscontainer {
 
 .calloutMain a {
 	display: block;
+	height: 44px;
 	text-decoration: none;
 	font-size: 13px;
 	text-align: center;
+	padding-right: 18px;
+	background: url(/common/images/action-arrow.png) no-repeat right;
 }
 
 .calloutMain a, .calloutMain a:visited {
-	color: #000;
+	color: #111;
 }
 
 .calloutDisclosure {
@@ -230,8 +233,10 @@ body.fullscreen #tabscontainer {
 
 #mapimage_infowindow {
 	border: none;
+	padding: 6px 0px 6px 4px;
 	box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 	margin-left: 50px;
+	line-height: 1.2em;	
 }
 
 #mapimage .simpleInfoWindow .title {
