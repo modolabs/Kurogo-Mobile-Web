@@ -270,6 +270,9 @@ class MapWebModule extends WebModule {
             $index = $params['featureindex'];
             $feedId = $params['feed'];
             $dataController = $this->getDataModel($feedId);
+            if (isset($params['category'])) {
+                $category = $dataController->findCategory($params['category']);
+            }
             $placemark = $dataController->selectPlacemark($index);
             if (is_array($placemark)) { // MapDataModel always returns arrays of placemarks
                 $placemark = $placemark[0];
