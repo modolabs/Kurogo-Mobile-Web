@@ -129,7 +129,6 @@ class RSSItem extends XMLElement implements NewsItem
     
     public function getImage()
     {
-        return $this->enclosure;
         foreach ($this->enclosures as $enclosure) {
             if ($enclosure instanceOf RSSImageEnclosure) {
                 return $enclosure;
