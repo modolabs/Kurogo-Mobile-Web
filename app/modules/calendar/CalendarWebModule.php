@@ -447,15 +447,11 @@ class CalendarWebModule extends WebModule {
 
         $type     = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+        $feed = $this->getFeed($calendar, $type);
+        $feed->setStartDate($start);
+        $feed->setEndDate($end);
         
-        $options = array(
-            'type'=>$type,
-            'calendar'=>$calendar,
-            'start'=>$start,
-            'end'=>$end
-        );
-        
-        $iCalEvents = $this->searchItems('', null, $options);
+        $iCalEvents = $feed->items();
         $options['noBreadcrumbs'] = true;
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
