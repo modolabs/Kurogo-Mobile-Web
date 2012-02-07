@@ -4,7 +4,9 @@ var navScroller = null;
 function onDOMChange() {
   if (containerScroller) {
     setContainerWrapperHeight();
-    containerScroller.refresh();
+    setTimeout(function () {
+      containerScroller.refresh();
+    }, 0);
   }
 }
 
@@ -81,6 +83,22 @@ function handleWindowResize(e) {
     }
 } 
 
+// form element-safe version of iScroll initialization
+function iScrollInit(id, options) {
+    options.useTransform = true;
+    options.onBeforeScrollStart = function (e) {
+        var target = e.target;
+        while (target.nodeType != 1) { target = target.parentNode; }
+        
+        var tagName = target.tagName;
+        if (target.tagName != 'SELECT' && target.tagName != 'INPUT' && target.tagName != 'TEXTAREA') {
+            e.preventDefault();
+        }
+    };
+
+    return new iScroll(id, options);
+}
+
 function tabletInit() {
    setOrientation(getOrientation());
     if(!document.getElementById('navbar')) {
@@ -95,22 +113,16 @@ function tabletInit() {
   var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
   window.addEventListener(resizeEvent, function() {setTimeout(handleWindowResize,0)}, false);
 
-  document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
-  
-  containerScroller = new iScroll('wrapper', { 
-    checkDOMChanges: false, 
+  containerScroller = iScrollInit('wrapper', { 
     hScrollbar: false,
-    desktopCompatibility: true,
     bounce: false,
     bounceLock: true
   });
 
 
-  navScroller = new iScroll('navsliderwrapper', { 
-    checkDOMChanges: false, 
+  navScroller = iScrollInit('navsliderwrapper', { 
     hScrollbar: false,
     vScrollbar: false,
-    desktopCompatibility: true,
     bounce: false,
     bounceLock: true,
     onScrollStart: updateNavSlider,
@@ -163,7 +175,10 @@ function scrollToTop() {
         this.orientation = getOrientation();
         this.list = document.getElementById(this.options.list);
         this.detail = document.getElementById(this.options.detail);
-        this.detailScroller = new iScroll(this.options.detail, {checkDOMChange: true});
+        this.detailScroller = iScrollInit(this.options.detail, {
+            hScrollbar : false,
+            hScroll : false
+        });
         
         if ('content' in this.options) {
             this.content = document.getElementById(this.options.content);
@@ -253,10 +268,31 @@ function scrollToTop() {
                       location.hash = hash;
                     }
                     
-                    self.detailScroller.refresh();
                     if (typeof moduleHandleWindowResize != 'undefined') {
                         moduleHandleWindowResize(e);
                     }
+                    
+                    
+                    var refreshOnLoad = function () {
+                        setTimeout(function () {
+                            self.detailScroller.refresh();
+                        }, 0);
+                    };
+                    
+                    // As images load the height of the detail view will change so
+                    // refresh the scroller when each image loads:
+                    var images = self.content.getElementsByTagName("img");
+                    for (var i = 0; i < images.length; i++) {
+                        // ignore images with a height attribute since the DOM already knows their height
+                        if (images[i].getAttribute("height")) { continue; }
+                        
+                        if (images[i].addEventListener) {
+                            images[i].addEventListener("load", refreshOnLoad, false);
+                        } else if (images[i].attachEvent) {
+                            images[i].attachEvent("onload", refreshOnLoad);
+                        }
+                    }
+                    refreshOnLoad();
                 }
             }
             showLoadingMsg(this.options.content);
@@ -313,16 +349,18 @@ function scrollToTop() {
                 },0);
                 return;
             } else {
-              this.listScroller = new iScroll(this.options.list, options);
+              this.listScroller = iScrollInit(this.options.list, options);
             }
         },
         refreshScrollers: function () {
-            if (self.detailScroller) {
-                self.detailScroller.refresh();
-            }
-            if (self.listScroller) {
-                self.listScroller.refresh();
-            }
+            setTimeout(function() {
+                if (self.detailScroller) {
+                    self.detailScroller.refresh();
+                }
+                if (self.listScroller) {
+                    self.listScroller.refresh();
+                }
+            }, 0);
         },
     }
     
