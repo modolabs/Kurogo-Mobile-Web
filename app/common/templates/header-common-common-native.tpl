@@ -24,6 +24,10 @@
 
 {block name="javascript"}
   <script type="text/javascript">
+      // Native apps replace this with js which fixes per-OS/version issues
+      // must be first inline js on page!
+      {$webBridgeConfig['jsHeader']}
+      
       //
       // Native template for platform "{$platform}"
       //

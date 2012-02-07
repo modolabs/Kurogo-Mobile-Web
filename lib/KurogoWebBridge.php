@@ -170,11 +170,13 @@ class KurogoWebBridge
     protected function urlSuffixToFile($urlSuffix) {
         return preg_replace(
             array(
-                '@device/'.$this->pagetype.'-[^/]+/@',
-                '@^min/\?g=file-/([^&]+)(&.+|)$@',
-                '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
+                '@.php$@',                             // remove .php extension
+                '@device/'.$this->pagetype.'-[^/]+/@', // remove device classifier
+                '@^min/\?g=file-/([^&]+)(&.+|)$@',     // rewrite minify local files
+                '@^min/g=([^-]+)-([^&]+)(&.+|)$@',     // rewrite minify css and js urls
             ),
             array(
+                '',
                 '',
                 '$1',
                 $this->page.'_min.$1',
@@ -184,7 +186,7 @@ class KurogoWebBridge
     }
 
     protected static function getPartsForMatches($matches) {
-        $urlSuffix = html_entity_decode($matches[4]);
+        $urlSuffix = html_entity_decode($matches[3]);
         $file = self::$currentInstance->urlSuffixToFile($urlSuffix);
         
         if (strpos($matches[0], '/'.FileLoader::fileDir().'/') !== FALSE) {
@@ -192,7 +194,7 @@ class KurogoWebBridge
             $replacement = $matches[0];
             
         } else if ($file) {
-            $replacement = $matches[1].$file.$matches[5];
+            $replacement = $matches[1].$file.$matches[4];
             
         } else {
             Kurogo::log(LOG_NOTICE, "Unable to determine file name for '{$matches[0]}'", 'api');
@@ -227,28 +229,28 @@ class KurogoWebBridge
     //
 
     protected function _rewriteURLsToFilePaths($contents, $callback='rewriteURLsToFilePathsCallback', $fileType=self::FILE_TYPE_HTML) {
-        // rewrite javascript url rewrites
+        // rewrite javascript url rewrites, removing php extension and relative paths
         $contents = preg_replace(
             array(
-              '@(window.location\s*=\s*[\'\"])\.\./([^\'\"]+)([\'\"])@',
-              '@(window.location\s*=\s*[\'\"])\./([^\'\"]+)([\'\"])@',
+              '@(window.location\s*=\s*[\'\"])\.\./([^\'\"\.]+)(.php|([^"]*))([\'\"])@',
+              '@(window.location\s*=\s*[\'\"])\./([^\'\"\.]+)(.php|([^"]*))([\'\"])@',
             ),
             array(
-              '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$2$3',
-              '$1'.self::BRIDGE_URL_INTERNAL_LINK.$this->module.'/$2$3',
+              '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$2$4$5',
+              '$1'.self::BRIDGE_URL_INTERNAL_LINK.$this->module.'/$2$4$5',
             ),
             $contents
         );
         
-        // rewrite form action urls
+        // rewrite form action urls, removing php extension
         $contents = preg_replace(
             array(
-              '@(<form\s+[^>]*action=")('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')([^"]+)(")@',
-              '@(<form\s+[^>]*action=")([^"/]+)(")@',
+              '@(<form\s+[^>]*action=")('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')([^"\.]+)(.php|([^"]*))(")@',
+              '@(<form\s+[^>]*action=")([^"\.]+)(.php|([^"]*))(")@',
             ),
             array(
-                '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$3$4',
-                '$1'.self::BRIDGE_URL_INTERNAL_LINK.$this->module.'/$2$3',
+                '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$3$5',
+                '$1'.self::BRIDGE_URL_INTERNAL_LINK.$this->module.'/$2$4$5',
             ),
             $contents
         );
@@ -258,14 +260,9 @@ class KurogoWebBridge
         $this->processingFileType = $fileType;
         self::$currentInstance = $this;
         $contents = preg_replace_callback(
-            ';'.
-                '(href\s*=\s*"|href\s*=\s*\'|src\s*=\s*"|src\s*=\s*\'|url\(")'.
-                '('.
-                    '('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')'.
-                    '([^>\'\"\\\)]+)'.
-                ')'.
-                '("\)|"|\')'.
-            ';', 
+            ';(href\s*=\s*"|href\s*=\s*\'|src\s*=\s*"|src\s*=\s*\'|url\(")'.
+                '('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')([^>\'\"\\\)]+)'.
+            '("\)|"|\');', 
             array(get_class(), $callback), 
             $contents
         );
@@ -357,6 +354,7 @@ class KurogoWebBridge
 
     public static function getServerConfig($id, $page, $args) {
         // config values for debugging web mode on browser:
+        $jsHeader = '';
         $base     = URL_BASE;
         $url      = rtrim(FULL_URL_PREFIX, '/');
         $ajaxArgs = self::AJAX_PARAMETER."=1";
@@ -365,6 +363,7 @@ class KurogoWebBridge
         
         // config values for web bridge mode on device:
         if (self::hasNativePlatform()) {
+            $jsHeader = '__KUROGO_JAVASCRIPT_HEADER__';
             $base     = '';
             $url      = '__KUROGO_SERVER_URL__';
             $pageArgs = '__KUROGO_MODULE_EXTRA_ARGS__';
@@ -375,6 +374,7 @@ class KurogoWebBridge
         }
         
         return array(
+            'jsHeader' => $jsHeader,
             'base'     => $base,
             'url'      => $url,
             'ajaxArgs' => $ajaxArgs,
