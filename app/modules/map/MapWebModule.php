@@ -994,10 +994,16 @@ class MapWebModule extends WebModule {
         foreach ($baseMap->getIncludeScripts() as $includeScript) {
             $this->addExternalJavascript($includeScript);
         }
+
+        $maxZoom = $baseMap->getMaximumZoomLevel();
+        $minRange = 360 / pow(2, $maxZoom);
+        $minRange2 = $minRange / 2;
         $this->addInlineJavascriptFooter(
-            "var COOKIE_PATH = '".COOKIE_PATH."';\n".
-            "var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
+            //"var COOKIE_PATH = '".COOKIE_PATH."';\n".
+            //"var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
             "var CONFIG_MODULE = '{$this->configModule}';\n".
+            "var MIN_SPAN = {$minRange};\n".
+            "var MIN_SPAN_2 = {$minRange2};\n".
             'var NO_RESULTS_FOUND = "'.$this->getLocalizedString('NO_RESULTS').'";');
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 

@@ -73,6 +73,10 @@ abstract class MapImageController
             $this->setZoomLevel($params['DEFAULT_ZOOM_LEVEL']);
         }
 
+        if (isset($params['DEFAULT_ZOOM_LEVEL'])) {
+            $this->maxZoomLevel = $this->zoomLevel;
+        }
+
         $this->bufferBox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
     }
 
@@ -89,6 +93,10 @@ abstract class MapImageController
     public function getZoomLevel()
     {
         return $this->zoomLevel;
+    }
+
+    public function getMaximumZoomLevel() {
+        return $this->maxZoomLevel;
     }
 
     public function getAvailableLayers()
@@ -197,8 +205,8 @@ abstract class MapImageController
                 $vZoom = ceil(log(180 / $vRange, 2));
                 $hZoom = ceil(log(360 / $hRange, 2));
                 $zoom = min($vZoom, $hZoom);
-                if ($zoom < $this->zoomLevel) {
-                    $this->setZoomLevel(min($vZoom, $hZoom));
+                if ($zoom < $this->maxZoomLevel) {
+                    $this->setZoomLevel($zoom);
                 }
             }
         }

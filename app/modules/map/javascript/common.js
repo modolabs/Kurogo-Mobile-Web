@@ -74,6 +74,14 @@ function submitMapSearch(form) {
                         maxLat = Math.max(maxLat, markerData.lat);
                         maxLon = Math.max(maxLon, markerData.lon);
                     }
+                    if (maxLon - minLon < MIN_SPAN) {
+                        maxLon += MIN_SPAN_2;
+                        minLon -= MIN_SPAN_2;
+                    }
+                    if (maxLat - minLat < MIN_SPAN_2) {
+                        maxLat += MIN_SPAN_2 / 2;
+                        minLat -= MIN_SPAN_2 / 2;
+                    }
                     mapLoader.setMapBounds(minLat, minLon, maxLat, maxLon);
                 } else {
                     alert(NO_RESULTS_FOUND);
