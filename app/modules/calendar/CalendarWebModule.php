@@ -320,11 +320,13 @@ class CalendarWebModule extends WebModule {
       );
     }
 
-    protected function getFeedsByType() {  
+    protected function getFeedsByType(&$totalFeeds) {  
         $feeds = array();
+        $totalFeeds = 0;
         foreach (array('user','resource','static') as $type) {
             $typeFeeds = $this->getFeeds($type);
             foreach ($typeFeeds as $feed=>$feedData) {
+                $totalFeeds++;
                 $feeds[$type][$type . '|' . $feed] = $feedData['TITLE'];
             }
         }
@@ -445,15 +447,11 @@ class CalendarWebModule extends WebModule {
 
         $type     = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+        $feed = $this->getFeed($calendar, $type);
+        $feed->setStartDate($start);
+        $feed->setEndDate($end);
         
-        $options = array(
-            'type'=>$type,
-            'calendar'=>$calendar,
-            'start'=>$start,
-            'end'=>$end
-        );
-        
-        $iCalEvents = $this->searchItems('', null, $options);
+        $iCalEvents = $feed->items();
         $options['noBreadcrumbs'] = true;
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
@@ -558,7 +556,8 @@ class CalendarWebModule extends WebModule {
         $this->assign('dateFormat', $this->getLocalizedString("LONG_DATE_FORMAT"));
         $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
         $this->assign('searchOptions', $this->searchOptions());
-        $this->assign('feeds',  $this->getFeedsByType());
+        $this->assign('feeds',  $this->getFeedsByType($totalFeeds));
+        $this->assign('totalFeeds', $totalFeeds);
         break;
       
       case 'categories':
@@ -845,7 +844,8 @@ class CalendarWebModule extends WebModule {
           $this->assign('searchTerms'   , $searchTerms);        
           $this->assign('selectedOption', $timeframe);
           $this->assign('searchOptions' , $this->searchOptions());
-          $this->assign('feeds'         , $this->getFeedsByType());
+          $this->assign('feeds'         , $this->getFeedsByType($totalFeeds));
+          $this->assign('totalFeeds', $totalFeeds);
           $this->assign('searchCalendar', $searchCalendar);
 
         } else {

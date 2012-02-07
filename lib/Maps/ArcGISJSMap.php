@@ -306,6 +306,14 @@ class ArcGISJSMap extends JavascriptMapImageController {
                .$this->apiVersion.'/js/dojo/dijit/themes/'
                .$this->themeName.'/'.$this->themeName.'.css';
     }
+
+    function getMinimumLatSpan() {
+        return oldPixelScaleForZoomLevel($this->maxZoomLevel);
+    }
+
+    function getMinimumLonSpan() {
+        return oldPixelScaleForZoomLevel($this->maxZoomLevel);
+    }
     
     function getFooterScript() {
         // put dojo stuff in the footer since the header script

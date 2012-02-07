@@ -994,10 +994,15 @@ class MapWebModule extends WebModule {
         foreach ($baseMap->getIncludeScripts() as $includeScript) {
             $this->addExternalJavascript($includeScript);
         }
+
+        $latRange = $baseMap->getMinimumLatSpan();
+        $lonRange = $baseMap->getMinimumLonSpan();
         $this->addInlineJavascriptFooter(
-            "var COOKIE_PATH = '".COOKIE_PATH."';\n".
-            "var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
+            //"var COOKIE_PATH = '".COOKIE_PATH."';\n".
+            //"var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
             "var CONFIG_MODULE = '{$this->configModule}';\n".
+            "var MIN_LAT_SPAN = {$latRange};\n".
+            "var MIN_LON_SPAN = {$lonRange};\n".
             'var NO_RESULTS_FOUND = "'.$this->getLocalizedString('NO_RESULTS').'";');
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 

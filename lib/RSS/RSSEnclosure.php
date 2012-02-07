@@ -23,7 +23,10 @@ class RSSEnclosure extends XMLElement
     public static function factory($attribs) {
         $type = isset($attribs['TYPE']) ? $attribs['TYPE'] : null;
         $class = 'RSSEnclosure';
-        if (self::isImage($type)) {
+        if (self::isImage($type)
+            || ($attribs['TAGNAME'] == 'MEDIA:CONTENT' && isset($attribs['MEDIUM']) && $attribs['MEDIUM'] == 'image')
+            || $attribs['TAGNAME'] == 'MEDIA:THUMBNAIL')
+        {
             $class = 'RSSImageEnclosure';
         }
         

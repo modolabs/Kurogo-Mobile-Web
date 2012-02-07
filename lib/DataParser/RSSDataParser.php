@@ -28,7 +28,8 @@ class RSSDataParser extends XMLDataParser
     protected $guids=array();
 
     protected static $startElements=array(
-        'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'ENCLOSURE', 'IMAGE');
+        'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY',
+        'ENCLOSURE', 'MEDIA:THUMBNAIL','MEDIA:CONTENT', 'IMAGE');
     protected static $endElements=array(
         'CHANNEL', 'FEED', 'ITEM', 'ENTRY');
     
@@ -105,11 +106,13 @@ class RSSDataParser extends XMLDataParser
                 break;
             case 'ENCLOSURE':
             case 'MEDIA:CONTENT':
+            case 'MEDIA:THUMBNAIL':
                 $thumbOptions = array(
                     'THUMB_MAX_WIDTH' => $this->getOption('thumb_max_width'),
                     'THUMB_MAX_HEIGHT' => $this->getOption('thumb_max_height'),
                     'THUMB_CROP' => $this->getOption('thumb_crop'),
                		'THUMB_BACKGROUND_RGB'=>$this->getOption('thumb_background_rgb'),
+                    'TAGNAME' => $name,
                 );
                 $attribs = array_merge($attribs, $thumbOptions);
                 $element = call_user_func(array($this->enclosureClass, 'factory'), $attribs);
