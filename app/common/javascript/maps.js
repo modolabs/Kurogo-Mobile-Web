@@ -236,9 +236,9 @@ KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
         var options = {
             content: content,
             boxStyle: {
-                background: "#ffc",
+                background: "#fff",
                 width: "180px",
-                opacity: 0.9,
+                opacity: 0.85,
             },
             alignBottom: true,
             pixelOffset: new google.maps.Size(-90, -35),

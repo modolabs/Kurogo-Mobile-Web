@@ -202,12 +202,26 @@ body.fullscreen #tabscontainer {
     margin: 6px 0;
 }
 
+.infoBox {
+	border-radius: 6px;
+	padding: 7px;
+	line-height: 1em;	
+	box-shadow: 0 1px 6px #000;
+}
+
+.infoBox img {
+	display: none;
+}
+
 .calloutMain a {
 	display: block;
 	text-decoration: none;
-	color: #333;
 	font-size: 13px;
 	text-align: center;
+}
+
+.calloutMain a, .calloutMain a:visited {
+	color: #000;
 }
 
 .calloutDisclosure {
