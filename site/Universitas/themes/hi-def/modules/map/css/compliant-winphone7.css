@@ -1,0 +1,11 @@
+/* Windows Phone 7 doesn't correctly deal with gradient backgrounds with transparency, so we add a transparent background color and a different border color for better contrast */
+
+.actionbutton a, .actionbutton a:active, .actionbutton a.pressedaction {
+	background: transparent;
+	border-color: @@@focal_border_color@@@;
+}
+
+#search-options input[type="button"], #search-options input[type="button"].pressedaction, #search-options input[type="button"]:active {
+	background: transparent;
+   border-color: @@@focal_border_color@@@;
+}
