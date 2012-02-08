@@ -5,7 +5,6 @@ function doUpdateContainerDimensions() {
         var mapTargetHeight = (getWindowHeight() - topoffset) + "px";
         if (mapimage.style.height != mapTargetHeight) {
             mapimage.style.height = mapTargetHeight;
-        } else {
             var container = document.getElementById("container");
             if (container) {
                 container.style.minHeight = 0;
