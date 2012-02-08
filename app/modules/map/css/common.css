@@ -1,7 +1,4 @@
 /* override common style so buttons don't fall off the screen on android */
-body.fullscreen #navbar {
-	margin-bottom: 2px;
-}
 
 body.fullscreen #container {
     min-height: 0;
@@ -50,6 +47,8 @@ body.fullscreen #container {
     height: 48px;
     margin: 0;
     padding: 0;
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 
 /* empty div behind the #toolbar to align the top of the #mapimage */
@@ -97,6 +96,8 @@ body.fullscreen #container {
 }
 
 #search-form input[type="text"] {
+	font-size: 88.3%;
+	font-family: sans-serif;
     border-radius: 8px;
     border: 1px solid #888;
     width: 96%;
@@ -150,6 +151,7 @@ body.fullscreen #container {
     display: block;
 }
 
+/*
 #search-options input[type="button"] {
    -webkit-appearance: none;
    padding: 0;
@@ -158,9 +160,41 @@ body.fullscreen #container {
    border-radius: 5px;
    width: 90%;
    font: 16px/1em sans-serif;
-   background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.2)), to(rgba(0,0,0,0.15)));
+   background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.2)), to(rgba(0,0,0,0.1)));
    -webkit-box-shadow: 0px 0.5px 1px #000;
-   box-shadow: 0px 1px 2px #000;
+   box-shadow: 0px 0px 1px #000;
+}
+*/
+#search-options input[type="button"] {
+   -webkit-appearance: none;
+   padding: 0;
+   height: 30px;
+   width: 90%;
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,.25)), to(rgba(128,128,128,0.2)));
+	border: 1px solid #eee;
+	border: 1px solid rgba(0,0,0,0.25);
+	border-bottom-color: rgba(0,0,0,0.4);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-o-border-radius: 6px;
+	border-radius: 6px;
+	color: #444;
+	font-size: 75%;
+	line-height: 20px;
+	text-transform: uppercase;
+	text-decoration: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+#search-options input[type="button"].pressedaction {
+	background: rgba(0,0,0,0.33);
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.18)), to(rgba(0,0,0,0.12)));
+	border-color: rgba(0,0,0,0.65);
+	border-top-color: rgba(0,0,0,0.75);
+	border-bottom-color: rgba(0,0,0,0.5);
+	color: #000;
+	-webkit-box-shadow: inset 0 1px 3px #000;
+	box-shadow: inset 0 1px 3px #000;
 }
 
 #searchbar-buttons {
@@ -204,7 +238,8 @@ body.fullscreen #tabscontainer {
 .infoBox {
 	border-radius: 6px;
 	padding: 0;
-	box-shadow: 0 1px 6px #000;
+	-webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.7);
+	box-shadow: 0 1px 5px rgba(0,0,0,0.7);
 	height: auto!important;
 }
 
@@ -243,7 +278,8 @@ body.fullscreen #tabscontainer {
 #mapimage_infowindow {
 	border: none;
 	padding: 0;
-	box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+	box-shadow: 0 1px 4px rgba(0,0,0,0.6);
 	margin-left: 55px;
 	line-height: 1.2em;
 }
@@ -307,6 +343,7 @@ body.fullscreen #tabscontainer {
 	border-top-color: rgba(0,0,0,0.75);
 	border-bottom-color: rgba(0,0,0,0.5);
 	color: #000;
+	-webkit-box-shadow: inset 0 1px 3px #000;
 	box-shadow: inset 0 1px 3px #000;
 }
 .actionbutton a.on {

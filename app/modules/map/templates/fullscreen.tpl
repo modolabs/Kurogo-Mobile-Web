@@ -1,4 +1,4 @@
-{include file="findInclude:common/templates/header.tpl"}
+{include file="findInclude:common/templates/header.tpl" scalable=false}
 
 {include file="findInclude:modules/map/templates/searchbar.tpl"}
 

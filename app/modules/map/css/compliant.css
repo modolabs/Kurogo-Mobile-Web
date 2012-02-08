@@ -1,5 +1,5 @@
 #toolbar {
-	  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.15)), to(rgba(0,0,0,0.15)));
+	  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.2)), to(rgba(0,0,0,0.1)));
 }
 
 #footerlinks, #footer {display: none;}

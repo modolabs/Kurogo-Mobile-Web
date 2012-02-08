@@ -7,25 +7,17 @@
 }
 
 #search-options input[type="button"] {
-    border-color: @@@focal_border_color@@@;
+	color: @@@nonfocal_text_color@@@;
 }
 
-.buttonContainer div {
-   background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0,0,0,0.2)), to(rgba(255,255,255,0.2)));
-/*
-   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-*/
+.toolbar {
+	color: @@@nonfocal_text_color@@@;
 }
 
-.buttonContainer div.pressed {
-   background-image: linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -o-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+.toolbar a, .toolbar a:visited, .toolbar input[type="button"] {
+	color: @@@nonfocal_text_color@@@;
 }
 
-
+.actionbutton a, .actionbutton a:visited {
+	color: @@@nonfocal_text_color@@@;
+}

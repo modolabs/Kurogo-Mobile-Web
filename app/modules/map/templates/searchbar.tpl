@@ -51,13 +51,14 @@
                         <div id="searchButton">
                             <input type="button"
                                    onclick="{if !$mapURL}submitMapSearch(this.form){else}this.form.submit(){/if}"
-                                   value={"SEARCHBAR_BUTTON_SEARCH"|getLocalizedString} />
+                                   value={"SEARCHBAR_BUTTON_SEARCH"|getLocalizedString} 
+                                   ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" />
                         </div>
                         <div id="clearButton">
-                            <input type="button" onclick="clearSearch(this.form)" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />
+                            <input type="button" onclick="clearSearch(this.form)" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />
                         </div>
                         <div id="cancelButton">
-                            <input type="button" onclick="hideSearchFormButtons()" value={"SEARCHBAR_BUTTON_CANCEL"|getLocalizedString} />
+                            <input type="button" onclick="hideSearchFormButtons()"  ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" value={"SEARCHBAR_BUTTON_CANCEL"|getLocalizedString} />
                         </div>
                     </div>
                 </div>
