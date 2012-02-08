@@ -266,7 +266,7 @@ class VideoWebModule extends WebModule
                         $this->assign('videoStillImage',  $video->getStillFrameImage());
                         $this->assign('videoDescription', $video->getDescription());
                         $this->assign('videoAuthor'     , $video->getAuthor());
-                        $this->assign('videoDate'       , $video->getPublished()->format('M n, Y'));
+                        $this->assign('videoDate'       , $video->getPublished()->format('M j, Y'));
                         
                         $body = $video->getDescription() . "\n\n" . $video->getURL();
     
