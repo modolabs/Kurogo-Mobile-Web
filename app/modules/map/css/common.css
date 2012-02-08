@@ -1,13 +1,3 @@
-/* override common style so buttons don't fall off the screen on android */
-
-body.fullscreen #navbar {
-	margin-bottom: 1px;
-}
-
-body.fullscreen #container {
-    min-height: 0;
-}
-
 /* used in detail page and index when swapping to list view with search query */
 #tabscontainer {
     position: relative;
