@@ -351,8 +351,15 @@ body.fullscreen #tabscontainer {
 	-webkit-box-shadow: inset 0 1px 3px #000;
 	box-shadow: inset 0 1px 3px #000;
 }
-.actionbutton a.on {
-	color: red!important;
+.bookmarkbutton {
+	background: url(/common/images/action-bookmark@2x.png) 5px 5px no-repeat;
+	background-size: 20px 19px;
+}
+.on {
+	background-image: url(/common/images/action-bookmark-on@2x.png);
+}
+.bookmarkbutton a {
+	padding-left: 26px;
 }
 .viewall {
 	float: right;
