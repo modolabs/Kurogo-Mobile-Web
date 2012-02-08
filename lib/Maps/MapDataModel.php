@@ -74,7 +74,7 @@ class MapDataModel extends DataModel implements MapFolder
     {
         $this->setPlacemarkId($id);
         if ($this->selectedCategory) {
-            return $this->returnPlacemarks($this->selectedCategory->getPlacemark($id));
+            return $this->returnPlacemarks($this->selectedCategory->selectPlacemark($id));
         }
         elseif ($this->selectedPlacemarks) {
             return $this->returnPlacemarks($this->selectedPlacemarks);

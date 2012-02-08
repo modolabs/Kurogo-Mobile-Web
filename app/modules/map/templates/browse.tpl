@@ -12,7 +12,7 @@
 {/capture}
 
 {capture name="browsePane" assign="browsePane"}
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories navlistID="categories"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$navItems navlistID="categories"}
 {/capture}
 
 {$tabBodies['search'] = $searchPane}

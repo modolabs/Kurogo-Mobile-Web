@@ -270,6 +270,9 @@ class MapWebModule extends WebModule {
             $index = $params['featureindex'];
             $feedId = $params['feed'];
             $dataController = $this->getDataModel($feedId);
+            if (isset($params['category'])) {
+                $category = $dataController->findCategory($params['category']);
+            }
             $placemark = $dataController->selectPlacemark($index);
             if (is_array($placemark)) { // MapDataModel always returns arrays of placemarks
                 $placemark = $placemark[0];
@@ -434,7 +437,7 @@ class MapWebModule extends WebModule {
 
         if (count($listItems) == 1) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
-            $this->redirectTo($link['url']);
+            header("Location: " . $link['url']);
             return;
         }
 
@@ -994,10 +997,15 @@ class MapWebModule extends WebModule {
         foreach ($baseMap->getIncludeScripts() as $includeScript) {
             $this->addExternalJavascript($includeScript);
         }
+
+        $latRange = $baseMap->getMinimumLatSpan();
+        $lonRange = $baseMap->getMinimumLonSpan();
         $this->addInlineJavascriptFooter(
-            "var COOKIE_PATH = '".COOKIE_PATH."';\n".
-            "var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
+            //"var COOKIE_PATH = '".COOKIE_PATH."';\n".
+            //"var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
             "var CONFIG_MODULE = '{$this->configModule}';\n".
+            "var MIN_LAT_SPAN = {$latRange};\n".
+            "var MIN_LON_SPAN = {$lonRange};\n".
             'var NO_RESULTS_FOUND = "'.$this->getLocalizedString('NO_RESULTS').'";');
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
