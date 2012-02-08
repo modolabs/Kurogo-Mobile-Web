@@ -5,7 +5,7 @@
   <h3>{"MAP_BOOKMARKED_PLACES_TITLE"|getLocalizedString}</h3>
 </div>
 {if $navItems}
-  {include file="findInclude:common/templates/navlist.tpl" results=$navlistItems}
+  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$navItems}
 {else}
   {block name="noResults"}
     <ul class="nav">

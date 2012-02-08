@@ -233,6 +233,7 @@ function showShare() {
 	var iframes = document.getElementsByTagName('iframe');
 	for (var i=0; i<iframes.length; i++) {
 	    iframes[i].style.visibility = 'hidden';
+	    iframes[i].style.height = '0';
 	}
 	window.scrollTo(0,0);
 }
@@ -244,6 +245,7 @@ function hideShare() {
 	var iframes = document.getElementsByTagName('iframe');
 	for (var i=0; i<iframes.length; i++) {
 	    iframes[i].style.visibility = 'visible';
+	    iframes[i].style.height = '';
 	}
 }
 
