@@ -134,7 +134,9 @@ class MapWebModule extends WebModule {
             //if ($this->page != $fullscreen) { // use detail page if we're already on a fullscreen map
             //    $page = $fullscreen;
             //}
-            if ($this->page != 'campus' && !$this->getArg('mapview')) { // use detail page if we're already on a fullscreen map
+            if (($this->page != 'campus' || $this->getArg('listview'))
+                && !$this->getArg('mapview'))
+            { // use detail page if we're already on a fullscreen map
                 $page = 'campus';
             }
         }
