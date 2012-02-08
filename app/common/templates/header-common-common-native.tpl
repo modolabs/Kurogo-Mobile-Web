@@ -102,16 +102,16 @@
       function webBridgeLinkToAjaxLinkIfNeeded(href) {ldelim}
           // must be able to pass through non-kgobridge links
           var bridgePrefix = "kgobridge://link/";
-          if (href.search(bridgePrefix) == 0) {ldelim}
-              href = "{$webBridgeConfig['url']}/"+href.slice(bridgePrefix.length);
+          if (href.indexOf(bridgePrefix) == 0) {ldelim}
+              href = "{$webBridgeConfig['url']}/"+href.substr(bridgePrefix.length);
               
               var anchor = '';
-              var anchorPos = href.search("#");
+              var anchorPos = href.indexOf("#");
               if (anchorPos > 0) {
-                  anchor = href.slice(anchorPos);
-                  href = href.slice(0, anchorPos);
+                  anchor = href.substr(anchorPos);
+                  href = href.substr(0, anchorPos);
               }
-              href = href+(href.search("?") > 0 ? "&" : "?")+"{$webBridgeConfig['ajaxArgs']}"+anchor;
+              href = href+(href.indexOf("?") > 0 ? "&" : "?")+"{$webBridgeConfig['ajaxArgs']}"+anchor;
           {rdelim}
           return href;
       {rdelim}
