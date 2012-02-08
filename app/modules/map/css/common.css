@@ -359,3 +359,7 @@ body.fullscreen #tabscontainer {
 .actionbutton a.on {
 	color: red!important;
 }
+.viewall {
+	float: right;
+	margin: 0 0 0 15px;
+}

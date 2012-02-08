@@ -5,16 +5,9 @@
 <div class="nonfocal">
   {block name="viewAllOnMap"}
   {if $mapURL}
-    <div class="buttonContainer">
-      <a href="{$mapURL}">
-        <div id="viewOnMapButton"
-             ontouchstart="addClass(this, 'pressed')"
-             ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
-            <img src="/modules/map/images/map-button-map.png" width="24" height="24" />
-            {"VIEW_ALL_ON_MAP"|getLocalizedString}
-        </div>
-      </a>
-    </div>
+  <div class="actionbuttons viewall">
+    <div class="actionbutton"><a href="{$mapURL}" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''"><img src="/common/images/action-placemark.png" width="15" height="19" />{"VIEW_ALL_ON_MAP"|getLocalizedString}</a></div>
+  </div>
   {/if}
   {/block}
   <h2>{$title}</h2>
