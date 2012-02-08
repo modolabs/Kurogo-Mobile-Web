@@ -27,11 +27,9 @@
                 </div>
                 <div id="toolbar-buttons">
                     <div class="toolbar-button">
-                    {if $hasBookmarks}
-                            <a href="{$bookmarkLink[0]['url']}"><img src="/modules/map/images/map-button-favorites.png" width="24" height="24"/></a>
-                    {else}
-                            <a><img src="/modules/map/images/map-button-favorites-off.png" width="24" height="24" /></a>
-                        {/if}
+                        <a href="{$bookmarkLink[0]['url']}">
+                            <img src="/modules/map/images/map-button-favorites.png" width="24" height="24"/>
+                        </a>
                     </div>
                     {if $mapURL}
                         <div class="toolbar-button">
