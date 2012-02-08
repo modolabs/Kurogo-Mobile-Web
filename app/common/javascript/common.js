@@ -248,14 +248,17 @@ function hideShare() {
 }
 
 // Bookmarks
-function toggleBookmark(name, item, expireseconds, path) {
+function toggleBookmark(name, item, expireseconds, path, bookmarkId) {
   // facility for module to respond to bookmark state change
   if (typeof moduleBookmarkWillToggle != 'undefined') {
     $result = moduleBookmarkWillToggle(name, item, expireseconds, path);
     if ($result === false) { return; }
   }
 
-  var bookmark = document.getElementById("bookmark");
+  if (!bookmarkId) {
+    bookmarkId = "bookmark";
+  }
+  var bookmark = document.getElementById(bookmarkId);
   toggleClass(bookmark, "on");
   var items = getCookieArrayValue(name);
   var newItems = new Array();
