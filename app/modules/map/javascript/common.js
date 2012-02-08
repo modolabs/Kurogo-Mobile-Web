@@ -21,7 +21,8 @@ function sortGroupsByDistance() {
                         var id = response[i]["id"];
                         if (id in browseGroups) {
                             if ("distance" in response[i]) {
-                                browseGroups[id].innerHTML = browseGroups[id].innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
+                                var a = browseGroups[id].firstChild;
+                                a.innerHTML = a.innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
                             }
                             sortedGroups.push(browseGroups[id]);
                         }
@@ -47,6 +48,7 @@ function sortGroupsByDistance() {
 
 function submitMapSearch(form) {
     if (form.filter.value.length > 0) {
+        form.filter.blur();
         mapLoader.clearMarkers();
         hideSearchFormButtons();
         params = {'q': form.filter.value};
@@ -107,7 +109,8 @@ function submitMapSearch(form) {
     }
 }
 
-function clearSearch(form) {
+function clearSearch(e, form) {
+    e.preventDefault();
     form.filter.value = '';
 }
 
@@ -129,6 +132,7 @@ function hideSearchFormButtons() {
     } else {
         removeClass(toolbar, "single-campus");
     }
+    scrollTo(0, 1);
 }
 
 ///// window size

@@ -67,7 +67,7 @@
     <div class="actionbuttons">
       {if !$isStatic}
         <div class="actionbutton">
-          <a href="{$mapURL}" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''"><img src="/common/images/action-placemark@2x.png" width="15" height="19" alt="" />{"VIEW_ON_MAP"|getLocalizedString}</a>
+          <a href="{$mapURL}" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''"><img src="/modules/map/images/map-button-placemark.png" width="20" height="20" alt="" />{"VIEW_ON_MAP"|getLocalizedString}</a>
         </div>
       {/if}
       {include file="findInclude:modules/map/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}

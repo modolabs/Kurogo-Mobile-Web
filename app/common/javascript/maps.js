@@ -230,7 +230,8 @@ KGOGoogleMapLoader.prototype.locationUpdateStopped = function() {
 
 // annotations
 
-KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
+// google maps specific function
+KGOGoogleMapLoader.prototype.generateInfoWindow = function(attribs, needsSetPosition) {
     var content = this.generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']);
     if (typeof InfoBox != 'undefined') {
         var options = {
@@ -249,13 +250,24 @@ KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
             pane: "floatPane",
             enableEventPropagation: false
         };
-        marker.infoWindow = new InfoBox(options);
+        if (needsSetPosition) {
+            options['position'] = new google.maps.LatLng(attribs['lat'], attribs['lon']);
+        }
+        return new InfoBox(options);
     } else {
-        marker.infoWindow = new google.maps.InfoWindow({
+        var options = {
             'content' : content,
             'maxWidth' : 200
-        });
+        }
+        if (needsSetPosition) {
+            options['position'] = new google.maps.LatLng(attribs['lat'], attribs['lon']);
+        }
+        return new google.maps.InfoWindow(options);
     }
+}
+
+KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
+    marker.infoWindow = this.generateInfoWindow(attribs);
 
     var that = this;
     google.maps.event.addListener(marker, 'mousedown', function() {
@@ -267,11 +279,7 @@ KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
 }
 
 KGOGoogleMapLoader.prototype.addOverlay = function(overlay, attribs) {
-    overlay.infoWindow = new google.maps.InfoWindow({
-        'content' : this.generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']),
-        'maxWidth' : 200,
-        'position' : new google.maps.LatLng(attribs['lat'], attribs['lon'])
-    });
+    overlay.infoWindow = this.generateInfoWindow(attribs, true);
 
     var that = this;
     google.maps.event.addListener(overlay, 'mousedown', function() {
@@ -412,31 +420,7 @@ function KGOEsriMapLoader(attribs) {
             }
         });
 
-        var recenterCallout = function() {
-            if (map.infoWindow.isShowing) {
-                var anchorPoint = map.toMap(map.infoWindow.coords);
-                var screenPoint = map.toScreen(anchorPoint).offset(-135, 0);
-                map.infoWindow.move(screenPoint);
-                map.centerAt(anchorPoint); // original corner
-                map.infoWindow.resize(200, 50); 
-            }
-        }
-
-        dojo.connect(map.infoWindow, "onShow", recenterCallout);
         dojo.connect(map, "onLoad", plotFeatures);
-
-        var lastWidth;
-        var lastHeight;
-        var firstResize = function(extent, width, height) {
-            recenterCallout();
-            if (width == lastWidth || height == lastHeight) {
-                dojo.disconnect(that.resizeHandler);
-            }
-            lastWidth = width;
-            lastHeight = height;
-        }
-
-        that.resizeHandler = dojo.connect(map, "onResize", firstResize);
     }
 }
 

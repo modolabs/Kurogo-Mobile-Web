@@ -134,7 +134,9 @@ class MapWebModule extends WebModule {
             //if ($this->page != $fullscreen) { // use detail page if we're already on a fullscreen map
             //    $page = $fullscreen;
             //}
-            if ($this->page != 'campus' && !$this->getArg('mapview')) { // use detail page if we're already on a fullscreen map
+            if (($this->page != 'campus' || $this->getArg('listview'))
+                && !$this->getArg('mapview'))
+            { // use detail page if we're already on a fullscreen map
                 $page = 'campus';
             }
         }
@@ -270,6 +272,9 @@ class MapWebModule extends WebModule {
             $index = $params['featureindex'];
             $feedId = $params['feed'];
             $dataController = $this->getDataModel($feedId);
+            if ($dataController instanceof MapDataModel) {
+                $dataController->clearCategoryId();
+            }
             if (isset($params['category'])) {
                 $category = $dataController->findCategory($params['category']);
             }
@@ -277,7 +282,14 @@ class MapWebModule extends WebModule {
             if (is_array($placemark)) { // MapDataModel always returns arrays of placemarks
                 $placemark = $placemark[0];
             }
-            return array($placemark->getTitle(), $dataController->getTitle());
+            
+            // only show the subtitle if there is more than 1 "campus"
+            if (count($this->feedGroups)>1) {
+                $subtitle = $dataController->getTitle();
+            } else {
+                $subtitle = '';
+            }
+            return array($placemark->getTitle(), $subtitle);
         
         } else if (isset($params['title'])) {
             $result = array($params['title']);
@@ -786,7 +798,7 @@ class MapWebModule extends WebModule {
             
             case 'category':
                 
-                $isMapView = $this->getArg('mapview') && $this->isMapDrivenUI();
+                $isMapView = $this->getArg('mapview');
                 $feedId = $this->getArg('feed');
                 $this->assign('feedId', $feedId);
                 $this->assignItemsFromFeed($feedId, $searchTerms, $isMapView);
@@ -797,7 +809,7 @@ class MapWebModule extends WebModule {
                     unset($mapArgs['mapview']);
                     $browseURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
                     $this->assign('browseURL', $browseURL);
-                } else if ($this->getSelectedPlacemarks()) {
+                } else if ($this->getSelectedPlacemarks() && $this->isMapDrivenUI()) {
                     $mapArgs['mapview'] = true;
                     $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
                     $this->assign('mapURL', $mapURL);

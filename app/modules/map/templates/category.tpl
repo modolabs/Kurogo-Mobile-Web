@@ -6,7 +6,7 @@
   {block name="viewAllOnMap"}
   {if $mapURL}
   <div class="actionbuttons viewall">
-    <div class="actionbutton"><a href="{$mapURL}" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''"><img src="/common/images/action-placemark.png" width="15" height="19" />{"VIEW_ALL_ON_MAP"|getLocalizedString}</a></div>
+    <div class="actionbutton"><a href="{$mapURL}" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''"><img src="/modules/map/images/map-button-placemark.png" width="20" height="20" />{"VIEW_ALL_ON_MAP"|getLocalizedString}</a></div>
   </div>
   {/if}
   {/block}

@@ -104,13 +104,13 @@ class MapDataModel extends DataModel implements MapFolder
         return $this;
     }
 
-    protected function clearCategoryId() {
+    public function clearCategoryId() {
         $this->selectedCategory = null;
     }
 
     protected function setCategoryId($categoryId) {
         if (!strlen($categoryId)) {
-            die();
+            throw new KurogoException("Invalid category ID");
         }
         foreach ($this->categories() as $category) {
             if ($category->getId() == $categoryId) {
