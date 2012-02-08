@@ -21,7 +21,8 @@ function sortGroupsByDistance() {
                         var id = response[i]["id"];
                         if (id in browseGroups) {
                             if ("distance" in response[i]) {
-                                browseGroups[id].innerHTML = browseGroups[id].innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
+                                var a = browseGroups[id].firstChild;
+                                a.innerHTML = a.innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
                             }
                             sortedGroups.push(browseGroups[id]);
                         }
