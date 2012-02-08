@@ -1,11 +1,17 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{if $navItems}
 <div class="nonfocal">
   <a name="places"> </a>
   <h3>{"MAP_BOOKMARKED_PLACES_TITLE"|getLocalizedString}</h3>
 </div>
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$navItems}
+{if $navItems}
+  {include file="findInclude:common/templates/navlist.tpl" results=$navlistItems}
+{else}
+  {block name="noResults"}
+    <ul class="nav">
+      <li>{"NO_RESULTS"|getLocalizedString}</li>
+    </ul>
+  {/block}
 {/if}
 
 {include file="findInclude:common/templates/footer.tpl"}
