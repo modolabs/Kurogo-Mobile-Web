@@ -359,7 +359,7 @@ body.fullscreen #tabscontainer {
 	background-image: url(/modules/map/images/map-button-favorites-on.png);
 }
 .bookmarkbutton a {
-	padding-left: 30px;
+	padding-left: 28px;
 }
 .viewall {
 	float: right;
