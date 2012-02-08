@@ -48,6 +48,7 @@ function sortGroupsByDistance() {
 
 function submitMapSearch(form) {
     if (form.filter.value.length > 0) {
+        form.filter.blur();
         mapLoader.clearMarkers();
         hideSearchFormButtons();
         params = {'q': form.filter.value};
@@ -130,6 +131,7 @@ function hideSearchFormButtons() {
     } else {
         removeClass(toolbar, "single-campus");
     }
+    scrollTo(0, 1);
 }
 
 ///// window size
