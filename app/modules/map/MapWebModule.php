@@ -272,6 +272,9 @@ class MapWebModule extends WebModule {
             $index = $params['featureindex'];
             $feedId = $params['feed'];
             $dataController = $this->getDataModel($feedId);
+            if ($dataController instanceof MapDataModel) {
+                $dataController->clearCategoryId();
+            }
             if (isset($params['category'])) {
                 $category = $dataController->findCategory($params['category']);
             }
