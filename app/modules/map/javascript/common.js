@@ -109,7 +109,8 @@ function submitMapSearch(form) {
     }
 }
 
-function clearSearch(form) {
+function clearSearch(e, form) {
+    e.preventDefault();
     form.filter.value = '';
 }
 

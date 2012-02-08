@@ -53,7 +53,7 @@
                                    ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" />
                         </div>
                         <div id="clearButton">
-                            <input type="button" onclick="clearSearch(this.form)" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />
+                            <input type="button" onmousedown="clearSearch(event, this.form)" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />
                         </div>
                         <div id="cancelButton">
                             <input type="button" onclick="hideSearchFormButtons()"  ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" value={"SEARCHBAR_BUTTON_CANCEL"|getLocalizedString} />
