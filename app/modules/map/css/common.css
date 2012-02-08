@@ -1,5 +1,9 @@
 /* override common style so buttons don't fall off the screen on android */
 
+body.fullscreen #navbar {
+	margin-bottom: 1px;
+}
+
 body.fullscreen #container {
     min-height: 0;
 }
@@ -72,7 +76,7 @@ body.fullscreen #container {
 }
 
 #toolbar.single-campus {
-    height: 100px;
+    height: 86px;
 }
 
 #toolbar.multi-campus {
