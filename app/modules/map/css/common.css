@@ -6,6 +6,11 @@
 
 /* used in map view - custom controls overlaying google maps, detail - controls below map image */
 
+#mapcontrols {
+	z-index: 1000000000;	/* Obnoxiously high to make sure the map controls float above pins, callouts, overlays, etc. */
+	opacity: 0.88;
+}
+
 #mapcontrols a {
     width: 40px;
     height: 34px;
@@ -106,19 +111,22 @@
 }
 
 .toolbar-button {
-    width: 36px;
-    height: 32px;
     float: right;
     margin: 0 4px 0 0;
-    background-image: url(/modules/map/images/button-background.png);
+	text-align: center;
 }
 
 .toolbar-button a {
-    margin: 2px;
+	display: block;
+    width: 35px;
+    height: 28px;
+	border: 1px solid rgba(0,0,0,0.15);
+	border-radius: 6px;
 }
 
 .toolbar-button a img {
-    margin: 4px;
+	padding: 2px 5px;
+	border-radius: 6px;
 }
 
 /* campus-select: the drop-down menu in multi-campus case */

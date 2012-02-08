@@ -30,16 +30,16 @@
                     {if $hasBookmarks}
                             <a href="{$bookmarkLink[0]['url']}"><img src="/modules/map/images/map-button-favorites.png"/></a>
                     {else}
-                            <a><img src="/modules/map/images/map-button-favorites-off.png"/></a>
+                            <a><img src="/modules/map/images/map-button-favorites-off.png" width="24" height="24" /></a>
                         {/if}
                     </div>
                     {if $mapURL}
                         <div class="toolbar-button">
-                            <a id="mapLink" href="{$mapURL}"><img src="/modules/map/images/map-button-map.png"/></a>
+                            <a id="mapLink" href="{$mapURL}"><img src="/modules/map/images/map-button-placemark.png" width="24" height="24" /></a>
                         </div>
                     {else}
                         <div class="toolbar-button">
-                            <a id="browseLink" href="{$browseURL}"><img src="/modules/map/images/map-button-browse.png"/></a>
+                            <a id="browseLink" href="{$browseURL}"><img src="/modules/map/images/map-button-browse.png" width="24" height="24" /></a>
                         </div>
                     {/if}
                 </div>
