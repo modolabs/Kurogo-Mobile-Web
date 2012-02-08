@@ -420,31 +420,7 @@ function KGOEsriMapLoader(attribs) {
             }
         });
 
-        var recenterCallout = function() {
-            if (map.infoWindow.isShowing) {
-                var anchorPoint = map.toMap(map.infoWindow.coords);
-                var screenPoint = map.toScreen(anchorPoint).offset(-135, 0);
-                map.infoWindow.move(screenPoint);
-                map.centerAt(anchorPoint); // original corner
-                map.infoWindow.resize(200, 50); 
-            }
-        }
-
-        dojo.connect(map.infoWindow, "onShow", recenterCallout);
         dojo.connect(map, "onLoad", plotFeatures);
-
-        var lastWidth;
-        var lastHeight;
-        var firstResize = function(extent, width, height) {
-            recenterCallout();
-            if (width == lastWidth || height == lastHeight) {
-                dojo.disconnect(that.resizeHandler);
-            }
-            lastWidth = width;
-            lastHeight = height;
-        }
-
-        that.resizeHandler = dojo.connect(map, "onResize", firstResize);
     }
 }
 
