@@ -331,9 +331,15 @@ body.fullscreen #tabscontainer {
 	color: #444;
 	font-size: 70%;
 	line-height: 20px;
+	height: 20px;
+	vertical-align: middle;
 	text-transform: uppercase;
 	text-decoration: none;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.actionbutton a img {
+	float: left;
+	margin-right: 3px;
 }
 .actionbutton a:active, .actionbutton a.pressedaction {
 	background: #aaa;
@@ -349,4 +355,3 @@ body.fullscreen #tabscontainer {
 .actionbutton a.on {
 	color: red!important;
 }
-

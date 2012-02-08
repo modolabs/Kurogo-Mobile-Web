@@ -239,7 +239,7 @@ KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
                 background: "#fff",
                 width: "180px",
                 height: "65px",
-                opacity: 0.90,
+                opacity: 0.92,
             },
             alignBottom: true,
             pixelOffset: new google.maps.Size(-90, -35),
