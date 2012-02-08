@@ -279,7 +279,14 @@ class MapWebModule extends WebModule {
             if (is_array($placemark)) { // MapDataModel always returns arrays of placemarks
                 $placemark = $placemark[0];
             }
-            return array($placemark->getTitle(), $dataController->getTitle());
+            
+            // only show the subtitle if there is more than 1 "campus"
+            if (count($this->feedGroups)>1) {
+                $subtitle = $dataController->getTitle();
+            } else {
+                $subtitle = '';
+            }
+            return array($placemark->getTitle(), $subtitle);
         
         } else if (isset($params['title'])) {
             $result = array($params['title']);
