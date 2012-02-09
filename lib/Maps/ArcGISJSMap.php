@@ -316,12 +316,12 @@ class ArcGISJSMap extends JavascriptMapImageController {
     }
     
     function getFooterScript() {
-        // put dojo stuff in the footer since the header script
-        // gets loaded before the included script
-
         $zoomLevel = $this->zoomLevel;
         $targetScale = oldPixelScaleForZoomLevel($zoomLevel);
         if ($this->levelsOfDetail) {
+            // TODO: if all zoom levels fail this test, the zoom level will
+            // revert to the internal powers-of-two style zoom level i.e. not 
+            // necessarily what we want
             foreach ($this->levelsOfDetail as $levelData) {
                 if ($levelData['scale'] < $targetScale) {
                     break;
@@ -330,12 +330,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 }
             }
         }
-        
-        $moreLayersJS = '';
-        foreach ($this->moreLayers as $anotherLayer) {
-            $moreLayersJS .= <<<JS
-    map.addLayer(new esri.layers.ArcGISDynamicMapServiceLayer("{$anotherLayer}", 1.0));
-JS;
+
+        $moreLayers = array();
+        foreach ($this->moreLayers as $layer) {
+            $moreLayers[] = '"'.$layer.'"';
         }
 
         $footer = $this->prepareJavascriptTemplate('ArcGISJSMapFooter');
@@ -347,7 +345,7 @@ JS;
             '___IMAGE_HEIGHT___' => $this->imageHeight,
             '___ZOOMLEVEL___' => $zoomLevel,
             '___BASE_URL___' => $this->baseURL,
-            '___MORE_LAYER_SCRIPT___' => $moreLayersJS,
+            '___MORE_LAYER_SCRIPT___' => '['.implode(',', $moreLayers).']',
             '___MARKER_SCRIPT___' => $this->getMarkerJS(),
             '___POLYGON_SCRIPT___' => $this->getPolygonJS(),
             '___PATH_SCRIPT___' => $this->getPathJS()));

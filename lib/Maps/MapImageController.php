@@ -358,7 +358,7 @@ class JavascriptTemplate
             foreach ($this->values as $values) {
                 $template = $this->template;
                 foreach ($values as $placeholder => $value) {
-                    if (!$value) {
+                    if (!strlen($value)) {
                         $value = ''; // nulls may show up as strings
                     }
                     $template = preg_replace('/'.$placeholder.'/', $value, $template);
