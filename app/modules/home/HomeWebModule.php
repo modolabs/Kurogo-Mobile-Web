@@ -32,7 +32,7 @@ class HomeWebModule extends WebModule {
           $this->importCSSAndJavascript($module->exportCSSAndJavascript());
       } catch (Exception $except) {
           error_log($except);
-          $paneContent = "";
+          $paneContent =  '<p class="nonfocal">' . $this->getLocalizedString('ERROR_MODULE_PANE') . "</p>";
       }
       
       $modulePanes[$blockName] = array(
