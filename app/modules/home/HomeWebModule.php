@@ -24,11 +24,16 @@ class HomeWebModule extends WebModule {
     $modulePanes = array();
     
     foreach ($tabletConfig as $blockName => $moduleID) {
-      $module = self::factory($moduleID, 'pane', $this->args);
+      try {
+          $module = self::factory($moduleID, 'pane', $this->args);
       
-      $paneContent = $module->fetchPage(); // sets pageTitle var
+          $paneContent = $module->fetchPage(); // sets pageTitle var
       
-      $this->importCSSAndJavascript($module->exportCSSAndJavascript());
+          $this->importCSSAndJavascript($module->exportCSSAndJavascript());
+      } catch (Exception $except) {
+          error_log($except);
+          $paneContent = "";
+      }
       
       $modulePanes[$blockName] = array(
         'id'      => $moduleID,
