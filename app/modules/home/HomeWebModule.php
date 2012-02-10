@@ -30,15 +30,18 @@ class HomeWebModule extends WebModule {
           $paneContent = $module->fetchPage(); // sets pageTitle var
       
           $this->importCSSAndJavascript($module->exportCSSAndJavascript());
+
+          $title = $module->getTemplateVars('pageTitle');
       } catch (Exception $except) {
-          error_log($except);
+          Kurogo::log(LOG_WARNING, $except->getMessage(), "home", $except->getTrace());
           $paneContent =  '<p class="nonfocal">' . $this->getLocalizedString('ERROR_MODULE_PANE') . "</p>";
+          $title = $module->getConfigModule();
       }
       
       $modulePanes[$blockName] = array(
         'id'      => $moduleID,
         'url'     => self::buildURLForModule($moduleID, 'index'),
-        'title'   => $module->getTemplateVars('pageTitle'),
+        'title'   => $title,
         'content' => $paneContent,
       );  
     }
