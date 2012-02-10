@@ -289,7 +289,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                 return AUTH_USER_NOT_FOUND; // not sure which one is correct yet
             }
         } else {
-            Kurogo::log(LOG_WARNING, "Error searching LDAP Server $this->ldapServer for uid=$login: " . ldap_error($ldap), 'auth');
+            Kurogo::log(LOG_WARNING, "Error searching LDAP Server $this->ldapServer for " . $this->getField('uid') . "=$login: " . ldap_error($ldap), 'auth');
             return false;
         }
     }
@@ -393,7 +393,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         $this->fieldMap = $this->defaultFieldMap();
         
         foreach ($args as $arg=>$value) {
-            if (preg_match("/^(user|group)_(.*?)_field$/", strtolower($arg), $bits)) {
+            if (preg_match("/^ldap_(user|group)_(.*?)_field$/", strtolower($arg), $bits)) {
                 if (isset($this->fieldMap[$bits[2]])) {
                     $this->fieldMap[$bits[2]] = strtolower($value);
                 }
