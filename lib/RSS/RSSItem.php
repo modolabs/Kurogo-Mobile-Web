@@ -159,7 +159,8 @@ class RSSItem extends XMLElement implements NewsItem
                     }
 
                     if ($link = $element->getAttrib('HREF')) {
-                        $element->setValue($link, true);
+                        $element->shouldStripTags(true);
+                        $element->setValue($link);
                     }
                 }
                 parent::addElement($element);
