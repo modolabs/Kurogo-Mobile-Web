@@ -24,6 +24,7 @@ class RSSDataParser extends XMLDataParser
     protected $imageClass='RSSImage';
     protected $enclosureClass='RSSEnclosure';
     protected $removeDuplicates = false;
+    protected $htmlEscapedCDATA = false;
     protected $items=array();
     protected $guids=array();
 
@@ -79,6 +80,10 @@ class RSSDataParser extends XMLDataParser
 
         if (isset($args['REMOVE_DUPLICATES'])) {
             $this->removeDuplicates = $args['REMOVE_DUPLICATES'];
+        }
+
+        if (isset($args['HTML_ESCAPED_CDATA'])) {
+            $this->htmlEscapedCDATA = $args['HTML_ESCAPED_CDATA'];
         }
     }
 
@@ -202,5 +207,21 @@ class RSSDataParser extends XMLDataParser
         return $strip_tags;
     }
     
+    protected function shouldHTMLDecodeCDATA($element)
+    {
+        $html_decode = false;
+        
+        if ($this->htmlEscapedCDATA) {
+            // Some buggy feeds have HTML escaped with both CDATA and html entities
+            switch ($element->name()) {
+                case 'CONTENT:ENCODED':
+                case 'CONTENT':
+                case 'BODY':
+                    $html_decode = true;
+                    break;
+            }
+        }
+        return $html_decode;
+    }
 }
 
