@@ -266,9 +266,9 @@ class HTMLDataParser extends DataParser
         $path = implode('/', $pathArray);
 
         $query = array();
-        if(!empty($pathArray['query']))
+        if(!empty($uriArray['query']))
         {
-            parse_str($pathArray['query'],$query);
+            parse_str($uriArray['query'],$query);
         }
         
         // For the most part, this should be a direct wrapper around buildBreadcrumbURLForModule()
