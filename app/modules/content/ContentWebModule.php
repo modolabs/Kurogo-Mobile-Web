@@ -39,6 +39,14 @@ class ContentWebModule extends WebModule {
                 
                 return $content;
                 break;
+            case 'html_dynamic':
+                $url = $this->getArg('url');
+                if($url)
+                {
+                    $feedData['BASE_URL'] = $url;
+                }
+                $model = ContentDataModel::factory($modelClass, $feedData);
+                return $model->getData();
             case 'rss':
                 if (!isset($feedData['PARSER_CLASS'])) {
                     $feedData['PARSER_CLASS'] = 'RSSDataParser';
