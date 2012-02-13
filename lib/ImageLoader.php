@@ -65,10 +65,9 @@ class ImageLoader extends FileLoader {
             }
 
             // if no extension found, do not use extension
-            if($extension) {
-                $file = md5($url) . '.'. $extension;
-            }else {
-                $file = md5($url);
+            $file = md5($url.json_encode($loaderInfo));
+            if ($extension) {
+                $file .= '.'.$extension;
             }
         }    
         return self::generateLazyURL($file, json_encode($loaderInfo), self::subDirectory());
