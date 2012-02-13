@@ -380,7 +380,7 @@ class KurogoWebBridge
             'ajaxArgs' => $ajaxArgs,
             'pagePath' => "/{$id}/{$page}",
             'pageArgs' => $pageArgs,
-            'timeout'  => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 30),
+            'timeout'  => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 60),
             'onError'  => $onError,
         );
     }
