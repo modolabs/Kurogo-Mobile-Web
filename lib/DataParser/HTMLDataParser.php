@@ -38,6 +38,8 @@ class HTMLDataParser extends DataParser
     private $startDelim;
     private $endDelim;
 
+    private $buildLinkCallback;
+
     public function init($args)
     {
         // if tidy is available, and not explicitly disabled, use tidy
@@ -66,6 +68,10 @@ class HTMLDataParser extends DataParser
         {
            $this->endDelim = $args['END_DELIM'];
         }
+        if(isset($args['buildModuleLink']))
+        {
+            $this->buildLinkCallback = $args['buildModuleLink'];
+        }
     }
     public function parseData($data)
     {
@@ -89,7 +95,6 @@ class HTMLDataParser extends DataParser
         }
         
         $searchPattern = '/'.preg_quote($this->startDelim, '/').'(.*?)'.preg_quote($this->endDelim, '/').'/s';
-        
         $matches = array();
         preg_match_all($searchPattern, $html, $matches);
         $content = implode('', $matches[1]);
@@ -153,7 +158,7 @@ class HTMLDataParser extends DataParser
         $readability->init();
         $this->setTitle($readability->getTitle()->textContent);
         $content = $readability->getContent()->innerHTML;
-        
+       
         return $content;
     }
 
@@ -211,7 +216,16 @@ class HTMLDataParser extends DataParser
         $hrefNodes = $doc->getElementsByTagName('a');
         for($i = 0;$i < $hrefNodes->length;$i ++) {
             $href = $hrefNodes->item($i)->getAttribute("href");
+            if(strncasecmp($href, 'tel:', strlen('tel:')) === 0)
+            {
+                continue;
+            }
             $urlArray = parse_url($href);
+            if($urlArray['scheme'] === "kgobridge")
+            {
+                $resolvedLink = $this->resolveKgobridge($href);
+                $hrefNodes->item($i)->setAttribute("href", $resolvedLink);
+            }
             if(!isset($urlArray['host'])) {
                 if(strpos($href, '/') !== 0) {
                     $href = "/" . $href;
@@ -229,6 +243,39 @@ class HTMLDataParser extends DataParser
                 "!</body></html>$!si"
             ), "", $html);
         return $body;
+    }
+    
+    protected function resolveKgobridge($uri)
+    {
+        $uriArray = parse_url($uri);
+        if($uriArray['scheme'] !== "kgobridge" || $uriArray['host'] !== "link" || !isset($this->buildLinkCallback))
+        {
+            // Don't handle anything that's not kgobridge,
+            // and we can't yet handle anything that's not a link.
+            // Also, if we don't have a callback, it's useless.
+            return $uri;
+        }
+
+        $pathArray = explode('/', $uriArray['path']);
+        $module = array_shift($pathArray);
+        if(empty($module))
+        {
+            // Handle leading slash
+            $module = array_shift($pathArray);
+        }
+        $path = implode('/', $pathArray);
+
+        $query = array();
+        if(!empty($pathArray['query']))
+        {
+            parse_str($pathArray['query'],$query);
+        }
+        
+        // For the most part, this should be a direct wrapper around buildBreadcrumbURLForModule()
+        // It has the same signature as that function, but it must be callable from this scope,
+        // which means it has to be public.
+        $rewrittenUri = call_user_func($this->buildLinkCallback, $module, $path, $query, true);
+        return $rewrittenUri;
     }
 
     protected function writeCache()

@@ -45,6 +45,7 @@ class ContentWebModule extends WebModule {
                 {
                     $feedData['BASE_URL'] = $url;
                 }
+                $feedData['buildModuleLink'] = array($this, 'buildLinkFromKgobridge');
                 $model = ContentDataModel::factory($modelClass, $feedData);
                 return $model->getData();
             case 'rss':
@@ -63,6 +64,11 @@ class ContentWebModule extends WebModule {
                 throw new KurogoConfigurationException("Invalid content type $content_type");
         }
         
+    }
+
+    public function buildLinkFromKgobridge($module, $path, $query, $breadcrumb=true)
+    {
+        return $this->buildBreadcrumbURLForModule($module, $path, $query, $breadcrumb);
     }
     
     public static function getContentTypes() {
