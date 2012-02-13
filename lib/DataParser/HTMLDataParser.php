@@ -35,6 +35,9 @@ class HTMLDataParser extends DataParser
     private $content;
     private $charset;
 
+    private $startDelim;
+    private $endDelim;
+
     public function init($args)
     {
         // if tidy is available, and not explicitly disabled, use tidy
