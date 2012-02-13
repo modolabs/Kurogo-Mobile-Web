@@ -1072,6 +1072,10 @@ a.noaction {
 	padding-right: 7px;
 }
 
+a.placemark {
+    background-image: url(/common/images/action-placemark.png);
+}
+
 
 
 /* Iconically coded links - e.g., Shuttle Schedule, 3DOWN, etc. */

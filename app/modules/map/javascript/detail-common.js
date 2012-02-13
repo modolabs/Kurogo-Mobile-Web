@@ -254,7 +254,10 @@ function doUpdateMapDimensions() {
 
         // 16 is top + bottom padding of mapimage
         // TODO don't hard code these numbers
-        mapHeight = (getWindowHeight() - topoffset - bottomoffset - 16);
+        var testHeight = (getWindowHeight() - topoffset - bottomoffset - 16);
+        if (testHeight > 80) { // if they can't get a useful map without scrolling, then let them scroll
+            mapHeight = testHeight;
+        }
         mapWidth = getWindowWidth() - 30;
 
         mapImage.style.width = (mapWidth + 2) + "px"; // border

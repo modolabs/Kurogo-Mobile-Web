@@ -1,38 +1,23 @@
 #toolbar {
-    /* android doesn't understand linear-gradient */
-    background-image: -webkit-gradient(linear, left bottom, left top, from(#ABABAB), to(#DBDBDB));
-    background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-    background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-    background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-    background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-    background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+	background-color: @@@body_background_color@@@;
 }
 
-#search-options input {
-    /* android doesn't understand linear-gradient */
-    
-   background-image: -webkit-gradient(linear, left bottom, left top, from(#ABABAB), to(#DBDBDB));
-   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+#search-form input[type="text"] {
+    border-color: @@@search_border_color@@@;
 }
 
-.buttonContainer div {
-   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+#search-options input[type="button"] {
+	color: @@@nonfocal_text_color@@@;
 }
 
-.buttonContainer div.pressed {
-   background-image: linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -o-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -moz-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -webkit-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
-   background-image: -ms-linear-gradient(bottom, rgb(219,219,219) 21%, rgb(171,171,171) 69%);
+.toolbar {
+	color: @@@nonfocal_text_color@@@;
 }
 
+.toolbar a, .toolbar a:visited, .toolbar input[type="button"] {
+	color: @@@nonfocal_text_color@@@;
+}
 
+.actionbutton a, .actionbutton a:visited {
+	color: @@@nonfocal_text_color@@@;
+}

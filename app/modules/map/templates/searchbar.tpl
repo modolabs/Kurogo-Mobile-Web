@@ -27,19 +27,17 @@
                 </div>
                 <div id="toolbar-buttons">
                     <div class="toolbar-button">
-                    {if $hasBookmarks}
-                            <a href="{$bookmarkLink[0]['url']}"><img src="/modules/map/images/map-button-favorites.png"/></a>
-                    {else}
-                            <a><img src="/modules/map/images/map-button-favorites-off.png"/></a>
-                        {/if}
+                        <a href="{$bookmarkLink[0]['url']}">
+                            <img src="/modules/map/images/map-button-favorites.png" width="24" height="24"/>
+                        </a>
                     </div>
                     {if $mapURL}
                         <div class="toolbar-button">
-                            <a id="mapLink" href="{$mapURL}"><img src="/modules/map/images/map-button-map.png"/></a>
+                            <a id="mapLink" href="{$mapURL}"><img src="/modules/map/images/map-button-placemark.png" width="24" height="24" /></a>
                         </div>
                     {else}
                         <div class="toolbar-button">
-                            <a id="browseLink" href="{$browseURL}"><img src="/modules/map/images/map-button-browse.png"/></a>
+                            <a id="browseLink" href="{$browseURL}"><img src="/modules/map/images/map-button-browse.png" width="24" height="24" /></a>
                         </div>
                     {/if}
                 </div>
@@ -51,18 +49,19 @@
                         <div id="searchButton">
                             <input type="button"
                                    onclick="{if !$mapURL}submitMapSearch(this.form){else}this.form.submit(){/if}"
-                                   value={"SEARCHBAR_BUTTON_SEARCH"|getLocalizedString} />
+                                   value={"SEARCHBAR_BUTTON_SEARCH"|getLocalizedString} 
+                                   ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" />
                         </div>
                         <div id="clearButton">
-                            <input type="button" onclick="clearSearch(this.form)" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />
+                            <input type="button" onmousedown="clearSearch(event, this.form)" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" value={"SEARCHBAR_BUTTON_CLEAR"|getLocalizedString} />
                         </div>
                         <div id="cancelButton">
-                            <input type="button" onclick="hideSearchFormButtons()" value={"SEARCHBAR_BUTTON_CANCEL"|getLocalizedString} />
+                            <input type="button" onclick="hideSearchFormButtons()"  ontouchstart="this.className='pressedaction'" ontouchend="this.className=''" value={"SEARCHBAR_BUTTON_CANCEL"|getLocalizedString} />
                         </div>
                     </div>
                 </div>
             </fieldset>
         </form>
-    </div>
-</div>
+    </div> <!-- id="searchbar" -->
+</div> <!-- id="toolbar" -->
 

@@ -19,6 +19,7 @@
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$calendarPages}
 
 {capture name="selectSection" assign="selectSection"}
+{if $totalFeeds>1}
   <select id="calendars" name="calendar">
   {foreach $feeds as $type=>$typeFeeds}
   {if $feeds|@count>1}
@@ -32,6 +33,9 @@
   {/if}
   {/foreach}
   </select>
+{elseif strlen($selectedFeed)}
+<input type="hidden" name="calendar" value="{$selectedFeed}" />
+{/if}
   <select id="timeframe" name="timeframe">
     {foreach $searchOptions as $key => $option}
       <option value="{$key}"{if isset($option['selected']) && $option['selected']} selected="selected"{/if} >

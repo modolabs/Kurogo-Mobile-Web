@@ -732,6 +732,10 @@ a.pdf {
 	padding-right: 34px;
 }
 
+a.placemark {
+    background-image: url(/common/images/action-placemark.gif);
+}
+
 a.noaction {
 	background-image: none;
 	padding-right: 7px;

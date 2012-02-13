@@ -98,27 +98,39 @@ class CalendarDataModel extends ItemListDataModel
         return $events;
     }
     
-    public function getEventCategories()
+    public function getEventCategories($limit = 0)
     {
         $this->setLimit(null);
         $items = $this->items();
         $categories = array();
-        foreach($items as $item) {
-            $eventCategories = $item->getEventCategories();
-            if($eventCategories) {
+        foreach ($items as $item) {
+            if ($eventCategories = $item->getEventCategories()) {
                 $categories = array_merge($categories, $eventCategories);
             }
         }
-        $categories = array_unique($categories);
+
+        if ($limit) {        
+            //get the count for each category
+            $categoriesCount = array_count_values($categories);
+            arsort($categoriesCount); //sort by count
+            
+            //limit the number of categories
+            $categoriesCount = array_slice($categoriesCount, 0, $limit);
+            $categories = array_keys($categoriesCount);
+        } else {
+            $categories = array_unique($categories);
+        }
+
+        //sort alphabetically    
         natsort($categories);
-        $cates = array();
+        $cats = array();
         foreach($categories as $category) {
             $catObj = new ICalCategory();
             $catObj->setID($category);
             $catObj->setName($category);
-            $cates[] = $catObj;
+            $cats[] = $catObj;
         }
-        return $cates;
+        return $cats;
     }
     
     public function setDuration($duration, $duration_units)
@@ -160,7 +172,7 @@ class CalendarDataModel extends ItemListDataModel
         }
     }
 
-    public function isFilterCateByDay() {
+    public function filterCategoryByDay() {
         return $this->filterCategoryByDay;
     }
 

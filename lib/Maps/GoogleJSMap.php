@@ -198,8 +198,12 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     // url of script to include in <script src="...
     public function getIncludeScripts() {
-        return array('http://maps.google.com/maps/api/js?sensor='
-             . ($this->locatesUser ? 'true' : 'false'));
+        $sensor = $this->locatesUser ? 'true' : 'false';
+        $result = array("http://maps.google.com/maps/api/js?sensor={$sensor}");
+        if ($this->webModule) {
+            $result[] = $this->webModule->getInternalJavascriptURL('/common/javascript/lib/infobox-1.1.11.js');
+        }
+        return $result;
     }
 
     public function getFooterScript() {

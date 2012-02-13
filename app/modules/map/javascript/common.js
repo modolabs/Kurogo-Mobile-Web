@@ -21,7 +21,8 @@ function sortGroupsByDistance() {
                         var id = response[i]["id"];
                         if (id in browseGroups) {
                             if ("distance" in response[i]) {
-                                browseGroups[id].innerHTML = browseGroups[id].innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
+                                var a = browseGroups[id].firstChild;
+                                a.innerHTML = a.innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
                             }
                             sortedGroups.push(browseGroups[id]);
                         }
@@ -47,6 +48,7 @@ function sortGroupsByDistance() {
 
 function submitMapSearch(form) {
     if (form.filter.value.length > 0) {
+        form.filter.blur();
         mapLoader.clearMarkers();
         hideSearchFormButtons();
         params = {'q': form.filter.value};
@@ -74,6 +76,14 @@ function submitMapSearch(form) {
                         maxLat = Math.max(maxLat, markerData.lat);
                         maxLon = Math.max(maxLon, markerData.lon);
                     }
+                    if (maxLon - minLon < MIN_LON_SPAN) {
+                        maxLon += MIN_LON_SPAN / 2;
+                        minLon -= MIN_LON_SPAN / 2;
+                    }
+                    if (maxLat - minLat < MIN_LAT_SPAN) {
+                        maxLat += MIN_LAT_SPAN / 2;
+                        minLat -= MIN_LAT_SPAN / 2;
+                    }
                     mapLoader.setMapBounds(minLat, minLon, maxLat, maxLon);
                 } else {
                     alert(NO_RESULTS_FOUND);
@@ -99,7 +109,8 @@ function submitMapSearch(form) {
     }
 }
 
-function clearSearch(form) {
+function clearSearch(e, form) {
+    e.preventDefault();
     form.filter.value = '';
 }
 
@@ -121,6 +132,7 @@ function hideSearchFormButtons() {
     } else {
         removeClass(toolbar, "single-campus");
     }
+    scrollTo(0, 1);
 }
 
 ///// window size
@@ -180,6 +192,7 @@ function findPosY(obj) {
     return intCurlTop;
 }
 
+/*
 if (typeof KGOMapLoader != 'undefined') {
     KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url) {
         var content = '';
@@ -234,3 +247,4 @@ if (typeof KGOMapLoader != 'undefined') {
         return content;
     }
 }
+*/

@@ -4,15 +4,18 @@
     padding: 0 12px;
 }
 
-.results a.placemark {
-    background-image: url(/modules/map/images/map-button-map.png);
+/* used in map view - custom controls overlaying google maps, detail - controls below map image */
+
+#mapcontrols {
+	z-index: 1000000000;	/* Obnoxiously high to make sure the map controls float above pins, callouts, overlays, etc. */
+	opacity: 0.88;
 }
 
-/* used in map view - custom controls overlaying google maps, detail - controls below map image */
 #mapcontrols a {
     width: 40px;
     height: 34px;
     display: block;
+    margin-top: 4px;
     background-image: url(/modules/map/images/buttons.png);
 }
 
@@ -40,21 +43,27 @@
 /*** expanding search bar ***/
 
 #toolbar {
-    height: 44px;
+    height: 48px;
     margin: 0;
     padding: 0;
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
 
 /* empty div behind the #toolbar to align the top of the #mapimage */
 #spacer {
-    height: 44px;
+    height: 48px;
 }
 
 #searchbar {
     margin: 0;
-    padding: 0;
+    padding: 6px 0 0 0;
     width: 100%;
     float: left;
+}
+
+#searchbar form {
+	padding-top: 2px;
 }
 
 #searchbar fieldset {
@@ -62,22 +71,22 @@
 }
 
 #toolbar.single-campus {
-    height: 80px;
+    height: 86px;
 }
 
 #toolbar.multi-campus {
-    height: 112px;
+    height: 132px;
 }
 
 #toolbar .searchwrapper {
     left: 6px;
-    right: 100px;
+    right: 88px;
     position: absolute;
 }
 
 #toolbar.expanded .searchwrapper {
     left: 6px;
-    right: 20px;
+    right: 6px;
 }
 
 #search-form {
@@ -86,11 +95,14 @@
 }
 
 #search-form input[type="text"] {
+	font-size: 88.3%;
+	font-family: sans-serif;
     border-radius: 8px;
-    width: 100%;
+    border: 1px solid #888;
+    width: 96%;
     line-height: 1em;
     height: 18px;
-    padding: 5px 4px 6px 7px;
+    padding: 4px 2% 6px 2%;
 }
 
 /* toolbar: browse/bookmark buttons to the right of the search field */
@@ -99,32 +111,31 @@
 }
 
 .toolbar-button {
-    width: 36px;
-    height: 32px;
     float: right;
     margin: 0 4px 0 0;
-    background-image: url(/modules/map/images/button-background.png);
+	text-align: center;
 }
 
 .toolbar-button a {
-    margin: 2px;
+	display: block;
+    width: 35px;
+    height: 28px;
+	border: 1px solid rgba(0,0,0,0.15);
+	border-radius: 6px;
 }
 
 .toolbar-button a img {
-    margin: 4px;
+	padding: 2px 5px;
+	border-radius: 6px;
 }
 
 /* campus-select: the drop-down menu in multi-campus case */
-#campus-select {
-    height: 33px;
-}
-
 #campus-select td {
-    padding: 4px 0 5px;
+    padding: 0;
 }
 
 #campus-select .formlabel {
-    width: 82px;
+    width: 84px;
     vertical-align: middle;
 }
 
@@ -132,31 +143,71 @@
 #search-options {
     display: none;
     left: 0;
-    padding: 0 5px 8px;
+    padding: 6px;
     position: absolute;
     right: 0;
-    top: 33px;
+    top: 32px;
 }
 
 #toolbar.expanded #search-options {
     display: block;
 }
 
-#search-options input {
-   margin: 7px 5px 0 0;
+/*
+#search-options input[type="button"] {
+   -webkit-appearance: none;
    padding: 0;
    height: 30px;
+   border: 1px solid #666;
    border-radius: 5px;
-   width: 100%;
+   width: 90%;
+   font: 16px/1em sans-serif;
+   background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.2)), to(rgba(0,0,0,0.1)));
+   -webkit-box-shadow: 0px 0.5px 1px #000;
+   box-shadow: 0px 0px 1px #000;
+}
+*/
+#search-options input[type="button"] {
+   -webkit-appearance: none;
+   padding: 0;
+   height: 30px;
+   width: 90%;
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,.25)), to(rgba(128,128,128,0.2)));
+	border: 1px solid #eee;
+	border: 1px solid rgba(0,0,0,0.25);
+	border-bottom-color: rgba(0,0,0,0.4);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-o-border-radius: 6px;
+	border-radius: 6px;
+	color: #444;
+	font-size: 75%;
+	line-height: 20px;
+	text-transform: uppercase;
+	text-decoration: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
+#search-options input[type="button"].pressedaction {
+	background: rgba(0,0,0,0.33);
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.18)), to(rgba(0,0,0,0.12)));
+	border-color: rgba(0,0,0,0.65);
+	border-top-color: rgba(0,0,0,0.75);
+	border-bottom-color: rgba(0,0,0,0.5);
+	color: #000;
+	-webkit-box-shadow: inset 0 1px 3px #000;
+	box-shadow: inset 0 1px 3px #000;
+}
 
 #searchbar-buttons {
     clear: both;
+    height: 32px;
+    margin: 0 -4px 0 -4px;
 }
 
 #searchbar-buttons div {
-    width: 33.33%;
+	text-align: center;
+    width: 33.3%;
     float: left;
 }
 
@@ -182,30 +233,70 @@ body.fullscreen #tabscontainer {
     padding: 6px 12px;
 }
 
-#calloutWrapper {
-    width: 210px;
-}
-
 #bookmarkWrapper {
     margin: 6px 0;
 }
 
+.infoBox {
+	border-radius: 6px;
+	padding: 0;
+	-webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.7);
+	box-shadow: 0 1px 5px rgba(0,0,0,0.7);
+	height: auto!important;
+}
+
+.infoBox img {
+	display: none;
+}
+
 .calloutMain {
-    max-width: 110px;
-    margin: 6px 8px;
+	display: table;
+	height: 100%;
+	width: 100%;
+}
+
+.calloutMain a {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	height: 100%;
+	text-decoration: none;
+	font-size: 15px;
+	line-height: 18px;	
+	text-align: left;
+	padding: 8px 20px 8px 8px;
+	background: url(/common/images/action-arrow.png) no-repeat right;
+	overflow: hidden;
+}
+
+.calloutMain a, .calloutMain a:visited {
+	color: #111;
 }
 
 .calloutDisclosure {
     margin: 6px 0;
 }
 
-/* ESRI maps have wider callouts */
-.simpleInfoWindow #calloutWrapper {
-    width: 230px;
+#mapimage_infowindow {
+    height: auto !important;
+    width: 180px !important;
+	border: none;
+	padding: 0;
+	-webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+	box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+	margin-left: -100px;
+	line-height: 1.2em;
 }
 
-.simpleInfoWindow .calloutMain {
-    max-width: 130px;
+#mapimage .content {
+    height: auto !important;
+	overflow: hidden;
+}
+
+#mapimage .simpleInfoWindow .calloutMain a {
+	font-size: 14px; 
+	line-height: 16px;
+	padding-top: 6px;
 }
 
 #mapimage .simpleInfoWindow .title {
@@ -213,30 +304,67 @@ body.fullscreen #tabscontainer {
     padding: 0;
 }
 
-#mapimage .simpleInfoWindow {
-    max-height: 80px;
-}
-
 #mapimage .simpleInfoWindow .close {
     display: none;
 }
 
-/* buttons */
-.nonfocal .buttonContainer {
-    float: right;
-    margin: -5px 0 0;
-}
 
-.buttonContainer {
-   height: 39px;
-}
+/* Action buttons */
 
-.buttonContainer a {
-    text-decoration: none;
+.actionbuttons {
+	margin: 10px -2px 10px -2px;
+}	
+.actionbutton {
+	margin: 0 2px;
+	float: left;
 }
-
-.buttonContainer div {
-   border-radius: 8px;
-   padding: 2px;
-   border: 1px solid #999;
+.actionbutton a {
+	display: block;
+	padding: 5px 6px 5px 6px;
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,.15)), to(rgba(128,128,128,0.15)));
+	border: 1px solid #eee;
+	border: 1px solid rgba(0,0,0,0.12);
+	border-top-color: #f3f3f3;
+	border-bottom-color: #e9e9e9;
+	border-top-color: rgba(0,0,0,0.1);
+	border-bottom-color: rgba(0,0,0,0.2);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-o-border-radius: 6px;
+	border-radius: 6px;
+	color: #444;
+	font-size: 70%;
+	line-height: 20px;
+	height: 20px;
+	vertical-align: middle;
+	text-transform: uppercase;
+	text-decoration: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.actionbutton a img {
+	float: left;
+	margin-left: -4px;
+}
+.actionbutton a:active, .actionbutton a.pressedaction {
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.18)), to(rgba(0,0,0,0.12)));
+	border-color: rgba(0,0,0,0.65);
+	border-top-color: rgba(0,0,0,0.75);
+	border-bottom-color: rgba(0,0,0,0.5);
+	color: #000;
+	-webkit-box-shadow: inset 0 1px 3px #000;
+	box-shadow: inset 0 1px 3px #000;
+}
+.bookmarkbutton {
+	background: url(/modules/map/images/map-button-favorites.png) 4px 3px no-repeat;
+	background-size: 24px 24px;
+}
+.on {
+	background-image: url(/modules/map/images/map-button-favorites-on.png);
+}
+.bookmarkbutton a {
+	padding-left: 28px;
+}
+.viewall {
+	float: right;
+	margin: 0 0 0 15px;
 }

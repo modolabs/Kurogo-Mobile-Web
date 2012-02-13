@@ -24,16 +24,24 @@ class HomeWebModule extends WebModule {
     $modulePanes = array();
     
     foreach ($tabletConfig as $blockName => $moduleID) {
-      $module = self::factory($moduleID, 'pane', $this->args);
+      try {
+          $module = self::factory($moduleID, 'pane', $this->args);
       
-      $paneContent = $module->fetchPage(); // sets pageTitle var
+          $paneContent = $module->fetchPage(); // sets pageTitle var
       
-      $this->importCSSAndJavascript($module->exportCSSAndJavascript());
+          $this->importCSSAndJavascript($module->exportCSSAndJavascript());
+
+          $title = $module->getTemplateVars('pageTitle');
+      } catch (Exception $except) {
+          Kurogo::log(LOG_WARNING, $except->getMessage(), "home", $except->getTrace());
+          $paneContent =  '<p class="nonfocal">' . $this->getLocalizedString('ERROR_MODULE_PANE') . "</p>";
+          $title = $module->getConfigModule();
+      }
       
       $modulePanes[$blockName] = array(
         'id'      => $moduleID,
         'url'     => self::buildURLForModule($moduleID, 'index'),
-        'title'   => $module->getTemplateVars('pageTitle'),
+        'title'   => $title,
         'content' => $paneContent,
       );  
     }
@@ -80,7 +88,7 @@ class HomeWebModule extends WebModule {
           $this->addOnOrientationChange('moduleHandleWindowResize();');
           
         } else {
-          $this->assign('modules', $this->getModuleNavList());
+          $this->assign('modules', $this->getModuleNavlist());
           $this->assign('hideImages', $this->getOptionalModuleVar('HIDE_IMAGES', false));
           
           if ($this->getOptionalModuleVar('BANNER_ALERT', false, 'notice')) {

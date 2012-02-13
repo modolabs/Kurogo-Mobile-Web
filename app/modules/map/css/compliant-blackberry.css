@@ -1,0 +1,26 @@
+#mapwrapper {
+  display: inline-block;
+	width: 414px;
+	height: 317px;
+	position: relative;
+	overflow: hidden;
+}
+
+.tabbody #staticmapimage {
+	width: 410px;
+	height: 260px;
+	border: 1px solid #999;
+	background-color: #fff;
+}
+
+#mapscrollers {
+  position: static;
+}
+
+.actionbutton a {
+	background: transparent;
+}
+
+.actionbutton a:active, .actionbutton a.pressedaction {
+	background: transparent;
+}

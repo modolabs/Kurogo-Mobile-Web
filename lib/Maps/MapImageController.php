@@ -73,6 +73,8 @@ abstract class MapImageController
             $this->setZoomLevel($params['DEFAULT_ZOOM_LEVEL']);
         }
 
+        $this->maxZoomLevel = isset($params['MAXIMUM_ZOOM_LEVEL']) ? $params['MAXIMUM_ZOOM_LEVEL'] : $this->zoomLevel;
+
         $this->bufferBox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
     }
 
@@ -89,6 +91,18 @@ abstract class MapImageController
     public function getZoomLevel()
     {
         return $this->zoomLevel;
+    }
+
+    public function getMaximumZoomLevel() {
+        return $this->maxZoomLevel;
+    }
+
+    public function getMinimumLatSpan() {
+        return 180 / pow(2, $this->maxZoomLevel);
+    }
+
+    public function getMinimumLonSpan() {
+        return 360 / pow(2, $this->maxZoomLevel);
     }
 
     public function getAvailableLayers()
@@ -153,11 +167,11 @@ abstract class MapImageController
         // just pick a few sample points to calculate buffer
         $points = $polyline->getPoints();
         $count = count($points);
-        if ($count < 4) {
+        if ($count < 20) {
             $sample = $points;
         } else {
             $sample = array();
-            $interval = $count / 4;
+            $interval = $count / 20;
             for ($i = 0; $i < $count; $i += $interval) {
                 $index = intval($i);
                 $sample[] = $points[$i];
@@ -193,11 +207,13 @@ abstract class MapImageController
                 'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
                 'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
                 ));
-
             if ($vRange > 0 && $hRange > 0) {
                 $vZoom = ceil(log(180 / $vRange, 2));
                 $hZoom = ceil(log(360 / $hRange, 2));
-                $this->setZoomLevel(min($vZoom, $hZoom));
+                $zoom = min($vZoom, $hZoom);
+                if ($zoom < $this->maxZoomLevel) {
+                    $this->setZoomLevel($zoom);
+                }
             }
         }
     }
@@ -342,7 +358,7 @@ class JavascriptTemplate
             foreach ($this->values as $values) {
                 $template = $this->template;
                 foreach ($values as $placeholder => $value) {
-                    if (!$value) {
+                    if (!strlen($value)) {
                         $value = ''; // nulls may show up as strings
                     }
                     $template = preg_replace('/'.$placeholder.'/', $value, $template);

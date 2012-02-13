@@ -37,6 +37,7 @@
             "section":{"labelKey":"ATHLETICS_ADMIN_SCHEDULE_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_SECTION_DESCRIPTION", "type":"label"},
             "BASE_URL":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_SCHEDULE_URL_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_URL_DESCRIPTION", "type":"text","omitBlankValue":true},
             "RETRIEVER_CLASS":{"labelKey":"ATHLETICS_ADMIN_SCHEDULE_RETRIEVER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_RETRIEVER_DESCRIPTION", "type":"select","optionsMethod":["AthleticEventsDataModel","getAthleticScheduleRetrievers"],"omitBlankValue":true},
+            "SPORT":{"key":"SPORT","labelKey":"ATHLETICS_ADMIN_SCHEDULE_SPORT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_SPORT_DESCRIPTION", "type":"text","showIf":["RETRIEVER_CLASS","CSTVDataRetriever"],"omitBlankValue":true},
             "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_SCHEDULE_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_SCHEDULE_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS","URLDataRetriever"],"default":"ICSDataParser"}
         },
         "sectionindex":"string",

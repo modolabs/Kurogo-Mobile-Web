@@ -1,4 +1,5 @@
 // Initialize the ellipsis event handlers
+var ytplayer;
 function setupVideosListing() {
     var videosEllipsizer = new ellipsizer();
     
@@ -8,4 +9,9 @@ function setupVideosListing() {
         if (!elem) { break; }
         videosEllipsizer.addElement(elem);
     }
+}
+
+function onYouTubePlayerAPIReady() {
+    ytplayer = new YT.Player('ytplayer', {
+    });
 }

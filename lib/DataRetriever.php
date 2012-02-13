@@ -163,6 +163,12 @@ abstract class DataRetriever {
         $this->options[$option] = $value;
         $this->parser()->setOption($option, $value);
     }
+    
+    public function setOptions($options) {
+        foreach ($options as $arg=>$value) {
+            $this->setOption($arg, $value);
+        }
+    }
 
     public function getOption($option) {
         return isset($this->options[$option]) ? $this->options[$option] : null;
@@ -185,9 +191,7 @@ abstract class DataRetriever {
         }
         
         if (isset($args['OPTIONS']) && is_array($args['OPTIONS'])) {
-            foreach ($args['OPTIONS'] as $arg=>$value) {
-                $this->setOption($arg, $value);
-            }
+            $this->setOptions($args['OPTIONS']);
         }
 
         if (isset($args['AUTHORITY'])) {
@@ -311,8 +315,8 @@ abstract class DataRetriever {
      */
     public function getData(&$response=null) {
 
-        $parser = $this->parser();
         $response = $this->getResponse();
+        $parser = $this->parser();
                 
         switch ($parser->getParseMode()) {
             case DataParser::PARSE_MODE_STRING:

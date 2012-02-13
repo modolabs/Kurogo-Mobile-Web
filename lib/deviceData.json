@@ -289,6 +289,30 @@
             ]
         },
         {
+            "groupName": "blackberry-bold-99xx",
+            "description": "BlackBerry Bold 99XX",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "webos",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "webos",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BlackBerry\\s*99\\d\\d",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
             "groupName": "BlackBerry Torch",
             "description": "BlackBerry Torch",
             "classification": {
