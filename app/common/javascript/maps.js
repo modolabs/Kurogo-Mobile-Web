@@ -356,6 +356,12 @@ function KGOEsriMapLoader(attribs) {
 
         map.addLayer(basemap);
 
+        if ("layers" in attribs) {
+            for (var i = 0; i < attribs["layers"].length; i++) {
+                map.addLayer(new esri.layers.ArcGISDynamicMapServiceLayer(attribs["layers"][i], 1.0));
+            }
+        }
+
         // add map controls
         var controlDiv = document.createElement('div');
         controlDiv.id = "mapcontrols"
