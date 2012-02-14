@@ -20,6 +20,7 @@ class URLDataRetriever extends DataRetriever {
     protected $requestHeaders=array();
     protected $requestData;
     protected $streamContext = null;
+    protected $saveToFile = false;
     
     public function __wakeup() {
         $this->initStreamContext($this->initArgs);
@@ -246,6 +247,14 @@ class URLDataRetriever extends DataRetriever {
         }
         return $key;
     }
+
+    protected function setSaveToFile($saveToFile) {
+        $this->saveToFile = $saveToFile;
+    }
+    
+    protected function saveToFile() {
+        return $this->saveToFile;
+    }
     
     /**
      * Retrieves the data using the config url. The default implementation uses the file_get_content()
@@ -267,7 +276,6 @@ class URLDataRetriever extends DataRetriever {
         
         Kurogo::log(LOG_INFO, "Retrieving $this->requestURL", 'url_retriever');
 
-        $data = file_get_contents($this->requestURL, false, $this->streamContext);
         $url_parts = parse_url($this->requestURL);
 
         if (!isset($url_parts['scheme'])) {
@@ -275,6 +283,14 @@ class URLDataRetriever extends DataRetriever {
         }
         
         $response = $this->initResponse();
+
+        if ($file = $this->saveToFile()) {
+            $data = $this->cache->getFullPath($file);
+            $result = file_put_contents($data, file_get_contents($this->requestURL, false, $this->streamContext));
+        } else {
+            $data = file_get_contents($this->requestURL, false, $this->streamContext);
+        }
+        
         if ($response instanceOf HTTPDataResponse) {
             $http_response_header = isset($http_response_header) ? $http_response_header : array();
             $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders, $this->requestData);
