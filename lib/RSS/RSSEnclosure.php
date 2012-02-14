@@ -20,26 +20,15 @@ class RSSEnclosure extends XMLElement
         );
     }
     
-    public static function factory($attribs) {
-        $type = isset($attribs['TYPE']) ? $attribs['TYPE'] : null;
-        $class = 'RSSEnclosure';
-        if (self::isImage($type)
-            || ($attribs['TAGNAME'] == 'MEDIA:CONTENT' && isset($attribs['MEDIUM']) && $attribs['MEDIUM'] == 'image')
-            || $attribs['TAGNAME'] == 'MEDIA:THUMBNAIL')
-        {
-            $class = 'RSSImageEnclosure';
-        }
-        
-        $element = new $class($attribs);
-        return $element;
-    }
-    
     public function __construct($attribs)
     {
         $this->setAttribs($attribs);
         $this->length = $this->getAttrib('LENGTH');
         $this->type = $this->getAttrib('TYPE');
         $this->url = $this->getAttrib('URL');
+    }
+    
+    public function init($args) {
     }
     
     protected static function isImage($type)
@@ -67,35 +56,5 @@ class RSSEnclosure extends XMLElement
     {
         return $this->length;
     }
-}
-
-class RSSImageEnclosure extends RSSEnclosure implements KurogoImage
-{
-    public function __construct($attribs) {
-        parent::__construct($attribs);
-        $url = $this->getAttrib('URL');
-
-        $options = array();
-        if(isset($attribs['THUMB_MAX_WIDTH'])) {
-            $options['max_width'] = $attribs['THUMB_MAX_WIDTH'];
-        }
-        if(isset($attribs['THUMB_MAX_HEIGHT'])) {
-            $options['max_height'] = $attribs['THUMB_MAX_HEIGHT'];
-        }
-        if(isset($attribs['THUMB_CROP'])) {
-            $options['crop'] = $attribs['THUMB_CROP'];
-        }
-        if(isset($attribs['THUMB_BACKGROUND_RGB'])) {
-            $options['rgb'] = $attribs['THUMB_BACKGROUND_RGB'];
-        }
-        $this->url = ImageLoader::cacheImage($url, $options);
-    }
-    
-    public function getWidth() {
-    }
-    
-    public function getHeight() {
-    }
-    
 }
 
