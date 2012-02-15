@@ -17,13 +17,10 @@ class TestWebModule extends NewsWebModule {
                 break;
                 
             case 'story':
-                if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
-                    $this->assign('shareTitle', $this->getLocalizedString('SHARE_THIS_STORY'));
-                    $this->assign('shareEmailURL', 'dummy');
-                    $this->assign('shareRemark',   'dummy');
-                    $this->assign('storyURL',      'dummy');
-                }
-
+                $this->assign('shareTitle', $this->getLocalizedString('SHARE_THIS_STORY'));
+                $this->assign('shareEmailURL', 'dummy');
+                $this->assign('shareRemark',   'dummy');
+                $this->assign('storyURL',      'dummy');
         }
     }
     
