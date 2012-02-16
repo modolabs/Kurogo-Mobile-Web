@@ -6,6 +6,7 @@ abstract class JavascriptMapImageController extends MapImageController
     protected $webModule; // optional, used to generate URLs via linkForItem
 
     abstract public function getIncludeScripts();
+    abstract public function getInternalScripts();
 
     public function setMapElement($mapElement) {
         $this->mapElement = $mapElement;

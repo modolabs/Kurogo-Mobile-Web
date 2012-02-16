@@ -20,8 +20,10 @@ class ArcGISStaticMap extends StaticMapImageController {
         $this->transparent = ($transparent == true);
     }
 
-    public function __construct($baseURL, $parser=null) {
-        $this->baseURL = $baseURL;
+    public function init($args) {
+        parent::init($args);
+
+        $this->baseURL = $args['BASE_URL'];
 
         // TODO find a better way to reuse JSON parsing code for ArcGIS-related data
         $url = $this->baseURL.'?'.http_build_query(array('f' => 'json'));

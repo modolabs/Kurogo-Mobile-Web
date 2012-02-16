@@ -992,8 +992,6 @@ class MapWebModule extends WebModule {
 
     protected function initializeDynamicMap()
     {
-        $this->addExternalJavascript($this->getInternalJavascriptURL('/common/javascript/maps.js'));
-
         // set up base map
         $baseMap = $this->getImageController();
         $baseMap->setWebModule($this);
@@ -1008,6 +1006,9 @@ class MapWebModule extends WebModule {
         $baseMap->prepareForOutput();
         foreach ($baseMap->getIncludeScripts() as $includeScript) {
             $this->addExternalJavascript($includeScript);
+        }
+        foreach ($baseMap->getInternalScripts() as $includeScript) {
+            $this->addInternalJavascript($includeScript);
         }
 
         $latRange = $baseMap->getMinimumLatSpan();
