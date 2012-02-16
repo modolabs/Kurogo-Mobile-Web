@@ -35,6 +35,60 @@ class ContentDataModel extends ItemListDataModel
         return $content;
     }
     
+    protected function getAllTagLists(DOMNodeList $nodes) {
+        $tagLists = array();
+
+        foreach ($nodes as $node) {
+            $nodeName = $node->nodeName;
+            if (substr($nodeName, 0, 1) != '#') {
+                $tagLists[] = $nodeName;
+            }
+            
+            if ($node->childNodes) {
+                $tagLists = array_merge($tagLists, $this->getAllTagLists($node->childNodes));
+            }
+        }
+
+        return $tagLists;
+    }
+    
+    public function getContentByClass($class) {
+        $content = '';
+        if ( ($dom = $this->getData()) && ($dom instanceOf DOMDocument)) {
+            
+            $root = $dom->documentElement; //root
+            $tagLists = array();
+            
+            //parsed all elements tag
+            if ($root->childNodes) {
+                $tagLists = $this->getAllTagLists($root->childNodes);
+            }
+            
+            //find match the class element
+            if ($tagLists) {
+                $tagLists = array_unique($tagLists);
+                
+                //cycle through all elements
+                foreach ($tagLists as $tag) {
+                    $elements = $dom->getElementsByTagName($tag);
+                    for ($i=0; $i < $elements->length; $i++) {
+                        $element = $elements->item($i);
+                        //find the elements that contain the class name specified in HTML_CLASS
+                        if ($element->hasAttribute('class')) {
+                            if (stripos($element->getAttribute('class'), $class)!==FALSE) {
+                                $content .= $dom->saveXML($element);
+                            }
+                        }
+                    }
+                }
+            }
+            //strip body tag
+            $content = preg_replace("#</?body.*?>#", "", $content);
+        }
+        
+        return $content;
+    }
+    
     protected function getData() {
         return $this->retriever->getData($response);
     }
