@@ -33,7 +33,6 @@ class AboutAPIModule extends APIModule {
     protected function initializeForCommand()  {
 
         // retrieve all Data for the About screen
-        $stringArray = ($this->getModuleArray('strings'));
         $textArray = array(
             'orgtext'       => $this->getSiteAboutHTML(),
             'abouttext'     => $this->getAboutHTML(),
