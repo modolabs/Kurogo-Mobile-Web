@@ -38,7 +38,7 @@ KGOMapLoader.prototype.showDefaultCallout = function() {
 KGOMapLoader.prototype.showCalloutForPlacemark = function(placemark) {}
 KGOMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {}
 KGOMapLoader.prototype.clearMarkers = function() {}
-KGOMapLoader.prototype.createMarker = function(id, lat, lon, url) {}
+KGOMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {}
 
 // base map
 KGOMapLoader.prototype.resizeMapOnContainerResize = function() {}
@@ -85,18 +85,29 @@ KGOMapLoader.prototype.generateInfoWindowContent = function(attribs) {
         content += '<div class="smallprint map_address">' + attribs["subtitle"] + '</div>';
     }
 
+    var div = document.createElement("div");
+    div.className = "calloutMain";
+    var a = null;
+
     if ("url" in attribs && attribs["url"] !== null) {
-        content = '<div class="calloutMain">' +
-                      '<a href="' + attribs["url"] + '">'  + content + '</a>' +
-                  '</div>';
-    } else if ("onclick" in attribs) {
-        var onclick = attribs["onclick"] + "('" + attribs["id"] + "')";
-        content = '<div class="calloutMain">' +
-                      '<a onclick="(' + onclick.replace('"', '\\"') + ')">'  + content + '</a>' +
-                  '</div>';
+        a = document.createElement("a");
+        a.href = attribs["url"];
     }
 
-    return content;
+    if ("onclick" in attribs) {
+        if (!a) {
+            a = document.createElement("a");
+        }
+        a.onclick = attribs["onclick"];
+    }
+
+    if (a) {
+        div.appendChild(a);
+        a.innerHTML = content;
+    } else {
+        div.innerHTML = content;
+    }
+    return div;
 }
 
 function KGOGoogleMapLoader(attribs) {
@@ -302,13 +313,11 @@ KGOGoogleMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {
     if (!"title" in attribs) {
         attribs["title"] = lat + ", " + lon;
     }
+    attribs["position"] = new google.maps.LatLng(lat, lon);
+    attribs["map"] = map;
     this.addPlacemark(
         id,
-        new google.maps.Marker({
-            position: new google.maps.LatLng(lat, lon),
-            map: map,
-            title: attribs["title"],
-            }),
+        new google.maps.Marker(attribs),
         attribs);
 }
 
