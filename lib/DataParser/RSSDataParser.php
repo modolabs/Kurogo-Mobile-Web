@@ -23,6 +23,7 @@ class RSSDataParser extends XMLDataParser
     protected $itemClass='RSSItem';
     protected $imageClass='RSSImage';
     protected $enclosureClass='RSSEnclosure';
+    protected $imageEnclosureClass='RSSImageEnclosure';
     protected $removeDuplicates = false;
     protected $htmlEscapedCDATA = false;
     protected $items=array();
@@ -62,20 +63,9 @@ class RSSDataParser extends XMLDataParser
         if (isset($args['ENCLOSURE_CLASS'])) {
             $this->setEnclosureClass($args['ENCLOSURE_CLASS']);
         }
-
-        // KGO-282
-        // set image resize/crop parameters
-        if (isset($args['THUMB_MAX_WIDTH'])) {
-            $this->setOption("thumb_max_width", intval($args['THUMB_MAX_WIDTH']));
-        }
-        if (isset($args['THUMB_MAX_HEIGHT'])) {
-            $this->setOption("thumb_max_height", intval($args['THUMB_MAX_HEIGHT']));
-        }
-        if (isset($args['THUMB_CROP'])) {
-            $this->setOption("thumb_crop", (boolean)$args['THUMB_CROP']);
-        }
-        if (isset($args['THUMB_BACKGROUND_RGB'])) {
-            $this->setOption("thumb_background_rgb", (string)($args['THUMB_BACKGROUND_RGB']));
+        
+        if (isset($args['IMAGE_ENCLOSURE_CLASS'])) {
+            $this->setImageEnclosureClass($args['IMAGE_ENCLOSURE_CLASS']);
         }
 
         if (isset($args['REMOVE_DUPLICATES'])) {
@@ -112,15 +102,12 @@ class RSSDataParser extends XMLDataParser
             case 'ENCLOSURE':
             case 'MEDIA:CONTENT':
             case 'MEDIA:THUMBNAIL':
-                $thumbOptions = array(
-                    'THUMB_MAX_WIDTH' => $this->getOption('thumb_max_width'),
-                    'THUMB_MAX_HEIGHT' => $this->getOption('thumb_max_height'),
-                    'THUMB_CROP' => $this->getOption('thumb_crop'),
-               		'THUMB_BACKGROUND_RGB'=>$this->getOption('thumb_background_rgb'),
-                    'TAGNAME' => $name,
-                );
-                $attribs = array_merge($attribs, $thumbOptions);
-                $element = call_user_func(array($this->enclosureClass, 'factory'), $attribs);
+                if ($this->enclosureIsImage($name, $attribs)) {
+                    $element = new $this->imageEnclosureClass($attribs);
+                } else {
+                    $element = new $this->enclosureClass($attribs);
+                }
+                $element->init($this->initArgs);
                 $this->elementStack[] = $element;
                 break;
             case 'IMAGE':
@@ -223,5 +210,19 @@ class RSSDataParser extends XMLDataParser
         }
         return $html_decode;
     }
-}
+    
+    protected function enclosureIsImage($name, $attribs)
+    {
+        $imageTypes = array(
+            'image/jpeg',
+            'image/jpg',
+            'image/gif',
+            'image/png',
+        );
+        $type   = isset($attribs['TYPE'])   ? $attribs['TYPE']   : '';
+        $medium = isset($attribs['MEDIUM']) ? $attribs['MEDIUM'] : '';
+        
+        return in_array($type, $imageTypes) || $name == 'MEDIA:THUMBNAIL' || ($name == 'MEDIA:CONTENT' && $medium == 'image');
+    }
 
+}

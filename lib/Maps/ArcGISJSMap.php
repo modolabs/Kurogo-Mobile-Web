@@ -300,6 +300,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
     function getIncludeScripts() {
         return array('http://serverapi.arcgisonline.com/jsapi/arcgis/?v='.$this->apiVersion.'compact');
     }
+
+    function getInternalScripts() {
+        return array('/common/javascript/maps.js');
+    }
     
     function getIncludeStyles() {
         return 'http://serverapi.arcgisonline.com/jsapi/arcgis/'

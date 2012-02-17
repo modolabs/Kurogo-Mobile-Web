@@ -68,9 +68,8 @@ function submitMapSearch(form) {
                     var maxLon = -10000000;
                     for (var i = 0; i < response.results.length; i++) {
                         var markerData = response.results[i];
-                        mapLoader.createMarker(
-                            markerData.title, markerData.subtitle,
-                            markerData.lat, markerData.lon, markerData.url);
+                        // TODO: mark markerData contain style info
+                        mapLoader.createMarker(i, markerData.lat, markerData.lon, markerData);
                         minLat = Math.min(minLat, markerData.lat);
                         minLon = Math.min(minLon, markerData.lon);
                         maxLat = Math.max(maxLat, markerData.lat);

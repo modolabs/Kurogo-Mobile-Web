@@ -11,7 +11,7 @@ function KGOMapLoader(attribs) {
     this.placemarks = [];
     this.showUserLocation = true;
     this.userLocationMarker = null;
-    this.markerOnTop = true; // track type of last placemark since it affects choice of function for positioning
+    this.currentPlacemark = null;
 
     // user location
     this.locateMeButton = null; // CSS applies to an <a id="locateMe"> element
@@ -23,20 +23,22 @@ KGOMapLoader.prototype.loadMap = function() {}
 
 // annotations
 KGOMapLoader.prototype.showDefaultCallout = function() {
-    if (this.placemarks.length == 1) {
-        if (this.markerOnTop) {
-            this.showCalloutForMarker(this.placemarks[0]);
-        } else {
-            this.showCalloutForOverlay(this.placemarks[0]);
-        }
+    var count = 0;
+    var thePlacemark = null;
+    for (var id in this.placemarks) {
+        count++;
+        thePlacemark = id;
+        break;
+    }
+
+    if (count == 1) {
+        this.showCalloutForPlacemark(thePlacemark);
     }
 }
-KGOMapLoader.prototype.showCalloutForMarker = function(marker) {}
-KGOMapLoader.prototype.showCalloutForOverlay = function(overlay) {}
-KGOMapLoader.prototype.addMarker = function(marker, attribs) {}
-KGOMapLoader.prototype.addOverlay = function(overlay, attribs) {}
+KGOMapLoader.prototype.showCalloutForPlacemark = function(placemark) {}
+KGOMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {}
 KGOMapLoader.prototype.clearMarkers = function() {}
-KGOMapLoader.prototype.createMarker = function(title, subtitle, lat, lon, url) {}
+KGOMapLoader.prototype.createMarker = function(id, lat, lon, url) {}
 
 // base map
 KGOMapLoader.prototype.resizeMapOnContainerResize = function() {}
@@ -74,20 +76,26 @@ KGOMapLoader.prototype.stopLocationUpdates = function() {
     }
 }
 
-KGOMapLoader.prototype.generateInfoWindowContent = function(title, subtitle, url) {
+KGOMapLoader.prototype.generateInfoWindowContent = function(attribs) {
     var content = '';
-    if (title !== null) {
-        content += '<div class="map_name">' + title + '</div>';
+    if ("title" in attribs && attribs["title"] !== null) {
+        content += '<div class="map_name">' + attribs["title"] + '</div>';
     }
-    if (subtitle !== null) {
-        content += '<div class="smallprint map_address">' + subtitle + '</div>';
+    if ("subtitle" in attribs && attribs["subtitle"] !== null) {
+        content += '<div class="smallprint map_address">' + attribs["subtitle"] + '</div>';
     }
-    // TODO don't reference an asset in a module directory here
-    if (typeof url != 'undefined' && url !== null) {
+
+    if ("url" in attribs && attribs["url"] !== null) {
         content = '<div class="calloutMain">' +
-                      '<a href="' + url + '">'  + content + '</a>' +
+                      '<a href="' + attribs["url"] + '">'  + content + '</a>' +
+                  '</div>';
+    } else if ("onclick" in attribs) {
+        var onclick = attribs["onclick"] + "('" + attribs["id"] + "')";
+        content = '<div class="calloutMain">' +
+                      '<a onclick="(' + onclick.replace('"', '\\"') + ')">'  + content + '</a>' +
                   '</div>';
     }
+
     return content;
 }
 
@@ -113,17 +121,18 @@ function KGOGoogleMapLoader(attribs) {
         setCurrentInfoWindow(null);
     }
 
-    this.showCalloutForMarker = function(marker) {
-        if (currentInfoWindow != marker.infoWindow) {
-            marker.infoWindow.open(map, marker);
-            setCurrentInfoWindow(marker.infoWindow);
+    this.showCalloutForPlacemark = function(placemark) {
+        var marker = placemark;
+        if (typeof placemark == 'number' || typeof placemark == 'string') {
+            marker = this.placemarks[placemark];
         }
-    }
-
-    this.showCalloutForOverlay = function(overlay) {
-        if (currentInfoWindow != overlay.infoWindow) {
-            overlay.infoWindow.open(map);
-            setCurrentInfoWindow(overlay.infoWindow);
+        if (currentInfoWindow != marker.infoWindow) {
+            if (typeof marker.getPosition == 'function') {
+                marker.infoWindow.open(map, marker);
+            } else {
+                marker.infoWindow.open(map);
+            }
+            setCurrentInfoWindow(marker.infoWindow);
         }
     }
     
@@ -232,7 +241,7 @@ KGOGoogleMapLoader.prototype.locationUpdateStopped = function() {
 
 // google maps specific function
 KGOGoogleMapLoader.prototype.generateInfoWindow = function(attribs, needsSetPosition) {
-    var content = this.generateInfoWindowContent(attribs['title'], attribs['subtitle'], attribs['url']);
+    var content = this.generateInfoWindowContent(attribs);
     if (typeof InfoBox != 'undefined') {
         var options = {
             content: content,
@@ -266,48 +275,41 @@ KGOGoogleMapLoader.prototype.generateInfoWindow = function(attribs, needsSetPosi
     }
 }
 
-KGOGoogleMapLoader.prototype.addMarker = function(marker, attribs) {
-    marker.infoWindow = this.generateInfoWindow(attribs);
+KGOGoogleMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {
+    attribs["id"] = id;
+    var isOverlay = typeof placemark.getPosition != 'function';
+    placemark.infoWindow = this.generateInfoWindow(attribs, isOverlay);
 
     var that = this;
-    google.maps.event.addListener(marker, 'mousedown', function() {
-        that.showCalloutForMarker(marker);
+    google.maps.event.addListener(placemark, 'mousedown', function() {
+        that.showCalloutForPlacemark(placemark);
     });
 
-    this.placemarks.push(marker);
-    this.markerOnTop = true;
-}
-
-KGOGoogleMapLoader.prototype.addOverlay = function(overlay, attribs) {
-    overlay.infoWindow = this.generateInfoWindow(attribs, true);
-
-    var that = this;
-    google.maps.event.addListener(overlay, 'mousedown', function() {
-        that.showCalloutForOverlay(overlay);
-    });
-
-    this.placemarks.push(overlay);
-    this.markerOnTop = false;
+    this.placemarks[id] = placemark;
+    this.currentPlacemark = placemark;
 }
 
 KGOGoogleMapLoader.prototype.clearMarkers = function() {
-    for (var i = 0; i < this.placemarks.length; i++) {
-        this.placemarks[i].setMap(null);
+    for (var id in this.placemarks) {
+        this.placemarks[id].setMap(null);
     }
     this.placemarks = [];
     this.closeCurrentInfoWindow();
 }
 
-KGOGoogleMapLoader.prototype.createMarker = function(title, subtitle, lat, lon, url) {
-    this.addMarker(new google.maps.Marker({
-        position: new google.maps.LatLng(lat, lon),
-        map: map,
-        title: title
-        }), {
-            title: title,
-            subtitle: subtitle,
-            url: url
-        });
+KGOGoogleMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {
+    // TODO: think up a better default than this
+    if (!"title" in attribs) {
+        attribs["title"] = lat + ", " + lon;
+    }
+    this.addPlacemark(
+        id,
+        new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lon),
+            map: map,
+            title: attribs["title"],
+            }),
+        attribs);
 }
 
 // base map
@@ -433,41 +435,38 @@ function KGOEsriMapLoader(attribs) {
 KGOEsriMapLoader.prototype = new KGOMapLoader();
 
 // annotations
-KGOEsriMapLoader.prototype.showCalloutForMarker = function(marker) {
-    map.infoWindow.setContent(marker.getContent());
-    map.infoWindow.show(marker.geometry);
+KGOEsriMapLoader.prototype.showCalloutForPlacemark = function(placemark) {
+    var graphic = placemark;
+    if (typeof placemark == 'number' || typeof placemark == 'string') {
+        graphic = this.placemarks[placemark];
+    }
+    map.infoWindow.setContent(graphic.getContent());
+    if (graphic.geometry.type == 'point') {
+        map.infoWindow.show(graphic.geometry);
+    } else {
+        var point = graphic.geometry.getExtent().getCenter();
+        map.infoWindow.show(point);
+    }
 }
 
-KGOEsriMapLoader.prototype.showCalloutForOverlay = function(overlay) {
-    // TODO: construct centroid for polylgons/polylines
-}
-
-KGOEsriMapLoader.prototype.addMarker = function(marker, attribs) {
+KGOEsriMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {
+    attribs["id"] = id;
     infoTemplate = new esri.InfoTemplate();
     infoTemplate.setContent(
-        this.generateInfoWindowContent(attribs["title"], attribs["subtitle"], attribs["url"]));
-    marker.setInfoTemplate(infoTemplate);
-    map.graphics.add(marker);
-    this.placemarks.push(marker);
-    this.markerOnTop = true;
-}
-
-KGOEsriMapLoader.prototype.addOverlay = function(overlay, attribs) {
-    map.graphics.add(overlay);
-    this.placemarks.push(overlay);
-    infoTemplate = new esri.InfoTemplate();
-    infoTemplate.setContent(
-        this.generateInfoWindowContent(attribs["title"], attribs["subtitle"], attribs["url"]));
-    overlay.setInfoTemplate(infoTemplate);
-    this.markerOnTop = false;
+        this.generateInfoWindowContent(attribs));
+    placemark.setInfoTemplate(infoTemplate);
+    map.graphics.add(placemark);
+    this.placemarks[id] = placemark;
+    this.currentPlacemark = placemark;
 }
 
 KGOEsriMapLoader.prototype.clearMarkers = function() {
     map.graphics.clear();
 }
 
-KGOEsriMapLoader.prototype.createMarker = function(title, subtitle, lat, lon, url) {
-    this.addMarker(
+KGOEsriMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {
+    this.addPlacemark(
+        id,
         new esri.Graphic(
             new esri.geometry.Point(lon, lat, this.spatialRef),
             new esri.symbol.SimpleMarkerSymbol( // add some styling because the default is a large empty black circle
@@ -475,11 +474,7 @@ KGOEsriMapLoader.prototype.createMarker = function(title, subtitle, lat, lon, ur
                 12,
                 new esri.symbol.SimpleLineSymbol(),
                 new dojo.Color([180, 0, 0]))),
-        {
-            title: title,
-            subtitle: subtitle,
-            url: url
-        }
+        attribs
     );
 }
 

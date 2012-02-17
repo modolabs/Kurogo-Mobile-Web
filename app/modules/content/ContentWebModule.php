@@ -33,6 +33,11 @@ class ContentWebModule extends WebModule {
                     $content = $controller->getContentById($feedData['HTML_ID']);
                 } elseif (isset($feedData['HTML_TAG']) && strlen($feedData['HTML_TAG'])>0) {
                     $content = $controller->getContentByTag($feedData['HTML_TAG']);
+                } elseif (isset($feedData['HTML_CLASS']) && strlen($feedData['HTML_CLASS'])>0) {
+                    $content = $controller->getContentByClass($feedData['HTML_CLASS']);
+                } elseif (isset($feedData['KUROGO_READER']) && $feedData['KUROGO_READER']) {
+                    $reader = new KurogoReader($feedData['BASE_URL']);
+                    $content = $reader->getContent();
                 } else {
                     $content = $controller->getContent();
                 }
