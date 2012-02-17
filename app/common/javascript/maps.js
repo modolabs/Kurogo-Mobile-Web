@@ -17,6 +17,10 @@ function KGOMapLoader(attribs) {
     this.locateMeButton = null; // CSS applies to an <a id="locateMe"> element
     this.locationWatchId = null;
     this.locationIsFirstPosition = true;
+
+    if ("onShowCallout" in attribs) {
+        this.onShowCallout = attribs["onShowCallout"];
+    }
 }
 
 KGOMapLoader.prototype.loadMap = function() {}
@@ -35,7 +39,7 @@ KGOMapLoader.prototype.showDefaultCallout = function() {
         this.showCalloutForPlacemark(thePlacemark);
     }
 }
-KGOMapLoader.prototype.showCalloutForPlacemark = function(placemark) {}
+KGOMapLoader.prototype.showCalloutForPlacemark = function(placemarkId) {}
 KGOMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {}
 KGOMapLoader.prototype.clearMarkers = function() {}
 KGOMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {}
@@ -113,6 +117,7 @@ KGOMapLoader.prototype.generateInfoWindowContent = function(attribs) {
 function KGOGoogleMapLoader(attribs) {
     KGOMapLoader.call(this, attribs);
 
+    var that = this;
     var currentInfoWindow = null;
     var setCurrentInfoWindow = function(infoWindow) {
         if (currentInfoWindow !== null) {
@@ -144,6 +149,10 @@ function KGOGoogleMapLoader(attribs) {
                 marker.infoWindow.open(map);
             }
             setCurrentInfoWindow(marker.infoWindow);
+
+            if (typeof that.onShowCallout != 'undefined') {
+                that.onShowCallout(placemark);
+            }
         }
     }
     
@@ -293,7 +302,7 @@ KGOGoogleMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {
 
     var that = this;
     google.maps.event.addListener(placemark, 'mousedown', function() {
-        that.showCalloutForPlacemark(placemark);
+        that.showCalloutForPlacemark(id);
     });
 
     this.placemarks[id] = placemark;

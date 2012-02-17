@@ -139,6 +139,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 );
             $json = json_encode($jsonParams);
             $template->appendValues(array(
+                '___ID___' => $placemark->getId(),
                 '___POLYGON_SPEC___' => $json,
                 '___FILL_COLOR___' => $fillColor,
                 '___STROKE_COLOR___' => $strokeColor,
@@ -181,6 +182,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 );
 
             $templateValues = array(
+                '___ID___' => $placemark->getId(),
                 '___POLYLINE_SPEC___' => json_encode($jsonObj),
                 '___TITLE___' => json_encode($placemark->getTitle()),
                 '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
@@ -272,6 +274,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             }
 
             // TODO use $placemark->getFields to populate Attributes
+            $templateValues['___ID___'] = $placemark->getId(),
             $templateValues['___TITLE___'] = json_encode($placemark->getTitle());
             $templateValues['___SUBTITLE___'] = json_encode($placemark->getSubtitle());
             $templateValues['___URL___'] = $this->urlForPlacemark($placemark);
@@ -342,7 +345,6 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
         $footer = $this->prepareJavascriptTemplate('ArcGISJSMapFooter');
         $footer->setValues(array(
-            '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
             '___WKID___' => $this->mapProjection,
             '___MAPELEMENT___' => $this->mapElement,
             '___IMAGE_WIDTH___' => $this->imageWidth,
