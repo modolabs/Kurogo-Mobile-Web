@@ -13,8 +13,7 @@ class EmergencyAPIModule extends APIModule {
 
         switch($this->command) {
             case 'notice':
-                try {
-                    $noticeConfig = $config->getSection('notice');
+                if ($noticeConfig = $config->getOptionalSection('notice')) {
 
                     try {
                         if (isset($noticeConfig['CONTROLLER_CLASS'])) {
@@ -29,11 +28,11 @@ class EmergencyAPIModule extends APIModule {
                     }
 
                     $emergencyNotice = $emergencyNoticeController->getFeaturedEmergencyNotice();
-                    $noticeEnabled = 1;
-                }catch (KurogoException $e) {
+                    $noticeEnabled = true;
+                } else {
                     // Config section 'notice' not set, there is not notice
                     $emergencyNotice = null;
-                    $noticeEnabled = 0;
+                    $noticeEnabled = false;
                 }
                 $response = array('notice' => $emergencyNotice, 'noticeEnabled' => $noticeEnabled);
                 $this->setResponse($response);
