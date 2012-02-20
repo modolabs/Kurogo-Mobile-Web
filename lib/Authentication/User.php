@@ -156,6 +156,26 @@ abstract class User
         return $this->getUserDataFolder() . "/" . $this->getUserHash();
     }
     
+    public function setCredentials($credentials) {
+        try {
+            $value = Kurogo::encrypt($credentials);
+        } catch (KurogoException $e) {
+            $value = $credentials;
+        }
+    
+        $this->setUserData('KurogoCredentialsCache', $value);
+    }
+    
+    public function getCredentials() {
+        $value = $this->getUserData('KurogoCredentialsCache');
+        try {
+            $credentials = Kurogo::decrypt($value);
+        } catch (KurogoException $e) {
+            $credentials = $value;
+        }
+        return $credentials;
+    }
+    
     public function setUserData($key, $value) {
         if (!is_dir($this->getUserDataFolder())) {
             if (!mkdir($this->getUserDataFolder(), 0700, true)) {

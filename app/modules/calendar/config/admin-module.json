@@ -4,8 +4,8 @@
         "descriptionKey":"CALENDAR_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "UserCalendarListController":{"labelKey":"CALENDAR_ADMIN_OPTIONS_USERCALENDARS_TITLE","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getUserCalendarListController"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_CALENDARS_DESCRIPTION"},
-            "ResourceListController":{"labelKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_TITLE","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getResourceListController"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_DESCRIPTION"}
+            "UserCalendar":{"key":"RETRIEVER_CLASS","labelKey":"CALENDAR_ADMIN_OPTIONS_USERCALENDARS_TITLE","type":"select","config":"module","section":"user_calendars","optionsMethod":["Calendar","getUserCalendarListRetrievers"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_CALENDARS_DESCRIPTION"},
+            "Resources":{"key":"RETRIEVER_CLASS","labelKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_TITLE","type":"select","config":"module","section":"resources","optionsMethod":["Calendar","getResourceListRetrievers"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_DESCRIPTION"}
        }
     },
     "index": {
@@ -38,7 +38,6 @@
             "section":{"labelKey":"CALENDAR_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
             "TITLE":{"labelKey":"CALENDAR_ADMIN_FEEDS_TITLE_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
             "BASE_URL":{"labelKey":"CALENDAR_ADMIN_FEEDS_BASEURL_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_BASEURL_DESCRIPTION","type":"text"},
-            "CONTROLLER_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_CLASS_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_CLASS_DESCRIPTION", "type":"text","placeholder":"CalendarDataController","omitBlankValue":true,"fieldgroup":"advanced"},
             "CACHE_LIFETIME":{"labelKey":"CALENDAR_ADMIN_FEEDS_CACHE_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_CACHE_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"fieldgroup":"advanced"},
             "PARSER_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_PARSERCLASS_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_PARSERCLASS_DESCRIPTION","type":"text","placeholder":"ICSDataParser","omitBlankValue":true,"fieldgroup":"advanced"},
             "EVENT_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_EVENTCLASS_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_EVENTCLASS_DESCRIPTION","type":"text","placeholder":"ICalEvent","omitBlankValue":true,"fieldgroup":"advanced"}

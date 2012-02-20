@@ -13,7 +13,9 @@ class ErrorWebModule extends WebModule {
   protected $configModule = 'error';
   protected $moduleName = 'Error';
   protected $canBeAddedToHomeScreen = false;
-
+  protected $canBeRemoved = false;
+  protected $canBeDisabled = false;
+  
     protected function getError($code) {
         static $errors = array(
             'server' => array(
@@ -75,7 +77,7 @@ class ErrorWebModule extends WebModule {
 
   protected function initializeForPage() {
     $code = $this->getArg('code', 'default');
-    $url  = $this->getArg('url', '');
+    $url = $this->buildURLFromArray($this->args);
     
     $error = $this->getError($code);
     

@@ -119,8 +119,8 @@ class WKTParser
                     $parts = explode(' ', $matches[2]);
                     if (count($parts) == 2) {
                         return new MapBasePoint(array(
-                            'lat' => $parts[1],
-                            'lon' => $parts[0]));
+                            'lat' => floatval($parts[1]),
+                            'lon' => floatval($parts[0])));
                     }
                     break;
 
@@ -131,8 +131,8 @@ class WKTParser
                         $pointParts = explode(' ', $point);
                         if (count($pointParts) == 2) {
                             $result[] = array(
-                                'lat' => $pointParts[1],
-                                'lon' => $pointParts[0]);
+                                'lat' => floatval($pointParts[1]),
+                                'lon' => floatval($pointParts[0]));
                         }
                     }
                     if ($result) {
@@ -151,8 +151,8 @@ class WKTParser
                                 $pointParts = explode(' ', $point);
                                 if (count($pointParts) == 2) {
                                     $ringArray[] = array(
-                                        'lat' => $pointParts[1],
-                                        'lon' => $pointParts[0]);
+                                        'lat' => floatval($pointParts[1]),
+                                        'lon' => floatval($pointParts[0]));
                                 }
                             }
                             $result[] = $ringArray;

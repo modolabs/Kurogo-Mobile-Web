@@ -591,7 +591,10 @@ a.module img {
   position: relative;
   margin: 0 -7px 0 0;
   padding: 11px 4px 11px 57px;
-  line-height: 30px;
+  min-height: 50px;
+}
+.nav li.icon a img {
+  top: 11px;
 }
 
 .nav h2, .nav h3 {
@@ -907,6 +910,12 @@ a.sidenav-next {
     word-wrap: break-word;
 }
 
+.email .value {
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    hyphens: noen;
+}
+
 .longlabel {
 	display: block;
 	font-size: 76.471%;
@@ -1038,6 +1047,10 @@ a.pdf {
 	padding-right: 34px;
 }
 
+a.placemark {
+    background-image: url(/common/images/action-placemark.png);
+}
+
 a.noaction {
 	background-image: none;
 	padding-right: 7px;
@@ -1124,7 +1137,7 @@ h2.icon {
 #tabs {
 	list-style-type: none;
 	margin: 0;
-	padding: 0;
+	padding: 6px 0 0 0;
 }
 
 #tabs li {
@@ -1132,11 +1145,11 @@ h2.icon {
 	float: left;
 	margin-bottom: -1px;
 	margin-right: 4px;
-	-webkit-border-top-right-radius: 7px;	
-	-webkit-border-top-left-radius: 7px;	
+	-webkit-border-top-right-radius: 6px;	
+	-webkit-border-top-left-radius: 6px;	
+	border-top-right-radius: 6px;	
+	border-top-left-radius: 6px;	
 	text-align: center;
-	border-top-right-radius: 7px;
-	border-top-left-radius: 7px;
 }
 
 #tabs li .badge {
@@ -1158,7 +1171,7 @@ h2.icon {
 	display: block;
 	text-decoration: none;
 	min-width: 30px;
-	padding: 7px 10px 8px 10px;
+	padding: 8px 10px 10px 10px;
 }
 
 #tabs.smalltabs li {
@@ -1169,15 +1182,6 @@ h2.icon {
 #tabs.smalltabs li a {
 	padding-right: 7px;
 	padding-left: 7px;
-}
-
-#tabs li.active {
-	margin-top: -1px;
-}
-
-#tabs li.active a {
-	padding-top: 8px;
-	padding-bottom: 9px;
 }
 
 #tabbodies {
@@ -1409,6 +1413,7 @@ h2.icon {
 	width: 220px;
 	margin-left: -130px;
 	-webkit-border-radius: 10px;
+	border-radius: 10px;
 	padding: 10px 20px;
 	background: #eee; /* Non-CSS3 browsers */
 	/* This doesn't work with the Palm Pre: 
@@ -1888,14 +1893,17 @@ table.section-search form {
 
 .landscape .splitview {
     -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
     display: -webkit-box;
+    display: -moz-box;
     height: 400px;
     position: relative;
 }
 
 .landscape .splitview-detailwrapper {
     border-top: 1px solid;
-	-webkit-box-flex:1;
+    -webkit-box-flex:1;
+    -moz-box-flex:1;
 }
 
 .landscape .splitview ul.results li.pagerlink {

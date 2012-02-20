@@ -1,5 +1,7 @@
 <?php
 
+/********* RETAINED FOR COMPATIBILITY *******/
+
 abstract class ContactsListDataController extends DataController
 {
     protected $DEFAULT_PARSER_CLASS = 'DrupalContactsDataParser';

@@ -5,12 +5,15 @@ class ContentAPIModule extends APIModule {
     protected $id = 'content';
     protected $vmin = 1;
     protected $vmax = 1;
+	protected static $defaultModel = 'ContentDataModel';
 
 
     // From ContentWebModule.php
     protected function getContent($feedData) {
 
         $content_type = isset($feedData['CONTENT_TYPE']) ? $feedData['CONTENT_TYPE'] : '';
+        $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+
         switch ($content_type)
         {
             case 'html':
@@ -21,10 +24,12 @@ class ContentAPIModule extends APIModule {
                 return $content;
                 break;
             case 'html_url':
-                if (!isset($feedData['CONTROLLER_CLASS'])) {
-                    $feedData['CONTROLLER_CLASS'] = 'HTMLDataController';
+                if (!isset($feedData['PARSER_CLASS'])) {
+                    $feedData['PARSER_CLASS'] = 'DOMDataParser';
                 }
-                $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                
+                $controller = ContentDataModel::factory($modelClass, $feedData);
+
                 if (isset($feedData['HTML_ID']) && strlen($feedData['HTML_ID'])>0) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
                 } elseif (isset($feedData['HTML_TAG']) && strlen($feedData['HTML_TAG'])>0) {
@@ -36,10 +41,11 @@ class ContentAPIModule extends APIModule {
                 return $content;
                 break;
             case 'rss':
-                if (!isset($feedData['CONTROLLER_CLASS'])) {
-                    $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
+                if (!isset($feedData['PARSER_CLASS'])) {
+                    $feedData['PARSER_CLASS'] = 'RSSDataParser';
                 }
-                $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+                $controller = ContentDataModel::factory($controllerClass, $feedData);
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
                 }

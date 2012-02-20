@@ -71,6 +71,7 @@ The following values are valid for host based systems (mysql, pgsql and mssql)
 * *DB_USER* - The username needed to connect to the server
 * *DB_PASS* - The password needed to connect to the server
 * *DB_DBNAME* - The database where the tables are located
+* *DB_PORT*   - The port used to connect to the server. If empty it will use the default (mysql and pgsql only)
 
 The following values are valid for file based systems (sqlite)
 

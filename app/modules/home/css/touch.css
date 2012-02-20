@@ -55,4 +55,18 @@ h1.roomfornew {
 form {
 	margin: 0 0 -0.5em 0;
 }
+.banner-notice {
+  background-color: #fff;
+  border-bottom: solid 1px #ccc;
+  padding: .25em .5em;
+}
+a.banner-notice {
+  display: block;
+  padding: .25em 25px .25em .5em;
+	background-image: url(/common/images/action-arrow.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+	line-height: 1.2em;
+	text-decoration: none;
+}
 

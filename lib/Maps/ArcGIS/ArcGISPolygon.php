@@ -2,8 +2,8 @@
 
 class ArcGISPolygon implements MapPolygon
 {
-    private $rings;
-    private $centerCoordinate;
+    protected $rings;
+    protected $centerCoordinate;
 
     public function __construct($geometry)
     {
@@ -26,5 +26,19 @@ class ArcGISPolygon implements MapPolygon
     
     public function getRings() {
         return $this->rings;
+    }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'rings' => serialize($this->rings),
+                'centerCoordinate' => serialize($this->centerCoordinate),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->rings = unserialize($data['rings']);
+        $this->centerCoordinate = unserialize($data['centerCoordinate']);
     }
 }

@@ -48,7 +48,6 @@
       <table class="devicedetection">
         <tr><th>Pagetype:</th><td>{$pagetype}</td></tr>
         <tr><th>Platform:</th><td>{$platform}</td></tr>
-        <tr><th>Certificates:</th><td>{if $supportsCerts}yes{else}no{/if}</td></tr>
         <tr><th>User Agent:</th><td>{$smarty.server.HTTP_USER_AGENT}</td></tr>
       </table>
     {/if}

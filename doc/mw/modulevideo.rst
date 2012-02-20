@@ -17,18 +17,18 @@ The name of each section is generally not important, but must be unique.
 
 Within each feed you use the following options:
 
-* *CONTROLLER_CLASS* - The DataController to use. Currently supported controllers include:
+* *RETRIEVER_CLASS* - The :doc:`Data Retriever <dataretriever>` to use. Currently supported retrievers include:
   
-  * *YouTubeVideoControler*
-  * *VimeoVideoController*
-  * *BrightcoveVideoController*
+  * *YouTubeRetriever*
+  * *VimeoRetriever*
+  * *BrightcoveRetriever*
   
 * *TITLE* - The textual label used when showing the section list
 * *AUTHOR* - optional, used to limit the results by author
 * *TAG* - optional, used to limit the results by tag
 
 ----------------------
-YouTubeVideoController
+YouTubeRetriever
 ----------------------
 
 There are additional options for YouTube feeds:
@@ -36,7 +36,7 @@ There are additional options for YouTube feeds:
 * *PLAYLIST* - optional, used to limit the results by a particular playlist
 
 ----------------------
-VimeoVideoController
+VimeoRetriever
 ----------------------
 
 There are additional options for Vimeo feeds:
@@ -44,7 +44,7 @@ There are additional options for Vimeo feeds:
 * *CHANNEL* - optional, used to limit the results by a particular channel
 
 -------------------------
-BrightcoveVideoController
+BrightcoveRetriever
 -------------------------
 
 In order to to use the Brightcove service, you must also include several other parameters. These 
@@ -53,3 +53,17 @@ values are available from Brightcove`
 * token
 * playerKey
 * playerId 
+
+===========================
+Configuring Display Options
+===========================
+
+* *MAX_PANE_RESULTS* - (optional) Defines the maximum number of videos to display when viewing the site's
+  home page on a tablet device. Defaults to 5.
+* *MAX_RESULTS* - (optional) Defines the maximum number of results when viewing the index page of the video
+  module. Defaults to 10.
+* *BOOKMARKS_ENABLED* - (optional) If set to true, a link to bookmarked entries will appear. Note that if
+  you have not bookmarked any entries, this link will not appear until an entry is bookmarked. Defaults
+  to true.
+* *SHARING_ENABLED* - (optional) If set to true a link to share the current video will be display on the
+  detail page. Defaults to true.

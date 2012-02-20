@@ -3,7 +3,7 @@
 
 <p>
  Copyright (c) 2010 Massachusetts Institute of Technology<br />
- Copyright (c) 2011 Modo Labs, Inc<br />
+ Copyright (c) 2012 Modo Labs, Inc<br />
  
  <p>
  Permission is hereby granted, free of charge, to any person obtaining a copy

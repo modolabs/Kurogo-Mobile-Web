@@ -8,7 +8,7 @@
   * @package ExternalData
   * @subpackage Calendar
   */
-class TrumbaCalendarDataController extends CalendarDataController
+class TrumbaCalendarDataController extends LegacyCalendarDataController
 {
     const DEFAULT_EVENT_CLASS='TrumbaEvent';
     protected $trumbaFilters=array();
@@ -38,8 +38,12 @@ class TrumbaCalendarDataController extends CalendarDataController
     }
     public function url()
     {
-        if (empty($this->startDate) || empty($this->endDate)) {
-            throw new KurogoConfigurationException('Start or end date cannot be blank');
+        if (empty($this->startDate)) {
+            throw new KurogoConfigurationException('Start date cannot be blank');
+        }
+        
+        if (empty($this->endDate)) {
+            $this->setEndDate(new DateTime($this->startTimestamp()+2592000)); // 30 days
         }
         
         $diff = $this->endTimestamp() - $this->startTimestamp();

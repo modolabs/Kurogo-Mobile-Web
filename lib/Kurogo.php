@@ -1,7 +1,7 @@
 <?php
 
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
-define('KUROGO_VERSION', '1.3');
+define('KUROGO_VERSION', '1.4 RC2');
 
 //
 // And a double quote define for ini files (php 5.1 can't escape them)
@@ -13,17 +13,46 @@ class Kurogo
 {
     private static $_instance = NULL;
     private function __clone() {}
+    protected $charset='UTF-8';
     protected $startTime;
     protected $libDirs = array();
-    protected $config;
+    protected $siteConfig;
     protected $deviceClassifier;
     protected $session;
     protected $logger;
     protected $locale;    
     protected $languages=array();
+    protected $cacher;
+    protected $module;
+    protected $request;
 
     private function __construct() {
         $this->startTime = microtime(true);
+    }
+    
+    public static function KurogoUserAgent() {
+        return "Kurogo Server v" . KUROGO_VERSION;
+    }
+    
+    public function setCurrentModule(Module $module) {
+        $this->module = $module;
+    }
+    
+    public function setRequest($id, $page, $args) {
+        $this->request = array(
+            'id'=>$id,
+            'page'=>$page,
+            'args'=>$args
+        );
+    }
+
+    public function getCurrentModule() {
+        return $this->module;
+    }
+    
+    public static function getArrayForRequest() {
+        $Kurogo = Kurogo::sharedInstance();
+        return $Kurogo->request;
     }
     
     public static function getElapsed() {
@@ -141,7 +170,12 @@ class Kurogo
      * 3. The LIB_DIR 
      * 
      */
+     
     public function siteLibAutoloader($className) {
+        if ($classPath = Kurogo::getCache('autoload-' . $className)) {
+            include($classPath);
+            return ;
+        }
         $paths = $this->libDirs;
         
         // If the className has Module in it then use the modules dir
@@ -155,18 +189,22 @@ class Kurogo
         }
         
         $paths[] = LIB_DIR;
-        
         self::log(LOG_DEBUG, "Autoloader loading $className", "autoLoader"); 
         foreach ($paths as $path) {
             $file = "$path/$className.php";
             self::log(LOG_DEBUG, "Autoloader looking for $file for $className", "autoLoader");
             if (file_exists($file)) {
                 self::log(LOG_INFO, "Autoloader found $file for $className", "autoLoader");
+                Kurogo::setCache('autoload-' . $className, $file);
                 include($file);
                 return;
             }
         }
         return;
+    }
+
+    public static function isValidSiteName($name) {
+        return preg_match("/^[a-z][a-z0-9_-]*$/i", $name);
     }
     
     public static function siteTimezone() {
@@ -178,7 +216,7 @@ class Kurogo
     }
     
     public function getConfig() {
-        return $this->config;
+        return $this->siteConfig;
     }
     
     public static function siteConfig() {
@@ -313,13 +351,13 @@ class Kurogo
     }
         
     private function logger() {
-        if (!$this->logger && $this->config) {
+        if (!$this->logger && $this->siteConfig) {
             require_once(LIB_DIR . '/KurogoLog.php');
             $this->logger = new KurogoLog();
-            $logFile = $this->config->getOptionalVar('KUROGO_LOG_FILE', LOG_DIR . "/kurogo.log");
+            $logFile = $this->siteConfig->getOptionalVar('KUROGO_LOG_FILE', LOG_DIR . "/kurogo.log");
             $this->logger->setLogFile($logFile);
-            $this->logger->setDefaultLogLevel($this->config->getOptionalVar('DEFAULT_LOGGING_LEVEL', LOG_WARNING));
-            if (($loggingLevels = $this->config->getOptionalVar('LOGGING_LEVEL')) && is_array($loggingLevels)) {
+            $this->logger->setDefaultLogLevel($this->siteConfig->getOptionalVar('DEFAULT_LOGGING_LEVEL', LOG_WARNING));
+            if (($loggingLevels = $this->siteConfig->getOptionalVar('LOGGING_LEVEL')) && is_array($loggingLevels)) {
                 foreach ($loggingLevels as $area=>$level) {
                     $this->logger->setLogLevel($area, $level);
                 }
@@ -328,6 +366,69 @@ class Kurogo
         
         return $this->logger;
     }
+
+    public function cacher() {
+        return $this->cacher;
+    }
+    
+    public static function getCache($key) {
+        if (!defined('SITE_NAME')) {
+            return false;
+        }
+        
+        $key = SITE_NAME . '-' . $key;
+        if ($cacher = Kurogo::sharedInstance()->cacher()) {
+            return $cacher->get($key);
+        }
+
+        // in the early stages the cacher is not available.
+        // Kurogo::log(LOG_DEBUG, "Cacher not available for $key", 'cache');
+        return false;
+    }
+    
+    public static function setCache($key, $value, $ttl = null) {
+        if (!defined('SITE_NAME')) {
+            return false;
+        }
+        
+        $key = SITE_NAME . '-' . $key;
+        if ($cacher = Kurogo::sharedInstance()->cacher()) {
+            $logValue = is_scalar($value) ? $value : gettype($value);
+            Kurogo::log(LOG_DEBUG, "Setting $key to $logValue", 'cache');
+            return $cacher->set($key, $value, $ttl);
+        }
+        return false;
+    }
+    
+    public static function deleteCache($key) {
+        if (!defined('SITE_NAME')) {
+            return false;
+        }
+
+        $key = SITE_NAME . '-' . $key;
+        if ($cacher = Kurogo::sharedInstance()->cacher()) {
+            return $cacher->delete($key);
+        }
+        return false;
+    }
+    
+    public static function clearCache() {
+        if ($cacher = Kurogo::sharedInstance()->cacher()) {
+            return $cacher->clear();
+        }
+        return false;
+    }
+
+    public function setDefaultLogLevel($level) {
+        $logger = $this->logger();
+        $logger->setDefaultLogLevel($level);
+    }
+    
+    public function setLogLevel($area, $level) {
+        $logger = $this->logger();
+        $logger->setLogLevel($area, $level);
+    }
+
     
     public static function log($priority, $message, $area, $backtrace=null) {
         static $deferredLogs = array();
@@ -362,7 +463,7 @@ class Kurogo
         define('MASTER_CONFIG_DIR', ROOT_DIR . DIRECTORY_SEPARATOR . 'config');
         define('APP_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'app');
         define('MODULES_DIR',       APP_DIR  . DIRECTORY_SEPARATOR . 'modules');
-        define('MIN_FILE_PREFIX',  'file:');
+        define('MIN_FILE_PREFIX',  'file-');
         define('API_URL_PREFIX',   'rest');
         
         //
@@ -378,9 +479,11 @@ class Kurogo
         //
         // Load configuration files
         //    
-        $this->config = new SiteConfig($path);
+        $this->initSite($path);
+        $this->setCharset($this->siteConfig->getOptionalVar('DEFAULT_CHARSET', 'UTF-8'));
         
-        ini_set('display_errors', $this->config->getVar('DISPLAY_ERRORS'));
+        ini_set('default_charset', $this->charset());
+        ini_set('display_errors', $this->siteConfig->getVar('DISPLAY_ERRORS'));
         if (!ini_get('error_log')) {
             ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
         }
@@ -389,25 +492,25 @@ class Kurogo
         // Install exception handlers
         //
       
-        if ($this->config->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+        if ($this->siteConfig->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
             set_exception_handler("exceptionHandlerForProduction");
         } else {
             set_exception_handler("exceptionHandlerForDevelopment");
         }
         
         //get timezone from config and set    
-        $timezone = $this->config->getVar('LOCAL_TIMEZONE');
+        $timezone = $this->siteConfig->getVar('LOCAL_TIMEZONE');
         date_default_timezone_set($timezone);
         $this->timezone = new DateTimeZone($timezone);
         self::log(LOG_DEBUG, "Setting timezone to $timezone", "kurogo");
 
-        if ($locale = $this->config->getOptionalVar('LOCALE')) {
+        if ($locale = $this->siteConfig->getOptionalVar('LOCALE')) {
             $this->setLocale($locale);
         } else {
             $this->locale = $this->getSystemLocale();
         }
         
-        if ($languages = $this->config->getOptionalVar('LANGUAGES')) {
+        if ($languages = $this->siteConfig->getOptionalVar('LANGUAGES')) {
         	$this->setLanguages($languages);
         } else {
         	$this->setLanguages(array('en_US'));
@@ -453,7 +556,7 @@ class Kurogo
         $urlDeviceDebugPrefix = '/';
         
         // Check for device classification in url and strip it if present
-        if ($this->config->getVar('DEVICE_DEBUG')) {
+        if ($this->siteConfig->getVar('DEVICE_DEBUG')) {
             if (preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
                 $device = $matches[1];  // layout forced by url
                 $path = $matches[2];
@@ -479,9 +582,222 @@ class Kurogo
         //preserved for compatibility
         $GLOBALS['deviceClassifier'] = $this->deviceClassifier;
     }
+
+    private function initSite(&$path) {
+    
+        includePackage('Cache');
+        includePackage('Config');
+        $siteConfig = new ConfigGroup();    
+        $saveCache = true;
+        // Load main configuration file
+        $kurogoConfig = ConfigFile::factory('kurogo', 'project', ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
+        $siteConfig->addConfig($kurogoConfig);
+        
+        define('CONFIG_MODE', $siteConfig->getVar('CONFIG_MODE', 'kurogo'));
+        Kurogo::log(LOG_DEBUG,"Setting config mode to " . (CONFIG_MODE ?  CONFIG_MODE : '<empty>'), 'config');
+        define('CONFIG_IGNORE_LOCAL', $siteConfig->getVar('CONFIG_IGNORE_LOCAL', 'kurogo'));
+        
+        if ($cacheClass = $siteConfig->getOptionalVar('CACHE_CLASS','', 'cache')) {
+            $this->cacher = KurogoMemoryCache::factory($cacheClass, $siteConfig->getOptionalSection('cache'));
+        }
+        
+        
+        //multi site currently only works with a url base of root "/"
+        if ($siteConfig->getOptionalVar('MULTI_SITE', false, 'kurogo')) {
+    
+            // in scripts you can pass the site name to Kurogo::initialize()
+            if (PHP_SAPI == 'cli') {
+            
+                $site = strlen($path)>0 ? $path : $siteConfig->getVar('DEFAULT_SITE');
+    
+                $siteDir = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
+                if (!file_exists(realpath($siteDir))) {
+                    die("FATAL ERROR: Site Directory $siteDir not found for site $path");
+                }
+            } else {        
+    
+                $paths = explode("/", $path); // this is url
+                $sites = array();
+                $siteDir = '';
+            
+                if (count($paths)>1) {
+                    $site = $paths[1];
+        
+                    if ($sites = $siteConfig->getOptionalVar('ACTIVE_SITES', array(), 'kurogo')) {
+                        //see if the site is in the list of available sites
+                        if (in_array($site, $sites)) {
+                            $testPath = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
+                            if (($siteDir = realpath($testPath)) && file_exists($siteDir)) {
+                                $urlBase = '/' . $site . '/'; // this is a url
+                            }
+                        }
+                    } elseif (self::isValidSiteName($site)) {
+                        
+                        $testPath = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
+                        if (($siteDir = realpath($testPath)) && file_exists($siteDir)) {
+                            $urlBase = '/' . $site . '/'; // this is a url
+                        }
+                    }
+                }
+                        
+                if (!$siteDir) {
+                    $site = $siteConfig->getVar('DEFAULT_SITE');
+                    array_splice($paths, 1, 1, array($site, $paths[1]));
+                    $url = implode("/", $paths);
+                    header("Location: $url");
+                    die();
+                }
+            }
+
+            define('SITE_NAME', $site);
+
+        } else {
+            //make sure active site is set    
+            if (!$site = $siteConfig->getVar('ACTIVE_SITE')) {
+                die("FATAL ERROR: ACTIVE_SITE not set");
+            }
+            
+            // make sure site_dir is set and is a valid path
+            // Do not call realpath_exists here because until SITE_DIR define is set
+            // it will not allow files and directories outside ROOT_DIR
+            if (!($siteDir = $siteConfig->getVar('SITE_DIR')) || !(($siteDir = realpath($siteDir)) && file_exists($siteDir))) {
+                die("FATAL ERROR: Site Directory ". $siteConfig->getVar('SITE_DIR') . " not found for site " . $site);
+            }
+            
+            define('SITE_NAME', $site);
+            if (PHP_SAPI != 'cli') {
+    
+                //
+                // Get URL base
+                //
+                if ($urlBase = $siteConfig->getOptionalVar('URL_BASE','','kurogo')) {
+                    $urlBase = rtrim($urlBase,'/').'/';
+                } elseif ($urlBase = Kurogo::getCache('URL_BASE')) {
+                    //@TODO this won't work yet because the cache hasn't initialized
+                    $urlBase = rtrim($urlBase,'/').'/';
+                    $saveCache = false;
+                } else {
+                    //extract the path parts from the url
+                    $pathParts = array_values(array_filter(explode("/", $_SERVER['REQUEST_URI'])));
+                    $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
+                    $urlBase = '/';
+            
+                    //once the path equals the WEBROOT_DIR we've found the base. This only works with symlinks
+                      if (realpath($testPath) != WEBROOT_DIR) {
+                        foreach ($pathParts as $dir) {
+                              $test = $testPath.$dir.DIRECTORY_SEPARATOR;
+                          
+                            if (file_exists(realpath($test))) {
+                                $testPath = $test;
+                                $urlBase .= $dir.'/';
+                                if (realpath($test) == WEBROOT_DIR) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        if (PHP_SAPI == 'cli') {
+            define('URL_BASE', null);
+        } else {
+            if (!isset($urlBase)) {
+                throw new KurogoConfigurationException("URL base not set. Please report the configuration to see why this happened");
+            }
+            
+            define('URL_BASE', $urlBase);
+
+            if ($saveCache) {    
+                Kurogo::setCache('URL_BASE', $urlBase);
+            }
+            Kurogo::log(LOG_DEBUG,"Setting site to $site with a base of $urlBase", 'kurogo');
+        
+            // Strips out the leading part of the url for sites where 
+            // the base is not located at the document root, ie.. /mobile or /m 
+            // Also strips off the leading slash (needed by device debug below)
+            if (isset($path)) {
+                // Strip the URL_BASE off the path
+                $baseLen = strlen(URL_BASE);
+                if ($baseLen && strpos($path, URL_BASE) === 0) {
+                    $path = substr($path, $baseLen);
+                }
+            }  
+        }
+    
+        // Set up defines relative to SITE_DIR
+        define('SITE_DIR',             $siteDir); //already been realpath'd
+        define('SITE_LIB_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'lib');
+        define('SITE_APP_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'app');
+        define('SITE_MODULES_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'modules');
+        define('DATA_DIR',             SITE_DIR . DIRECTORY_SEPARATOR . 'data');
+        define('CACHE_DIR',            SITE_DIR . DIRECTORY_SEPARATOR . 'cache');
+        define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
+        define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');
+        define('SITE_DISABLED_DIR',    SITE_DIR . DIRECTORY_SEPARATOR . 'config_disabled');
+    
+        //load in the site config file (required);
+        $config = ConfigFile::factory('site', 'site');
+        $siteConfig->addConfig($config);
+    
+        // attempt to load site key    
+        $siteKey = $siteConfig->getOptionalVar('SITE_KEY', md5($siteDir));
+        define('SITE_KEY', $siteKey);
+        
+        if ($siteConfig->getOptionalVar('SITE_DISABLED')) {
+            die("FATAL ERROR: Site disabled");
+        }
+    
+        // Set up theme define
+        if (!$theme = $siteConfig->getVar('ACTIVE_THEME')) {
+            die("FATAL ERROR: ACTIVE_THEME not set");
+        }
+    
+        Kurogo::log(LOG_DEBUG,"Setting theme to $theme", 'kurogo');
+        
+        define('THEME_DIR', SITE_DIR . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $theme);
+        $this->siteConfig = $siteConfig;
+      }    
+      
+    public static function getCharset() {
+        return Kurogo::sharedInstance()->charset();
+    }   
+    
+    public function setCharset($charset) {
+        $this->charset = $charset;
+    }
+
+    public function charset() {
+        return $this->charset;
+    }
+
+    public static function encrypt($string, $key=SITE_KEY) {
+        if (strlen($string)==0) {
+            return $string;
+        }
+        
+        if (!function_exists('mcrypt_encrypt')) {
+            throw new KurogoException("mcrypt functions not available");
+        }
+        
+        return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key))));
+    }
+
+    public static function decrypt($encrypted, $key=SITE_KEY) {
+        if (strlen($encrypted)==0) {
+            return $encrypted;
+        }
+
+        if (!function_exists('mcrypt_decrypt')) {
+            throw new KurogoException("mcrypt functions not available");
+        }
+        
+        return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encrypted), MCRYPT_MODE_CBC, md5(md5($key))), "\0");    
+    }
     
     public function getLanguages() {
-    	return $this->languages;
+        return $this->languages;
     }
 
     public function setLanguages($languages) {
@@ -725,7 +1041,7 @@ class Kurogo
         return trim(file_get_contents($url));
     }
     
-    private function rmdir($dir) {
+    public static function rmdir($dir) {
         if (strlen($dir) && is_dir($dir)) {
             if (is_file('/bin/rm')) {
                 $exec = sprintf("%s -rf %s", '/bin/rm', escapeshellarg($dir));
@@ -739,12 +1055,25 @@ class Kurogo
         }
     }
     
+    public static function defaultModule() {
+      $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
+      $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
+
+      if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
+        if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
+            $module = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
+        }
+      }
+      
+        return $module; 
+    }
+    
     public function clearCaches($type=null) {
 
         self::log(LOG_NOTICE, "Clearing site caches", "kurogo");
 
         if (strlen($type)>0) {
-            return $this->rmdir(CACHE_DIR . "/" . $type);
+            return self::rmdir(CACHE_DIR . "/" . $type);
         }
     
         //clear all folders
@@ -754,7 +1083,7 @@ class Kurogo
         $dirs = scandir(CACHE_DIR);
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
-                $result = $this->rmdir(CACHE_DIR . "/" . $dir);
+                $result = self::rmdir(CACHE_DIR . "/" . $dir);
                 if ($result !==0) {
                     return $result;
                 }
@@ -763,10 +1092,18 @@ class Kurogo
         
         return 0;
     }
+    
+    public static function getCacheClasses() {
+        includePackage('Cache');
+        return KurogoMemoryCache::getCacheClasses();
+        
+    }
 }
 
 interface KurogoObject 
 {
+    public function getID();
+    public function filterItem($filters);
 }
 
 /* retained for compatibility */

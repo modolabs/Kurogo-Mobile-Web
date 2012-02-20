@@ -4,13 +4,12 @@ class ArcGISFeature extends BasePlacemark
 {
     private $titleField;
     private $geometryType;
-    private $category;
     private $rawGeometry;
 
-    public function __construct($fields, $geometry, $index, $category)
+    public function __construct($fields, $geometry, $index, $categories)
     {
-        $this->index = $index;
-        $this->category = $category;
+        $this->id = $index;
+        $this->categories = $categories;
         $this->fields = $fields;
         $this->rawGeometry = $geometry;
     }
@@ -61,5 +60,21 @@ class ArcGISFeature extends BasePlacemark
     {
         // TODO make this a config field
         return $this->getField('Address');
+    }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'geometryType' => $this->geometryType,
+                'titleField' => $this->titleField,
+                'parent' => parent::serialize(),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        parent::unserialize($data['parent']);
+        $this->titleField = $data['titleField'];
+        $this->geometryType = $data['geometryType'];
     }
 }

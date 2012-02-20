@@ -5,64 +5,65 @@
 
 body {
 	/* Site-wide page background color, and base font family, size and line spacing */
-	background-color: #dcdddf;
-	font: 17px/1.33em sans-serif;
+	background-color: @@@body_background_color@@@;
+	font: 17px/1.33em @@@primary_font_family@@@;
 }
 
 body, th, td, li, option, select, input {
 	/* Primary text color */
-	color: #333;
+	color: @@@primary_text_color@@@;
 }
 
 a, a:visited, .focal a, .focal a:visited, .tabbody a, .tabbody a:visited {
 	/* Primary text link color */
-	color: #036;
+	color: @@@focal_link_color@@@;
 }
 
 .nonfocal a, .nonfocal a:visited {
 	/* Text link color on body background */
-	color: #036;
+	color: @@@nonfocal_link_color@@@;
 }
 
 h1 {
-	font-family: sans-serif;
+	font-family: @@@heading_font_family@@@;
 	font-size: 170.6%;
-	line-height: 1.25em;
+	line-height: 1.2em;
 	font-weight: normal;
-	color: #333;
+	color: @@@primary_heading_color@@@;
 }
 
 h2 {
-	font-family: sans-serif;
-	font-size: 123.5%;
+	font-family: @@@heading_font_family@@@;
+	font-size: 129.4%;
+	line-height: 1.2em;
 	font-weight: normal;
-	color: #036;
+	color: @@@primary_heading_color@@@;
 }
 
 h3 {
-	font-family: sans-serif;
+	font-family: @@@primary_font_family@@@;
 	font-size: 100%;
 	font-weight: bold;
-	color: #036;
+	color: @@@secondary_heading_color@@@;
 }
 
 h4 {
-	font-family: sans-serif;
+	font-family: @@@primary_font_family@@@;
 	font-size: 100%;
 	font-weight: normal;
-	color: #333;
+	color: @@@secondary_heading_color@@@;
 }
 
 dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 	/* Accent text color for several types of secondary text that appears on white backgrounds */
 	/* e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
 	/* Often the same as the secondary text color defined in the next rule */
-	color: #404649;
+	color: @@@secondary_text_color@@@;
 }
 
 .address, .smallprint, .fineprint, .dek {
 	/* Secondary text color for several types of secondary text */
-	color: #555;
+	color: @@@secondary_text_color@@@;
 }
 
 
@@ -70,7 +71,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 /* Text labels for springboards (grids of icons, e.g., homescreen) */
 
 .springboard a, .springboard a:visited {
-	color: #036;
+	color: @@@primary_link_color@@@;
 }
 
 
@@ -79,30 +80,30 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 .focal {   
 	/* Focal content div */
-	background-color: #fff;
-	border-color: #fff;
+	background-color: @@@focal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
 }
 
 .nonfocal, .nonfocal .legend, .formlabel {
 	/* Text color for elements that sit on the overall body background */
-	color: #555;
+	color: @@@nonfocal_text_color@@@;
 }
 
-.nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4 {
+.nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4, h1.nonfocal, h2.nonfocal, h3.nonfocal, h4.nonfocal {
 	/* Color for headings that sit on the overall body background */
-	color: #036;
+	color: @@@nonfocal_heading_color@@@;
 }
 
 .shaded, .HomeModule .blockborder {
 	/* Shaded subclass of focal content - e.g., background for tabbed focal div, portlets in Tablet device class */
 	/* Typically very close to, but distinguishable from, body background */
-	background-color: #f3f3f3;
-	color: #333;
+	background-color: @@@subfocal_background_color@@@;
+	color: @@@primary_text_color@@@;
 }
 
 .shaded h1, .shaded h2, .shaded h3, .shaded h4 {
 	/* Color for headings that sit on the shaded divs */
-	color: #036;
+	color: @@@nonfocal_heading_color@@@;
 }
 
 
@@ -110,14 +111,14 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 /* Nav bar at top of all screens other than home screen */
 
 #navbar {
-	height: 48px; 
-	background: transparent url(/common/images/navback.png) repeat-x;
+	height: 45px; 
+	background: @@@navbar_background_color@@@ url(/common/images/navback.png) repeat-x;
 	font-size: 94.1%;
 }
 
 .breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited, .pagetitle {
  	/* All breadcrumb links in nav bar */
-	color: #036;
+	color: @@@navbar_text_color@@@;
 }
 
 
@@ -126,37 +127,37 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 .nav, .results {
 	/* Main navigation lists and search-results lists */
-	background-color: #fff; 	
-	border-color: #fff;
+	background-color: @@@focal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
 }
 
 .nav, .results, .nav a, .nav a:visited, .nav span.nolink, .results a, .results a:visited  {
 	/* Text color for all navigation and results lists */
-	color: #333;
+	color: @@@primary_text_color@@@;
 }
 
 .nav li, .results li, ul.focal li  {
 	/* Color of border between list items */
-	border-color: #ccc;
+	border-color: @@@focal_border_color@@@;
 }
 
 .secondary {
 	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds, often the same as .shaded specified above */
 	font-size: 95%;
-	background-color: #edeef0;
-	border-color: #ddd;
+	background-color: @@@subfocal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
 }
 
 .secondary, .secondary a, .secondary a:visited {
-	color: #444;
+	color: @@@secondary_text_color@@@;
 }
 
 .secondary .smallprint {
-	color: #666;
+	color: @@@tertiary_text_color@@@;
 }
 
 .secondary li {
-	border-color: #ddd;
+	border-color: @@@focal_border_color@@@;
 }
 
 .nav .badge {
@@ -185,7 +186,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 #footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited {
 	/* Color of actual text and text links in sitewide footers */
-	color: #555;
+	color: @@@nonfocal_text_color@@@;
 }
 
 
@@ -197,8 +198,8 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 	color: #fff;
 }
 
-.sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .paging a:visited {
-	color: #333;
+.sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .sidenavlabel, .paging a, .paging a:visited {
+	color: @@@nonfocal_text_color@@@;
 }
 
 
@@ -206,38 +207,38 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 /* Tabs - for compliant, tablet, and touch */
 
 #tabs li {
-	border: 1px solid #bbb;	/* Should match #tabbodies border-color */
-	background-color: #bbb;	/* Should match #tabbodies border-color */
+	border: 1px solid @@@focal_border_color@@@;
+	background-color: @@@subfocal_background_color@@@;
 }
 
 #tabs li.active {
-	border-bottom: 1px solid #fff;	/* Should match #tabbodies background-color */
-	background-color: #fff;	/* Should match #tabbodies background-color */
+	border-bottom: 1px solid @@@focal_background_color@@@;	/* Should match #tabbodies background-color */
+	background-color: @@@focal_background_color@@@;
 }
 
 #tabs li a {
 	/* Text label of unselected tab */
-	color: #333;
+	color: @@@secondary_text_color@@@;
 }
 
 #tabs li.active a {
 	/* Text label of currently selected tab */
-	color: #000;
+	color: @@@strong_text_color@@@;
 }
 
 #tabs li.greyedout {
 	/* Text label of disabled tab */
-  	color: #666;
+	color: @@@secondary_text_color@@@;
 }
 
 #tabbodies {
-	border-color: #bbb;
-	background-color: #fff;
+	background-color: @@@focal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
 }
 
 .tabbody .nested {
 	/* Navigation list inside a tab body needs a bit of background color to contrast from tab body background */
-	background-color: #eee;
+	background-color: @@@subfocal_background_color@@@;
 }
 
 
@@ -246,12 +247,12 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 .forminput {
   /* Should match the border color of image /common/images/compliant/search_button.png */
-	border-color: #666; 	
+	border-color: @@@search_border_color@@@;
 }
 
 .inputcombo .forminput {
   /* Border color should match the border color of image /common/images/compliant/search_button.png */
-	border: 1px 0 1px 1px solid #666; 	
+	border: 1px 0 1px 1px solid  @@@search_border_color@@@;
 	-webkit-border-bottom-left-radius: 8px;	
 	-webkit-border-top-left-radius: 8px;	
 	border-bottom-left-radius: 8px;	
@@ -261,7 +262,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 .emphasized  .forminput {
   /* Border color should match the border color of image /common/images/compliant/search_button.png */
   /* Border weight should be 2px greater than border weight of .inputcombo .forminput */
-	border: 3px solid #666; 		
+	border: 3px solid @@@search_border_color@@@;	
 	/* Corner radius should be 2px greater than corner radius of .inputcombo .forminput */
 	-webkit-border-bottom-left-radius: 10px; 		
 	-webkit-border-top-left-radius: 10px;	
@@ -271,7 +272,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 .submitbutton {
 	/* Form submit buttons that have text labels on Basic and Touch. */
-	background-color: #666;
+	background-color: @@@search_border_color@@@;
 	color: #fff;
 	font-size: 93.75%;
 }
@@ -282,11 +283,11 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 h1.slugline, h2.itemtitle {
 	/* Special headline style used in news, videos, and other modules with story-type content detail */
-	font-family: sans-serif;
+	font-family: @@@heading_font_family@@@;
     font-size: 129.4%;
 	line-height: 1.25em;
 	font-weight: normal;
-    color:#333;
+    color: @@@heading_text_color@@@;
 	margin: 0 0 0.75em 0;
 }
 
@@ -296,31 +297,31 @@ h1.slugline, h2.itemtitle {
     line-height: 1.25em;
 	padding-bottom: 0.33em;
 	margin-bottom: 1.33em;
-    border-bottom: 1px dotted #999;
+    border-bottom: 1px dotted @@@focal_border_color@@@;
 }
 
 
 /* Freeform content module - basic styles to format unstyled raw HTML */
 
 .staticContentBody {
-	background-color: #fff;
-	color: #333;
+	background-color: @@@focal_background_color@@@;
+	color: @@@primary_text_color@@@;
 }
 
 .staticContentBody h1 {
-	color: #333;
+	color: @@@primary_heading_color@@@;
 }
 
 .staticContentBody h2 {
-	color: #333;
+	color: @@@secondary_heading_color@@@;
 }
 
 .staticContentBody h3 {
-	color: #333;
+	color: @@@secondary_heading_color@@@;
 }
 
 .staticContentBody h4 {
-	color: #666;
+	color: @@@secondary_heading_color@@@;
 }
 
 

@@ -11,7 +11,6 @@
             "SHOW_TITLE":{"labelKey":"CONTENT_ADMIN_FEEDS_SHOWTITLE_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_SHOWTITLE_DESCRIPTION","type":"checkbox","default":1},
             "CONTENT_TYPE":{"labelKey":"CONTENT_ADMIN_FEEDS_CONTENTTYPE_TITLE", "descriptionKey":"CONTENT_ADMIN_FEEDS_CONTENTTYPE_DESCRIPTION","type":"select","optionsMethod":["ContentWebModule","getContentTypes"]},
             "BASE_URL":{"labelKey":"CONTENT_ADMIN_FEEDS_BASEURL_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_BASEURL_DESCRIPTION","type":"text","showIf":["CONTENT_TYPE",["html_url","rss"]]},
-            "CONTROLLER_CLASS":{"labelKey":"CONTENT_ADMIN_FEEDS_CLASS_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_CLASS_DESCRIPTION","type":"text","placeholder":"HTMLDataController", "showIf":["CONTENT_TYPE","html_url"], "omitBlankValue":true},
             "CONTENT_HTML":{"labelKey":"CONTENT_ADMIN_FEEDS_CONTENTHTML_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_CONTENTHTML_DESCRIPTION","type":"paragraph","showIf":["CONTENT_TYPE","html"]},
             "HTML_ID":{"labelKey":"CONTENT_ADMIN_FEEDS_HTMLID_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_HTMLID_DESCRIPTION","type":"text","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true},
             "HTML_TAG":{"labelKey":"CONTENT_ADMIN_FEEDS_HTMLTAG_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_HTMLTAG_DESCRIPTION","type":"text","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true}

@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-  <meta http-equiv="content-type" content="application/xhtml+xml" />
+  <meta http-equiv="content-type" content="application/xhtml+xml" charset={$charset}" />
   {if $refreshPage}
     <meta http-equiv="refresh" content="{$refreshPage}" />
   {/if}
@@ -19,11 +19,17 @@
   {/foreach}
   
   {block name="javascript"}
-      <script type="text/javascript">var URL_BASE='{$smarty.const.URL_BASE}';</script>
+      <script type="text/javascript">
+        var URL_BASE='{$smarty.const.URL_BASE}';
+        var API_URL_PREFIX='{$smarty.const.API_URL_PREFIX}';
+      </script>
     {if strlen($GOOGLE_ANALYTICS_ID)}
       <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', '{$GOOGLE_ANALYTICS_ID}']);
+        {if $GOOGLE_ANALYTICS_DOMAIN}
+        _gaq.push(['_setDomainName', '{$GOOGLE_ANALYTICS_DOMAIN}']);
+        {/if}
         _gaq.push(['_trackPageview']);
       </script>
     {/if}
@@ -43,10 +49,18 @@
 
     <script type="text/javascript">
       function onOrientationChange() {ldelim}
-        rotateScreen();
-        {foreach $onOrientationChangeBlocks as $script}
-          {$script}
-        {/foreach}
+        {* the galaxy tab sends orientation change events constantly *}
+        if (typeof onOrientationChange.lastOrientation == 'undefined') {ldelim}
+          onOrientationChange.lastOrientation = null;
+        {rdelim}
+        var newOrientation = getOrientation();
+        if (newOrientation != onOrientationChange.lastOrientation) {ldelim}
+          rotateScreen();
+          {foreach $onOrientationChangeBlocks as $script}
+            {$script}
+          {/foreach}
+        {rdelim}
+        onOrientationChange.lastOrientation = newOrientation;
       {rdelim}
       if (window.addEventListener) {ldelim}
         window.addEventListener("orientationchange", onOrientationChange, false);

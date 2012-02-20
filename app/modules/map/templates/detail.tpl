@@ -10,10 +10,8 @@
       <a name="map"> </a>
       <!--<div id="mapwrapper" class="image">-->
       <div id="mapimage" class="image">
-        {if $isStatic}
-          {include file="findInclude:modules/$moduleID/templates/mapscrollers.tpl"}
-          <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
-        {/if}
+        {include file="findInclude:modules/$moduleID/templates/mapscrollers.tpl"}
+        <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
       </div>
       <!--<div id="mapimage" style="display:none"></div>-->
     {/block}
@@ -57,16 +55,27 @@
 
 {if in_array('links', $tabKeys)}
   {capture name="linksPane" assign="linksPane"}
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/$moduleID/templates/listItemWithID.tpl"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/map/templates/listItemWithID.tpl"}
   {/capture}
   {$tabBodies['links'] = $linksPane}
 {/if}
 
 {block name="tabView"}
-  <div id="tabscontainer">
-    {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
-    <h2>{$name|escape}</h2>
+  <h2 class="nonfocal">{$name|escape}</h2>
+  <div class="nonfocal">
     <p class="address">{$address|escape}</p>
+    <div class="actionbuttons">
+      {if !$isStatic}
+        <div class="actionbutton">
+          <a href="{$mapURL}" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''"><img src="/modules/map/images/map-button-placemark.png" width="20" height="20" alt="" />{"VIEW_ON_MAP"|getLocalizedString}</a>
+        </div>
+      {/if}
+      {include file="findInclude:modules/map/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+ 	<div class="clear"></div>
+   </div>
+  </div>
+  
+  <div id="tabscontainer">
     {include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}

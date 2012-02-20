@@ -101,6 +101,25 @@ function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null
     return array('min' => $min, 'max' => $max, 'center' => $center);
 }
 
+function mapModelFromFeedData($feedData) {
+    if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
+        $modelClass = $feedData['CONTROLLER_CLASS'];
+    }
+    elseif (isset($feedData['MODEL_CLASS'])) {
+        $modelClass = $feedData['MODEL_CLASS'];
+    }
+    else {
+        $modelClass = 'MapDataModel';
+    }
+
+    try {
+        $model = MapDataModel::factory($modelClass, $feedData);
+    } catch (KurogoConfigurationException $e) {
+        $model = DataController::factory($modelClass, $feedData);
+    }
+    return $model;
+}
+
 function mapIdForFeedData(Array $feedData) {
     $identifier = $feedData['TITLE'];
     if (isset($feedData['BASE_URL'])) {
@@ -111,28 +130,20 @@ function mapIdForFeedData(Array $feedData) {
     return substr(md5($identifier), 0, 10);
 }
 
-function shortArrayFromMapFeature(Placemark $feature) {
-    $category = current($feature->getCategoryIds());
-    $result = array('category' => $category);
-
-    $id = $feature->getId();
-    if ($id) {
-        $result['featureindex'] = $id;
-    } else {
-        $geometry = $feature->getGeometry();
-        if ($geometry) {
-            $coords = $geometry->getCenterCoordinate();
-            $result['lat'] = $coords['lat'];
-            $result['lon'] = $coords['lon'];
-        }
-        $result['title'] = $feature->getTitle();
-    }
-
-    return $result;
-}
-
+// $colorString must be 6 or 8 digit hex color
 function htmlColorForColorString($colorString) {
     return substr($colorString, strlen($colorString)-6);
+}
+
+// returns a value between 0 and 1
+// $colorString must be valid hex color
+function alphaFromColorString($colorString) {
+    if (strlen($colorString) == 8) {
+        $alphaHex = substr($colorString, 0, 2);
+        $alpha = hexdec($alphaHex) / 256;
+        return round($alpha, 2);
+    }
+    return 1;
 }
 
 function isValidURL($urlString)
@@ -141,13 +152,55 @@ function isValidURL($urlString)
     return filter_var(strtr($urlString, '-', '.'), FILTER_VALIDATE_URL);
 }
 
+/* The following three functions are from Google Maps sample code at 
+ * http://gmaps-samples.googlecode.com/svn/trunk/urlsigning/UrlSigner.php-source
+ */
+
+// Sign a URL with a given crypto key
+// Note that this URL must be properly URL-encoded
+function signURLForGoogle($urlToSign) {
+    $clientID = Kurogo::getOptionalSiteVar('GOOGLE_MAPS_CLIENT_ID', false, 'maps');
+    $privateKey = Kurogo::getOptionalSiteVar('GOOGLE_MAPS_PRIVATE_KEY', false, 'maps');
+    if ($clientID && $privateKey) {
+        // parse the url
+        $url = parse_url($myUrlToSign);
+        if (strpos($url['query'], 'client=') === false) {
+            $url['query'] .= "client={$clientID}";
+        }
+        $urlPartToSign = $url['path'] . "?" . $url['query'];
+
+        // Decode the private key into its binary format
+        $decodedKey = decodeBase64UrlSafe($privateKey);
+
+        // Create a signature using the private key and the URL-encoded
+        // string using HMAC SHA1. This signature will be binary.
+        $signature = hash_hmac("sha1", $urlPartToSign, $decodedKey, true);
+
+        $encodedSignature = encodeBase64UrlSafe($signature);
+        return $urlToSign."&signature=".$encodedSignature;
+    }
+    return $urlToSign;
+}
+
+// Encode a string to URL-safe base64
+function encodeBase64URLSafe($value) {
+    return str_replace(array('+', '/'), array('-', '_'), base64_encode($value));
+}
+
+// Decode a string from URL-safe base64
+function decodeBase64URLSafe($value) {
+    return base64_decode(str_replace(array('-', '_'), array('+', '/'), $value));
+}
+
 class MapsAdmin
 {
     public static function getMapControllerClasses() {
         return array(
-            'MapDataController' => 'default',
-            'MapDBDataController' => 'database',
+            //'MapDataController' => 'default',
+            //'MapDBDataController' => 'database',
             //'ArcGISDataController'=>'ArcGIS',
+            'MapDataModel' => 'default',
+            'ArcGISDataModel' => 'ArcGIS Server',
         );
     }
     

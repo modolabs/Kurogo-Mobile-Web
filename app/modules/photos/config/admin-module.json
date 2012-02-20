@@ -1,0 +1,41 @@
+{
+    "options": {
+        "titleKey":"PHOTOS_ADMIN_OPTIONS_TITLE",
+        "descriptionKey":"PHOTOS_ADMIN_OPTIONS_DESCRIPTION",
+        "sectiontype":"fields",
+        "fields":{
+            "MAX_RESULTS":{"labelKey":"PHOTOS_ADMIN_OPTIONS_MAXRESULTS_TITLE","type":"number","config":"module","section":"module","descriptionKey":"PHOTOS_ADMIN_OPTIONS_MAXRESULTS_DESCRIPTION"}
+       }
+    },
+    "strings":{
+        "titleKey":"PHOTOS_ADMIN_STRINGS_TITLE",
+        "descriptionKey":"PHOTOS_ADMIN_STRINGS_DESCRIPTION",
+        "sectiontype":"fields",
+        "fields":{
+             "description":{"labelKey":"PHOTOS_ADMIN_STRINGS_HEADERTEXT_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"PHOTOS_ADMIN_STRINGS_HEADERTEXT_DESCRIPTION"}
+        }
+    },
+    "feeds": {
+        "titleKey":"PHOTOS_ADMIN_FEEDS_TITLE",
+        "descriptionKey":"PHOTOS_ADMIN_FEEDS_DESCRIPTION",
+        "config":"feeds",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"labelKey":"PHOTOS_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"PHOTOS_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
+            "TITLE":{"labelKey":"PHOTOS_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"PHOTOS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
+            "RETRIEVER_CLASS":{"labelKey":"PHOTOS_ADMIN_FEEDS_CONTROLLER_TITLE", "descriptionKey":"PHOTOS_ADMIN_FEEDS_CONTROLLER_DESCRIPTION", "type":"select","optionsMethod":["PhotosDataModel","getPhotoDataRetrievers"],"optionsFirst":"-- Choose a photo provider --","default":"URLDataRetriever"},
+            "API_KEY":{"labelKey":"PHOTOS_ADMIN_FEEDS_API_KEY_TITLE","descriptionKey":"PHOTOS_ADMIN_FEEDS_API_KEY_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["FlickrAPIRetriever"]]},
+            "USER":{"labelKey":"PHOTOS_ADMIN_FEEDS_USER_TITLE","descriptionKey":"PHOTOS_ADMIN_FEEDS_USER_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["FlickrFeedRetriever","FlickrAPIRetriever","PicasaRetriever"]]},
+            "PHOTOSET":{"labelKey":"PHOTOS_ADMIN_FEEDS_FLICKR_PHOTOSET_TITLE","descriptionKey":"PHOTOS_ADMIN_FEEDS_FLICKR_PHOTOSET_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["FlickrFeedRetriever","FlickrAPIRetriever"]]},
+            "GROUP":{"labelKey":"PHOTOS_ADMIN_FEEDS_FLICKR_GROUP_TITLE","descriptionKey":"PHOTOS_ADMIN_FEEDS_FLICKR_GROUP_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["FlickrFeedRetriever","FlickrAPIRetriever"]]},
+            "ALBUM":{"labelKey":"PHOTOS_ADMIN_FEEDS_ALBUM_TITLE","descriptionKey":"PHOTOS_ADMIN_FEEDS_ALBUM_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["PicasaRetriever"]]},
+            "BASE_URL":{"labelKey":"PHOTOS_ADMIN_FEEDS_URL_TITLE", "descriptionKey":"PHOTOS_ADMIN_FEEDS_URL_DESCRIPTION", "type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["URLDataRetriever"]]},
+            "PARSER_CLASS":{"labelKey":"PHOTOS_ADMIN_FEEDS_PARSER_TITLE", "descriptionKey":"PHOTOS_ADMIN_FEEDS_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["URLDataRetriever"]]}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"loadFeedData",
+        "sectionaddnew":true,
+        "sectiondelete":true,
+        "sectionreorder":true
+    }
+}

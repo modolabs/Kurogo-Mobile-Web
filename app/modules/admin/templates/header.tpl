@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
+	<meta charset="{$charset}" />
 <!--[if lt IE 9]>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -39,7 +39,7 @@
 		<span id="sitename">{$strings.SITE_NAME}</span>
 	</h1>
 	<div id="utility">
-        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{"SIGN_OUT"|getLocalizedString}</a>
+        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{"SIGN_OUT"|getLocalizedString}</a></div>
         {/if}
 	</div>
 </header>

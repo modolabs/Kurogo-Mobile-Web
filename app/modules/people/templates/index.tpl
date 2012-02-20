@@ -9,7 +9,7 @@
 {/if}
 
 {block name="contactslist"}
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$contacts secondary=true accessKey=false}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$contacts secondary=true accessKey=false subTitleNewline=$contactsSubTitleNewline}
 {/block}
 
 {include file="findInclude:common/templates/footer.tpl"}

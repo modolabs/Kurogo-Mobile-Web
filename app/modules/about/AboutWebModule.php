@@ -11,7 +11,7 @@
 class AboutWebModule extends WebModule {
   protected $id = 'about';
 
-  private function getPhraseForDevice() {
+  protected function getPhraseForDevice() {
     switch($this->platform) {
       case 'iphone':
         return $this->pagetype == 'tablet' ? 'iPad' : 'iPhone';
@@ -46,6 +46,7 @@ class AboutWebModule extends WebModule {
 
       case 'help':
       case 'credits':
+      case 'credits_html': // Used by AboutAPIModule to build credits html
       case 'about':
       case 'pane':
         break;

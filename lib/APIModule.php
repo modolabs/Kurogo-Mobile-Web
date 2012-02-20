@@ -17,6 +17,10 @@ abstract class APIModule extends Module
     public function getVmax() {
         return $this->vmax;
     }
+    
+    public function getPayload() {
+        return null;
+    }
 
  /**
    * Set the command
@@ -132,7 +136,7 @@ abstract class APIModule extends Module
 
     protected function getAPIConfig($name, $opts=0) {
         $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
-        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts);
+        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts, $this);
         return $config;
     }
 
@@ -255,6 +259,7 @@ abstract class APIModule extends Module
         $this->logCommand($size);
     }
     header("Content-Length: " . $size);
+    header("Content-Type: application/json; charset=utf-8");
     echo $json;
     exit();
   }

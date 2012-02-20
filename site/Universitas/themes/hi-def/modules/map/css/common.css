@@ -1,0 +1,23 @@
+#toolbar {
+	background-color: @@@body_background_color@@@;
+}
+
+#search-form input[type="text"] {
+    border-color: @@@search_border_color@@@;
+}
+
+#search-options input[type="button"] {
+	color: @@@nonfocal_text_color@@@;
+}
+
+.toolbar {
+	color: @@@nonfocal_text_color@@@;
+}
+
+.toolbar a, .toolbar a:visited, .toolbar input[type="button"] {
+	color: @@@nonfocal_text_color@@@;
+}
+
+.actionbutton a, .actionbutton a:visited {
+	color: @@@nonfocal_text_color@@@;
+}

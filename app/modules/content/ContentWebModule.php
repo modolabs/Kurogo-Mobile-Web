@@ -1,13 +1,16 @@
 <?php
 
+includePackage('DataModel');
 class ContentWebModule extends WebModule {
     protected $id = 'content';
 	protected $contentGroups;
 	protected $feedGroups = null;
+	protected static $defaultModel = 'ContentDataModel';
 
    protected function getContent($feedData) {
    
         $content_type = isset($feedData['CONTENT_TYPE']) ? $feedData['CONTENT_TYPE'] : '';
+        $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
         
         switch ($content_type)
         {
@@ -18,15 +21,23 @@ class ContentWebModule extends WebModule {
                 }
                 return $content;
                 break;
+
             case 'html_url':
-                if (!isset($feedData['CONTROLLER_CLASS'])) {
-                    $feedData['CONTROLLER_CLASS'] = 'HTMLDataController';
+                if (!isset($feedData['PARSER_CLASS'])) {
+                    $feedData['PARSER_CLASS'] = 'DOMDataParser';
                 }
-                $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                
+                $controller = ContentDataModel::factory($modelClass, $feedData);
+                
                 if (isset($feedData['HTML_ID']) && strlen($feedData['HTML_ID'])>0) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
                 } elseif (isset($feedData['HTML_TAG']) && strlen($feedData['HTML_TAG'])>0) {
                     $content = $controller->getContentByTag($feedData['HTML_TAG']);
+                } elseif (isset($feedData['HTML_CLASS']) && strlen($feedData['HTML_CLASS'])>0) {
+                    $content = $controller->getContentByClass($feedData['HTML_CLASS']);
+                } elseif (isset($feedData['KUROGO_READER']) && $feedData['KUROGO_READER']) {
+                    $reader = new KurogoReader($feedData['BASE_URL']);
+                    $content = $reader->getContent();
                 } else {
                     $content = $controller->getContent();
                 }
@@ -34,10 +45,11 @@ class ContentWebModule extends WebModule {
                 return $content;
                 break;
             case 'rss':
-                if (!isset($feedData['CONTROLLER_CLASS'])) {
-                    $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
+                if (!isset($feedData['PARSER_CLASS'])) {
+                    $feedData['PARSER_CLASS'] = 'RSSDataParser';
                 }
-                $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+                $controller = ContentDataModel::factory($controllerClass, $feedData);
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
                 }
@@ -66,7 +78,7 @@ class ContentWebModule extends WebModule {
 		if (isset($this->feedGroups[$group])) {
 
             if (!isset($this->feedGroups[$group]['DESCRIPTION'])) {
-                $this->feedGroups[$group]['DESCRIPTION'] = $this->getModuleVar('description','strings');
+                $this->feedGroups[$group]['DESCRIPTION'] = $this->getOptionalModuleVar('description','','strings');
             }
             
             return $this->feedGroups[$group];            
@@ -137,7 +149,7 @@ class ContentWebModule extends WebModule {
 					$this->setPageTitle($feedData['TITLE']);
 					$this->assign('contentBody', $this->getContent($feedData));
 				}else{
-					$this->assign('description', $this->getModuleVar('description','strings'));
+					$this->assign('description', $this->getOptionalModuleVar('description','','strings'));
 					$this->assign('contentPages', $pages);
 				}
 				

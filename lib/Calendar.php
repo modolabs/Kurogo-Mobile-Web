@@ -1,21 +1,33 @@
 <?php
 
-require_once(LIB_DIR . '/Calendar/DateTimeUtils.php');
+includePackage('DateTime');
 require_once(LIB_DIR . '/Calendar/ICalendar.php');
+
+interface CalendarInterface {
+    public function init($args);
+    public function getEvents();
+    public function getEventsInRange(TimeRange $range=null, $limit=null);
+    public function set_attribute($contentname, $value, $params=null);
+    public function add_event(CalendarEvent $event);
+}
+
+interface CalendarEvent {
+    public function init($args);
+}
 
 class Calendar 
 {
-    public static function getUserCalendarListController() {
+    public static function getUserCalendarListRetrievers() {
         return array(
             ''=>'-',
-            'GoogleAppsCalendarListController'=>'Google Apps'
+            'GoogleAppsCalendarListRetriever'=>'Google Apps'
         );
     }
 
-    public static function getResourceListController() {
+    public static function getResourceListRetrievers() {
         return array(
             ''=>'-',
-            'GoogleAppsCalendarListController'=>'Google Apps (Business or Education)'
+            'GoogleAppsCalendarListRetriever'=>'Google Apps (Business or Education)'
         );
     }
     

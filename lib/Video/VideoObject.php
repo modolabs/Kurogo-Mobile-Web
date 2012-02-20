@@ -33,6 +33,20 @@ class VideoObject implements KurogoObject
         return $this->id;
     }
     
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search': //case insensitive
+                    return  (stripos($this->getTitle(), $value)!==FALSE) ||
+                            (stripos($this->getDescription(), $value)!==FALSE);
+                    break;
+            }
+        }   
+        
+        return true;     
+    }
+    
     public function setTitle($title) {
         $this->title = $title;
     }

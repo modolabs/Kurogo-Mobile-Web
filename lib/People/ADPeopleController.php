@@ -1,20 +1,11 @@
 <?php
 /**
-  * @package Directory
+  * @package People
   */
 
 /**
-  * @package Directory
+  * @package People
   */
-class ADPeopleController extends LDAPPeopleController {
-
-    protected function init($args) {
-        $args = array_merge(
-            array(
-                'LDAP_USERID_FIELD'=>'samaccountname'
-            ), $args
-        );
-                
-        parent::init($args);
-    }
+class ADPeopleController extends PeopleDataModel {
+    protected $DEFAULT_RETRIEVER_CLASS='ADPeopleRetriever';
 }

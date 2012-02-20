@@ -46,12 +46,15 @@ abstract class Module
     }
   
     /**
-      * Loads the data in the feeds configuration file
+      * Loads the data in the feeds configuration file. It will get merged with a feeds 
+      * section in the module.ini file
       * @return array
       */
     protected function loadFeedData() {
+        $default = $this->getOptionalModuleSection('feeds','module');
         $feeds = $this->getModuleSections('feeds');
         foreach ($feeds as $index=>&$feedData) {
+            $feedData = array_merge($default, $feedData);
             $feedData['INDEX'] = $index;
         }
         reset($feeds);
@@ -71,6 +74,9 @@ abstract class Module
 		$this->logDataLabel = strval($dataLabel);
 	}
   
+    private static function cacheKey($id, $type) {
+        return "module-factory-{$id}-{$type}";
+    }
     /**
       * Factory method. Used to instantiate a subclass
       * @param string $id, the module id to load
@@ -87,6 +93,18 @@ abstract class Module
         } elseif (!Kurogo::getOptionalSiteVar('CREATE_DEFAULT_CONFIG', false, 'modules')) {
             Kurogo::log(LOG_ERR, "Module config file not found for module $id", 'module');
 			throw new KurogoModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
+        }
+
+        // see if the class location has been cached 
+        if ($moduleFile = Kurogo::getCache(self::cacheKey($id, $type))) {
+            $className = basename($moduleFile,'.php');
+            include_once($moduleFile);
+            $module = new $className();
+            $module->setConfigModule($configModule);
+            if ($config) {
+                $module->setConfig('module', $config);
+            }
+            return $module;
         }
         
 
@@ -136,6 +154,9 @@ abstract class Module
                         if ($config) {
                         	$module->setConfig('module', $config);
                         }
+                
+                        // cache the location of the class (which also includes the classname)
+                        Kurogo::setCache(self::cacheKey($id, $type), $moduleFile);
                         return $module;
                     }
                     Kurogo::log(LOG_NOTICE, "$class found at $moduleFile is abstract and cannot be used for $id", 'module');
@@ -191,6 +212,10 @@ abstract class Module
             }
         }
         $this->logView = Kurogo::getOptionalSiteVar('STATS_ENABLED', true) ? true : false;
+    }
+    
+    public function isEnabled() {
+        return !$this->getModuleVar('disabled', 'module');
     }
     
     /**
@@ -263,7 +288,7 @@ abstract class Module
     		return $this->configs[$type];
     	}
     	
-        if ($config = ModuleConfigFile::factory($this->configModule, $type, $opts)) {
+        if ($config = ModuleConfigFile::factory($this->configModule, $type, $opts, $this)) {
             Kurogo::siteConfig()->addConfig($config);
             $this->setConfig($type, $config);
         }
@@ -647,6 +672,10 @@ abstract class Module
             SITE_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini'
         );
         
+        if ($this->id != $this->configModule) {
+            $stringFiles[] = SITE_MODULES_DIR . '/' . $this->configModule ."/strings/".$lang . '.ini';
+        }
+        
         $strings = array();
         foreach ($stringFiles as $stringFile) {
             if (is_file($stringFile)) {
@@ -674,7 +703,7 @@ abstract class Module
         return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
     }
     
-    public function getLocalizedString($key, $opts=null) {
+    public function getLocalizedString($key) {
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
             throw new KurogoConfigurationException("Invalid string key $key");
         }
@@ -734,5 +763,24 @@ abstract class Module
       * Action to take when access to the module is restricted
       */
     abstract protected function unauthorizedAccess();
+
+    public function removeModule() {
+        $source_dir = SITE_CONFIG_DIR . DIRECTORY_SEPARATOR . $this->getConfigModule();
+        $base_target_dir = $target_dir = SITE_DISABLED_DIR . DIRECTORY_SEPARATOR . $this->getConfigModule() . '-' . date('Y-m-d');
+        $start = 1;
+        
+        if (!is_dir(SITE_DISABLED_DIR)) {
+            mkdir(SITE_DISABLED_DIR, 0700, true);
+        }
+        
+        while (is_dir($target_dir)) {
+            $target_dir = $base_target_dir . '-' . $start++;
+        }
+        
+        rename($source_dir, $target_dir);
+        Kurogo::clearCache();
+        clearstatcache();
+    }
+    
 
 }

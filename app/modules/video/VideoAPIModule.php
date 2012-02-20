@@ -5,16 +5,23 @@ Kurogo::includePackage('Video');
 class VideoAPIModule extends APIModule {    
     protected $id='video';  // this affects which .ini is loaded
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
     protected $feeds = array();
+    protected $legacyController = false;
+    protected static $defaultModel = 'VideoDataModel';
+    protected static $defaultController = 'VideoDataController';
 
     protected function arrayFromVideo($video) {
-        return array(
+        $videoArray = array(
             "id"              => $video->getID(),
             "title"           => $video->getTitle(),
             "description"     => strip_tags($video->getDescription()),
             "author"          => $video->getAuthor(),
-            "published"       => $video->getPublished(),
+            "published"       => array(
+                'date'          => $video->getPublished()->format('Y-m-d H:i:s'),
+                'timezone_type' => 1, // PHP 5.3 internal type -- deprecated
+                'timezone'      => $video->getPublished()->format('P'),
+            ),
             "date"            => $video->getPublished()->format('M n, Y'),
             "url"             => $video->getURL(),
             "image"           => $video->getImage(),
@@ -26,16 +33,34 @@ class VideoAPIModule extends APIModule {
             "streamingURL"    => $video->getStreamingURL(),
             "stillFrameImage" => $video->getStillFrameImage(),
             );
+        
+        if ($this->requestedVersion >= 2) {
+            $videoArray['published']['timestamp'] = $video->getPublished()->format('U');
+        }
+        
+        return $videoArray;
     }
 
     protected function getFeed($feed=null) {
         $feed = isset($this->feeds[$feed]) ? $feed : $this->getDefaultSection();
         $feedData = $this->feeds[$feed];
-        
-        $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+        try {
+            if (isset($feedData['CONTROLLER_CLASS'])) {
+                $modelClass = $feedData['CONTROLLER_CLASS'];
+            } else {
+                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            }
+            
+            $controller = VideoDataModel::factory($modelClass, $feedData);
+        } catch (KurogoException $e) { 
+            $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $this->legacyController = true;
+        }
+
         return $controller;
     }
-    
+
     protected function getDefaultSection() {
         return key($this->feeds);
     }
@@ -46,25 +71,37 @@ class VideoAPIModule extends APIModule {
         switch ($this->command) {
         case 'sections':
             $this->setResponse(VideoModuleUtils::getSectionsFromFeeds($this->feeds));
-            $this->setResponseVersion(1);                
+            $this->setResponseVersion($this->requestedVersion);
             break;
         case 'videos':
         case 'search':            
             // videos commands requires one argument: section.
             // search requires two arguments: section and q (query).
             $section = $this->getArg('section');
-            $query = $this->getArg('q');                
 
             $controller = $this->getFeed($section);
-            $totalItems = $controller->getTotalItems();
             $videos = array();
 
             // TODO: this isn't the right place to hard code paging limits
+
             if ($this->command == 'search') {
-                $items = $controller->search($query, 0, 20);
+                $limit = 20;
+                $query = $this->getArg('q');                
+                if ($this->legacyController) {
+                    $items = $controller->search($query, 0, $limit);
+                } else {
+                    $controller->setLimit($limit);
+                    $items = $controller->search($query);
+                }
             }
             else {
-                $items = $controller->items(0, 50);
+                $limit = 50;
+                if ($this->legacyController) {
+                    $items = $controller->items(0, 50);
+                } else {
+                    $controller->setLimit($limit);
+                    $items = $controller->items();
+                }
             }
 
             foreach ($items as $video) {
@@ -72,7 +109,7 @@ class VideoAPIModule extends APIModule {
             }
 
             $this->setResponse($videos);
-            $this->setResponseVersion(1);                
+            $this->setResponseVersion($this->requestedVersion);
             break; 
                 
         case 'detail':
@@ -83,7 +120,7 @@ class VideoAPIModule extends APIModule {
             if ($video = $controller->getItem($videoid)) {
                 $result = $this->arrayFromVideo($video);
                 $this->setResponse($result);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($this->requestedVersion);
             } else {
                 $this->throwError(new KurogoError("Video Not Found"));
             }

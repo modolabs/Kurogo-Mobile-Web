@@ -176,6 +176,7 @@ class TemplateEngine extends Smarty {
           Kurogo::log(LOG_DEBUG, __FUNCTION__." replacing extends $name with $path", 'template');
         } else {
           Kurogo::log(LOG_WARNING, __FUNCTION__." FAILED to find EXTENDS for $name", 'template');
+          throw new SmartyException("Unable to load template \"findExtends : $name\"");
         }
       }
     }
@@ -295,7 +296,7 @@ class TemplateEngine extends Smarty {
       if (isset($params['id'])) {
         $html .= " id=\"{$params['id']}\"";
       }
-      if (self::$accessKey < 10) {
+      if (self::$accessKey < 10 && Kurogo::deviceClassifier()->getPlatform() != "blackberry") {
         $html .= ' accesskey="'.self::$accessKey.'">'.self::$accessKey.': ';
         self::$accessKey++;
       } else {
@@ -332,9 +333,8 @@ class TemplateEngine extends Smarty {
     $this->error_reporting = E_ALL & ~E_NOTICE;
 
     // Device info
-    $pagetype      = Kurogo::deviceClassifier()->getPagetype();
-    $platform      = Kurogo::deviceClassifier()->getPlatform();
-    $supportsCerts = Kurogo::deviceClassifier()->getSupportsCerts();
+    $pagetype = Kurogo::deviceClassifier()->getPagetype();
+    $platform = Kurogo::deviceClassifier()->getPlatform();
     
     // Smarty configuration
     $this->setCompileDir (CACHE_DIR.'/smarty/templates');
@@ -367,7 +367,6 @@ class TemplateEngine extends Smarty {
     // variables common to all modules
     $this->assign('pagetype', $pagetype);
     $this->assign('platform', $platform);
-    $this->assign('supportsCerts', $supportsCerts ? 1 : 0);
     $this->assign('showDeviceDetection', Kurogo::getSiteVar('DEVICE_DETECTION_DEBUG'));
     $this->assign('moduleDebug', Kurogo::getSiteVar('MODULE_DEBUG'));
   }

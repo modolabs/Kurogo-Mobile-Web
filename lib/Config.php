@@ -1,4 +1,7 @@
 <?php
+
+require('Config/ConfigFile.php');
+require('Config/ConfigGroup.php');
 /**
  * Config
  * @package Config

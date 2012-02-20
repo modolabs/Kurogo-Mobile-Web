@@ -16,7 +16,8 @@
     {/if}
   {/block}
   
-  <p class="legend">
+  <p>
+    {$lastField["class"] = ""}
     {include file="findInclude:common/templates/listItem.tpl" item=$lastField}
   </p>
 

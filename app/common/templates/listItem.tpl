@@ -14,10 +14,9 @@
     <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget || $item['linkTarget']} target="{if $item['linkTarget']}{$item['linkTarget']}{else}{$linkTarget}{/if}"{/if}>
   {/if}
     {if $item['img']}
-      <img src="{$item['img']}" alt="{$item['title']}"{if $item['imgWidth']}
-        width="{$item['imgWidth']}"{/if}{if $item['imgHeight']}
-        height="{$item['imgHeight']}"{/if}{if $item['imgAlt']}
-        alt="{$item['imgAlt']}"{/if} />
+      <img src="{$item['img']}" alt="{if $item['imgAlt']}{$item['imgAlt']}{/if}"
+        {if $item['imgWidth']} width="{$item['imgWidth']}"{/if}
+        {if $item['imgHeight']} height="{$item['imgHeight']}"{/if} />
     {/if}
     {$listItemLabel}
     {if $titleTruncate}

@@ -115,7 +115,7 @@ class ICalAlarm extends ICalObject {
  * @package ExternalData
  * @subpackage Calendar
  */
-class ICalEvent extends ICalObject implements KurogoObject {
+class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
 
     protected $uid;
     protected $sequence;
@@ -125,6 +125,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
     protected $summary;
     protected $description;
     protected $location;
+    protected $geo;
     protected $tzid;
     protected $url;
     protected $created;
@@ -138,7 +139,12 @@ class ICalEvent extends ICalObject implements KurogoObject {
     protected $exdates = array();
     protected $recurrence_exceptions = array();
 
-    public function getEventCategories() {
+    public function getEventCategories(TimeRange $range = null) {
+        if($range && $this->range->contained_by($range)) {
+            return $this->categories;
+        }else {
+            return $this->categories;
+        }
         return array();
     }
 
@@ -146,6 +152,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
         return array(
             'summary', 
             'location', 
+            'geo',
             'description', 
             'uid', 
             'start', 
@@ -156,31 +163,30 @@ class ICalEvent extends ICalObject implements KurogoObject {
         );
     }
 
-    public function apiArray() {
-
-        $arr= array (
-            'id'=>crc32($this->get_uid()) >>1,
-            'title'=>$this->get_summary(),
-            'start'=>$this->get_start(),
-            'end'=>$this->get_end()
-        );
-
-        if ($urlLink = $this->get_url()) {
-            $arr['url'] = $urlLink;
-        }
-        if ($location = $this->get_location()) {
-            $arr['location'] = $location;
-        }
-        if ($description = $this->get_description()) {
-            $arr['description'] = $description;
-        }
-
-        return $arr;
-
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search': //case insensitive
+                    return  (stripos($this->getTitle(), $value)!==FALSE);
+                    break;
+                case 'category': //case insensitive
+                    if (!in_array(strtolower($value), array_map('strtolower', $this->categories))) {
+                        return false;
+                    }
+                    break;
+            }
+        }   
+        
+        return true;     
     }
 
     public function get_tzid() {
         return $this->tzid;
+    }
+    
+    public function getID() {
+        return $this->uid;
     }
 
     public function get_uid() {
@@ -189,6 +195,14 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
     public function get_recurid() {
         return $this->recurid;
+    }
+    
+    public function isAllDay() {
+        return $this->range instanceOf DayRange;
+    }
+
+    public function getRange() {
+        return $this->range;
     }
 
     public function get_range() {
@@ -210,6 +224,10 @@ class ICalEvent extends ICalObject implements KurogoObject {
     public function get_summary() {
         return $this->summary;
     }
+    
+    public function getTitle() {
+        return $this->summary;
+    }
 
     public function get_url() {
         return $this->url;
@@ -221,6 +239,18 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
     public function get_location() {
         return $this->location;
+    }
+    
+    public function get_location_coordinates() {
+        $coords = false;
+        $parts = explode(';', $this->geo);
+        if (count($parts) == 2) {
+            $coords = array(
+                'lat' => floatval($parts[0]),
+                'lon' => floatval($parts[1]),
+            );
+        }
+        return $coords;
     }
 
     public function get_categories() {
@@ -302,6 +332,12 @@ class ICalEvent extends ICalObject implements KurogoObject {
         $this->location = $location;
     }
     
+    public function setLocationCoordinates($coordinates) {
+        if (count($coordinates) == 2) {
+            $this->geo = implode(';', array_values($coordinates));
+        }
+    }
+    
     private static function getTimezoneForID($tzid) {
         try {
             $timezone = new DateTimeZone($tzid);
@@ -325,6 +361,13 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'LOCATION':
                 $this->setLocation(iCalendar::ical_unescape_text($value));
+                break;
+            case 'GEO':
+                if (is_array($value)) {
+                    $this->setLocationCoordinates($value);
+                } else if (is_string($value)) {
+                    $this->geo = $value;
+                }
                 break;
             case 'SUMMARY':
                 $this->setSummary(iCalendar::ical_unescape_text($value));
@@ -398,7 +441,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
                     }
 
                     if (isset($this->properties['duration'])) {
-                        $this->range->set_end($this->get_start() + $this->properties['duration']);
+                        $this->range->set_icalendar_duration($this->properties['duration']);
                         unset($this->properties['duration']);
                     }
                 } else {
@@ -419,28 +462,9 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 $this->transparency = $value;
                 break;
             case 'DURATION':
-                // todo:
-                // if this tag comes before DTSTART we will break
-                if (preg_match('/^P([0-9]{1,2}[W])?([0-9]{1,3}[D])?([T]{0,1})?([0-9]{1,2}[H])?([0-9]{1,2}[M])?([0-9]{1,2}[S])?/', $value, $bits)) {
-                    $value = 0;
-                    switch (count($bits)) {
-                        case 7:
-                            $value += $bits[6]; //seconds
-                        case 6:
-                            $value += (60*$bits[5]); //minutes
-                        case 5:
-                            $value += (3600*$bits[4]); //hours
-                        case 4:
-                        case 3:
-                            $value += (86400*$bits[2]); //days
-                        case 2:
-                            $value += (604800*$bits[1]);  //weeks
-                    }
-                }
-
                 if ($this->range) {
-                    $this->range->set_end($this->get_start() + $value);
-                } else {      
+                    $this->range->set_icalendar_duration($value);
+                } else {
                     $this->properties['duration'] = $value;
                 }
                 break;
@@ -530,8 +554,12 @@ class ICalEvent extends ICalObject implements KurogoObject {
             $this->addLine($output_string, "LOCATION", $this->location);
         }
 
+        if ($this->geo) {
+            $this->addLine($output_string, "GEO", $this->geo);
+        }
+
         if ($this->description) {
-            $this->addLine($output_string, "DECRIPTION", $this->description);
+            $this->addLine($output_string, "DESCRIPTION", $this->description);
         }
 
         if ($this->range) {
@@ -546,6 +574,9 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
         $this->addLine($output_string, 'END', 'VEVENT');
         return $output_string;
+    }
+    
+    public function init($args) {
     }
 
     public function __construct($summary=NULL, TimeRange $range=NULL) {
@@ -572,6 +603,7 @@ class ICalRecurrenceRule extends ICalObject {
     protected $interval = 1;
     protected $occurs_by_list = array();
     protected $occurs_by_day = array();
+    protected $wkst;
     private static $dayIndex = Array('SU'=>0, 'MO'=>1, 'TU'=>2, 'WE'=>3, 'TH'=>4, 'FR'=>5, 'SA'=>6 );
     private $dayString = array(
         'SU' => 'Sunday',
@@ -630,8 +662,12 @@ class ICalRecurrenceRule extends ICalObject {
                         }
                         ksort($this->occurs_by_day);
                         break;
+                    } else if($this->type == 'MONTHLY'){
+                    	$this->occurs_by_list = array('BYDAY'=>$rulevalue);
                     }
                 case 'WKST':
+                    $this->wkst = array_key_exists($rulevalue, self::$dayIndex) ? $rulevalue : '';
+                    break;
                 case (substr($rulename, 0, 2) == 'BY'):
                     $this->occurs_by_list[$rulename] = $rulevalue;
                     break;
@@ -675,27 +711,35 @@ class ICalRecurrenceRule extends ICalObject {
 
                 // Loop through the days and find the next one.
                 reset($this->occurs_by_day);
+                //check the wkst to resort the occurs_by_day 
+                if ($interval > 1 && $this->wkst && self::$dayIndex[$this->wkst] > 0 && isset($this->occurs_by_day[0])) {
+                    array_shift($this->occurs_by_day);
+                    $this->occurs_by_day[7] = 'SU';
+                }
+                
                 $day = current($this->occurs_by_day);
                 while ($day) {
                     if ($day == $current_day) {
                         $next_day = next($this->occurs_by_day);
                         if ($next_day) {
                             $offset = self::$dayIndex[$next_day] - self::$dayIndex[$current_day];
+                            $time = self::nextIncrement($time, 'DAILY', $offset);
                         }
                         // If we have reached the end of the sequence, use the beginning and add 7
                         else {
                             reset($this->occurs_by_day);
                             $next_day = current($this->occurs_by_day);
                             $offset = 7 + self::$dayIndex[$next_day] - self::$dayIndex[$current_day];
+                            $time = self::nextIncrement($time, 'DAILY', $offset + (($interval - 1) * 7));
                         }
                         break;
                     }
                     $day = next($this->occurs_by_day);
                 }
-                $time = self::nextIncrement($time, 'DAILY', $offset*$interval);
+                //$time = self::nextIncrement($time, 'DAILY', $offset*$interval);
                 break;
             case 'MONTHLY':
-                throw new ICalendarException("MONTHLY increment Not handled yet");
+            	$time = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time)+$interval, date('d', $time), date('Y', $time));
                 break;
             case 'YEARLY':
                 $time = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time), date('d', $time), date('Y', $time)+$interval);
@@ -726,7 +770,6 @@ class ICalRecurrenceRule extends ICalObject {
                     break;
                 case 'BYMONTH':
                     $time = mktime(date('H', $time), date('i', $time), date('s', $time), $val, date('d', $time), date('Y', $time));
-                    //jeffery var_dump(date("Y-m-d", $time));
                     break;
                 case 'BYSECOND':
                     $time = mktime(date('H', $time), date('i', $time), $val, date('m', $time), date('d', $time), date('Y', $time));
@@ -747,7 +790,7 @@ class ICalRecurrenceRule extends ICalObject {
                 case 'BYWEEKNO':
                 case 'BYSETPOS':
                 case 'WKST':
-                    throw new Exception("BYWEEKNO, BYSETPOS, WKST Not handled yet");
+                    throw new ICalendarException("$rule Not handled yet");
                     break;
                 default:
             }
@@ -816,8 +859,13 @@ class ICalendar extends ICalObject implements CalendarInterface {
     protected $events=array();
     protected $eventStartTimes=array();
     protected $recurrence_exceptions = array();
+    protected $initArgs=array();
 
-    public function add_event(ICalEvent $event) {
+    public function add_event(CalendarEvent $event) {
+        if (!$event instanceOf ICalEvent) {
+            throw new KurogoConfigurationException(gettype($event) . " must be a subclass of ICalEvent");
+        }
+        
         $uid = $event->get_uid();
         if (is_null($event->get_recurid())) {
             $this->events[$uid] = $event;
@@ -856,22 +904,15 @@ class ICalendar extends ICalObject implements CalendarInterface {
     }
 
     /* returns an array of events keyed by uid containing an array of occurrences keyed by start time */
-    public function getEventsInRange(TimeRange $range=null, $limit=null) {
-        $events = $this->events;
-
-        // sort event times
-        // deprecated use usort as follow
-        //asort($this->eventStartTimes);
+    public function getEventsInRange(TimeRange $range=null, $limit=null, $filters=null) {
 
         $occurrences = array();
+        $filters = is_array($filters) ? $filters : array();
 
         foreach ($this->eventStartTimes as $id => $startTime) {
             $event = $this->events[$id];
-            $eventOccurrences = $event->getOccurrencesInRange($range, $limit);
-
-            foreach ($eventOccurrences as $occurrence) {
-                $key = count($occurrences);
-                $occurrences[$key] = $occurrence;
+            if ($event->filterItem($filters)) {
+                $occurrences = array_merge($occurrences, $event->getOccurrencesInRange($range, $limit));
             }
         }
 
@@ -893,6 +934,11 @@ class ICalendar extends ICalObject implements CalendarInterface {
     public function set_attribute($attr, $value, $params=null) {
         $this->properties[$attr] = $value;
     }
+
+    public function init($args) {
+        $this->initArgs = $args;
+    }
+    
 
     public function __construct($url=FALSE) {
         $this->properties = Array();
