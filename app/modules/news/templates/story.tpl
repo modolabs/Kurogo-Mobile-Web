@@ -39,6 +39,11 @@
     <a href="{$link}">{"READ_MORE"|getLocalizedString}</a>
     </div>
     {/if}
+    {if $showCommentsLink}
+    <div id="comments">
+    <a href="{$commentslink}">{"READ_COMMENTS"|getLocalizedString}</a>
+    </div>
+    {/if}
   </div><!--story-->
 </div>
 
