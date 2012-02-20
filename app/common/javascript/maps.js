@@ -249,6 +249,14 @@ KGOGoogleMapLoader.prototype.locationUpdated = function(location, firstLocation)
         bounds.extend(new google.maps.LatLng(this.initLat, this.initLon));
         bounds.extend(position);
         bounds.extend(map.getCenter());
+        if (typeof MIN_LAT_SPAN != 'undefined') {
+            bounds.extend(new google.maps.LatLng(position.lat() - MIN_LAT_SPAN / 2, position.lng()));
+            bounds.extend(new google.maps.LatLng(position.lat() + MIN_LAT_SPAN / 2, position.lng()));
+        }
+        if (typeof MIN_LON_SPAN != 'undefined') {
+            bounds.extend(new google.maps.LatLng(position.lat(), position.lng() - MIN_LON_SPAN / 2));
+            bounds.extend(new google.maps.LatLng(position.lat(), position.lng() + MIN_LON_SPAN / 2));
+        }
         map.fitBounds(bounds);
     }
 }
