@@ -1,4 +1,4 @@
-1.4 (Jan 27, 2012)
+1.4 (Feb 20, 2012)
 * NEW MODULE: Photos. Show photos from Flickr or Picassa
 * NEW MODULE: Athletics. Show news and score information
 * Updated map module interface
@@ -18,6 +18,14 @@
 * Added new DataModel/DataRetriever access classes. This permits simpler creation of new data retrieval methods including support for SOAP and Database calls. (See Dev guide for more info)
 * Added support for in-memory caching using APC or Memcache
 * Many other fixes and improvements to the included modules
+Since 1.4RC1
+* Visual Updates to Map module
+* Allow limited filtering of LDAP data
+* Fixed parse error in SOAP retriever
+* Added option in news to remove duplicate items
+* Added ability to retrieve the most popular calendar categories for a feed
+* Updated device detection
+* Added support for monthly recurring events
 
 1.3 (Oct 13, 2011)
 * IMPORTANT NOTE: After upgrading to 1.3, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
@@ -41,7 +49,6 @@
 * Added suport for Percent Mobile Analytics
 * You can now use a YouTube playlist as a source for video entries
 * Many other minor bug fixes and improvements
-Since 1.3RC1
 * Fixed an issue when using the admin module while being logged in
 * Non standard timezones in calendar feeds are handled better
 * There is now an option to show the distance to nearby points
@@ -90,7 +97,6 @@ Since 1.3RC1
 * Various issues that were present with E_STRICT on have been fixed
 * A XSS Vulnerability in the video module has been fixed
 * The Stats module now reports the list of API modules properly
-Since 1.2RC1:
 * Added option for Data Parsers to receive a file string and use parseFile instead of parseData
 * Sanitize breadcrumb parameters
 * getArg method will now accept filter_var() filters and options to filter/sanitize user input
