@@ -150,36 +150,18 @@ function KGOGoogleMapLoader(attribs) {
             }
             setCurrentInfoWindow(marker.infoWindow);
 
-            if (typeof that.onShowCallout != 'undefined') {
+            if (typeof that.onShowCallout == 'function') {
                 that.onShowCallout(placemark);
             }
         }
     }
-    
 }
 
 KGOGoogleMapLoader.prototype = new KGOMapLoader();
 
-KGOGoogleMapLoader.prototype.loadMap = function() {
-    var that = this;    
-    var mapImage = document.getElementById(this.mapElement);
-    var initCoord = new google.maps.LatLng(this.initLat, this.initLon);
-    var options = {
-        zoom: this.initZoom,
-        center: initCoord,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        disableDefaultUI: true
-    };
-    map = new google.maps.Map(mapImage, options);
-    var tilesLoadedListener = google.maps.event.addListener(map, 'tilesloaded', function() {
-        map.setCenter(initCoord);
-        google.maps.event.removeListener(tilesLoadedListener);
-    });
-
-    // setup zoom and other controls
-
-    var controlDiv = document.createElement('div');
-    controlDiv.id = "mapcontrols"
+KGOGoogleMapLoader.prototype.createMapControls = function() {
+    var controlDiv = document.createElement("div");
+    controlDiv.id = "mapcontrols";
 
     var zoominButton = document.createElement('a');
     zoominButton.id = "zoomin";
@@ -197,21 +179,41 @@ KGOGoogleMapLoader.prototype.loadMap = function() {
 
     var recenterButton = document.createElement('a');
     recenterButton.id = "recenter";
+    var that = this;
     recenterButton.onclick = function() {
-        map.setCenter(initCoord);
+        map.setCenter(new google.maps.LatLng(that.initLat, that.initLon));
         map.setZoom(that.initZoom);
     }
     controlDiv.appendChild(recenterButton);
 
-    if ("geolocation" in navigator && this.showUserLocation) {
-        this.locateMeButton = document.createElement('a');
-        this.locateMeButton.id = "locateMe";
-        this.locateMeButton.onclick = function() {
-            that.toggleLocationUpdates();
-        }
-        controlDiv.appendChild(this.locateMeButton);
+    this.locateMeButton = document.createElement('a');
+    this.locateMeButton.id = "locateMe";
+    var that = this;
+    this.locateMeButton.onclick = function() {
+        that.toggleLocationUpdates();
     }
+    controlDiv.appendChild(this.locateMeButton);
 
+    return controlDiv;
+}
+
+KGOGoogleMapLoader.prototype.loadMap = function() {
+    var that = this;    
+    var mapImage = document.getElementById(this.mapElement);
+    var initCoord = new google.maps.LatLng(this.initLat, this.initLon);
+    var options = {
+        zoom: this.initZoom,
+        center: initCoord,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        disableDefaultUI: true
+    };
+    map = new google.maps.Map(mapImage, options);
+    var tilesLoadedListener = google.maps.event.addListener(map, 'tilesloaded', function() {
+        map.setCenter(initCoord);
+        google.maps.event.removeListener(tilesLoadedListener);
+    });
+
+    var controlDiv = this.createMapControls();
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(controlDiv);
 }
 
