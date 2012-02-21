@@ -4,7 +4,7 @@ class GoogleJSMap extends JavascriptMapImageController {
 
 // http://code.google.com/apis/maps/documentation/javascript/overlays.html
 
-    private $locatesUser = false;
+    private $locatesUser = true;
 
     // these aren't arrays of actual objects;
     // they're mostly JavaScript snippets that will be concatenated later
