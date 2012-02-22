@@ -57,8 +57,23 @@ class ImageLoader extends FileLoader {
 
         $file = isset($options['file']) ? $options['file'] : '';
         if (!$file) {
-            $extension = pathinfo($url, PATHINFO_EXTENSION);
-            $file = md5($url) . '.'. $extension;
+            $urlparts = parse_url($url);
+            // if there is no path and query, it should not be an image
+            if(!isset($urlparts['path']) && !isset($urlparts['query'])) {
+                return false;
+            }
+            // use $urlparts['path'] to find extension only if path and query exists
+            if (isset($urlparts['query']) && isset($urlparts['path'])) {
+                $extension = pathinfo($urlparts['path'], PATHINFO_EXTENSION);
+            } else {
+                $extension = pathinfo($url, PATHINFO_EXTENSION);
+            }
+
+            // if no extension found, do not use extension
+            $file = md5($url.json_encode($loaderInfo));
+            if ($extension) {
+                $file .= '.'.$extension;
+            }
         }    
         return self::generateLazyURL($file, json_encode($loaderInfo), self::subDirectory());
     }

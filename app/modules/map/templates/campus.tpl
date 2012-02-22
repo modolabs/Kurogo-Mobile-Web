@@ -1,9 +1,9 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{include file="findInclude:modules/map/templates/searchbar.tpl"}
+{* {include file="findInclude:modules/map/templates/searchbar.tpl"} *}
 
 <div class="nonfocal">
-  <h3>{$browseHint}</h3>
+  <h2>{$browseHint}</h2>
 </div>
 
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$navItems navlistID="categories"}

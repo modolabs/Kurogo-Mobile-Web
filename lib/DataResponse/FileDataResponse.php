@@ -8,6 +8,10 @@ class FileDataResponse extends DataResponse
         return $this->responseFile;
     }
 
+    public function setResponseFile($url) {
+        $this->responseFile = $url;
+    }
+
     public function setRequest($url) {
         $this->responseFile = $url;
         if (!is_readable($url)) {

@@ -126,7 +126,7 @@ class MapWebModule extends WebModule {
         );
     }
 
-    private function pageForPlacemark(Placemark $placemark) {
+    protected function pageForPlacemark(Placemark $placemark) {
         $page = 'detail';
         $params = $placemark->getURLParams();
         if (isset($params['feed']) && $this->isMapDrivenUI($params['feed'])) {
@@ -134,7 +134,9 @@ class MapWebModule extends WebModule {
             //if ($this->page != $fullscreen) { // use detail page if we're already on a fullscreen map
             //    $page = $fullscreen;
             //}
-            if ($this->page != 'campus') { // use detail page if we're already on a fullscreen map
+            if (($this->page != 'campus' || $this->getArg('listview'))
+                && !$this->getArg('mapview'))
+            { // use detail page if we're already on a fullscreen map
                 $page = 'campus';
             }
         }
@@ -270,11 +272,24 @@ class MapWebModule extends WebModule {
             $index = $params['featureindex'];
             $feedId = $params['feed'];
             $dataController = $this->getDataModel($feedId);
+            if ($dataController instanceof MapDataModel) {
+                $dataController->clearCategoryId();
+            }
+            if (isset($params['category'])) {
+                $category = $dataController->findCategory($params['category']);
+            }
             $placemark = $dataController->selectPlacemark($index);
             if (is_array($placemark)) { // MapDataModel always returns arrays of placemarks
                 $placemark = $placemark[0];
             }
-            return array($placemark->getTitle(), $dataController->getTitle());
+            
+            // only show the subtitle if there is more than 1 "campus"
+            if (count($this->feedGroups)>1) {
+                $subtitle = $dataController->getTitle();
+            } else {
+                $subtitle = '';
+            }
+            return array($placemark->getTitle(), $subtitle);
         
         } else if (isset($params['title'])) {
             $result = array($params['title']);
@@ -426,11 +441,15 @@ class MapWebModule extends WebModule {
             }
         }
 
+        if ($title) {
+            $this->setPageTitles($title);
+        }
+
         $linkOptions = array('feed' => $feedId, 'group' => $this->feedGroup);
 
         if (count($listItems) == 1) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
-            $this->redirectTo($link['url']);
+            header("Location: " . $link['url']);
             return;
         }
 
@@ -725,6 +744,13 @@ class MapWebModule extends WebModule {
                     $this->initializeDynamicMap();
                 }
 
+                if ($this->feedGroup && $this->numGroups > 1) {
+                    $data = $this->getDataForGroup($this->feedGroup);
+                    if (isset($data['title'])) {
+                        $this->setPageTitles($data['title']);
+                    }
+                }
+
                 break;
             
             case 'bookmarks':
@@ -772,16 +798,22 @@ class MapWebModule extends WebModule {
             
             case 'category':
                 
-                $isMapView = $this->getArg('mapview') && $this->isMapDrivenUI();
+                $isMapView = $this->getArg('mapview');
                 $feedId = $this->getArg('feed');
                 $this->assign('feedId', $feedId);
                 $this->assignItemsFromFeed($feedId, $searchTerms, $isMapView);
 
                 // link to "view all on map"
                 $mapArgs = $this->args;
-                $mapArgs['mapview'] = true;
-                $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
-                $this->assign('mapURL', $mapURL);
+                if (isset($mapArgs['mapview']) && $mapArgs['mapview']) {
+                    unset($mapArgs['mapview']);
+                    $browseURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
+                    $this->assign('browseURL', $browseURL);
+                } else if ($this->getSelectedPlacemarks() && $this->isMapDrivenUI()) {
+                    $mapArgs['mapview'] = true;
+                    $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
+                    $this->assign('mapURL', $mapURL);
+                }
 
                 break;
           
@@ -960,8 +992,6 @@ class MapWebModule extends WebModule {
 
     protected function initializeDynamicMap()
     {
-        $this->addExternalJavascript($this->getInternalJavascriptURL('/common/javascript/maps.js'));
-
         // set up base map
         $baseMap = $this->getImageController();
         $baseMap->setWebModule($this);
@@ -977,10 +1007,18 @@ class MapWebModule extends WebModule {
         foreach ($baseMap->getIncludeScripts() as $includeScript) {
             $this->addExternalJavascript($includeScript);
         }
+        foreach ($baseMap->getInternalScripts() as $includeScript) {
+            $this->addInternalJavascript($includeScript);
+        }
+
+        $latRange = $baseMap->getMinimumLatSpan();
+        $lonRange = $baseMap->getMinimumLonSpan();
         $this->addInlineJavascriptFooter(
-            "var COOKIE_PATH = '".COOKIE_PATH."';\n".
-            "var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
+            //"var COOKIE_PATH = '".COOKIE_PATH."';\n".
+            //"var BOOKMARK_LIFESPAN = ".$this->getBookmarkLifespan().";\n".
             "var CONFIG_MODULE = '{$this->configModule}';\n".
+            "var MIN_LAT_SPAN = {$latRange};\n".
+            "var MIN_LON_SPAN = {$lonRange};\n".
             'var NO_RESULTS_FOUND = "'.$this->getLocalizedString('NO_RESULTS').'";');
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
@@ -1092,5 +1130,9 @@ JS;
                 break;
         }
         return $result;
+    }
+
+    public function getInternalJavascriptURL($path) {
+        return parent::getInternalJavascriptURL($path);
     }
 }

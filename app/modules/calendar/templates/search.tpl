@@ -1,6 +1,7 @@
 {include file="findInclude:common/templates/header.tpl"}
 
 {capture name="selectSection" assign="selectSection"}
+{if $totalFeeds>1}
   <select id="calendars" name="calendar">
   {foreach $feeds as $type=>$typeFeeds}
   {if $feeds|@count>1}
@@ -14,6 +15,9 @@
   {/if}
   {/foreach}
   </select>
+{elseif strlen($searchCalendar)}
+<input type="hidden" name="calendar" value="{$searchCalendar}" />
+{/if}
   <select id="timeframe" name="timeframe">
     {foreach $searchOptions as $key => $option}
       <option value="{$key}"{if $selectedOption == $key} selected="selected"{/if} >

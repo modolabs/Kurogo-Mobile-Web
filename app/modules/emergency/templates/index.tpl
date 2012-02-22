@@ -1,5 +1,7 @@
 {include file="findInclude:common/templates/header.tpl"}
 
+{block name="emergencyHeader"}{/block}
+
 {if $hasEmergencyFeed}
   {foreach $emergencyNotices as $i => $emergencyNotice}
       {capture name="title" assign="title"}
@@ -45,4 +47,5 @@
   {/block}
 {/if}
 
+{block name="emergencyFooter"}{/block}
 {include file="findInclude:common/templates/footer.tpl"}
