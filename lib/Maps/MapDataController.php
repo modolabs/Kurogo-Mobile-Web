@@ -163,7 +163,7 @@ class MapDataController extends DataController implements MapFolder
         if ($this->selectedPlacemarks) {
             return $this->selectedPlacemarks;
         }
-        if ($this->selectedCategory) {
+        if ($this->selectedCategory && $this->selectedCategory->getFeedId() != $this->getFeedId()) {
             $placemarks = array();
             foreach ($this->selectedCategory->placemarks() as $aPlacemark) {
                 $placemarks[] = $this->getProjectedFeature($aPlacemark);
