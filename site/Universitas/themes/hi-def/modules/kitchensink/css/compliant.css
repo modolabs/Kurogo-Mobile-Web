@@ -1,0 +1,56 @@
+ul.nav li a, ul.results a, a.phone, a.email    {
+    font-weight: bold;
+}
+
+#searchformcontainer.nonfocal    {
+    margin:  0;
+    background-color: #666;
+}
+
+
+
+input#filter.forminput    {
+    margin: 0px 10px 0px 10px;
+    border-radius: 19px;
+}
+
+input#sch_btn.combobutton    {
+    visibility: hidden;
+}
+
+.inputcombo.emphasized    {
+    margin: 0;
+    padding: 3px;
+}
+
+p.smallprint    {
+    width: 50%;
+}
+
+.somebuttons    {
+width: 50%;
+float: right;
+margin-top: 0px;
+}
+
+#bookmarkContainer    {
+float: none;
+}
+
+div#bookmark    {
+float: none;
+position: absolute;
+right: 60px;
+}
+
+div#share    {
+float: none;
+position: absolute;
+right: 10px;
+}
+
+
+
+ul#tabs    {
+    margin-top: 20px;
+}
