@@ -48,7 +48,7 @@ class HTTPDataResponse extends DataResponse
             }
         }
         
-        if (!$this->responseCode) { 
+        if (!$this->responseCode && substr($this->requestURL,0,4) === "http") { 
             $this->responseError = 'Error Retrieving Data';
         }
     }
