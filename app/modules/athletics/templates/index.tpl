@@ -31,8 +31,10 @@
   {$tabBodies['bookmarks'] = $bookmarksTab}
 {/if}
 
+{block name="tabs"}
 <div id="tabscontainer">
 {include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies smallTabs=true}
 </div>
+{/block}
 
 {include file="findInclude:common/templates/footer.tpl"}
