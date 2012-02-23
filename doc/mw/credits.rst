@@ -14,9 +14,9 @@ Kurogo is distributed under the :ref:`MIT License <license>` by Modo Labs, Inc.
 Credits
 *******
 
-=========
-Modo Team
-=========
+==============
+Modo Labs Team
+==============
 
 **Developers**
 
@@ -28,13 +28,19 @@ Modo Team
 * Wesley Hirsch
 * Sonya Huang (Lead Developer, iOS)
 * Jim Kang
+* Edward Liu
+* Newstar Liu
+* Ebrahim Kobeissi
 * David Ormsbee
-* Brian Patt
+* Brian Patt (Lead Developer, Android)
 * Brent Wang
 * Jeffrey You
+* Saturn Zhang
 
 **Designers**
 
+* James Choi
+* Kate Dobroth
 * Eric Kim (Lead Designer)
 * Hoon Lee
 * Ilona Moreland
@@ -59,7 +65,7 @@ The Kurogo Framework is based on the MIT Mobile Framework, and incorporates cont
 * Doug Beck (University of Central Florida)
 * Jared Lang (University of Central Florida)
 * Chris Conover (University of Central Florida)
-* Ebrahim Kobeissi (University of Vermont)
+* University of Vermont
 * Adam Franco (Middlebury College)
 
 ==================================
@@ -89,6 +95,10 @@ JSON
   | License: BSD
   | Copyright: Stig Brautaset
   | Link: http://stig.github.com/json-framework
+
+===========================
+Third Party Libraries (Android)
+===========================
 
 .. _license:
 
