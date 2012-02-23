@@ -81,13 +81,15 @@
         $this->addFilter('v', 2); // version 2
 
         $data = $this->getData($response);
-        $responseContent = $response->getResponse();
-        if (isset($responseContent['error'])) {
-            $error = $responseContent['error'];
-            // TODO: be able to pass this on to the data model
-            $code = $error['code'];
-            $message = $error['message'];
-            Kurogo::log(LOG_WARNING, "Error retrieving video ({$code}): {$message}", 'video');
+        if (!$data) {
+            $responseContent = json_decode($response->getResponse());
+            if (isset($responseContent['error'])) {
+                $error = $responseContent['error'];
+                // TODO: be able to pass this on to the data model
+                $code = $error['code'];
+                $message = $error['message'];
+                Kurogo::log(LOG_WARNING, "Error retrieving video ({$code}): {$message}", 'video');
+            }
             return false;
         }
         
