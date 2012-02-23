@@ -274,7 +274,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             }
 
             // TODO use $placemark->getFields to populate Attributes
-            $templateValues['___ID___'] = $placemark->getId(),
+            $templateValues['___ID___'] = $placemark->getId();
             $templateValues['___TITLE___'] = json_encode($placemark->getTitle());
             $templateValues['___SUBTITLE___'] = json_encode($placemark->getSubtitle());
             $templateValues['___URL___'] = $this->urlForPlacemark($placemark);
