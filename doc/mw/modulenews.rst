@@ -65,8 +65,8 @@ this would apply to most feeds.
 * *REMOVE_DUPLICATES* - This will remove duplicate entries from the feed (i.e. items that have the
   same GUID). This can be turned on for feeds that suffer from duplication.
 * *HTML_ESCAPED_CDATA* - If set to 1 it will decode HTML entities in the content and description
-   fields. This will need to be turned on if feed generators mistakenly encode HTML data in
-   addition to wrapping it in CDATA blocks (this is typically not necessary) 
+  fields. This will need to be turned on if feed generators mistakenly encode HTML data in
+  addition to wrapping it in CDATA blocks (this is typically not necessary) 
 * *USE_DESCRIPTION_FOR_CONTENT* - If this option is set to 1, then the description field will be
   used as the full content. The description field is typically only used for a short introduction.
 * *FETCH_CONTENT* - If this option is set to 1, then Kurogo will attempt to fetch the content found
