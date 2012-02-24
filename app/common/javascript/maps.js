@@ -17,6 +17,10 @@ function KGOMapLoader(attribs) {
     this.locateMeButton = null; // CSS applies to an <a id="locateMe"> element
     this.locationWatchId = null;
     this.locationIsFirstPosition = true;
+
+    if ("onShowCallout" in attribs) {
+        this.onShowCallout = attribs["onShowCallout"];
+    }
 }
 
 KGOMapLoader.prototype.loadMap = function() {}
@@ -35,10 +39,10 @@ KGOMapLoader.prototype.showDefaultCallout = function() {
         this.showCalloutForPlacemark(thePlacemark);
     }
 }
-KGOMapLoader.prototype.showCalloutForPlacemark = function(placemark) {}
+KGOMapLoader.prototype.showCalloutForPlacemark = function(placemarkId) {}
 KGOMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {}
 KGOMapLoader.prototype.clearMarkers = function() {}
-KGOMapLoader.prototype.createMarker = function(id, lat, lon, url) {}
+KGOMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {}
 
 // base map
 KGOMapLoader.prototype.resizeMapOnContainerResize = function() {}
@@ -85,23 +89,35 @@ KGOMapLoader.prototype.generateInfoWindowContent = function(attribs) {
         content += '<div class="smallprint map_address">' + attribs["subtitle"] + '</div>';
     }
 
+    var div = document.createElement("div");
+    div.className = "calloutMain";
+    var a = null;
+
     if ("url" in attribs && attribs["url"] !== null) {
-        content = '<div class="calloutMain">' +
-                      '<a href="' + attribs["url"] + '">'  + content + '</a>' +
-                  '</div>';
-    } else if ("onclick" in attribs) {
-        var onclick = attribs["onclick"] + "('" + attribs["id"] + "')";
-        content = '<div class="calloutMain">' +
-                      '<a onclick="(' + onclick.replace('"', '\\"') + ')">'  + content + '</a>' +
-                  '</div>';
+        a = document.createElement("a");
+        a.href = attribs["url"];
     }
 
-    return content;
+    if ("onclick" in attribs) {
+        if (!a) {
+            a = document.createElement("a");
+        }
+        a.onclick = attribs["onclick"];
+    }
+
+    if (a) {
+        div.appendChild(a);
+        a.innerHTML = content;
+    } else {
+        div.innerHTML = content;
+    }
+    return div;
 }
 
 function KGOGoogleMapLoader(attribs) {
     KGOMapLoader.call(this, attribs);
 
+    var that = this;
     var currentInfoWindow = null;
     var setCurrentInfoWindow = function(infoWindow) {
         if (currentInfoWindow !== null) {
@@ -133,33 +149,19 @@ function KGOGoogleMapLoader(attribs) {
                 marker.infoWindow.open(map);
             }
             setCurrentInfoWindow(marker.infoWindow);
+
+            if (typeof that.onShowCallout == 'function') {
+                that.onShowCallout(placemark);
+            }
         }
     }
-    
 }
 
 KGOGoogleMapLoader.prototype = new KGOMapLoader();
 
-KGOGoogleMapLoader.prototype.loadMap = function() {
-    var that = this;    
-    var mapImage = document.getElementById(this.mapElement);
-    var initCoord = new google.maps.LatLng(this.initLat, this.initLon);
-    var options = {
-        zoom: this.initZoom,
-        center: initCoord,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        disableDefaultUI: true
-    };
-    map = new google.maps.Map(mapImage, options);
-    var tilesLoadedListener = google.maps.event.addListener(map, 'tilesloaded', function() {
-        map.setCenter(initCoord);
-        google.maps.event.removeListener(tilesLoadedListener);
-    });
-
-    // setup zoom and other controls
-
-    var controlDiv = document.createElement('div');
-    controlDiv.id = "mapcontrols"
+KGOGoogleMapLoader.prototype.createMapControls = function() {
+    var controlDiv = document.createElement("div");
+    controlDiv.id = "mapcontrols";
 
     var zoominButton = document.createElement('a');
     zoominButton.id = "zoomin";
@@ -177,21 +179,41 @@ KGOGoogleMapLoader.prototype.loadMap = function() {
 
     var recenterButton = document.createElement('a');
     recenterButton.id = "recenter";
+    var that = this;
     recenterButton.onclick = function() {
-        map.setCenter(initCoord);
+        map.setCenter(new google.maps.LatLng(that.initLat, that.initLon));
         map.setZoom(that.initZoom);
     }
     controlDiv.appendChild(recenterButton);
 
-    if ("geolocation" in navigator && this.showUserLocation) {
-        this.locateMeButton = document.createElement('a');
-        this.locateMeButton.id = "locateMe";
-        this.locateMeButton.onclick = function() {
-            that.toggleLocationUpdates();
-        }
-        controlDiv.appendChild(this.locateMeButton);
+    this.locateMeButton = document.createElement('a');
+    this.locateMeButton.id = "locateMe";
+    var that = this;
+    this.locateMeButton.onclick = function() {
+        that.toggleLocationUpdates();
     }
+    controlDiv.appendChild(this.locateMeButton);
 
+    return controlDiv;
+}
+
+KGOGoogleMapLoader.prototype.loadMap = function() {
+    var that = this;    
+    var mapImage = document.getElementById(this.mapElement);
+    var initCoord = new google.maps.LatLng(this.initLat, this.initLon);
+    var options = {
+        zoom: this.initZoom,
+        center: initCoord,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        disableDefaultUI: true
+    };
+    map = new google.maps.Map(mapImage, options);
+    var tilesLoadedListener = google.maps.event.addListener(map, 'tilesloaded', function() {
+        map.setCenter(initCoord);
+        google.maps.event.removeListener(tilesLoadedListener);
+    });
+
+    var controlDiv = this.createMapControls();
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(controlDiv);
 }
 
@@ -227,6 +249,14 @@ KGOGoogleMapLoader.prototype.locationUpdated = function(location, firstLocation)
         bounds.extend(new google.maps.LatLng(this.initLat, this.initLon));
         bounds.extend(position);
         bounds.extend(map.getCenter());
+        if (typeof MIN_LAT_SPAN != 'undefined') {
+            bounds.extend(new google.maps.LatLng(position.lat() - MIN_LAT_SPAN / 2, position.lng()));
+            bounds.extend(new google.maps.LatLng(position.lat() + MIN_LAT_SPAN / 2, position.lng()));
+        }
+        if (typeof MIN_LON_SPAN != 'undefined') {
+            bounds.extend(new google.maps.LatLng(position.lat(), position.lng() - MIN_LON_SPAN / 2));
+            bounds.extend(new google.maps.LatLng(position.lat(), position.lng() + MIN_LON_SPAN / 2));
+        }
         map.fitBounds(bounds);
     }
 }
@@ -282,7 +312,7 @@ KGOGoogleMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {
 
     var that = this;
     google.maps.event.addListener(placemark, 'mousedown', function() {
-        that.showCalloutForPlacemark(placemark);
+        that.showCalloutForPlacemark(id);
     });
 
     this.placemarks[id] = placemark;
@@ -302,13 +332,11 @@ KGOGoogleMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {
     if (!"title" in attribs) {
         attribs["title"] = lat + ", " + lon;
     }
+    attribs["position"] = new google.maps.LatLng(lat, lon);
+    attribs["map"] = map;
     this.addPlacemark(
         id,
-        new google.maps.Marker({
-            position: new google.maps.LatLng(lat, lon),
-            map: map,
-            title: attribs["title"],
-            }),
+        new google.maps.Marker(attribs),
         attribs);
 }
 

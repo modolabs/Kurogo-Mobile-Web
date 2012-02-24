@@ -25,6 +25,8 @@ abstract class MapImageController
     protected $mapProjection = GEOGRAPHIC_PROJECTION; // projection to pass to map image generator
     protected $mapProjector;
 
+    protected $initOptions;
+
     public static function basemapClassForDevice(MapDevice $mapDevice, $params=array())
     {
         $isStatic = false;
@@ -76,6 +78,8 @@ abstract class MapImageController
         $this->maxZoomLevel = isset($params['MAXIMUM_ZOOM_LEVEL']) ? $params['MAXIMUM_ZOOM_LEVEL'] : $this->zoomLevel;
 
         $this->bufferBox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
+
+        $this->initOptions = $params;
     }
 
     // query functions
