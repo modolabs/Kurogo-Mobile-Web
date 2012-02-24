@@ -1539,7 +1539,7 @@ abstract class WebModule extends Module {
     
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
 
-    $this->assign('webBridgeOnPageLoadURL', KurogoWebBridge::getOnPageLoadURL(
+    $this->assign('webBridgeOnPageLoadParams', KurogoWebBridge::getOnPageLoadParams(
           $this->pageTitle, $this->breadcrumbTitle, $this->hasWebBridgePageRefresh));
     
     $this->assign('webBridgeConfig', KurogoWebBridge::getServerConfig(

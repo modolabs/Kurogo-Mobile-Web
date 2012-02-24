@@ -23,8 +23,6 @@ class KurogoWebBridge
     const AJAX_PARAMETER        = 'ajax';
     
     const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
-    const BRIDGE_URL_EVENT_ONLOAD  = 'kgobridge://event/load';
-    const BRIDGE_URL_EVENT_ERROR   = 'kgobridge://event/error';
     
     const FILE_TYPE_HTML       = 'html';
     const FILE_TYPE_CSS        = 'css';
@@ -331,11 +329,7 @@ class KurogoWebBridge
     // Config URL for setting native navbar options
     //
 
-    public static function getOnPageLoadURL($pageTitle, $backTitle, $hasRefresh) {
-        if (!self::hasNativePlatform()) {
-            return '';
-        }
-        
+    public static function getOnPageLoadParams($pageTitle, $backTitle, $hasRefresh) {
         $params = array(
           'pagetitle' => $pageTitle,
         );
@@ -345,7 +339,8 @@ class KurogoWebBridge
         if ($hasRefresh) {
           $params['refresh'] = 1;
         }
-        return self::BRIDGE_URL_EVENT_ONLOAD.'?'.http_build_query($params);
+        
+        return json_encode($params);
     }
     
     //
@@ -359,7 +354,6 @@ class KurogoWebBridge
         $url      = rtrim(FULL_URL_PREFIX, '/');
         $ajaxArgs = self::AJAX_PARAMETER."=1";
         $pageArgs = http_build_query($args);
-        $onError  = '';
         
         // config values for web bridge mode on device:
         if (self::hasNativePlatform()) {
@@ -367,7 +361,6 @@ class KurogoWebBridge
             $base     = '';
             $url      = '__KUROGO_SERVER_URL__';
             $pageArgs = '__KUROGO_MODULE_EXTRA_ARGS__';
-            $onError  = self::BRIDGE_URL_EVENT_ERROR.'?type=load&code='; // http status appended by javascript
         }
         if (self::forceNativePlatform($pagetype, $platform, $browser)) {
             $ajaxArgs .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform, $browser));
@@ -375,13 +368,15 @@ class KurogoWebBridge
         
         return array(
             'jsHeader' => $jsHeader,
-            'base'     => $base,
-            'url'      => $url,
-            'ajaxArgs' => $ajaxArgs,
-            'pagePath' => "/{$id}/{$page}",
-            'pageArgs' => $pageArgs,
-            'timeout'  => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 60),
-            'onError'  => $onError,
+            'jsConfig' => json_encode(array(
+                'events'   => self::hasNativePlatform(),
+                'base'     => $base,
+                'url'      => $url,
+                'ajaxArgs' => $ajaxArgs,
+                'pagePath' => "/{$id}/{$page}",
+                'pageArgs' => $pageArgs,
+                'timeout'  => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 60),
+            )),
         );
     }
 

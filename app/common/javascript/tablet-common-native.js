@@ -23,7 +23,7 @@ function tabletInit() {
     
     window.splitView.prototype.oldLinkSelect = window.splitView.prototype.linkSelect;
     window.splitView.prototype.linkSelect = function(e, link) {
-        link.href = webBridgeLinkToAjaxLinkIfNeeded(link.href);
+        link.href = kgoBridge.bridgeToAjaxLink(link.href);
         this.oldLinkSelect(e, link);
     };
     
