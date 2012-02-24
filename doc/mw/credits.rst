@@ -96,9 +96,9 @@ JSON
   | Copyright: Stig Brautaset
   | Link: http://stig.github.com/json-framework
 
-===========================
+===============================
 Third Party Libraries (Android)
-===========================
+===============================
 
 .. _license:
 
