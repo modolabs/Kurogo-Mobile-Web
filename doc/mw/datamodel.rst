@@ -30,7 +30,7 @@ items. It also permits searching within the collection.
 Overview
 --------
 
-This model will retrieve the values from the retriever and expects to receie an array of
+This model will retrieve the values from the retriever and expects to receive an array of
 items. The *getItem* method will allow you to retrieve a specific item from the collection.
 For retrievers that have specific methods for retrieving a single item they should implements 
 the *ItemDataRetriever* interface. Otherwise the model will return the item that matches
