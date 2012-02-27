@@ -26,6 +26,7 @@ The *response* parameter of the Core API module has the following form: ::
                 "tag":"about",
                 "title":"About",
                 "access":true,
+                "payload":null,
                 "vmin":1,
                 "vmax":1,
                 "home":false
@@ -35,6 +36,7 @@ The *response* parameter of the Core API module has the following form: ::
                 "tag":"video",
                 "title":"Video",
                 "access":true,
+                "payload":null,
                 "vmin":1,
                 "vmax":1,
                 "home":{"type":"primary","order":3}
@@ -56,15 +58,16 @@ where
     requires authentication, for example, this parameter may change from false to true after
     the user is authenticated via the login module (implying the Core module can be requested
     multiple times in the same session).
+  * *payload*: A module defined value send with the request. Not used by all modules.
   * *vmin*: minimum version of the REST API supported by the server for this module
   * *vmax*: maximum version of the REST API supported by the server for this module
   * *home*: whether the module is located on the mobile web home screen. the *type* parameter
     is either primary or secondary, and the order is a 0 based number for its order on the
     home screen. If home is false then it does not appear on the home screen.
 
-=======
+========
 classify
-=======
+========
 
 :kbd:`http[s]://<host>/rest/classify?useragent=<client user agent>`
 
