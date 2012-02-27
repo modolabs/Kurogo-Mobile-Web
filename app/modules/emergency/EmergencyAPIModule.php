@@ -6,7 +6,7 @@ class EmergencyAPIModule extends APIModule {
 
     protected $id = 'emergency';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
     
     protected function initializeForCommand() {
         $config = $this->getConfig('feeds');
@@ -36,7 +36,7 @@ class EmergencyAPIModule extends APIModule {
                 }
                 $response = array('notice' => $emergencyNotice, 'noticeEnabled' => $noticeEnabled);
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion(2);
                 break;
 
             case 'contacts':
@@ -59,7 +59,7 @@ class EmergencyAPIModule extends APIModule {
                     'secondary' => self::formatContacts($contactsController->getSecondaryContacts()),
                 );
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion(2);
                 break;
 
         }

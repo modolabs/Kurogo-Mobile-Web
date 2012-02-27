@@ -20,6 +20,12 @@ Static Class Methods
 * *Kurogo::getOptionalSiteSection($section)* See :ref:`modules_configuration`
 * *Kurogo::getSiteString($key)* - See :ref:`modules_configuration`
 * *Kurogo::getOptionalSiteString($key, $default='')* - See :ref:`modules_configuration`
+* *Kurogo::getCache($key)* - Retrieves a value from the memory cache - See :ref:`caching`
+* *Kurogo::setCache($key, $value, $ttl = null)* - Sets a value to the memory cache - See :ref:`caching`
+* *Kurogo::deleteCache($key)* -Removes a value from the memory cache - See :ref:`caching`
+* *Kurogo::log($priority, $message, $area)* - Logs a value to the kurogo log - See :doc:`logging`
+* *Kurogo::encrypt($value, key)* - Encrypts a value (requires the mcrypt extension). See :ref:`encryption`
+* *Kurogo::decrypt($value, key)* - Decrypts a value (requires the mcrypt extension). See :ref:`encryption`
 
 
 .. _autoloader:
@@ -69,3 +75,62 @@ packages are part of the Kurogo distribution:
 * Maps - used by the maps module
 * People - used by the people module
 * Video - used by the video module
+
+.. _encryption:
+
+**********
+Encryption
+**********
+
+Version 1.4 adds methods to store and retrieve encrypted data. This is primarily useful for 
+saving sensitive data from remote servers in a secure fashion. These methods require the mcrypt 
+extension. Like any encryption system it is only secure as the keys used to encrypt the data. 
+The default behavior is to use the SITE_KEY constant which is generated using the install
+path of the server software. You can set this key by updating the SITE_KEY value in *site.ini*
+
+.. _caching:
+
+*******
+Caching
+*******
+
+Version 1.4 also adds methods to improve the performance of Kurogo by utilizing in-memory
+caching. If the server contains certain extensions, you can greatly improve the performance 
+of production servers by caching information used by Kurogo such as configuration values, search
+paths for templates, and remote data values. 
+
+-------------
+Configuration
+-------------
+
+Kurogo supports caching using 2 different systems:
+
+* APC - `The Alternative PHP cache <http://php.net/manual/en/book.apc.php>`_
+* `Memcache <http://www.php.net/manual/en/book.memcache.php>`_
+
+Configuration for this system is accomplished through the *[cache]* section of *kurogo.ini*. There are a few options
+used by all caching types:
+
+* *CACHE_CLASS* - The type of caching system to use. Current options include *APCCache* and *MemcacheCache*
+* *CACHE_TTL* - The default time-to-live (in seconds) for cache values. This will keep the values
+  in the cache for the specified time. A time of 10-15 mintes (600-900) is usually adequate for
+  most sites
+
+--------
+APC
+--------
+
+There are no additional options available or needed for APCCache  
+
+--------
+Memcache
+--------
+
+These options only apply to MemcacheCache
+
+* *CACHE_HOST* - The hostname or IP address of your memcache server. If this value is an array (CACHE_HOST[]) then Kurogo will 
+  utilize connection failover
+* *CACHE_PORT* - The port used to connect to the memcache server. By default this is 11211
+* *CACHE_PERSISTENT* - If set to 1 a persistent connection will be used, default is false
+* *CACHE_TIMEOUT* - Timeout in seconds to connect to the servers. This should rarely be altered.
+* *CACHE_COMPRESSED* - If set to 1, compression will be used. Default is true. 

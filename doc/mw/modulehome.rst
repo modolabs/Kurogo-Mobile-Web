@@ -54,12 +54,40 @@ The following configuration values are available to customize the behaviour of t
 Banner Alert System
 ===================
 
+Introduced in version 1.4, you can display small notifications on the home screen from other
+modules. This allows users to know about information without visiting the module. An example
+of this (and the only included module to support this behavior) is the Emergency Module. 
+Developers can enable their modules to support this behavior by implementing only a few methods.
+
 -------------
 Configuration
 -------------
 
-* *BANNER_ALERT* -
-* *BANNER_ALERT_MODULE_LINK* -
+By default the notification is disabled. The following options in the *[notice]* section of
+the home module's *module.ini* file can be updated to enable notifications.
+
+* *BANNER_ALERT*  - Set to 1 to enable notifications
+* *BANNER_ALERT_MODULE*  - Set this to the module that will provide notifications. The module must conform to the *HomeAlertInterface*
+  object interface
+* *BANNER_ALERT_MODULE_LINK* - If set to 1, then the user can tap this notification and it will direct them to the module.
+
+------------------------------
+Creating a Notification Module
+------------------------------
+
+A module you set using *BANNER_ALERT_MODULE* must conform to the *HomeAlertInterface* interface.
+In version 1.4 of Kurogo, only the Emergency module supports this behavior. This interface requires
+the creation of 1 method in your module:
+
+* public function getHomeScreenAlert() - This method should return a dictionary (array) with the
+  following keys:
+  * *title* - A title for the notification
+  * *text* - The text of the notification
+  * *date* - A formatted date string of the notification. Usually the post date of the Notification
+  * *unixtime* - A unix timestamp of the post date of the notification.
+  
+If you module implements this interface (and implements the methods) you can use it to 
+provide notifications to your users. 
 
 =====
 Icons
@@ -73,7 +101,7 @@ in: *SITE_DIR/themes/[ACTIVE_THEME]/modules/home/images/PAGETYPE*. Each module s
 Tablet Interface
 ================
 
-Kurogo includes a special layout for tablet devices. For version 1.0, it is used for Apple iPad devices.
+Kurogo includes a special layout for tablet devices. 
 The interface includes 2 significant changes from the standard layout. First there is a navigation strip that
 appears at the bottom of the screen on all pages. This allows easy navigation to any module. in order 
 to support this you will have to include an additional home screen icon for each module with a *-selected*

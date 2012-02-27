@@ -27,14 +27,11 @@ the project.
    
    * :kbd:`git remote add upstream git://github.com/modolabs/Kurogo-Mobile-Web.git`
    * :kbd:`git fetch upstream`
-   * :kbd:`git checkout -b upstream upstream/master`
 
 #. When new changes come down you can run:
    
-   * :kbd:`git checkout upstream` Change to upstream branch
-   * :kbd:`git pull` Pull down changes
-   * :kbd:`git checkout master` Change to master branch
-   * :kbd:`git merge upstream` Merge changes into master branch
+   * :kbd:`git fetch upstream` Get updates to the upstream remote
+   * :kbd:`git merge upstream/master` Merge changes into your master branch
 
 There are certainly other ways to manage your repository, but this method provides flexibility and
 will allow you to maintain a branch that represents the current development in the project.
