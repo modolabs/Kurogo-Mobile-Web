@@ -536,7 +536,7 @@ class Kurogo
         self::log(LOG_DEBUG, "Setting server host to $host", "kurogo");
     
         define('IS_SECURE', isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
-        define('FULL_URL_BASE', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_BASE);
+        define('FULL_URL_BASE', 'http'.(IS_SECURE ? 's' : '').'://'.$host.URL_BASE);
         define('COOKIE_PATH', URL_BASE);
 
         // make sure host is all lower case
@@ -572,7 +572,7 @@ class Kurogo
         define('URL_DEVICE_DEBUG_PREFIX', $urlDeviceDebugPrefix);
         define('URL_PREFIX', $urlPrefix);
         self::log(LOG_DEBUG, "Setting URL_PREFIX to " . URL_PREFIX, "kurogo");
-        define('FULL_URL_PREFIX', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_PREFIX);
+        define('FULL_URL_PREFIX', 'http'.(IS_SECURE ? 's' : '').'://'.$host.URL_PREFIX);
         define('KUROGO_IS_API', preg_match("#^" .API_URL_PREFIX . "/#", $path));
           
         //error_log(__FUNCTION__."(): prefix: $urlPrefix");
