@@ -1730,7 +1730,12 @@ height: 38px;
 background: url(/common/images/bookmark.png) no-repeat -44px -38px;
 }
 
+/* Tablet version of search control for a single feed (e.g., News and Video) */
+div.single-section-search {
+    overflow: hidden;
+}
 /* Tablet version of section-switcher + search control (e.g., News and Video) */
+
 
 table.section-search {
   width: 100%;
