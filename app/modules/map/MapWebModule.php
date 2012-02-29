@@ -735,6 +735,11 @@ class MapWebModule extends WebModule {
         switch ($this->page) {
 
             case 'index': // no breadcrumbs
+                if ($this->getOptionalModuleVar('SHOW_LISTVIEW_BY_DEFAULT')) {
+                    $this->args['listview'] = 1;
+                }
+                // fall through to campus branch
+
             case 'campus': // one breadcrumb
 
                 $this->assignGroups(); // appears in searchbar for campus.tpl or campus list in index.tpl
