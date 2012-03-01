@@ -1,3 +1,12 @@
+#navbar {
+	height: 45px;
+	margin-bottom: 0
+}
+
+#toolbar {
+	margin-top: 0;
+}
+
 h2 {
 	margin-bottom: 4px;
 }
@@ -66,15 +75,16 @@ h2 {
 	opacity: 0.75;
 }
 
-#toolbar {
-    margin: 8px 0 0;
-}
-
 #containerinset #mapimage {
     position: absolute;
     top: 52px; /* toolbar height plus top margin */
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+#search-form input[type="text"] {
+    width: 98%;
+    padding: 4px 1% 6px 1%;
 }
 

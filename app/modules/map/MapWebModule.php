@@ -453,17 +453,29 @@ class MapWebModule extends WebModule {
             return;
         }
 
+        $this->selectedPlacemarks = array();
+        $placemarkLoad = 0;
+
         $results = array();
         foreach ($listItems as $listItem) {
             if (!$isMapView) {
                 $results[] = $this->linkForItem($listItem, $linkOptions);
-            } elseif ($listItem instanceof Placemark) {
-                $results[] = $listItem;
+            }
+            if ($listItem instanceof Placemark) {
+                $this->selectedPlacemarks[] = $listItem;
+
+                $geometry = $listItem->getGeometry();
+                if ($geometry instanceof MapPolygon) {
+                    $placemarkLoad += 4;
+                } elseif ($geometry instanceof MapPolyline) {
+                    $placemarkLoad += 2;
+                } else {
+                    $placemarkLoad += 1;
+                }
             }
         }
 
         if ($isMapView) {
-            $this->selectedPlacemarks = $results;
             $this->setTemplatePage('fullscreen');
             $this->initializeDynamicMap();
         } else {
@@ -471,6 +483,15 @@ class MapWebModule extends WebModule {
             $this->assign('navItems', $results);
             if ($this->numGroups > 1) {
                 $this->assignClearLink();
+            }
+
+            if ($this->isMapDrivenUI() && $placemarkLoad
+                && $placemarkLoad <= $this->getOptionalModuleVar('placemarkLoad', 30))
+            {
+                $mapArgs = $this->args;
+                $mapArgs['mapview'] = true;
+                $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
+                $this->assign('mapURL', $mapURL);
             }
         }
     }
@@ -809,10 +830,6 @@ class MapWebModule extends WebModule {
                     unset($mapArgs['mapview']);
                     $browseURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
                     $this->assign('browseURL', $browseURL);
-                } else if ($this->getSelectedPlacemarks() && $this->isMapDrivenUI()) {
-                    $mapArgs['mapview'] = true;
-                    $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
-                    $this->assign('mapURL', $mapURL);
                 }
 
                 break;
@@ -899,18 +916,14 @@ class MapWebModule extends WebModule {
             $dataModel = $this->getDataModel($feedId);
             $category = $this->getArg('category', null);
             $featureIndex = $this->getArg('featureindex', null);
-            //$selectedCategory = null;
             if ($category !== null) {
-                $selectedCategory = $dataModel->findCategory($category);
+                $dataModel->findCategory($category);
             }
             if ($this->placemarkId !== null) {
                 $dataModel->setPlacemarkId($this->placemarkId);
             }
-            //if ($selectedCategory) {
-            //    $placemarks = $selectedCategory->placemarks();
-            //} else {
-                $placemarks = $dataModel->placemarks();
-            //}
+            $placemarks = $dataModel->placemarks();
+
             if ($featureIndex !== null && intval($featureIndex) < count($placemarks)) {
                 $placemarks = array_slice($placemarks, intval($featureIndex), 1);
             }

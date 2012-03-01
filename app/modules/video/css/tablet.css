@@ -1,4 +1,4 @@
-body.VideoModule #navbar, .video {
+body.VideoModule #navbar, #videoDetailWrapper {
 	/* Background color for video listing and detail; should be white in most cases */
     background-color: #fff;
 }

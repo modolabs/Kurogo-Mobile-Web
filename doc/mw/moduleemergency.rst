@@ -10,25 +10,33 @@ supports Drupal 6).  Alternatively,
 a standard RSS feed can be used for the emergency notice, and the contacts list can be 
 configured with an ini file.
 
-=================================
-Configuring the Server Connection
-=================================
+==========================
+Configure Emergency Notice 
+==========================
 
-In order to use the emergency module, you must first setup the connection to your data.
-If you want to display an emergency notice you will need to include a `notice` section
-in *config/emergency/feeds.ini*.  In the `notice` section you will need to configure
-the url for the emergency notice RSS feed.
+If you want to display an emergency notice you will need to include a *[notice]* section
+in *config/emergency/feeds.ini*.  
 
-* If you are using the add-on emergency drupal module, you can set the BASE_URL to
+* If you are using the add-on emergency Drupal module, you can set the BASE_URL to
   "http://YOUR_DRUPAL_SERVER_DOMAIN/emergency-information-v1", where YOUR_DRUPAL_SERVER_DOMAIN.
-  Otherwise just set the BASE_URL to the appropriate RSS feed.
+* Otherwise just set the BASE_URL to the appropriate RSS feed.
+
+-------------
+Other Options
+-------------
+
+* *NOTICE_EXPIRATION* - The amount of time (in seconds) to consider a notice to be active. This is
+  useful for feeds where the notices are not removed from the feed. The default is 1 week (604800 seconds)
+* *NOTICE_MAX_COUNT* - The maximum number of notices to show from the feed.
+
+=======================
+Configure Contacts List
+=======================
 
 If you also want to include emergency contact phone numbers, you will need to include
 a `contacts` section in *config/emergency/feeds.ini*
 
-**Configure Contacts List**
-
-Configure contacts list to connect to the drupal emergency module:
+Configure contacts list to connect to the Drupal emergency module:
 
 * *RETRIEVER_CLASS* = "DrupalContactsDataRetriever"
 * *DRUPAL_SERVER_URL* = "http://YOUR_DRUPAL_SERVER_DOMAIN"  
@@ -54,7 +62,9 @@ Emergency Contacts".
 Using Drupal Emergency Module
 =======================================
 
-**Installation**
+-------------
+Installation
+-------------
 
 This add on module requires Drupal 6, Drupal 7 is not yet supported.
 Follow the standard procedure for installing a drupal module, which is:  
@@ -67,7 +77,9 @@ Follow the standard procedure for installing a drupal module, which is:
 * In the drupal administration panel go to modules then select the "Emergency Info"
   module and click "save configurations". 
 
-**Usage**
+-----
+Usage
+-----
 
 To input an emergency notification: create a node of content type "Emergency Notification",
 the RSS feed will only show the most recently updated Emergency Notification.

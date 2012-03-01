@@ -7,8 +7,9 @@ News API
 categories
 =============
 
-
 :kbd:`/rest/news/categories?v=1`
+
+Returns a list of available news feeds and their titles.
 
 Sample *response* ::
 
@@ -29,6 +30,8 @@ stories
 
 
 :kbd:`/rest/news/stories?categoryID=<category-id>&mode=full&limit=<limit>&start=<start>&v=1`
+
+Returns a list of stories from a particular news feed.
 
 Sample *response* ::
 
@@ -59,6 +62,8 @@ search
 ======
 
 :kbd:`/rest/news/search?q=<search-terms>&categoryID=<category-id>&v=1`
+
+Performs a content search on a particular feed.
 
 Sample *response* ::
 

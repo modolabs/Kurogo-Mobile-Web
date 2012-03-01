@@ -43,7 +43,7 @@ abstract class XMLDataParser extends DataParser
     {
         if ($element = array_pop($this->elementStack)) {
 
-            if ($this->data) {
+            if (!is_null($this->data) && $this->data !== '') {
                 if (!$element instanceOf XMLElement) {
                     throw new KurogoDataException("$name is not an XMLElement");
                 }

@@ -43,11 +43,6 @@ Internal Methods
 * *initResponse* - Call this method if you are implementing your own *retrieveResponse()* method. 
   It will return a initialized response object ready for use.
 
-================
-Callback Methods
-================
-
-
 ==================
 Special Properties
 ==================
