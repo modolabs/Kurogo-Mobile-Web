@@ -154,6 +154,7 @@ function processModuleSections(data) {
         }
         $("#adminSections").append(li);
     });
+    $("#adminSections").append('<div style="clear:both"></div>');
 }
     
 function processModuleData(data) {

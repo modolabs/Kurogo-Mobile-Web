@@ -102,7 +102,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 '___LONGITUDE___' => $coord['lon'],
                 '___TITLE___' => json_encode($marker->getTitle()),
                 '___OPTIONS___' => $options,
-                '___SUBTITLE___' => json_encode($marker->getSubtitle()),
+                '___SUBTITLE___' => json_encode($marker->getDescription()),
                 '___URL___' => $this->urlForPlacemark($marker),
                 ));
         }
@@ -141,7 +141,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 $coord = $this->mapProjector->projectPoint($coord);
             }
             $template->appendValues(array(
-                '___ID___' => $marker->getId(),
+                '___ID___' => $placemark->getId(),
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
                 '___MULTIPATHSTRING___' => implode(',', $polyString),
@@ -184,7 +184,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 $coord = $this->mapProjector->projectPoint($coord);
             }
             $template->appendValues(array(
-                '___ID___' => $marker->getId(),
+                '___ID___' => $placemark->getId(),
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
                 '___PATHSTRING___' => $coordString,

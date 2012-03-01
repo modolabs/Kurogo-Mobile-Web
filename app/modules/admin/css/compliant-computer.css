@@ -140,6 +140,8 @@ nav ul ul a {
 	-webkit-box-shadow: 1px 1px 3px #999;
 	-moz-box-shadow: 1px 1px 3px #999;
 	padding: 18px 16px;
+	overflow:auto;
+	width:610px;
 }
 #content h1 {
 	font-size: 30px;
@@ -691,7 +693,7 @@ h1 img {
 }
 
 #adminSections {
-    height:30px;
+    min-height:30px;
     margin: 0;
     padding: 0 0 10px 0;
     border-bottom: 1px solid #ddd;
