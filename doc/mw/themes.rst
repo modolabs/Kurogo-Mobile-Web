@@ -2,7 +2,7 @@
 Style and Themes
 ################
 
-The Kurogo Framework supports both simple and deep visual customization to reflect your organization's visual brand identity. Basic visual properties (such as colors, content and header backgrounds, fonts, and more) are very easy to customize across all device classes with changes to a single CSS file. Logos, module icons, header and body backgrounds, and other images can be easily replaced to complete your visual branding. Kurogo also gives you the flexibility to deliver advanced CSS and high-resolution images to devices and browsers that can support them, or use a simpler set of theme assets to simplify theme creation and maintenance.
+The Kurogo Framework supports both simple and deep visual customization to reflect your organization's visual brand identity. Basic visual properties (such as colors, content and header backgrounds, fonts, and more) are very easy to customize across all device classes with changes to a theme configuration file and a handful of CSS files. Logos, module icons, header and body backgrounds, and other images can be easily replaced to complete your visual branding. Kurogo also gives you the flexibility to deliver advanced CSS and high-resolution images to devices and browsers that can support them, or use a simpler set of theme assets to simplify theme creation and maintenance.
 
 Beyond straightforward visual branding, Kurogo theming can also extend deeper into application-level styling, templates, and images. Just about anything your users can see or interact with can be customized, depending on your institution's needs and your development team's technical abilities. This document covers the basics of visual theming; functional customization through module extensions and template overrides is covered in :doc:`moduleextend`.
 
@@ -16,7 +16,7 @@ Theming Overview
 
 The Kurogo Framework has a theming layer which allows sites to make most stylistic changes to the web application without modifying the core libraries.  The advantage of using the theming layer is that site changes are isolated from the framework sources and can be more easily moved to a new version of the framework.
 
-The core visual interface of Kurogo lives in *app/*.  It is made up of HTML templates, CSS and Javascript files.  All HTML, CSS and Javascript in the core interface can be overridden by a theme. While it's possible to directly edit the files in *app/*, doing so will increase the probability that future upgrades to Kurogo will break your site. As with everything else you build with Kurogo, it is highly recommended that you **not** directly edit any contents of this directory.
+The core visual interface of Kurogo lives in *app/*.  It is made up of HTML templates, CSS and Javascript files, and a core set of application images.  All HTML, CSS and Javascript in the core interface can be overridden by a theme. While it's possible to directly edit the files in *app/*, doing so will increase the probability that future upgrades to Kurogo will break your site. As with everything else you build with Kurogo, it is highly recommended that you **not** directly edit any contents of this directory. If there are CSS rules or image files you wish to replace in your theme, it is recommended that you create new versions of those rules and images in your theme directory.
 
 Each theme is contained within a directory inside the *SITE_DIR/themes* folder. By convention the default theme is named *default*. Each site can have multiple themes, but only one theme can be active at any time. You can easily switch between active themes from the *Site Configuration > Theme* screen in the Kurogo administration console.
 
@@ -28,20 +28,20 @@ Themes have the same directory structure as the core visual interface directory 
 Tutorial: Implement a Simple Theme
 **********************************
 
-Because of Kurogo's breadth and depth, implementing a simple theme is a multi-step process. However, each step can be broken down into fairly discrete tasks, and with Kurogo v1.2 there are significantly fewer CSS files and image assets that need to be revised or replaced to create a workable theme. Of course, theming can be as deep and extensive as you desire. This is part of Kurogo's underlying philosophy of flexibility and scalability -- making it easy to get up and running while supporting potentially limitless customization and extension to meet your organization's specific mobile needs now and in the future.
+Because of Kurogo's breadth and depth, implementing a simple theme is a multi-step process. However, each step can be broken down into fairly discrete tasks, and with each version of Kurogo we have made efforts to reduce the number of files and image assets that need to be revised or replaced to create a workable theme. Of course, theming can be as deep and extensive as you desire. This is part of Kurogo's underlying philosophy of flexibility and scalability -- making it easy to get up and running while supporting potentially limitless customization and extension to meet your organization's specific mobile needs now and in the future.
 
 -----------------------------------
 1. Create a working theme directory
 -----------------------------------
 It's recommended that you build a new theme by duplicating the default theme, editing its theme CSS, and replacing key image files. This allows you to quickly switch back to the default theme to check the effect of changes you're making in your new theme, or to revert to a working theme if you run into trouble.
 
-The first decision to make is whether you want to make the extra effort to create high-resolution assets as part of :ref:`hdpi`. This extra effort (consisting of several extra versions of up to dozens of image files) can yield noticeably sharper-looking images on high-end devices. Don't worry if you're not sure or change your mind; you can always start with the default (simpler) theme structure and refine later with as much or as little high-density optimization as you like.
+The first decision to make is whether you want to make the extra effort to create high-resolution assets as part of :ref:`hdpi`. This extra effort (consisting of several extra versions of up to dozens of image files) can yield noticeably sharper-looking images on devices with high-resolution screens. Don't worry if you're not sure or change your mind; you can always start with the default (simpler) theme structure and refine later with as much or as little high-density optimization as you like.
 
 In *SITE_DIR/themes*, duplicate either the *default* (simpler) or *hi-def* (optimized for high-density displays) directory and give the new directory a descriptive name.
 
 In your site's Kurogo administration console, go to the *Site Configuration > Theme* page and select your new theme, and click the "Save" button.
 
-In a modern web browser (e.g., Chrome, Firefox 4+, Safari 3+), open a few test views of your site for different device classes:
+In a modern web browser (e.g., Chrome, Firefox 4+, Safari 4+), open a few test views of your site for different device classes:
 
 * *http://[SITE_PATH]/device/compliant/home/*
 * *http://[SITE_PATH]/device/compliant-bbplus/home/*
@@ -52,28 +52,41 @@ In a modern web browser (e.g., Chrome, Firefox 4+, Safari 3+), open a few test v
 As you make the changes detailed below, come back to your browser and refresh the relevant test views to make sure that the changes have the intended effect.
 
 
------------------------------
-2. Modify the basic theme CSS
------------------------------
-In your theme directory (which we'll refer to from now on as *THEME_DIR*), open *common/css/common.css*. This is the base theme CSS file. The essential rules you'll need to edit include:
+--------------------------------
+2. Modify the basic theme values
+--------------------------------
 
-* *body*: Body background color (and tiling image, if you so desire) and base text size, line height, and font family. Almost all of the other font sizes throughout your web app will be calculated as percentages of this base font size, which can be specified in points (preferred) or pixels. (lines 8-9)
-* *body, th, td, li, option, select, input*: Primary text color (line 14)
-* *a, a:visited, .focal a, .focal a:visited, .tabbody a, .tabbody a:visited*: Default link text color (line 19)
-* *.nonfocal a, .nonfocal a:visited*: Link text color in areas that use the body background color; for themes with a light background, this may be the same as (or close to) line 19, but for themes with dark backgrounds it should be reversed out for contrast and legibility (line 24)
-* Header styles: relative font sizes and colors for *h1* through *h4* in focal content areas, which usually have white or light backgrounds (lines 27-54)
-* *dt, .label, .legend, .legend h2, .legend h3, .searchlegend*: Accent/highlight text color used in focal content areas, which usually have white or light backgrounds (line 60)
-* *.address, .smallprint, .fineprint, .dek*: Secondary text color used for less important text (line 64)
-* *.springboard a, .springboard a:visited*: Text color of labels below icons in springboards (grids of icons), e.g., the homescreen (line 73)
-* *.nonfocal, .nonfocal .legend, .formlabel* and *.nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4*: Text color and heading color, respectively, in areas that use the body background color; for themes with a light background, these may be the same as (or close to) the primary text color set in line 14, but for themes with dark backgrounds they should be reversed out for contrast and legibility. Note that the heading styles can be broken apart if you want to style them separately.
-* *.shaded, .HomeModule .blockborder*: Shaded containers used to contain the tabs in many tabbed screens and in homescreen portlets on tablets (lines 99-100)
-* *.shaded h1, .shaded h2, .shaded h3, .shaded h4*: Text color for headings that sit on the shaded containers. Should have legible contrast from the background color set in line 99.
-* *#navbar*: Size, background color/image, and base font size for the navigation bar at the top of every screen other than the home screen. Does not apply to Basic device class. It is recommended that the height not be modified. (lines 114-115)
-* *.breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited, .pagetitle*: Breadcrumbs and page titles at the top of every screen other than the home screen. Does not apply to Basic device class. This text color should contrast with the background color or image specified in *#navbar* (line 114) for legibility. (line 120)
-* *#footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited*: Text and links that appear in the sitewide footers. Usually slightly less contrast than the primary text and link colors, but should still be legible against the body background set in line 8.
-* *.sidenav a, .sidenav a:visited, .paging a:visited*: Color of paging navigation links used in the Calendar module (to move from day to day) and certain paged content displays; for themes with a light background, these may be the same as (or close to) the primary text color set in line 14, but for themes with dark backgrounds they should be reversed out for contrast and legibility. Note that the heading styles can be broken apart if you want to style them separately. 
+Kurogo 1.4 introduces support for setting theme values in a single configuration file, for theme attributes such as colors and font styles that get applied across many theme CSS files. This theme configuration file dramatically simplifies the definition of most if not all of the core theming that was previously done in CSS.
 
-Other styles may be modified as well, but the ones listed above are essential for any theme.
+In your theme directory (which we'll refer to from now on as *THEME_DIR*), open *config.ini*. This is the theme configuration file. 
+
+At runtime, Kurogo parses all of the CSS which has been concatenated for the current page and device class and looks for a specific text pattern that indicates the use of theme constants. You can see this in your *THEME_DIR/common/common.css* file; look for any value defined in the format *@@@[constant_name]@@@*. Kurogo then replaces this pattern with the value of that named constant as defined in the theme configuration file. For instance, every instance of *@@@primary_text_color@@@* will be replaced by the actual value of the constant *primary_text_color* as defined in your theme configuration file; in the case of the standard Kurogo reference theme ("Universitas" in blue), this value is #036, or a dark blue. So, for example, line 15 of common.css would be delivered to the user's browser as *color: #036*.
+
+In *THEME_DIR/config.ini*, the global theme style constants are in lines 14-39. These constants are:
+
+* *primary_font_family*: Font family definition for the entire site. This can be defined as a single value (e.g., "Arial" or "sans-serif"), but given the non-overlapping range of default fonts available on different mobile platforms, an array of families is recommended, with a fallback of "sans-serif" or "serif".
+* *base_font_size*: Base font size. Almost all of the other font sizes throughout your web app will be calculated as percentages of this base font size, which can be specified in points or pixels.
+* *primary_text_color*: Primary text color for most text and navigation elements throughout the site
+* *secondary_text_color*: Text color for secondary text such as smallprint, fineprint, legends, labels, nonselected tabs, and text in secondary nav lists
+* *tertiary_text_color*: Text color for the small-print detail text that sometimes shows up in secondary nav list items
+* *nonfocal_text_color*: Color of text items (including text links) that appear on the body background, e.g., within nonfocal elements
+* *strong_text_color*: Text color for certain emphasized elements, such as active tabs
+* *heading_font_family*: Font family for <h1> and <h2> elements, including content item titles
+* *primary_heading_color*: Text color for <h1> and <h2> elements, including content item titles
+* *secondary_heading_color*: Color for <h3> and <h4> elements, including section headings within grouped tables and subheadings within content areas
+* *nonfocal_heading_color*: Color for all <h1>, <h2>, <h3>, and <h4> elements that appear on the body background, e.g., within nonfocal elements
+* *focal_link_color*: Color of text links within focal content areas
+* *nonfocal_link_color*: Color of text links that appear on the body background, e.g., within nonfocal elements
+* *body_background_color*: Overall body background color. Often largely or even entirely hidden or overridden by focal content areas.
+* *body_background_image*: Overall body background image. Optional; use "none" if no image is required, or CSS format e.g., "url(/common/images/bodyback.jpg)"
+* *focal_background_color*: Background color for focal content areas and navigation and results lists
+* *subfocal_background_color*: Tinted background color for subfocal content areas and nested navigation lists. Usually a tint between body_background_color and focal_background_color
+* *focal_border_color*: Color of borders around focal content areas and navigation and results lists, and hairlines between list items
+* *search_border_color*: Color of borders around search fields and behind text search buttons
+* *navbar_background_color*: Background color behind navbar (usually not seen if there's a navbar background image)
+* *navbar_text_color*: Color of navigation-bar text (page title and breadcrumb text) in Compliant and Tablet device classes
+
+In addition to modifying these theme configuration values, you can always modify or override individual rules in specific theme CSS files. However, simply changing these theme configuration values will take care of most, if not all, of the theming that previously required editing actual CSS.
 
 
 ------------------------------------------
@@ -86,7 +99,7 @@ Homepage
 You'll need to create a version of the logo to appear on the homepage: [#f1]_ [#f2]_
 
 * Basic and Touch device classes: *THEME_DIR/modules/home/images/logo-home.gif* must be a GIF image [#f3]_. This image will be centered horizontally within the screen. The default size is 208x35px, cropped tight to the actual artwork.
-* Compliant device class: *THEME_DIR/modules/home/images/logo-home.png* must be a PNG image [#f3]_. The default size is 280x60px, cropped tight the actual artwork. The Compliant home logo/banner image is one that benefits noticeably from :ref:`hdpi`.
+* Compliant device class: *THEME_DIR/modules/home/images/logo-home.png* must be a PNG image [#f3]_. The default size is 280x60px, cropped tight the actual artwork. The Compliant home logo/banner image is one that benefits noticeably from :ref:`hdpi`. 
 	
 
 Header logos
