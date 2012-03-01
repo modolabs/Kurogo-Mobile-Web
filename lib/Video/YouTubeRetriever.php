@@ -30,6 +30,12 @@
         }
         $this->setStandardFilters();
     }
+
+    protected function streamContextOpts($args) {
+        $opts = parent::streamContextOpts($args);
+        $opts['http']['ignore_errors'] = true;
+        return $opts;
+    }
     
     protected function initRequest() {
         parent::initRequest();
@@ -73,8 +79,21 @@
         $this->addFilter('alt', 'jsonc'); //set the output format to json
         $this->addFilter('format', 6); //only return mobile videos
         $this->addFilter('v', 2); // version 2
+
+        $data = $this->getData($response);
+        if (!$data) {
+            $responseContent = json_decode($response->getResponse());
+            if (isset($responseContent['error'])) {
+                $error = $responseContent['error'];
+                // TODO: be able to pass this on to the data model
+                $code = $error['code'];
+                $message = $error['message'];
+                Kurogo::log(LOG_WARNING, "Error retrieving video ({$code}): {$message}", 'video');
+            }
+            return false;
+        }
         
-        return $this->getData($response);
+        return $data;
 	}
 }
  
@@ -91,7 +110,7 @@ class YouTubeDataParser extends DataParser
         }
         $video->setMobileURL($entry['content']['1']);
         $video->setTitle($entry['title']);
-        $video->setDescription($entry['description']);
+        $video->setDescription(strip_tags($entry['description']));
         $video->setDuration($entry['duration']);
         $video->setID($entry['id']);
         $video->setImage($entry['thumbnail']['sqDefault']);

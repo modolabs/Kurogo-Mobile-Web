@@ -6,7 +6,10 @@ Video API
 sections
 ==========
 
+
 :kbd:`/rest/video/sections?v=2`
+
+Returns a list of video feeds
 
 Sample *response* ::
 
@@ -24,6 +27,8 @@ Sample *response* ::
 ========
 videos
 ========
+
+Returns a list of videos for a particular section
 
 :kbd:`/rest/video/videos?section=<section-id>&v=2`
 
@@ -75,6 +80,12 @@ Sample *response* ::
         }
         // ...
     ]
+    
+---------------
+Version History
+---------------
+    
+* Version 2 added the *timestamp* property in the *published* field
 
 ======
 detail
@@ -119,4 +130,10 @@ Sample *response* ::
         "duration": 1062, 
         "stillFrameImage": "http://i.ytimg.com/vi/04SEzifEsGg/hqdefault.jpg"
     }
+
+---------------
+Version History
+---------------
+    
+* Version 2 added the *timestamp* property in the *published* field
 

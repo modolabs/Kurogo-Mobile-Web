@@ -122,7 +122,7 @@ class VideoAPIModule extends APIModule {
                 $this->setResponse($result);
                 $this->setResponseVersion($this->requestedVersion);
             } else {
-                $this->throwError(new KurogoError("Video Not Found"));
+                $this->throwError(new KurogoError(1, "Video Not Found", "Video not found"));
             }
                         
             break;

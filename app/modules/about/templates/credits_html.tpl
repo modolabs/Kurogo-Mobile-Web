@@ -19,14 +19,20 @@ Cambridge, MA 02140<br />
     <li>Wesley Hirsch</li>
     <li>Sonya Huang (Lead Developer, iOS)</li>
     <li>Jim Kang</li>
+    <li>Edward Liu</li>
+    <li>Newstar Liu</li>
+    <li>Ebrahim Kobeissi</li>
     <li>David Ormsbee</li>
-    <li>Brian Patt</li>
+    <li>Brian Patt (Lead Developer, Android)</li>
     <li>Brent Wang</li>
     <li>Jeffery You</li>
+    <li>Saturn Zhang</li>
 </ul>
 
 <h3>Designers:</h3>
 <ul>
+    <li>James Choi</li>
+    <li>Kate Dobroth</li>
     <li>Eric Kim (Lead Designer)</li>
     <li>Hoon Lee</li>
     <li>Ilona Moreland</li>
@@ -53,7 +59,7 @@ Cambridge, MA 02140<br />
     <li>Doug Beck (University of Central Florida)</li>
     <li>Jared Lang (University of Central Florida)</li>
     <li>Chris Conover (University of Central Florida)</li>
-    <li>Ebrahim Kobeissi (University of Vermont)</li>
+    <li>University of Vermont</li>
     <li>Adam Franco (Middlebury College)</li>
 </ul>
 
@@ -89,3 +95,4 @@ Cambridge, MA 02140<br />
     <li><a href="http://stig.github.com/json-framework">http://stig.github.com/json-framework</a>
 </ul>    
    
+<h2>Third Party Libraries (Android)</h2>

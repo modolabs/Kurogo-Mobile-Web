@@ -169,7 +169,7 @@ Sample *response* ::
 detail
 ========
 
-:kbd:`/rest/map/detail?id=1&category=05bc9c448&references=1e61bad385:boston&v=1
+:kbd:`/rest/map/detail?id=1&category=05bc9c448&references=1e61bad385:boston&v=1`
 
 Parameters:
 

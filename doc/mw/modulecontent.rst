@@ -10,12 +10,6 @@ By default, the content module displays its feeds in a list. Then the user selec
 its title) and the content of the feed is shown. If there is only 1 feed then that feed is shown instead
 of the list. Optional grouping may be configured.
 
---------
-Abstract
---------
-The content module cannot be instantiated directly. It is an *abstract* module. In order to create
-a module that utilizes its features you should :ref:`copy the module <copy-module>`.
-
 =========================
 Configuring Content Feeds
 =========================

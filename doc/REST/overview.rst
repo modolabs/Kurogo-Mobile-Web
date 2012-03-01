@@ -81,10 +81,9 @@ The values of the above are as follows:
 * *version* - an integer specifying the version of the response associated 
   with the current module.
 * *response* - the response body.
-* *context* -
+* *context* - A value set by the caller. This allows callers to keep track of multiple calls. It is simply passed through
 
-Each module independently determines the contents of *version*, *response*, 
-and *context*.
+Each module independently determines the contents of *version* and *response*.
 
 =============
 Errors

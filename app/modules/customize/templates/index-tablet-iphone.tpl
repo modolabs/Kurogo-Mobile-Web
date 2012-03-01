@@ -1,29 +1,10 @@
 {extends file="findExtends:modules/customize/templates/index.tpl"}
 
 {block name="customize"}
-  {if $newCount > 0}
-    <div id="statusmsg" class="focal collapsed" onclick="showHideFuller(this);">
-      <strong>{$newCount} New App{if $newCount > 1}s{/if}</strong>
-      <span class="smallprint">
-        <span class="summary">
-          <span class="more">show</span>
-        </span>
-        <span class="fulltext">
-          <span class="more">hide</span>
-          <ul class="newapps{if $newCount >= 2} twoPlus{/if}{if $newCount >= 3} threePlus{/if}">
-            {foreach $modules as $id => $info}
-              {if $info['new']}
-                <li><a href="#{$id}">{$info['title']}</a></li>
-              {/if}
-            {/foreach}
-          </ul>
-        </span>
-      </span>
-    </div>
-    <h3 id="allapps">All Apps</h3>
-  {else}
-    <h3 id="allapps"></h3>
-  {/if}
+  <div class="nonfocal smallprint"> 
+{"CUSTOMIZE_INSTRUCTIONS_TABLET_DRAG"|getLocalizedString}
+  </div> 
+  
   
   <ul id="dragReorderList">
     {foreach $modules as $id => $info}

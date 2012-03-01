@@ -18,8 +18,15 @@ Sample *response* ::
             "text": "There are no emergencies at Universitas at this time.\n", 
             "unixtime": 1299128679, 
             "title": "No Emergency"
-        }
+        },
+        "noticeEnabled": true
     }
+
+---------------
+Version History
+---------------
+
+* Version 2 - Added *noticeEnabled* property. If this value is false then notice is not configured on this server
 
 ========
 contacts
@@ -62,6 +69,4 @@ The contacts are divided into a *primary* and *secondary* group.  Typically
 information, and *secondary* a longer list displayed on its own.  Each contact
 in the lists is similar in structure to contacts in the People module's
 :ref:`rest-people-contacts` API.
-
-
 
