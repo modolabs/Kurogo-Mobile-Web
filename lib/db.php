@@ -41,14 +41,14 @@ class db {
             }
     
             $config = array(
-                'DB_TYPE'=>$config->getVar('DB_TYPE'),
-                'DB_HOST'=>$config->getVar('DB_HOST'),
-                'DB_USER'=>$config->getVar('DB_USER'),
-                'DB_PASS'=>$config->getVar('DB_PASS'),
-                'DB_DBNAME'=>$config->getVar('DB_DBNAME'),   
-                'DB_FILE'=>$config->getVar('DB_FILE'),
-                'DB_CREATE'=>$config->getOptionalVar('DB_CREATE'),
-                'DB_PORT'=>$config->getOptionalVar('DB_PORT')
+                'DB_TYPE'=>$config->getVar('DB_TYPE', 'database'),
+                'DB_HOST'=>$config->getVar('DB_HOST', 'database'),
+                'DB_USER'=>$config->getVar('DB_USER', 'database'),
+                'DB_PASS'=>$config->getVar('DB_PASS', 'database'),
+                'DB_DBNAME'=>$config->getVar('DB_DBNAME', 'database'),   
+                'DB_FILE'=>$config->getVar('DB_FILE', 'database'),
+                'DB_CREATE'=>$config->getOptionalVar('DB_CREATE', 'database'),
+                'DB_PORT'=>$config->getOptionalVar('DB_PORT', 'database')
             );
         }
     

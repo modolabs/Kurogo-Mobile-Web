@@ -17,6 +17,10 @@ class SOAPDataRetriever extends DataRetriever {
     protected $soapOptions = array('trace' => 1); //use it and wsdl to instantiate SoapClient
     protected $method;
     protected $parameters;
+    protected $location;
+    protected $uri;
+    protected $action;
+    
     protected $soapHeaders = array();
     
     public function setWSDL($wsdl) {
@@ -152,11 +156,25 @@ class SOAPDataRetriever extends DataRetriever {
         $method = $this->method();
         $parameters = $this->parameters();
         $soapClient = $this->getSOAPClient();
+        $options = array();
+        if ($this->location) {
+            $options['location'] = $this->location;
+        }
+
+        if ($this->uri) {
+            $options['uri'] = $this->uri;
+        }
+
+        if ($this->action) {
+            $options['soapaction'] = $this->action;
+        }
+
+        $headers = $this->soapHeaders;
 
         Kurogo::log(LOG_DEBUG, sprintf("Calling SOAP Method %s", $method), 'soap');
 
         try {
-            $data = $soapClient->__soapCall($method, $parameters);
+            $data = $soapClient->__soapCall($method, $parameters, $options, $headers, $outputHeaders);
         } catch (SoapFault $fault) {
             throw new KurogoDataException($fault->getMessage(), $fault->getCode());
         }
@@ -177,6 +195,7 @@ class SOAPDataRetriever extends DataRetriever {
     
     public function clearInternalCache() {
         parent::clearInternalCache();
+        $this->soapHeaders = array();
         $this->soapClient = null;
     }
 }

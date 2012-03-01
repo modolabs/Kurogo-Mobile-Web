@@ -19,7 +19,16 @@ class RSSItem extends XMLElement implements NewsItem
     protected $category=array();
     protected $enclosure;
     protected $images=array();
-    
+    protected $fetchContent = false;
+    protected $enclosures = array();
+    protected $useDescriptionForContent = false;
+
+    public function setFetchContent($bool) {
+        $this->fetchContent =  $bool ? true : false;
+    }
+    public function setUseDescriptionForContent($bool){
+    	$this->useDescriptionForContent = $bool ? true : false;
+    }
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
             switch ($filter)
@@ -27,7 +36,7 @@ class RSSItem extends XMLElement implements NewsItem
                 case 'search':
                     return  (stripos($this->getTitle(), $value)!==FALSE) ||
                          (stripos($this->getDescription(), $value)!==FALSE) ||
-                         (stripos($this->getContent(),     $value)!==FALSE);
+                         (stripos($this->getContent(false),     $value)!==FALSE);
                     break;
             }
         }
@@ -36,10 +45,24 @@ class RSSItem extends XMLElement implements NewsItem
     }
     
     public function init($args) {
+        if (isset($args['FETCH_CONTENT'])) {
+            $this->setFetchContent($args['FETCH_CONTENT']);
+        }
+        //KGO-522
+        if (isset($args['USE_DESCRIPTION_FOR_CONTENT'])) {
+            $this->setUseDescriptionForContent($args['USE_DESCRIPTION_FOR_CONTENT']);
+        }
     }
     
-    public function getContent()
+    public function getContent($fetch=true)
     {
+        if (strlen($this->content)==0) {
+            if ($this->fetchContent && $fetch && ($url = $this->getLink())) {
+                $reader = new KurogoReader($url);
+                $this->content = $reader->getContent();
+            }
+        }
+
         return $this->content;
     }
 
@@ -106,15 +129,21 @@ class RSSItem extends XMLElement implements NewsItem
     {
         return $this->enclosure;
     }
+
+    public function getEnclosures() {
+        return $this->enclosures;
+    }
     
     public function getImage()
     {
-        if ( ($enclosure = $this->getEnclosure()) && $enclosure instanceOf RSSImageEnclosure) {
-            return $enclosure;
-        } elseif (count($this->images)>0) {
+        foreach ($this->enclosures as $enclosure) {
+            if ($enclosure instanceOf RSSImageEnclosure) {
+                return $enclosure;
+            }
+        }
+        if (count($this->images)>0) {
             return $this->images[0];
         }
-
         return null;
     }
     
@@ -137,13 +166,15 @@ class RSSItem extends XMLElement implements NewsItem
                     }
 
                     if ($link = $element->getAttrib('HREF')) {
-                        $element->setValue($link, true);
+                        $element->shouldStripTags(true);
+                        $element->setValue($link);
                     }
                 }
                 parent::addElement($element);
                 break;
             case 'enclosure':
                 $this->enclosure = $element;
+                $this->enclosures[] = $element;
                 break;
             case 'image':
                 $this->images[] = $element;
@@ -165,6 +196,13 @@ class RSSItem extends XMLElement implements NewsItem
                 }
                 
                 break;
+            case 'DESCRIPTION':
+            	if($this->useDescriptionForContent){
+            		parent::addElement($element);//set description
+            		$element->setName('CONTENT');//set description value to content KGO-522
+            	}
+            	parent::addElement($element);
+            	break;
             default:
                 parent::addElement($element);
                 break;

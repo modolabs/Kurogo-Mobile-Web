@@ -662,6 +662,8 @@ class ICalRecurrenceRule extends ICalObject {
                         }
                         ksort($this->occurs_by_day);
                         break;
+                    } else if($this->type == 'MONTHLY'){
+                    	$this->occurs_by_list = array('BYDAY'=>$rulevalue);
                     }
                 case 'WKST':
                     $this->wkst = array_key_exists($rulevalue, self::$dayIndex) ? $rulevalue : '';
@@ -737,7 +739,7 @@ class ICalRecurrenceRule extends ICalObject {
                 //$time = self::nextIncrement($time, 'DAILY', $offset*$interval);
                 break;
             case 'MONTHLY':
-                throw new ICalendarException("MONTHLY increment Not handled yet");
+            	$time = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time)+$interval, date('d', $time), date('Y', $time));
                 break;
             case 'YEARLY':
                 $time = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time), date('d', $time), date('Y', $time)+$interval);
@@ -768,7 +770,6 @@ class ICalRecurrenceRule extends ICalObject {
                     break;
                 case 'BYMONTH':
                     $time = mktime(date('H', $time), date('i', $time), date('s', $time), $val, date('d', $time), date('Y', $time));
-                    //jeffery var_dump(date("Y-m-d", $time));
                     break;
                 case 'BYSECOND':
                     $time = mktime(date('H', $time), date('i', $time), $val, date('m', $time), date('d', $time), date('Y', $time));

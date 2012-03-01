@@ -4,8 +4,6 @@ abstract class StaticMapImageController extends MapImageController
 {
     protected $bbox;
 
-    protected $baseURL;
-
     protected $imageFormat = 'png';
     protected $supportedImageFormats = array('png', 'jpg');
 

@@ -1,0 +1,41 @@
+@import url("nature.css");
+
+em {
+    color: #3B981E; 
+}
+
+a em {
+    color: #6876cb;
+}
+
+a  {
+    color: #6876cb;
+}
+
+div.body p {
+	margin: 0 0 1em 0;
+}
+
+h4, div.body h4 {
+	background-color: transparent;
+	padding: 0;
+	margin: 1.5em 0 0.5em 0;
+	font-size: 1em;
+	font-weight: bold;
+}
+
+.sphinxsidebar ul ul ul ul {
+	display: none;
+}
+
+.footnote {
+	font-size: 85%;
+	line-height: 1.4em;
+	margin-bottom: 0.5em;
+}
+
+.rubric, div.body p.rubric {
+	margin-top: 3em;
+	border-top: 1px dotted #ccc;
+	padding-top: 1em;
+}

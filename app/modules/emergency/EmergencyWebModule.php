@@ -9,7 +9,7 @@ class EmergencyWebModule extends WebModule implements HomeAlertInterface
     protected $emergencyNoticeController;
     
     public function getHomeScreenAlert() {
-        return $this->emergencyNoticeController->getFeaturedEmergencyNotice();        
+        return $this->emergencyNoticeController ? $this->emergencyNoticeController->getFeaturedEmergencyNotice() : null;
     }
 
     protected function initialize() {

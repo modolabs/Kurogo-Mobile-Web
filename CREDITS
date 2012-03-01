@@ -5,7 +5,7 @@ Modo Labs, Inc.
 Cambridge, MA 02140
 kurogo@modolabs.com
 
-Modo Team
+Modo Labs Team
 
 Developers
 Pete Akins (Lead Developer, Mobile Web)
@@ -16,24 +16,27 @@ Ian Gavalakis
 Wesley Hirsch
 Sonya Huang (Lead Developer, iOS)
 Jim Kang
+Edward Liu
+Newstar Liu
+Ebrahim Kobeissi
 David Ormsbee
-Brian Patt
+Brian Patt (Lead Developer, Android)
 Brent Wang
 Jeffery You
-
+Saturn Zhang
 
 Designers: 
+James Choi
+Kate Dobroth
 Eric Kim (Lead Designer)
 Hoon Lee
 Ilona Moreland
 Brian Tepfenhart
 
-
 Project Management & QA: 
 Yuki Nagatoshi
 Marshall Vale
 Andrew Yu
-
 
 Special Thanks
 Justin Anderson
@@ -45,7 +48,7 @@ Harvard University
 Doug Beck (University of Central Florida)
 Jared Lang (University of Central Florida)
 Chris Conover (University of Central Florida)
-Ebrahim Kobeissi (University of Vermont)
+University of Vermont
 Adam Franco (Middlebury College)
 
 
@@ -76,4 +79,4 @@ License: BSD
 Copyright: Stig Brautaset
 Link: http://stig.github.com/json-framework
 
-
+Third Party Libraries (Android)

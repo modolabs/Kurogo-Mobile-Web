@@ -1,5 +1,8 @@
 <?php
 
+// this class is only used by MapDataController which is deprecated.
+// MapCategory is no longer abstract.
+
 class MapBaseCategory extends MapCategory
 {
     protected $folders = array();

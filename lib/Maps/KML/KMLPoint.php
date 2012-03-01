@@ -31,4 +31,16 @@ class KMLPoint extends XMLElement implements MapGeometry
                 break;
         }
     }
+
+    public function serialize() {
+        return serialize(
+            array(
+                'coordinate' => serialize($this->coordinate),
+            ));
+    }
+
+    public function unserialize($data) {
+        $data = unserialize($data);
+        $this->coordinate = unserialize($data['coordinate']);
+    }
 }

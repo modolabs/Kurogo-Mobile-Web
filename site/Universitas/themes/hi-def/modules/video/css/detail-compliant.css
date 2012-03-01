@@ -1,0 +1,4 @@
+body.VideoModule, .video {
+	/* Background color for video listing and detail; should be white in most cases */
+	background-color: @@@focal_background_color@@@;
+}

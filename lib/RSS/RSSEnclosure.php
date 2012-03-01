@@ -20,23 +20,15 @@ class RSSEnclosure extends XMLElement
         );
     }
     
-    public static function factory($attribs) {
-        $type = isset($attribs['TYPE']) ? $attribs['TYPE'] : null;
-        $class = 'RSSEnclosure';
-        if (self::isImage($type)) {
-            $class = 'RSSImageEnclosure';
-        }
-        
-        $element = new $class($attribs);
-        return $element;
-    }
-    
     public function __construct($attribs)
     {
         $this->setAttribs($attribs);
         $this->length = $this->getAttrib('LENGTH');
         $this->type = $this->getAttrib('TYPE');
         $this->url = $this->getAttrib('URL');
+    }
+    
+    public function init($args) {
     }
     
     protected static function isImage($type)
@@ -64,21 +56,5 @@ class RSSEnclosure extends XMLElement
     {
         return $this->length;
     }
-}
-
-class RSSImageEnclosure extends RSSEnclosure implements KurogoImage
-{
-    public function __construct($attribs) {
-        parent::__construct($attribs);
-        $url = $this->getAttrib('URL');
-        $this->url = ImageLoader::precache($url);
-    }
-    
-    public function getWidth() {
-    }
-    
-    public function getHeight() {
-    }
-    
 }
 

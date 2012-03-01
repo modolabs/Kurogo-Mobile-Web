@@ -92,7 +92,7 @@ class ContentAPIModule extends APIModule {
             case 'getFeed': // pre 1.0
 
                 $filter = $this->getArg('key');
-                if ($filter) {
+                if (strlen($filter)) {
                     $feedData = $feeds[$filter];
                     $feedBody = $this->getContent($feedData);
 

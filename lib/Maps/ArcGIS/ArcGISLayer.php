@@ -30,6 +30,18 @@ class ArcGISLayer implements MapFolder, MapListElement {
     
     private $features = array();
     private $isPopulated = false;
+
+    // forward compatibility functions
+
+    public function placemarks() {
+        return $this->getAllPlacemarks();
+    }
+
+    public function categories() {
+        return $this->getChildCategories();
+    }
+
+    ///
     
     public function __construct($id, $name, ArcGISParser $parent) {
         $this->id = $id;
@@ -42,6 +54,18 @@ class ArcGISLayer implements MapFolder, MapListElement {
     }
     
     // MapListElement interface
+
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search': //case insensitive
+                    return  (stripos($this->getTitle(), $value)!==FALSE) || (stripos($this->getSubTitle(), $value)!==FALSE);
+                    break;
+            }
+        }   
+        return true;
+    }
     
     public function getId() {
         return $this->id;

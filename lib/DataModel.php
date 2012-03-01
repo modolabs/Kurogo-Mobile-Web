@@ -11,7 +11,7 @@
  */
 includePackage('DataModel'); 
 includePackage('DataRetriever');
-abstract class DataModel {
+class DataModel {
     
     protected $DEFAULT_PARSER_CLASS;
     protected $DEFAULT_RETRIEVER_CLASS='URLDataRetriever';

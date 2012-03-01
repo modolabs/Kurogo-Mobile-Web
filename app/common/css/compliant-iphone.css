@@ -70,3 +70,8 @@ a.external {
 	background-image: url(/common/images/action-external.png); 
 	background-size: 26px 19px;
 }
+
+a.placemark {
+    background-image: url(/common/images/action-placemark@2x.png);
+	background-size: 16px 19px;
+}

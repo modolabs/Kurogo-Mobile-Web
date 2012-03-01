@@ -23,12 +23,17 @@ class RSSDataParser extends XMLDataParser
     protected $itemClass='RSSItem';
     protected $imageClass='RSSImage';
     protected $enclosureClass='RSSEnclosure';
+    protected $imageEnclosureClass='RSSImageEnclosure';
+    protected $removeDuplicates = false;
+    protected $htmlEscapedCDATA = false;
     protected $items=array();
+    protected $guids=array();
 
     protected static $startElements=array(
-        'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'ENCLOSURE', 'IMAGE');
+        'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY',
+        'ENCLOSURE', 'MEDIA:THUMBNAIL','MEDIA:CONTENT', 'IMAGE');
     protected static $endElements=array(
-        'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'DESCRIPTION');
+        'CHANNEL', 'FEED', 'ITEM', 'ENTRY');
     
     public function items()
     {
@@ -58,6 +63,18 @@ class RSSDataParser extends XMLDataParser
         if (isset($args['ENCLOSURE_CLASS'])) {
             $this->setEnclosureClass($args['ENCLOSURE_CLASS']);
         }
+        
+        if (isset($args['IMAGE_ENCLOSURE_CLASS'])) {
+            $this->setImageEnclosureClass($args['IMAGE_ENCLOSURE_CLASS']);
+        }
+
+        if (isset($args['REMOVE_DUPLICATES'])) {
+            $this->removeDuplicates = $args['REMOVE_DUPLICATES'];
+        }
+
+        if (isset($args['HTML_ESCAPED_CDATA'])) {
+            $this->htmlEscapedCDATA = $args['HTML_ESCAPED_CDATA'];
+        }
     }
 
     protected function shouldHandleStartElement($name)
@@ -84,7 +101,13 @@ class RSSDataParser extends XMLDataParser
                 break;
             case 'ENCLOSURE':
             case 'MEDIA:CONTENT':
-                $element = call_user_func(array($this->enclosureClass, 'factory'), $attribs);
+            case 'MEDIA:THUMBNAIL':
+                if ($this->enclosureIsImage($name, $attribs)) {
+                    $element = new $this->imageEnclosureClass($attribs);
+                } else {
+                    $element = new $this->enclosureClass($attribs);
+                }
+                $element->init($this->initArgs);
                 $this->elementStack[] = $element;
                 break;
             case 'IMAGE':
@@ -108,17 +131,10 @@ class RSSDataParser extends XMLDataParser
                 break;
             case 'ITEM':
             case 'ENTRY': //for atom feeds
-                $this->items[] = $element;
-                break;
-            case 'DESCRIPTION':
-                /* dupe description to content if content is not defined */
-                if (is_a($parent, 'RSSItem') && !$parent->getContent()) {
-                    $contentElement = clone($element);
-                    $contentElement->setName('CONTENT');
-                    $contentElement->setValue($this->data, $this->shouldStripTags($contentElement));
-                    $parent->addElement($contentElement);
+                if (!$this->removeDuplicates || !in_array($element->getGUID(), $this->guids)) {
+                    $this->guids[] = $element->getGUID();
+                    $this->items[] = $element;
                 }
-                $parent->addElement($element);
                 break;
         }
     }
@@ -178,5 +194,35 @@ class RSSDataParser extends XMLDataParser
         return $strip_tags;
     }
     
-}
+    protected function shouldHTMLDecodeCDATA($element)
+    {
+        $html_decode = false;
+        
+        if ($this->htmlEscapedCDATA) {
+            // Some buggy feeds have HTML escaped with both CDATA and html entities
+            switch ($element->name()) {
+                case 'CONTENT:ENCODED':
+                case 'CONTENT':
+                case 'BODY':
+                    $html_decode = true;
+                    break;
+            }
+        }
+        return $html_decode;
+    }
+    
+    protected function enclosureIsImage($name, $attribs)
+    {
+        $imageTypes = array(
+            'image/jpeg',
+            'image/jpg',
+            'image/gif',
+            'image/png',
+        );
+        $type   = isset($attribs['TYPE'])   ? $attribs['TYPE']   : '';
+        $medium = isset($attribs['MEDIUM']) ? $attribs['MEDIUM'] : '';
+        
+        return in_array($type, $imageTypes) || $name == 'MEDIA:THUMBNAIL' || ($name == 'MEDIA:CONTENT' && $medium == 'image');
+    }
 
+}

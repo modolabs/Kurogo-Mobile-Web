@@ -1,0 +1,116 @@
+#mapimage {
+    border: 1px solid #999;
+    margin: -1px;
+    overflow: hidden;
+}
+
+#zoomin {
+    left: 7%;
+}
+
+#zoomout {
+    left: 28%;
+}
+
+#recenter {
+    left: 50%;
+}
+
+#locateMe {
+    left: 75%;
+}
+
+/* used on static maps in detail page */
+#mapscrollers {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: 10;
+}
+
+#mapscrollers div {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    padding: 0;
+    z-index: 10;
+    background-image: url(/modules/map/images/scrollers.png);
+    background-repeat: no-repeat;
+}
+
+#nw {
+    top: 0;
+    left: 0;
+    background-position: -350px 0px;
+}
+
+#n {
+    top: 0;
+    left: 50%;
+    margin-left: -25px;
+    background-position: 0px 0px;
+}
+
+#ne {
+    top: 0;
+    right: 0;
+    background-position: -200px 0px;
+}
+
+#e {
+    top: 50%;
+    margin-top: -25px;
+    right: 0;
+    background-position: -50px 0px;
+}
+
+#se {
+    bottom: 0;
+    right: 0;
+    background-position: -250px 0px;
+}
+
+#s {
+    bottom: 0;
+    left: 50%;
+    margin-left: -25px;
+    background-position: -100px 0px;
+}
+
+#sw {
+    bottom: 0;
+    left: 0;
+    background-position: -300px 0px;
+}
+
+#w {
+    top: 50%;
+    margin-top: -25px;
+    left: 0;
+    background-position: -150px 0px;
+}
+
+/* view on map and bookmark buttons */
+#buttonWrapper {
+    width: 100%;
+}
+
+#buttonWrapper a div {
+    margin: 0 0 6px;
+}
+
+#viewOnMapContainer {
+    padding: 3px;
+    float: left;
+}
+
+#bookmarkButtonContainer {
+    float: right;
+}
+
+#tabs {
+    margin: 4px 0 0;
+    clear: both;
+}

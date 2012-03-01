@@ -9,17 +9,9 @@ on mobile web pages.
 
 .. toctree::
    :maxdepth: 1
-
+   
    overview
-
-.. toctree::
-   :maxdepth: 1
-
    modulecore
-
-.. toctree::
-   :maxdepth: 2
-
    moduleslist
 
 
