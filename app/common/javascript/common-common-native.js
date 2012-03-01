@@ -18,6 +18,8 @@
             serverURL: "",
             timeout: 60
         },
+        callbacks : {},
+        callbackIdCounter : 0,
         
         ajaxLoad: function () {
             var pageURL = this.config.url+this.config.pagePath+"?"+this.config.ajaxArgs;
@@ -78,39 +80,56 @@
         },
         
         onAjaxError: function (status) {
-            this.triggerError("load", status);
+            this.handleError("load", status);
         },
         
         onPageLoad: function (params) {
             this.triggerEvent("load", params);
         },
         
-        triggerError: function (type, code) {
-            this.triggerEvent("error", {"type" : type, "code" : code});
+        handleError: function (errorType, code) {
+            this.triggerEvent("error", {"type" : errorType, "code" : code});
         },
         
-        triggerEvent: function (type, params) {
-            this.triggerNative("event", type, params);
+        triggerEvent: function (eventType, params, callback) {
+            if (typeof callback == "undefined") { callback = null; }
+            
+            this.nativeAPI("event", eventType, params, callback);
         },
         
-        triggerNative: function (category, type, params) {
-            if (this.config.events) {
-                var url = "kgobridge://"+escape(category)+"/"+escape(type);
-                if (params) {
-                    var paramStrings = [];
-                    for (var key in params) {
-                        paramStrings.push(escape(key)+"="+escape(params[key]));
-                    }
-                    if (paramStrings.length) {
-                        url += "?"+paramStrings.join("&");
-                    }
+        nativeAPI: function (category, type, params, callback) {
+            var url = "kgobridge://"+escape(category)+"/"+escape(type);
+            var paramStrings = [];
+            if (typeof params == "object") {
+                for (var key in params) {
+                    paramStrings.push(escape(key)+"="+escape(params[key]));
                 }
+            }
+            if (typeof callback != "undefined" && callback) {
+                var callbackId = this.callbackIdCounter++;
+                this.callbacks[callbackId] = callback;
+                paramStrings.push("callbackId="+callbackId);
+            }
+            if (paramStrings.length) {
+                url += "?"+paramStrings.join("&");
+            }
                 
+            if (this.config.events) {
                 var iframe = document.createElement("IFRAME");
                 iframe.setAttribute("src", url);
                 document.documentElement.appendChild(iframe);
                 iframe.parentNode.removeChild(iframe);
                 iframe = null;
+            }
+        },
+        
+        nativeAPICallback: function(callbackId, params) {
+            if (callbackId in this.callbacks && this.callbacks[callbackId]) {
+                if (typeof params !== "object") {
+                    params = {};
+                }
+                this.callbacks[callbackId](params);
+                delete this.callbacks[callbackId];
             }
         },
         
