@@ -6,7 +6,8 @@
 body {
 	/* Site-wide page background color, and base font family, size and line spacing */
 	background-color: @@@body_background_color@@@;
-	font: 17px/1.33em @@@primary_font_family@@@;
+	background-image: @@@body_background_image@@@;
+	font: @@@base_font_size@@@/1.33em @@@primary_font_family@@@;
 }
 
 body, th, td, li, option, select, input {
