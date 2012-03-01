@@ -88,6 +88,8 @@ In *THEME_DIR/config.ini*, the global theme style constants are in lines 14-39. 
 
 In addition to modifying these theme configuration values, you can always modify or override individual rules in specific theme CSS files. However, simply changing these theme configuration values will take care of most, if not all, of the theming that previously required editing actual CSS.
 
+You can also extend the use of these global theme values by adding your own constants to your *THEME_DIR/config.ini*. Any value that can be expressed as a text string can be defined in the theme config file and used in any of your theme CSS files, whether at the common level or at the level of individual modules.
+
 
 ------------------------------------------
 3. Add your logo or other branding artwork
