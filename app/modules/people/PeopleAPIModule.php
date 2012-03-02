@@ -124,13 +124,12 @@ class PeopleAPIModule extends APIModule
 
     public function initializeForCommand() {  
         $this->feeds = $this->loadFeedData();
-        $peopleController = $this->getFeed('people');
-        $this->fieldConfig = $this->getAPIConfigData('detail');
         $this->fieldConfig = $this->getAPIConfigData('detail');
         foreach($this->fieldConfig as $field => $info) {
             $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
         }
         $this->detailAttributes = array_values(array_unique($this->detailAttributes));
+        $peopleController = $this->getFeed('people');
         
         switch ($this->command) {
             case 'search':

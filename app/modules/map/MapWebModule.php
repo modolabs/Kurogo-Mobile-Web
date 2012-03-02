@@ -6,6 +6,7 @@ class MapWebModule extends WebModule {
 
     protected $id = 'map';
 
+    protected $mapURL = null;
     protected $feedGroup = null;
     protected $feedGroups = null;
     protected $dataModel = null;
@@ -181,11 +182,11 @@ class MapWebModule extends WebModule {
 
     ////// private data retrieval
     
-    private function getDataForGroup($group) {
+    protected function getDataForGroup($group) {
         return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
     }
 
-    private function getFeedData()
+    protected function getFeedData()
     {
         if (!$this->feeds) {
             $this->feeds = $this->loadFeedData();
@@ -194,7 +195,7 @@ class MapWebModule extends WebModule {
     }
 
     // assumes feeds are loaded
-    private function getDataModel($feedId=null)
+    protected function getDataModel($feedId=null)
     {
         // re-instantiate DataModel if a different feed is requested.
         if ($this->dataModel && $feedId !== $this->dataModel->getFeedId()) {
@@ -209,7 +210,7 @@ class MapWebModule extends WebModule {
         return $this->dataModel;
     }
 
-    private function getCurrentFeed($feedId=null) {
+    protected function getCurrentFeed($feedId=null) {
         $this->getFeedData();
         if ($feedId === null || $feedId === '') {
             $feedId = $this->getArg('feed');
@@ -223,7 +224,7 @@ class MapWebModule extends WebModule {
         return null;
     }
 
-    private function getMergedConfigData($feedId=null) {
+    protected function getMergedConfigData($feedId=null) {
         if ($this->getArg('worldmap')) {
             return array();
         }
@@ -488,10 +489,12 @@ class MapWebModule extends WebModule {
             if ($this->isMapDrivenUI() && $placemarkLoad
                 && $placemarkLoad <= $this->getOptionalModuleVar('placemarkLoad', 30))
             {
-                $mapArgs = $this->args;
+                $mapArgs = array_merge($this->args, $linkOptions);
+                if (isset($mapArgs['listview'])) {
+                    unset($mapArgs['listview']);
+                }
                 $mapArgs['mapview'] = true;
-                $mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
-                $this->assign('mapURL', $mapURL);
+                $this->mapURL = $this->buildBreadcrumbURL($this->page, $mapArgs, false);
             }
         }
     }
@@ -735,7 +738,7 @@ class MapWebModule extends WebModule {
         switch ($this->page) {
 
             case 'index': // no breadcrumbs
-                if ($this->getOptionalModuleVar('SHOW_LISTVIEW_BY_DEFAULT')) {
+                if ($this->getOptionalModuleVar('SHOW_LISTVIEW_BY_DEFAULT') && !$this->getArg('mapview')) {
                     $this->args['listview'] = 1;
                 }
                 // fall through to campus branch
@@ -854,7 +857,7 @@ class MapWebModule extends WebModule {
                         $this->generateBookmarkOptions($this->bookmarkIDForPlacemark($feature));
                     }
                     $link = $this->linkForItem($feature);
-                    $this->assign('mapURL', $link['url']);
+                    $this->mapURL = $link['url'];
 
                 } else {
                     if ($this->getArg('worldmap')) {
@@ -885,6 +888,10 @@ class MapWebModule extends WebModule {
                 $this->args['worldmap'] = true;
                 $this->initializeDynamicMap();
                 break;
+        }
+
+        if ($this->mapURL !== null) {
+            $this->assign('mapURL', $this->mapURL);
         }
     }
 
@@ -995,17 +1002,19 @@ class MapWebModule extends WebModule {
             $this->addOnLoad('sortGroupsByDistance();');
         }
 
-        $toggleArgs = array('group' => $this->feedGroup, 'mapview' => true);
-        if (($searchTerms = $this->getArg('filter'))) {
-            $toggleArgs['filter'] = $searchTerms;
+        if ($this->mapURL === null) {
+            $toggleArgs = array('group' => $this->feedGroup, 'mapview' => true);
+            if (($searchTerms = $this->getArg('filter'))) {
+                $toggleArgs['filter'] = $searchTerms;
+            }
+            if (($feed = $this->getArg('feed'))) {
+                $toggleArgs['feed'] = $feed;
+            }
+            if (($category = $this->getArg('category'))) {
+                $toggleArgs['category'] = $category;
+            }
+            $this->mapURL = $this->buildBreadcrumbURL($this->page, $toggleArgs, false);
         }
-        if (($feed = $this->getArg('feed'))) {
-            $toggleArgs['feed'] = $feed;
-        }
-        if (($category = $this->getArg('category'))) {
-            $toggleArgs['category'] = $category;
-        }
-        $this->assign('mapURL', $this->buildBreadcrumbURL($this->page, $toggleArgs, false));
     }
 
     protected function initializeDynamicMap()
