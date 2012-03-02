@@ -63,7 +63,7 @@ function getOrientation() {
             var height = document.documentElement.clientHeight || document.body.clientHeight;
             
             /* at this point the method of orientation detection is not perfect */
-            if (navigator.userAgent.match(/(PlayBook.+RIM Tablet|Android 3\.\d)/)) {
+            if (navigator.userAgent.match(/(PlayBook.+RIM Tablet|Xoom|Android 3\.\d)/)) {
                 getOrientation.orientationIsFlipped = true;
             }
         }
