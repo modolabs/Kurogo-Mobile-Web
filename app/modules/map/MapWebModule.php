@@ -182,11 +182,11 @@ class MapWebModule extends WebModule {
 
     ////// private data retrieval
     
-    private function getDataForGroup($group) {
+    protected function getDataForGroup($group) {
         return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
     }
 
-    private function getFeedData()
+    protected function getFeedData()
     {
         if (!$this->feeds) {
             $this->feeds = $this->loadFeedData();
@@ -195,7 +195,7 @@ class MapWebModule extends WebModule {
     }
 
     // assumes feeds are loaded
-    private function getDataModel($feedId=null)
+    protected function getDataModel($feedId=null)
     {
         // re-instantiate DataModel if a different feed is requested.
         if ($this->dataModel && $feedId !== $this->dataModel->getFeedId()) {
@@ -210,7 +210,7 @@ class MapWebModule extends WebModule {
         return $this->dataModel;
     }
 
-    private function getCurrentFeed($feedId=null) {
+    protected function getCurrentFeed($feedId=null) {
         $this->getFeedData();
         if ($feedId === null || $feedId === '') {
             $feedId = $this->getArg('feed');
@@ -224,7 +224,7 @@ class MapWebModule extends WebModule {
         return null;
     }
 
-    private function getMergedConfigData($feedId=null) {
+    protected function getMergedConfigData($feedId=null) {
         if ($this->getArg('worldmap')) {
             return array();
         }
