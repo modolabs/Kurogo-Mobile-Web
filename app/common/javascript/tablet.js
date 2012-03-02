@@ -65,8 +65,8 @@ function handleWindowResize(e) {
     if (typeof moduleHandleWindowResize != 'undefined') {
         moduleHandleWindowResize(e);
     }
-    if (navigator.userAgent.match(/(Android 3\.\d)/)) {
-        // Android 3 browsers don't reliably set client and offset heights
+    if (navigator.userAgent.match(/(Android [34]\.\d)/)) {
+        // Android 3/4 browsers don't reliably set client and offset heights
         // before calling orientationchange or resize handlers.
         var self = this;
         setTimeout(function() {

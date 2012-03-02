@@ -67,10 +67,7 @@ class MapProjection
     private $standardParallel2 = 0;
 
     private $unitsPerMeter = 1;
-
-    // not using this yet until we need one of the projections
-    // with k < 1.0
-    private $scaleFactor;
+    private $scaleFactor = 1;
 
     public function getUnitsPerMeter()
     {
@@ -146,8 +143,28 @@ class MapProjection
                 $this->y = (log(tan(M_PI_4 + $this->phi / 2))) * $this->semiMajorAxis;
                 break;
 
+            case 'utm': // http://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system
+                // better explanation at http://www.uwgb.edu/dutchs/usefuldata/utmformulas.htm
+                $sin_phi = sin($this->phi);
+                $cos_phi = cos($this->phi);
+                $e2 = $this->eccentricity * $this->eccentricity;
+                $v = 1 / (sqrt(1 - $e2 * $sin_phi * $sin_phi));
+                $A = ($this->lambda - $this->centralMeridian) * $cos_phi;
+                $e4 = $e2*$e2;
+                $e6 = $e2*$e4;
+                $s = (1 - $e2/4 - 3*$e4/64 - 5*$e6/ 256) * $this->phi
+                     - (3*$e2/8 + 3*$e4/32 + 45*$e6/1024) * sin(2 * $this->phi)
+                     + (15*$e4/256 + 45*$e6/1024) * sin(4 * $this->phi)
+                     - (35*$e6/3072) * sin(6 * $this->phi);
+                $T = pow($sin_phi/$cos_phi, 2);
+                $C = $e2 * $cos_phi * $cos_phi / (1 - $e2);
+
+                $ka = $this->scaleFactor * $this->semiMajorAxis;
+                $this->x = $ka * $v * ($A + (1 - $T + $C)*pow($A,6)/6 + (5 - 18*$T + $T*$T)*pow($A,5)/120);
+                $this->y = $ka * ($s + $v * tan($A*$A/2 + (5 - $T + 9*$C + 4*$C*$C)*pow($A,4)/24 + (61 - 58*$T + $T*$T)*pow($A,6)/720));
+                break;
+
             case 'tmerc': // 1501 SRIDs; http://en.wikipedia.org/wiki/Transverse_Mercator_projection
-            case 'utm': // 930 SRIDs
             case 'stere': // 29
             case 'cass': // 20
             case 'aea': // 20 SRIDs; http://en.wikipedia.org/wiki/Albers_projection
@@ -202,8 +219,34 @@ class MapProjection
                 $this->phi = 2 * (atan(exp($this->y / $this->semiMajorAxis)) - M_PI / 4);
                 break;
 
+            case 'utm': // http://www.uwgb.edu/dutchs/usefuldata/utmformulas.htm
+                $M = $this->y / $this->scaleFactor;  // meridional arc
+                $e2 = $this->eccentricity * $this->eccentricity;
+                $mu = $M / ($this->semiMajorAxis * (1 - $e2/4 - 3*$e2*$e2/64 - 5*pow($e2,6)/256));
+                $e_1 = (1 - sqrt(1 - $e2)) / (1 + sqrt(1 - $e2));
+                $fp = $mu + (3*$e_1/2 - 27*pow($e_1,3)/32) * sin(2 * $mu)
+                          + (21*$e_1*$e_1/16 - 55*pow($e_1,4)/32) * sin(4 * $mu)
+                          + (151*pow($e_1,3)/96) * sin(6 * $mu); // footprint latitude
+                $e2_ = $e2 / (1 - $e2);
+                $cos_fp = cos($fp);
+                $sin_fp = sin($fp);
+                $tan_fp = $sin_fp / $cos_fp;
+                $C1 = $e2_ * $cos_fp * $cos_fp;
+                $T1 = $tan_fp * $tan_fp;
+                $R1 = $this->semiMajorAxis * (1 - $e2) / pow(1 - $e2*$sin_fp*$sin_fp, 1.5);
+                $N1 = $this->semiMajorAxis / sqrt(1 - $e2*$sin_fp*$sin_fp);
+                $D = $this->x / ($N1 * $this->scaleFactor);
+                $this->phi = $fp - $N1*$tan_fp/$R1 * ($D*$D/2
+                                                    - (5 + 3*$T1 + 10*$C1 - 4*$C1*$C1 - 9*$e2_)*pow($D,4)/24
+                                                    + (61 + 90*$T1 + 298*$C1 + 45*$T1*$T1 - 3*$C1*$C1 - 252*$e2_)*pow($D,6)/720);
+                $this->lambda = $this->centralMeridian
+                              + ($D 
+                                -(1 + 2*$T1 + $C1)*pow($D,3)/6
+                                +(5 - 2*$C1 + 28*$T1 - 3*$C1*$C1 + 8*$e2_ + 24*$T1*$T1)*pow($D,5)/120)
+                               /$cos_fp;
+                break;
+
             case 'tmerc': // 1501 SRIDs; http://en.wikipedia.org/wiki/Transverse_Mercator_projection
-            case 'utm': // 930 SRIDs
             case 'stere': // 29
             case 'cass': // 20
             case 'aea': // 20 SRIDs; http://en.wikipedia.org/wiki/Albers_projection
@@ -231,7 +274,6 @@ class MapProjection
             $this->adjustedX = ($this->x + $this->falseEasting) * $this->unitsPerMeter;
             $this->adjustedY = ($this->y + $this->falseNorthing) * $this->unitsPerMeter;
         }
-
         return array(
             'lon' => $this->adjustedX,
             'lat' => $this->adjustedY,
@@ -344,6 +386,15 @@ class MapProjection
 
         $this->proj = $params['+proj'];
 
+        if ($this->proj == 'utm') {
+            // fill in some conventional values
+            // wikipedia says false northing is 0 for points in N hemisphere
+            // and 10M meters for south, but we can't deduce hemisphere from
+            // x and y values so we should just avoid UTM for S hemisphere
+            $this->scaleFactor = 0.9996;
+            $this->falseEasting = 500000;
+        }
+
         // plug in pre-calculated values for eccentricity
         // which is just sqrt((a^2 - b^2) / a^2) where a is major axis
         // and b is minor axis 
@@ -377,6 +428,17 @@ class MapProjection
             }
         }
 
+        if (isset($params['+zone']) && $this->proj == 'utm') {
+            // there are 60 zones, numbered from 1, each 6 degrees wide,
+            // from -180 to 180. central meridians of the zone are halfway
+            // between the min/max longitudes of the zone, i.e. min + 3.
+            $zone = $params['+zone'];
+            if ($zone >= 1 && $zone <= 60) {
+                $centralLongitude = ($zone - 1) * 6 - 180 + 3;
+                $this->centralMeridian = $centralLongitude / 180 * M_PI;
+            }
+        }
+
         if (isset($params['+lat_1'])) {
             $this->standardParallel1 = $params['+lat_1'] / 180 * M_PI;
         }
@@ -399,11 +461,9 @@ class MapProjection
         if (isset($params['+y_0'])) { // these are always in meters
             $this->falseNorthing = $params['+y_0'];
         }
-        /*
         if (isset($params['+k'])) {
             $this->scaleFactor = $params['+k'];
         }
-        */
 
     }
 

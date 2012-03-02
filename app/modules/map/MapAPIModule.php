@@ -209,7 +209,11 @@ class MapAPIModule extends APIModule
         }
 
         if (isset($categoryId)) {
-            $this->dataModel->findCategory($categoryId);
+            $category = $this->dataModel->findCategory($categoryId);
+            $categoryArg = $this->getArg('category');
+            if ($categoryArg) {
+                $this->dataModel->findCategory($categoryArg);
+            }
         }
 
         return $this->dataModel;

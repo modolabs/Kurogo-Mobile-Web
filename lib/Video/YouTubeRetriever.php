@@ -110,7 +110,7 @@ class YouTubeDataParser extends DataParser
         }
         $video->setMobileURL($entry['content']['1']);
         $video->setTitle($entry['title']);
-        $video->setDescription($entry['description']);
+        $video->setDescription(strip_tags($entry['description']));
         $video->setDuration($entry['duration']);
         $video->setID($entry['id']);
         $video->setImage($entry['thumbnail']['sqDefault']);
