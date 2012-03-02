@@ -225,6 +225,7 @@ class CalendarDataModel extends ItemListDataModel
             $end->setTime(23,59,59);
             $this->setStartDate($start);
             $this->setEndDate($end);
+            $this->setOption('time', $time);
         }
         
         $items = $this->items();
