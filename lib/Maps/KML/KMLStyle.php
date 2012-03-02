@@ -38,12 +38,21 @@ class KMLStyle extends XMLElement implements MapStyle
                 case MapStyle::POLYGON: $style = $this->polyStyle; break;
             }
         } else {
-            //$styleRef = $this->styleContainer->getStyle($this->normalStyle);
             $styleRef = $this->normalStyle;
-            switch ($type) {
-                case MapStyle::POINT: $style = $styleRef->getIconStyle(); break;
-                case MapStyle::LINE: $style = $styleRef->getLineStyle(); break;
-                case MapStyle::POLYGON: $style = $styleRef->getPolyStyle(); break;
+            if (is_string($styleRef) && $this->styleContainer) {
+                // recover style from parser for pairs that were parsed before
+                // the simple style was populated
+                $styleRef = $this->styleContainer->getStyle($styleRef);
+                if ($styleRef) {
+                    $this->normalStyle = $styleRef;
+                }
+            }
+            if ($styleRef instanceof KMLStyle) {
+                switch ($type) {
+                    case MapStyle::POINT: $style = $styleRef->getIconStyle(); break;
+                    case MapStyle::LINE: $style = $styleRef->getLineStyle(); break;
+                    case MapStyle::POLYGON: $style = $styleRef->getPolyStyle(); break;
+                }
             }
         }
         return $style;
@@ -119,19 +128,13 @@ class KMLStyle extends XMLElement implements MapStyle
                 break;
             case 'PAIR':
                 $state = $element->getProperty('KEY');
-                /*
+                $styleRef = substr($element->getProperty('STYLEURL'), 1);
+                $style = $this->styleContainer->getStyle($styleRef);
+                // store the style URL if the parser hasn't yet loaded the associated simple style
                 if ($state == 'normal') {
-                    $this->normalStyle = substr($element->getProperty('STYLEURL'), 1);
+                    $this->normalStyle = $style ? $styleRef : $style;
                 } else if ($state == 'highlighted') {
-                    $this->highlightStyle = substr($element->getProperty('STYLEURL'), 1);
-                }
-                */
-                if ($state == 'normal') {
-                    $styleRef = substr($element->getProperty('STYLEURL'), 1);
-                    $this->normalStyle = $this->styleContainer->getStyle($styleRef);
-                } else if ($state == 'highlighted') {
-                    $styleRef = substr($element->getProperty('STYLEURL'), 1);
-                    $this->highlightStyle = $this->styleContainer->getStyle($styleRef);
+                    $this->highlightStyle = $style ? $styleRef : $style;
                 }
                 break;
             default:

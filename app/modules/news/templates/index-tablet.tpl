@@ -24,7 +24,7 @@
       </td></tr>
     </table>
   {else}
-  <div id="newsHeader">
+  <div id="newsHeader" class="single-section-search">
     {include file="findInclude:common/templates/search.tpl" extraArgs=$hiddenArgs}
   </div>
   {/if}

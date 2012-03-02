@@ -13,9 +13,7 @@ outlined as follows:
 #. Presuming the file does not exist it will be sent to index.php for processing
 #. Certain paths will map to a file in the file system and be returned or a 404 will be returned
 #. You can map URLs to other URLs by updating *SITE_DIR/config/site.ini*
-#. Otherwise a module based on the path is instantiated and will forward further processing.
-   to that module. An exception is raised if the url maps to a module that does not exist
-
+#. A config folder based on the first path component is looked for and a module is loaded
 
 =============
 Path patterns
@@ -35,10 +33,12 @@ The index.php script will analyze the path for several patterns
 If no pattern has been found, the script will then look at the *[urls]* section of *SITE_DIR/config/site.ini*
 to see if a url is found. If so, it will redirect to the indicated url. 
 
-All other requests will attempt to load a module based on the first path component of the request. The
-contents before the first "/" will refer the *id* of the module, the contents after the slash will be the
-page to load. If there is no page specified, the *index* page will be loaded. The script attempts to
-instantiate a module  with the corresponding *id* using the *WebModule::factory* method (see :doc:`modules` for 
+All other requests will attempt to find a folder in the site config folder based on the first path
+component of the request (/module). The contents before the first "/" will typically refer the *id* 
+of the module. You can override this by adding an *id* property in the module.ini file (see :ref:`copy-module` 
+for more information). The contents after the slash will be the page to load. If there is no page specified, 
+the *index* page will be loaded. The script attempts to instantiate a module  with the corresponding 
+*id* using the *WebModule::factory* method (see :doc:`modules` for 
 information on how the module files are located) and includes the page and the contents of the 
 $_GET and $_POST variables as parameters. **Note:** the trailing .php for page names is optional.
 
