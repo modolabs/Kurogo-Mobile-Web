@@ -575,28 +575,33 @@ abstract class WebModule extends Module {
           MODULES_DIR
         );
 
-        $moduleClasses = array();        
+        $moduleClasses = array();
+        $moduleIDs = array();
         foreach ($modulePaths as $path) {
             $moduleFiles = glob($path . "/*/*WebModule.php");
             foreach ($moduleFiles as $file) {
                 $moduleFile = realpath_exists($file);
-                if ($moduleFile && include_once($moduleFile)) {
-                    if (preg_match("/(Site)?([A-Za-z]+WebModule)\.php$/", $file, $bits)) {
-                        $className = $bits[1] . $bits[2];
-                        $info = new ReflectionClass($className);
-                        if (!$info->isAbstract()) {
-                            try {
-                                $module = new $className();
-                                $moduleClasses[] = $module->getID();
-                            } catch (Exception $e) {}
+                if (preg_match("/(Site)?([A-Za-z]+WebModule)\.php$/", $file, $bits)) {
+                    $className = $bits[1] . $bits[2];
+                    // prevent loading a class twice (i.e. a site overridden class) 
+                    if (!in_array($className, $moduleClasses)) {
+                        if ($moduleFile && include_once($moduleFile)) {
+                            $info = new ReflectionClass($className);
+                            if (!$info->isAbstract()) {
+                                try {
+                                    $module = new $className();
+                                    $moduleClasses[] = $className;
+                                    $moduleIDs[] = $module->getID();
+                                } catch (Exception $e) {}
+                            }
                         }
                     }
                 }
             }
         }
-        $moduleClasses = array_unique($moduleClasses);
-        sort($moduleClasses);
-        return $moduleClasses;        
+        $moduleIDs = array_unique($moduleIDs);
+        sort($moduleIDs);
+        return $moduleIDs;        
     }
   
 

@@ -61,24 +61,21 @@
 {/if}
 
 {block name="tabView"}
-  <div id="tabscontainer">
-    <h2>{$name|escape}</h2>
+  <h2 class="nonfocal">{$name|escape}</h2>
+  <div class="nonfocal">
     <p class="address">{$address|escape}</p>
-    <div id="buttonWrapper">
+    <div class="actionbuttons">
       {if !$isStatic}
-        <div id="viewOnMapContainer" class="buttonContainer">
-          <a href="{$mapURL}">
-            <div id="viewOnMapButton"
-                 ontouchstart="addClass(this, 'pressed')"
-                 ontouchend="removeClass(this, 'pressed')"{if $bookmarkStatus == "on"} class="on"{/if}>
-                <img src="/modules/map/images/map-button-map.png"/>
-                {"VIEW_ON_MAP"|getLocalizedString}
-            </div>
-          </a>
+        <div class="actionbutton">
+          <a href="{$mapURL}" ontouchstart="this.className='pressedaction'" ontouchend="this.className=''"><img src="/modules/map/images/map-button-placemark.png" width="20" height="20" alt="" />{"VIEW_ON_MAP"|getLocalizedString}</a>
         </div>
       {/if}
-      {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
-    </div>
+      {include file="findInclude:modules/map/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+ 	<div class="clear"></div>
+   </div>
+  </div>
+  
+  <div id="tabscontainer">
     {include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}

@@ -61,7 +61,7 @@ class FileLoader {
                     Kurogo::log(LOG_WARNING,"FileLoader got invalid loader info",'data');
                 }
             } else {
-                Kurogo::log(LOG_WARNING,"FileLoader could not find loader info at '$loaderInfoPath'",'data');
+                Kurogo::log(LOG_WARNING,"FileLoader could not find loader info for '$file' at '$loaderInfoPath'",'data');
             }
         }
         return $path;

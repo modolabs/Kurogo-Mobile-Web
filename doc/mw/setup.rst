@@ -128,3 +128,33 @@ Execute something similar to the following in a Command Prompt:
 
 This assumes you want the subfolder to be named "mobile". You could use any valid folder name you wish.
 
+============================
+Common Installation Problems
+============================
+
+In some cases, you may encounter problems. Most are related to incomplete setup procedure or requirements. 
+
+-------------------------------------------------------------------
+Apache: Viewing any of the modules results in a 404 Not Found error
+-------------------------------------------------------------------
+
+After viewing your site, you might be redirected to the /info or /home modules but it results in a 404. This
+indicates that Kurogo has handled your request, however the .htaccess file that routes all requests through
+Kurogo is not being read properly. 
+
+* Ensure that mod_rewrite is enabled. This requires editing your httpd.conf file and ensuring that the line
+  enabling mod_rewrite is present and not commented. Please refer to the instructions for your
+  distribution on the exact location of this file as it varies.
+* Ensure that AllowOverride is set to FileInfo or All. AllowOverride is the option that allows
+  apache to read .htaccess files. In certain setups this is disabled by default and must be explicitly 
+  enabled in either the httpd.conf file or the configuration file for the virtual host configuration
+  of your site. 
+  
+----------------------------------------------------------
+Kurogo Error messages are shown as an Apache error message
+----------------------------------------------------------
+
+If you are encountering error messages and they are being shown as Apache messages then it is likely
+that your server is trapping /error urls
+
+* Remove any "Alias /error" lines from your httpd.conf or virtual host configuration file

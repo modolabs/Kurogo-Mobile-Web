@@ -17,8 +17,11 @@ class ArcGISJSMap extends JavascriptMapImageController {
     protected $levelsOfDetail = array();    
     
     // TODO: fix zoom level problem
-    public function __construct($baseURL)
-    {
+    public function init($args) {
+        parent::init($args);
+
+        $baseURL = $args['BASE_URL'];
+
         if (is_array($baseURL)) {
             $this->baseURL = array_shift($baseURL);
         } else {
@@ -136,6 +139,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 );
             $json = json_encode($jsonParams);
             $template->appendValues(array(
+                '___ID___' => $placemark->getId(),
                 '___POLYGON_SPEC___' => $json,
                 '___FILL_COLOR___' => $fillColor,
                 '___STROKE_COLOR___' => $strokeColor,
@@ -178,6 +182,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 );
 
             $templateValues = array(
+                '___ID___' => $placemark->getId(),
                 '___POLYLINE_SPEC___' => json_encode($jsonObj),
                 '___TITLE___' => json_encode($placemark->getTitle()),
                 '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
@@ -269,6 +274,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             }
 
             // TODO use $placemark->getFields to populate Attributes
+            $templateValues['___ID___'] = $placemark->getId();
             $templateValues['___TITLE___'] = json_encode($placemark->getTitle());
             $templateValues['___SUBTITLE___'] = json_encode($placemark->getSubtitle());
             $templateValues['___URL___'] = $this->urlForPlacemark($placemark);
@@ -297,20 +303,32 @@ class ArcGISJSMap extends JavascriptMapImageController {
     function getIncludeScripts() {
         return array('http://serverapi.arcgisonline.com/jsapi/arcgis/?v='.$this->apiVersion.'compact');
     }
+
+    function getInternalScripts() {
+        return array('/common/javascript/maps.js');
+    }
     
     function getIncludeStyles() {
         return 'http://serverapi.arcgisonline.com/jsapi/arcgis/'
                .$this->apiVersion.'/js/dojo/dijit/themes/'
                .$this->themeName.'/'.$this->themeName.'.css';
     }
+
+    function getMinimumLatSpan() {
+        return oldPixelScaleForZoomLevel($this->maxZoomLevel);
+    }
+
+    function getMinimumLonSpan() {
+        return oldPixelScaleForZoomLevel($this->maxZoomLevel);
+    }
     
     function getFooterScript() {
-        // put dojo stuff in the footer since the header script
-        // gets loaded before the included script
-
         $zoomLevel = $this->zoomLevel;
         $targetScale = oldPixelScaleForZoomLevel($zoomLevel);
         if ($this->levelsOfDetail) {
+            // TODO: if all zoom levels fail this test, the zoom level will
+            // revert to the internal powers-of-two style zoom level i.e. not 
+            // necessarily what we want
             foreach ($this->levelsOfDetail as $levelData) {
                 if ($levelData['scale'] < $targetScale) {
                     break;
@@ -319,24 +337,21 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 }
             }
         }
-        
-        $moreLayersJS = '';
-        foreach ($this->moreLayers as $anotherLayer) {
-            $moreLayersJS .= <<<JS
-    map.addLayer(new esri.layers.ArcGISDynamicMapServiceLayer("{$anotherLayer}", 1.0));
-JS;
+
+        $moreLayers = array();
+        foreach ($this->moreLayers as $layer) {
+            $moreLayers[] = '"'.$layer.'"';
         }
 
         $footer = $this->prepareJavascriptTemplate('ArcGISJSMapFooter');
         $footer->setValues(array(
-            '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
             '___WKID___' => $this->mapProjection,
             '___MAPELEMENT___' => $this->mapElement,
             '___IMAGE_WIDTH___' => $this->imageWidth,
             '___IMAGE_HEIGHT___' => $this->imageHeight,
             '___ZOOMLEVEL___' => $zoomLevel,
             '___BASE_URL___' => $this->baseURL,
-            '___MORE_LAYER_SCRIPT___' => $moreLayersJS,
+            '___MORE_LAYER_SCRIPT___' => '['.implode(',', $moreLayers).']',
             '___MARKER_SCRIPT___' => $this->getMarkerJS(),
             '___POLYGON_SCRIPT___' => $this->getPolygonJS(),
             '___PATH_SCRIPT___' => $this->getPathJS()));

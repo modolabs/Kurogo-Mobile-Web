@@ -19,6 +19,7 @@ Strings
 -------
 
 *description* - This string will show at the top of the page when viewing the list
+*description_footer* - This string will show at the bottom of the page when viewing the list
 
 -----
 Links

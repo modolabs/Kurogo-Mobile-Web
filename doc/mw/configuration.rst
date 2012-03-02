@@ -169,6 +169,7 @@ Site settings
 -------------
 
 * *SITE_DISABLED* - When set to 1 this site is disabled. Useful for :doc:`multisite`
+* *SECURE_REQUIRED* - When set to 1 then the site will require a secure (https) connection
 * *SECURE_HOST* - Alternate hostname to use for secure (https) connections. If not included it will use the same host name.
 * *SECURE_PORT* - Alternate port to use for secure connections. Typically you should leave it at the default of 443
 * *LOCALE* - Locales are used for date/time formatting. If you wish to use a locale other than the server default, then you should set this. 

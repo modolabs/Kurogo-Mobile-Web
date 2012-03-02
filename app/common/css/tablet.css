@@ -788,6 +788,7 @@ ul.focal li:first-child {
 .sidenav2 a {
 	display: block;
 	position: absolute;
+	top: 0;
 	background: transparent url(/common/images/sidenav-arrows.png) no-repeat;
 	height: 29px;
 	line-height: 29px;
@@ -800,6 +801,23 @@ a.sidenav-prev {
 	background-position: left top;
 	padding-left: 44px;
 }
+.sidenavlabel {
+	font-size: 88.3%;
+	text-align: center;
+	padding: 4px 30px;
+}
+
+span.sidenav-current {
+    font-weight: bold;
+	display: block;
+	text-align: center;
+	height: 29px;
+	line-height: 29px;
+	padding: 0 10px;
+	text-decoration: none;
+	font-size: 88.3%;
+}
+
 a.sidenav-next {
 	right: 0;
 	background-position: right bottom;
@@ -1045,6 +1063,10 @@ a.secure {
 a.pdf {  
 	background-image: url(/common/images/action-pdf.png); 
 	padding-right: 34px;
+}
+
+a.placemark {
+    background-image: url(/common/images/action-placemark.png);
 }
 
 a.noaction {

@@ -27,7 +27,9 @@ class MapAPIModule extends APIModule
         $categoryArg = isset($urlArgs['category']) ? $urlArgs['category'] : null;
         $categories = explode(MAP_CATEGORY_DELIMITER, $categoryArg);
         $category = current($categories);
-        $urlArgs['feed'] = $category;
+        if ($category) {
+            $urlArgs['feed'] = $category;
+        }
 
         $configData = $this->getDataForGroup($this->feedGroup);
 
@@ -50,7 +52,7 @@ class MapAPIModule extends APIModule
             $page = 'detail';
         }
 
-        return FULL_URL_PREFIX.'/'.$this->configModule.'/'.$page.'?'.http_build_query($urlArgs);
+        return rtrim(FULL_URL_PREFIX, '/'). '/'. $this->configModule.'/'.$page.'?'.http_build_query($urlArgs);
     }
 
     protected function shortArrayFromPlacemark(Placemark $placemark)

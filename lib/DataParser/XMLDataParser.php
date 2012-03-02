@@ -13,6 +13,15 @@ abstract class XMLDataParser extends DataParser
     protected $trimWhiteSpace = false;
     
     abstract protected function shouldStripTags($element);
+    
+    protected function shouldHTMLDecodeCDATA($element)
+    {
+        // Don't force subclasses to implement this.  It exists for buggy feeds
+        // which have certain elements escaped with both CDATA and html entities.
+        // Implemented by the RSS parser because RSS feeds are where this commonly
+        // happens.
+        return false;
+    }
 
     abstract protected function shouldHandleStartElement($name);
     abstract protected function handleStartElement($name, $attribs);
@@ -34,11 +43,13 @@ abstract class XMLDataParser extends DataParser
     {
         if ($element = array_pop($this->elementStack)) {
 
-            if ($this->data) {
+            if (!is_null($this->data) && $this->data !== '') {
                 if (!$element instanceOf XMLElement) {
                     throw new KurogoDataException("$name is not an XMLElement");
                 }
-                $element->setValue($this->data, $this->shouldStripTags($element));
+                $element->shouldStripTags($this->shouldStripTags($element));
+                $element->shouldHTMLDecodeCDATA($this->shouldHTMLDecodeCDATA($element));
+                $element->setValue($this->data);
                 $this->data = '';
             }
             $parent = end($this->elementStack);

@@ -233,6 +233,7 @@ function showShare() {
 	var iframes = document.getElementsByTagName('iframe');
 	for (var i=0; i<iframes.length; i++) {
 	    iframes[i].style.visibility = 'hidden';
+	    iframes[i].style.height = '0';
 	}
 	window.scrollTo(0,0);
 }
@@ -244,18 +245,22 @@ function hideShare() {
 	var iframes = document.getElementsByTagName('iframe');
 	for (var i=0; i<iframes.length; i++) {
 	    iframes[i].style.visibility = 'visible';
+	    iframes[i].style.height = '';
 	}
 }
 
 // Bookmarks
-function toggleBookmark(name, item, expireseconds, path) {
+function toggleBookmark(name, item, expireseconds, path, bookmarkId) {
   // facility for module to respond to bookmark state change
   if (typeof moduleBookmarkWillToggle != 'undefined') {
     $result = moduleBookmarkWillToggle(name, item, expireseconds, path);
     if ($result === false) { return; }
   }
 
-  var bookmark = document.getElementById("bookmark");
+  if (!bookmarkId) {
+    bookmarkId = "bookmark";
+  }
+  var bookmark = document.getElementById(bookmarkId);
   toggleClass(bookmark, "on");
   var items = getCookieArrayValue(name);
   var newItems = new Array();

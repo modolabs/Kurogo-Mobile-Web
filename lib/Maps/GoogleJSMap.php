@@ -4,7 +4,7 @@ class GoogleJSMap extends JavascriptMapImageController {
 
 // http://code.google.com/apis/maps/documentation/javascript/overlays.html
 
-    private $locatesUser = false;
+    private $locatesUser = true;
 
     // these aren't arrays of actual objects;
     // they're mostly JavaScript snippets that will be concatenated later
@@ -97,6 +97,7 @@ class GoogleJSMap extends JavascriptMapImageController {
             $fields = $marker->getFields();
 
             $template->appendValues(array(
+                '___ID___' => $marker->getId(),
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
                 '___TITLE___' => json_encode($marker->getTitle()),
@@ -140,6 +141,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 $coord = $this->mapProjector->projectPoint($coord);
             }
             $template->appendValues(array(
+                '___ID___' => $placemark->getId(),
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
                 '___MULTIPATHSTRING___' => implode(',', $polyString),
@@ -182,6 +184,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 $coord = $this->mapProjector->projectPoint($coord);
             }
             $template->appendValues(array(
+                '___ID___' => $marker->getId(),
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
                 '___PATHSTRING___' => $coordString,
@@ -198,8 +201,15 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     // url of script to include in <script src="...
     public function getIncludeScripts() {
-        return array('http://maps.google.com/maps/api/js?sensor='
-             . ($this->locatesUser ? 'true' : 'false'));
+        $sensor = $this->locatesUser ? 'true' : 'false';
+        return array("http://maps.google.com/maps/api/js?sensor={$sensor}");
+    }
+
+    public function getInternalScripts() {
+        return array(
+            '/common/javascript/maps.js',
+            '/common/javascript/lib/infobox-1.1.11.js',
+            );
     }
 
     public function getFooterScript() {
@@ -209,12 +219,16 @@ class GoogleJSMap extends JavascriptMapImageController {
         } else {
             $center = $this->center;
         }
+        $options = '';
+        if (isset($this->initOptions["onShowCallout"]) && $this->initOptions["onShowCallout"]) {
+            $options .= "onShowCallout: {$this->initOptions['onShowCallout']},";
+        }
         $footer->setValues(array(
             '___MAPELEMENT___' => $this->mapElement,
             '___CENTER_LATITUDE___' => $center['lat'],
             '___CENTER_LONGITUDE___' => $center['lon'],
             '___ZOOMLEVEL___' => $this->zoomLevel,
-            '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
+            '___OPTIONS___' => $options,
             '___MARKER_SCRIPT___' => $this->getMarkerJS(),
             '___POLYGON_SCRIPT___' => $this->getPolygonJS(),
             '___PATH_SCRIPT___' => $this->getPathJS()));

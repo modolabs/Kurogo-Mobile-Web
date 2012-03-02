@@ -247,7 +247,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 .forminput {
   /* Should match the border color of image /common/images/compliant/search_button.png */
-	border-color: @@@focal_border_color@@@;
+	border-color: @@@search_border_color@@@;
 }
 
 .inputcombo .forminput {

@@ -6,32 +6,37 @@ class EmergencyAPIModule extends APIModule {
 
     protected $id = 'emergency';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
     
     protected function initializeForCommand() {
         $config = $this->getConfig('feeds');
 
         switch($this->command) {
             case 'notice':
-                $noticeConfig = $config->getSection('notice');
-                
-                try {
-                    if (isset($noticeConfig['CONTROLLER_CLASS'])) {
-                        $modelClass = $noticeConfig['CONTROLLER_CLASS'];
-                    } else {
-                        $modelClass = isset($noticeConfig['MODEL_CLASS']) ? $noticeConfig['MODEL_CLASS'] : 'EmergencyNoticeDataModel';
+                if ($noticeConfig = $config->getOptionalSection('notice')) {
+
+                    try {
+                        if (isset($noticeConfig['CONTROLLER_CLASS'])) {
+                            $modelClass = $noticeConfig['CONTROLLER_CLASS'];
+                        } else {
+                            $modelClass = isset($noticeConfig['MODEL_CLASS']) ? $noticeConfig['MODEL_CLASS'] : 'EmergencyNoticeDataModel';
+                        }
+
+                        $emergencyNoticeController = EmergencyNoticeDataModel::factory($modelClass, $noticeConfig);
+                    } catch (KurogoException $e) { 
+                        $emergencyNoticeController = DataController::factory($noticeConfig['CONTROLLER_CLASS'], $noticeConfig);
                     }
-                
-                    $emergencyNoticeController = EmergencyNoticeDataModel::factory($modelClass, $noticeConfig);
-                } catch (KurogoException $e) { 
-                    $emergencyNoticeController = DataController::factory($noticeConfig['CONTROLLER_CLASS'], $noticeConfig);
+
+                    $emergencyNotice = $emergencyNoticeController->getFeaturedEmergencyNotice();
+                    $noticeEnabled = true;
+                } else {
+                    // Config section 'notice' not set, there is not notice
+                    $emergencyNotice = null;
+                    $noticeEnabled = false;
                 }
-                
-                
-                $emergencyNotice = $emergencyNoticeController->getFeaturedEmergencyNotice();
-                $response = array('notice' => $emergencyNotice);
+                $response = array('notice' => $emergencyNotice, 'noticeEnabled' => $noticeEnabled);
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion(2);
                 break;
 
             case 'contacts':
@@ -54,7 +59,7 @@ class EmergencyAPIModule extends APIModule {
                     'secondary' => self::formatContacts($contactsController->getSecondaryContacts()),
                 );
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion(2);
                 break;
 
         }

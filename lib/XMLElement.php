@@ -7,6 +7,8 @@ class XMLElement
     protected $value;
     protected $debugMode = false;
     protected $properties = array();
+    protected $strip_tags = false;
+    protected $html_decode = false;
     protected $encoding;
     
     public function setDebugMode($debugMode)
@@ -19,6 +21,17 @@ class XMLElement
         $this->setName($name);
         $this->setAttribs($attribs);
         $this->encoding = $encoding;
+    }
+    
+    public function shouldStripTags($strip_tags)
+    {
+        $this->strip_tags = $strip_tags;
+    }
+    
+    // For buggy feeds which have elements escaped with both CDATA and html entities
+    public function shouldHTMLDecodeCDATA($html_decode)
+    {
+        $this->html_decode = $html_decode;
     }
     
     public function setAttribs($attribs)
@@ -38,11 +51,20 @@ class XMLElement
         return $this->attribs;
     }
     
-    public function setValue($value, $strip_tags=false)
+    public function setValue($value, $strip_tags=false /* compat arg */)
     {
-        $encoding = ($this->encoding !== null) ? $this->encoding : 'UTF-8';
-        $value = trim($value);
-        $this->value = $strip_tags ? strip_tags($value) : html_entity_decode($value, ENT_COMPAT, $encoding);
+        if ($this->strip_tags || $strip_tags) {
+            // Remove all HTML tags (will also convert all HTML entities to feed encoding below)
+            $value = trim(strip_tags($value));
+        }
+        
+        if ($this->html_decode || $this->strip_tags || $strip_tags) {
+            // convert all HTML entities to the feed encoding
+            $encoding = ($this->encoding !== null) ? $this->encoding : 'UTF-8';
+            $value = html_entity_decode($value, ENT_COMPAT, $encoding);
+        }
+        
+        $this->value = $value;
     }
 
     public function appendValue($value)
