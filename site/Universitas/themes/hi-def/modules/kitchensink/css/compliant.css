@@ -1,27 +1,59 @@
+/*Action Button adjustments*/
+
 ul.nav li a, ul.results a, a.phone, a.email    {
     font-weight: bold;
 }
 
+
+/*Search Adjustments*/
+
 #searchformcontainer.nonfocal    {
     margin:  0;
-    background-color: #666;
+    padding: 0;
 }
 
+#searchformcontainer.nonfocal form	{
+	padding: 0;
+	margin: 0;
+	margin: 0 auto;
+	background-color: #999;
+	height: 50px;
+}
 
+#searchformcontainer.nonfocal form fieldset.inputcombo.emphasized	{
+	padding: 0;
+	margin: 0;
+	background-color: #333;
+	width: 100%;
+}
 
-input#filter.forminput    {
-    margin: 0px 10px 0px 10px;
-    border-radius: 19px;
+div.searchwrapper	{
+	margin: 0;
+	padding: 0;
+	background-color: #666;
+	height: 20px;
+	width: 90%;
+	margin: 0 auto;
+}
+
+div.searchwrapper input#filter.forminput    {
+	padding: 0;
+    margin: 0;
+    border-radius: 0px;
+    border: 0;
+    width: 80%;
+    line-height: 26px;
+    margin: 0 auto;
+
 }
 
 input#sch_btn.combobutton    {
-    visibility: hidden;
+position: relative;
 }
 
-.inputcombo.emphasized    {
-    margin: 0;
-    padding: 3px;
-}
+
+
+
 
 p.smallprint    {
     width: 50%;
@@ -50,7 +82,15 @@ right: 10px;
 }
 
 
+/*Tabs spacer adjustment*/
 
 ul#tabs    {
     margin-top: 20px;
 }
+
+/*Nav List - Icon Adjustments*/
+
+li.icon a.icon	{
+	padding-right: 25px;
+}
+
