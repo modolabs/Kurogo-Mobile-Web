@@ -1,1 +1,1 @@
-{extends file="findInclude:modules/content/templates/index.tpl"}
+{extends file="findExtends:modules/content/templates/index.tpl"}
