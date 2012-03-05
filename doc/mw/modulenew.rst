@@ -27,9 +27,10 @@ Steps
 * Create a folder named *twitter* in the SITE_DIR/app/modules folder
 * Create a folder named *twitter* in the SITE_DIR/config folder
 * Create a templates folder inside the SITE_DIR/app/modules/twitter folders
-* Create *TwitterWebModule.php* with the following contents:
+* Create *SITE_DIR/app/modules/twitter/TwitterWebModule.php* with the following contents:
 
 .. code-block:: php
+   :linenos:
 
     <?php
     
@@ -40,7 +41,7 @@ Steps
       }
     }
 
-* Create *templates/index.tpl* with the following contents:
+* Create *SITE_DIR/app/modules/twitter/templates/index.tpl* with the following contents:
 
 .. code-block:: html
 
@@ -66,7 +67,8 @@ Steps
   *SITE_DIR/themes/default/common/images/compliant*. This will be the image that will show up in the
   nav bar for this module
 
-You can now access this module by going to */twitter* on your server
+You can now access this module by going to */twitter* on your server. At this point, it has
+no useful functionality. These steps can be repeated for any future module you wish to create.
 
 ===========================
 Retrieving and Parsing Data
@@ -74,7 +76,7 @@ Retrieving and Parsing Data
 
 Now it's time to get some data. Most web services provide their data by making HTTP requests with
 certain parameters. We will use the `Twitter Data API <https://dev.twitter.com/docs>`_ 
-as the source of our data. It results data in JSON format.
+as the source of our data. It returns data in JSON format.
 
 -----------------------
 Creating a Data Library
@@ -113,12 +115,12 @@ Steps
 Some notes on this listing:
 
 * The *DEFAULT_PARSER_CLASS* property sets which parser will be used (it can be overridden by setting the
-  *PARSER_CLASS* key when using the factory method.
+  *PARSER_CLASS* key when using the factory method. See :doc:`dataretriever` for more information.
 * The *tweets* method sets the base URL and adds filters. Filters work as parameters that are added to 
-  the url's query string. The *getData* method is called which will retrieve that data (using
+  the URL's query string. The *getData* method is called which will retrieve that data (using
   the cache if necessary) and run the data through the parser (a JSON parser in this case). 
 * Note that to keep this entry short, we are not utilizing any error control. This should not be 
-  considered a robust solution
+  considered a robust solution.
 
 Now that we have a retriever, we can utilize it in our module. Here is an updated *TwitterWebModule.php*
 
@@ -146,7 +148,6 @@ Now that we have a retriever, we can utilize it in our module. Here is an update
                 //prepare the list
                 $tweetList = array();
                 foreach ($tweets as $tweetData) {
-                    $date = new DateTime($tweetData['created_at']);
                     $tweet = array(
                         'title'=> $tweetData['text'],
                         'subtitle'=> $tweetData['created_at']
@@ -166,24 +167,29 @@ Some notes on this listing:
 * We instantiate our controller using the DataRetriever factory method with the name of the class
   as the first parameter. Any options can be specified in an associative array in the second parameter.
 * Using a *switch* statement allows us to have different logic depending on which page we are on. We
-  can add logic for other pages shortly
+  will add logic for other pages shortly
 * Then we use our tweets method and send it a string value. The method returns an array of tweets
+* *Note:* When debugging the contents of a web service call, it can be useful to output its contents.
+  You may find it useful to use the *KurogoDebug::debug($var, $halt=false)* method. The
+  first parameter is a variable (typically an array or object), the second parameter is
+  a boolean. If true, then script execution will stop. It will also contain a function trace
+  to assist in code path debugging. 
 * We iterate through the array and assign values for each item. We're using the text value for the item 
-  title and settings the post date as our subtitle
+  title and the post date as our subtitle. In this example, the value is not formatted, but
+  you could use the DateFormatter class to format the value.
 * We then assign the tweetList array to the template
 
-Finally we update the *index.tpl* file to utilize a results list to show the list of videos:
+Finally we update the *index.tpl* file and utilize a results list to show the list of tweets:
 
 .. code-block:: html
 
     {include file="findInclude:common/templates/header.tpl"}
     
-    {include file="findInclude:common/templates/results.tpl" results=$tweetList resultsID="tweetList"}
+    {include file="findInclude:common/templates/results.tpl" results=$tweetList}
     
     {include file="findInclude:common/templates/footer.tpl"}
     
 * We include the results.tpl file which expects an array of items set in the results variable. 
-* We also set the resultsID variable to assist in styling
 
 You should now be able to view the list of tweets by going to */twitter*. 
     
