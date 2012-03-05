@@ -5,8 +5,8 @@ Version History
 Kurogo continues to be improved. The following are significant improvements in each version.
 For more detailed release notes, see the included CHANGELOG file
 
-Version 1.4 (January, 2012)
-===========================
+Version 1.4 (March 5, 2012)
+===============================
 * NEW Module: :doc:`Athletics <moduleathletics>`
 * NEW Module: :doc:`Photos <modulephotos>`
 * Updated :doc:`Map module <modulemap>`
