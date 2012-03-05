@@ -5,6 +5,8 @@ class ContentAPIModule extends APIModule {
     protected $id = 'content';
     protected $vmin = 1;
     protected $vmax = 1;
+    protected $pageId;
+    protected $group;
     protected $feedGroups = null;
 	protected static $defaultModel = 'ContentDataModel';
 	// overrides function in Module.php
@@ -112,6 +114,7 @@ class ContentAPIModule extends APIModule {
     }
 
     protected function filterContentByPage($content, $page, $group) {
+        return $content;
     }
 
      protected function initializeForCommand() {
@@ -171,11 +174,11 @@ class ContentAPIModule extends APIModule {
             case 'groups':
 				$feedGroups = $this->getModuleSections('feedgroups');
 				
-                foreach ($feedGroups as $gourpName => $gourpData) {
+                foreach ($feedGroups as $groupName => $groupData) {
 	                    $groups[] = array(
-	                        'key' => $gourpName,
-	                        'title' => $gourpData['TITLE'],
-	                        'description' => isset($gourpData['DESCRIPTION']) ? $gourpData['DESCRIPTION'] : '',
+	                        'key' => $groupName,
+	                        'title' => $groupData['TITLE'],
+	                        'description' => isset($groupData['DESCRIPTION']) ? $groupData['DESCRIPTION'] : '',
 	                    );
                 }
                 
@@ -187,11 +190,11 @@ class ContentAPIModule extends APIModule {
             	break;
             case 'page': 
             case 'getFeed': 
-        		$pageId = $this->getArg('key');
-				$group = $this->getArg('group', false);
-				$items = ($group === false) ? $this->loadFeedData() : $this->loadFeedData($group);
+        		$this->pageId = $this->getArg('key');
+				$this->group = $this->getArg('group', false);
+				$items = ($this->group === false) ? $this->loadFeedData() : $this->loadFeedData($this->group);
 				
-				$feedData = $items[$pageId];
+				$feedData = $items[$this->pageId];
 				
 				$title = $feedData['TITLE']?$feedData['TITLE']:'';
 				
