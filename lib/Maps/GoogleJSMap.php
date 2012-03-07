@@ -117,7 +117,7 @@ class GoogleJSMap extends JavascriptMapImageController {
             $rings = $placemark->getGeometry()->getRings();
             $polyStrings = array();
             foreach ($rings as $ring) {
-                $polyString[] = '['.$this->coordsToGoogleArray($ring->getPoints()).']';
+                $polyStrings[] = '['.$this->coordsToGoogleArray($ring->getPoints()).']';
             }
 
             $options = array('map: map');
@@ -144,7 +144,7 @@ class GoogleJSMap extends JavascriptMapImageController {
                 '___ID___' => $placemark->getId(),
                 '___LATITUDE___' => $coord['lat'],
                 '___LONGITUDE___' => $coord['lon'],
-                '___MULTIPATHSTRING___' => implode(',', $polyString),
+                '___MULTIPATHSTRING___' => implode(',', $polyStrings),
                 '___TITLE___' => json_encode($placemark->getTitle()),
                 '___OPTIONS___' => implode(',', $options),
                 '___SUBTITLE___' => json_encode($placemark->getSubtitle()),
