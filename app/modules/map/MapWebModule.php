@@ -682,7 +682,7 @@ class MapWebModule extends WebModule {
 
                 $externalLinks[] = array(
                     'title' => $this->getLocalizedString('VIEW_IN_GOOGLE_MAPS'),
-                    'url'   => 'http://maps.google.com?ll='.$centerText,
+                    'url'   => 'http://maps.google.com?q=loc:'.$centerText,
                     'class' => 'external',
                     );
                 
