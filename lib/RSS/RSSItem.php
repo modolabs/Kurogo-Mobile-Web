@@ -21,14 +21,11 @@ class RSSItem extends XMLElement implements NewsItem
     protected $images=array();
     protected $fetchContent = false;
     protected $enclosures = array();
-    protected $useDescriptionForContent = false;
 
     public function setFetchContent($bool) {
         $this->fetchContent =  $bool ? true : false;
     }
-    public function setUseDescriptionForContent($bool){
-    	$this->useDescriptionForContent = $bool ? true : false;
-    }
+
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
             switch ($filter)
@@ -47,10 +44,6 @@ class RSSItem extends XMLElement implements NewsItem
     public function init($args) {
         if (isset($args['FETCH_CONTENT'])) {
             $this->setFetchContent($args['FETCH_CONTENT']);
-        }
-        //KGO-522
-        if (isset($args['USE_DESCRIPTION_FOR_CONTENT'])) {
-            $this->setUseDescriptionForContent($args['USE_DESCRIPTION_FOR_CONTENT']);
         }
     }
     
@@ -196,13 +189,6 @@ class RSSItem extends XMLElement implements NewsItem
                 }
                 
                 break;
-            case 'DESCRIPTION':
-            	if($this->useDescriptionForContent){
-            		parent::addElement($element);//set description
-            		$element->setName('CONTENT');//set description value to content KGO-522
-            	}
-            	parent::addElement($element);
-            	break;
             default:
                 parent::addElement($element);
                 break;

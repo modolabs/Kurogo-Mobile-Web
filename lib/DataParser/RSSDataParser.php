@@ -26,6 +26,7 @@ class RSSDataParser extends XMLDataParser
     protected $imageEnclosureClass='RSSImageEnclosure';
     protected $removeDuplicates = false;
     protected $htmlEscapedCDATA = false;
+    protected $useDescriptionForContent = false;
     protected $items=array();
     protected $guids=array();
 
@@ -33,7 +34,7 @@ class RSSDataParser extends XMLDataParser
         'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY',
         'ENCLOSURE', 'MEDIA:THUMBNAIL','MEDIA:CONTENT', 'IMAGE');
     protected static $endElements=array(
-        'CHANNEL', 'FEED', 'ITEM', 'ENTRY');
+        'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'DESCRIPTION');
     
     public function items()
     {
@@ -75,6 +76,14 @@ class RSSDataParser extends XMLDataParser
         if (isset($args['HTML_ESCAPED_CDATA'])) {
             $this->htmlEscapedCDATA = $args['HTML_ESCAPED_CDATA'];
         }
+        
+        if (isset($args['USE_DESCRIPTION_FOR_CONTENT'])) {
+            $this->setUseDescriptionForContent($args['USE_DESCRIPTION_FOR_CONTENT']);
+        }
+    }
+    
+    public function setUseDescriptionForContent($bool) {
+    	$this->useDescriptionForContent = $bool ? true : false;
     }
 
     protected function shouldHandleStartElement($name)
@@ -136,6 +145,17 @@ class RSSDataParser extends XMLDataParser
                     $this->items[] = $element;
                 }
                 break;
+            case 'DESCRIPTION':
+                $parent->addElement($element); // add description as description
+                
+                if ($this->useDescriptionForContent) {
+                    // add description element again as content
+                    $element->setName('CONTENT');
+                    $element->shouldStripTags($this->shouldStripTags($element));
+                    $element->shouldHTMLDecodeCDATA($this->shouldHTMLDecodeCDATA($element));
+                    $parent->addElement($element);
+                }
+                break;            
         }
     }
 
