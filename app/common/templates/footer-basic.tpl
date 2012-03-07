@@ -37,7 +37,7 @@
 {/block}
 
   {block name="loginHTML"}
-    {if $session && $moduleID == 'home'}
+    {if $showLogin}
 	<div class="loginstatus">
 		<p{if $footerLoginClass} class="{$footerLoginClass}"{/if}><a href="{$footerLoginLink}">{$footerLoginText}</a></p>
 	</div>
