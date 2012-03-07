@@ -28,11 +28,20 @@ abstract class DrupalCCKDataParser extends RSSDataParser
     // overide this for fields that have only one value
     protected $singletonFields = array();
 
+    protected function shouldStripTags($element)
+    {
+        if ($element->name() == "DESCRIPTION") {
+           return false;
+	   } else {
+           return parent::shouldStripTags($element);
+        }
+    }
+
     public function parseData($data) {
         $rssItems = parent::parseData($data);
         $items = array();
         foreach($rssItems as $rssItem) {
-            $content = $this->getContent($rssItem->getContent());
+            $content = $this->getContent($rssItem->getDescription());
             $normalizedFields = self::normalize($content);
             $body = $normalizedFields['body'];
             unset($normalizedFields['body']);
