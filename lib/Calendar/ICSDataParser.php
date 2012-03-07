@@ -112,8 +112,11 @@ class ICSDataParser extends DataParser
                 switch ($value) {
                 case 'VEVENT':
                     $addEvent = true;
-                    $event = 
-                    $nesting[] = $this->initEvent();
+                    $event = $this->initEvent();
+                    if ($calendar->timezone) {
+                        $event->set_attribute('TZID', $calendar->timezone->tzid);
+                    }
+                    $nesting[] = $event;
                     break;
                 case 'VCALENDAR':
                     $nesting[] = $calendar;
@@ -164,9 +167,6 @@ class ICSDataParser extends DataParser
                 }
                 switch ($value) {
                     case 'VEVENT':
-                        if ($calendar->timezone) {
-                            $last_object->set_attribute('TZID', $calendar->timezone->tzid);
-                        }
                         if ($addEvent) {
                             $calendar->add_event($last_object);
                         }

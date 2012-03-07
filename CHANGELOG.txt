@@ -1,4 +1,4 @@
-1.4 (Feb 20, 2012)
+1.4 (Mar 4, 2012)
 * NEW MODULE: Photos. Show photos from Flickr or Picassa
 * NEW MODULE: Athletics. Show news and score information
 * Updated map module interface

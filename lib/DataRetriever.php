@@ -33,6 +33,7 @@ abstract class DataRetriever {
     
     public function setCacheLifeTime($cacheLifetime) {
         $this->cacheLifetime = $cacheLifetime;
+        $this->cache->setCacheLifetime($cacheLifetime);
     }
 
     protected function setCacheKey($cacheKey) {
@@ -216,6 +217,7 @@ abstract class DataRetriever {
                 
         $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
         $this->cache = DataCache::factory($cacheClass, $args);
+        $this->cache->setCacheLifetime($this->DEFAULT_CACHE_LIFETIME);
     }
     
     public function clearInternalCache() {
