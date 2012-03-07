@@ -450,7 +450,7 @@ class MapWebModule extends WebModule {
 
         if (count($listItems) == 1) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
-            header("Location: " .  URL_BASE. $link['url']);
+            header("Location: " .  rtrim(URL_BASE, '/') . $link['url']);
             return;
         }
 
