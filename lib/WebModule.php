@@ -82,23 +82,33 @@ abstract class WebModule extends Module {
       $currentTab = $defaultTab;
     }
     
+    // prefill from config to get order
     $tabs = array();
+    foreach ($this->pageConfig as $key => $value) {
+      if (strpos($key, 'tab_') === 0) {
+        $tabKey = substr($key, 4);
+        if (in_array($tabKey, $tabKeys)) {
+          $tabs[$tabKey] = array(
+            'title' => $value,
+          );
+        }
+      }
+    }
+    
+    // Fill out rest of tabs
     foreach ($tabKeys as $tabKey) {
-      $title = ucwords($tabKey);
-      $configKey = "tab_{$tabKey}";
-      if (isset($this->pageConfig, $this->pageConfig[$configKey]) && 
-          strlen($this->pageConfig[$configKey])) {
-        $title = $this->pageConfig[$configKey];
+      // Fill out default titles for tabs not in config:
+      if (!isset($tabs[$tabKey]) || !is_array($tabs[$tabKey])) {
+        $tabs[$tabKey] = array(
+          'title' => ucwords($tabKey),
+        );
       }
       
       $tabArgs = $this->args;
       $tabArgs['tab'] = $tabKey;
+      $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
       
-      $tabs[$tabKey] = array(
-        'title' => $title,
-        'url'   => $this->buildBreadcrumbURL($this->page, $tabArgs, false),
-        'javascript' => isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '',
-      );
+      $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
     }
     
     $this->tabbedView = array(
