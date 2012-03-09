@@ -2,11 +2,9 @@
   {block name="tabsStart"}
     <ul id="tabs"{if $smallTabs} class="smalltabs"{/if}>
   {/block}
-  
-      {foreach $tabBodies as $tabKey => $tabBody}
+      {foreach $tabbedView['tabs'] as $tabKey => $tabInfo}
         {if isset($tabbedView['tabs'][$tabKey])}
-          {$tabInfo = $tabbedView['tabs'][$tabKey]}
-          {$isLastTab = $tabBody@last}
+          {$isLastTab = $tabInfo@last}
           
           {block name="tab"}
             {if strlen($GOOGLE_ANALYTICS_ID)}
@@ -30,10 +28,10 @@
 
 {block name="tabBodies"}
   <div id="tabbodies">
-    {foreach $tabBodies as $tabKey => $tabBody}
+    {foreach $tabbedView['tabs'] as $tabKey => $tabInfo}
       {if isset($tabbedView['tabs'][$tabKey])}
         <div class="tabbody" id="{$tabKey}Tab" {if count($tabBodies) > 1}style="display:none"{/if}>
-          {$tabBody}
+          {$tabBodies[$tabKey]}
         </div>
       {/if}
     {/foreach}
