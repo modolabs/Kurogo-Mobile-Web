@@ -1500,7 +1500,7 @@ abstract class WebModule extends Module {
     
     if ($this->page == '__nativeWebTemplates') {
         $title = 'Success!';
-        $message = 'Generated native web templates for '.$this->getArg('platform');
+        $message = 'Generated native web templates for '.implode(' and ', explode(',', $this->getArg('platform')));
         try {
             $this->buildNativeWebTemplates();
         } catch (Exception $e) {
@@ -1562,6 +1562,7 @@ abstract class WebModule extends Module {
     } else if (KurogoWebBridge::useWrapperPageTemplate()) {
       // Web bridge page wrapper
       $template = 'common/templates/webBridge';
+      $this->assign('webBridgeJSLocalizedStrings', json_encode(Kurogo::getLocalizedStrings()));
       
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
@@ -1646,22 +1647,24 @@ abstract class WebModule extends Module {
           throw new KurogoConfigurationException("module does not have any pages defined in pages.ini");
       }
       
-      $platform = $this->getArg('platform', 'unknown');
-      
       $additionalAssets = array();
       $nativeConfig = $this->getOptionalModuleSection('native_template');
       if ($nativeConfig && $nativeConfig['additional_assets']) {
           $additionalAssets = $nativeConfig['additional_assets'];
       }
       
-      // Phone version
-      $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_PHONE, $platform, KurogoWebBridge::BROWSER);
-      $rewriter->saveTemplates($pages, $additionalAssets);
+      $platforms = explode(',', $this->getArg('platform', 'unknown'));
       
-      if (Kurogo::getOptionalSiteVar('NATIVE_TABLET_ENABLED', 1)) {
-          // Tablet version
-          $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_TABLET, $platform, KurogoWebBridge::BROWSER);
+      foreach ($platforms as $platform) {
+          // Phone version
+          $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_PHONE, $platform, KurogoWebBridge::BROWSER);
           $rewriter->saveTemplates($pages, $additionalAssets);
+          
+          if (Kurogo::getOptionalSiteVar('NATIVE_TABLET_ENABLED', 1)) {
+              // Tablet version
+              $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_TABLET, $platform, KurogoWebBridge::BROWSER);
+              $rewriter->saveTemplates($pages, $additionalAssets);
+          }
       }
   }
 

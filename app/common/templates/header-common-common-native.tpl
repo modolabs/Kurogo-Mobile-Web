@@ -30,7 +30,9 @@
   </script>
   {$smarty.block.parent}
   <script type="text/javascript">
-      var kgoBridge = new kgoBridgeHandler({$webBridgeConfig['jsConfig']});
+      var kgoBridgeConfig = {$webBridgeConfig['jsConfig']};
+      {if $webBridgeJSLocalizedStrings}kgoBridgeConfig['localizedStrings'] = {$webBridgeJSLocalizedStrings};{/if} 
+      var kgoBridge = new kgoBridgeHandler(kgoBridgeConfig);
   </script>
 {/block}
 
@@ -64,7 +66,7 @@
           
           onOrientationChange();
           
-          kgoBridge.onPageLoad({$webBridgeOnPageLoadParams});
+          kgoBridge.initPage({$webBridgeOnPageLoadParams});
       {rdelim}
   </script>
 {/block}

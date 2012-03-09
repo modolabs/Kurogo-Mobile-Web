@@ -1048,6 +1048,26 @@ class Kurogo
         return Kurogo::sharedInstance()->localizedString($key, $opts);
     }    
     
+    public function localizedStrings() {
+        $strings = array();
+    
+        $languages = $this->getLanguages();
+        foreach ($languages as $language) {
+            $langStrings = $this->getStringsForLanguage($language);
+            foreach ($langStrings as $key => $value) {
+                if (!isset($strings[$key])) {
+                    $strings[$key] = $value;
+                }
+            }
+        }
+        
+        return $strings;
+    }
+    
+    public static function getLocalizedStrings() {
+        return Kurogo::sharedInstance()->localizedStrings();
+    }
+    
     public function checkCurrentVersion() {
         $url = "http://kurogo.org/checkversion.php?" . http_build_query(array(
             'version'=>KUROGO_VERSION,
