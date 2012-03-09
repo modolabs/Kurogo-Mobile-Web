@@ -448,7 +448,7 @@ class MapWebModule extends WebModule {
 
         $linkOptions = array('feed' => $feedId, 'group' => $this->feedGroup);
 
-        if (count($listItems) == 1) {
+        if (count($listItems) == 1 && !$this->getArg('listview')) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
             header("Location: " .  rtrim(URL_BASE, '/') . $link['url']);
             return;
