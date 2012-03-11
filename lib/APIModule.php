@@ -145,6 +145,16 @@ abstract class APIModule extends Module
         return $config->getSectionVars(Config::EXPAND_VALUE);
     }
 
+    protected function getModuleNavigationData() {
+        $moduleNavConfig = $this->getModuleNavigationConfig();
+        $modules = array(
+            'primary'  => $moduleNavConfig->getOptionalSection('primary_modules'),
+            'secondary'=> $moduleNavConfig->getOptionalSection('secondary_modules')
+        );
+
+        return $modules;
+    }
+
     protected function getModuleNavigationIDs() {
         $moduleNavConfig = $this->getModuleNavigationConfig();
         
