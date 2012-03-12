@@ -43,8 +43,12 @@ class PhotosWebModule extends WebModule {
     }
 
   protected function timeText($photo, $timeOnly=false) {
-    includePackage('Calendar');
-        return DateFormatter::formatDate($photo->getPublished(), DateFormatter::SHORT_STYLE, DateFormatter::SHORT_STYLE);
+    if ($photo->getPublished()) {
+        includePackage('Calendar');
+            return DateFormatter::formatDate($photo->getPublished(), DateFormatter::SHORT_STYLE, DateFormatter::SHORT_STYLE);
+    } else {
+        return "";
+    }
   }
 
     protected function initializeForPage() {
@@ -132,10 +136,11 @@ class PhotosWebModule extends WebModule {
             	$controller = $this->getFeed($album);
                 $id = base64_decode($this->getArg('id'));
                 $photo = $controller->getPhoto($id);
-                $this->assign('photoURL',    $photo->getUrl());
-                $this->assign('photoTitle',  $photo->getTitle());
-                $this->assign('photoAuthor', $photo->getAuthor());
-                $this->assign('photoDate',   $this->timeText($photo));
+                $this->assign('photoURL',           $photo->getUrl());
+                $this->assign('photoTitle',         $photo->getTitle());
+                $this->assign('photoAuthor',        $photo->getAuthor());
+                $this->assign('photoDate',          $this->timeText($photo));
+                $this->assign('photoDescription',   $photo->getDescription());
                 
                 break;
         }

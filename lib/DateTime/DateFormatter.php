@@ -57,6 +57,9 @@ class DateFormatter
     }
 
     private static function getTimeConstant($timeStyle) {
+        if (!is_numeric($timeStyle)) {
+            return $timeStyle;
+        }
         switch ($timeStyle)
         {
             case self::NO_STYLE:
@@ -73,6 +76,9 @@ class DateFormatter
     }
     
     private static function getDateConstant($dateStyle) {
+        if (!is_numeric($dateStyle)) {
+            return $dateStyle;
+        }
         switch ($dateStyle)
         {
             case self::NO_STYLE:
