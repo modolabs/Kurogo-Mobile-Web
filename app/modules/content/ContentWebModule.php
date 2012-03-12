@@ -52,7 +52,7 @@ class ContentWebModule extends WebModule {
                     $feedData['PARSER_CLASS'] = 'RSSDataParser';
                 }
 
-                $controller = ContentDataModel::factory($controllerClass, $feedData);
+                $controller = ContentDataModel::factory($modelClass, $feedData);
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
                 }
