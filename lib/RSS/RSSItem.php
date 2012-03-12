@@ -179,6 +179,7 @@ class RSSItem extends XMLElement implements NewsItem
             case 'PUBDATE':
             case 'DC:DATE':
             case 'PUBLISHED':
+            case 'UPDATED':
                 if ($value = $element->value()) {
                     try {
                         if ($date = new DateTime($value)) {
