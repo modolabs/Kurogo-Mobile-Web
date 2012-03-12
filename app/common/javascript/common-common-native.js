@@ -170,28 +170,29 @@
         shareDialog: function (buttonConfig) {
             var buttonTitles = [];
             var actionURLs = [];
-            if ("email" in buttonConfig) {
+            if ("mail" in buttonConfig) {
                 buttonTitles.push(this.localizedString("SHARE_OPTION_EMAIL"));
-                actionURLs.push(buttonConfig["email"]);
+                actionURLs.push(buttonConfig["mail"]);
             }
             if ("facebook" in buttonConfig) {
                 buttonTitles.push(this.localizedString("SHARE_OPTION_FACEBOOK"));
-                actionURLs.push(buttonConfig["email"]);
+                actionURLs.push(buttonConfig["facebook"]);
             }
             if ("twitter" in buttonConfig) {
                 buttonTitles.push(this.localizedString("SHARE_OPTION_TWITTER"));
-                actionURLs.push(buttonConfig["email"]);
+                actionURLs.push(buttonConfig["twitter"]);
             }
             
             var title = this.localizedString("SHARE_THIS_ITEM");
             var cancel = this.localizedString("BUTTON_CANCEL");
             
+            var that = this;
             this.actionDialog(title, cancel, null, buttonTitles, null, function(error, params) {
                 if ("button" in params && params["button"].indexOf('alternate') === 0) {
                     var index = +params["button"].substr(9);
                     if (index >= 0 && index < actionURLs.length) {
                         setTimeout(function () {
-                            this.loadURL(actionURLs[index]);
+                            that.loadURL(actionURLs[index]);
                         }, 100);
                     }
                 }
@@ -392,8 +393,8 @@
                 document.documentElement.appendChild(iframe);
                 iframe.parentNode.removeChild(iframe);
                 iframe = null;
-            } else {
-                alert("bridgeCallback: "+url);
+            } else if (typeof console != "undefined" && typeof console.log != "undefined") {
+                console.log("DEBUG_MODE: kgoBridge would have called "+url);
             }
         }
     };
