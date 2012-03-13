@@ -9,9 +9,14 @@ class EmergencyNoticeDataModel extends DataModel
     protected $emergencyNotices = NULL;
     protected $cacheFolder = "Emergency";
 
-    protected $cacheLifetime = 60; // emergency notice should have a short cache time
+    protected $DEFAULT_CACHE_LIFETIME = 60; // emergency notice should have a short cache time
 
     protected function init($args) {
+        // Present variable if not set before init (the retriever reads it)
+        if (!isset($args['CACHE_LIFETIME'])) {
+            $args['CACHE_LIFETIME'] = $this->DEFAULT_CACHE_LIFETIME;
+        }
+
         parent::init($args);
 
         if (isset($args['NOTICE_EXPIRATION'])) {
