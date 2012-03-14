@@ -50,7 +50,8 @@ class NewsAPIModule extends APIModule {
                                         'show_images'=>isset($feedData['SHOW_IMAGES']) ? $feedData['SHOW_IMAGES'] : true,
                                         'show_pubdate'=>isset($feedData['SHOW_PUBDATE']) ? $feedData['SHOW_PUBDATE'] : false,
                                         'show_author' => isset($feedData['SHOW_AUTHOR']) ? $feedData['SHOW_AUTHOR'] : false,
-                                        'show_link' => isset($feedData['SHOW_LINK']) ? $feedData['SHOW_LINK'] : false
+                                        'show_link' => isset($feedData['SHOW_LINK']) ? $feedData['SHOW_LINK'] : false,
+                                        'show_body_thumbnail' => isset($feedData['SHOW_BODY_THUMBNAIL']) ? $feedData['SHOW_BODY_THUMBNAIL'] : true
                     					);
                 }
                 $this->setResponse($response);
