@@ -32,7 +32,9 @@ KGOMapLoader.prototype.showDefaultCallout = function() {
     for (var id in this.placemarks) {
         count++;
         thePlacemark = id;
-        break;
+        if (count > 1) {
+            break;
+        }
     }
 
     if (count == 1) {

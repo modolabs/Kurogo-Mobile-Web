@@ -54,12 +54,6 @@
       {/if}
     {/block}
     
-    {block name="inlineJavascriptBlocks"}
-      {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
-        <script type="text/javascript">{$inlineJavascriptBlock}</script>
-      {/foreach}
-    {/block}
-    
     {block name="javascriptURLs"}
       {foreach $javascriptURLs as $url}
         <script src="{$url|escape}" type="text/javascript"></script>
@@ -68,6 +62,12 @@
     
     {block name="minifyJavascript"}
       <script src="{$minify['js']|escape}" type="text/javascript"></script>
+    {/block}
+    
+    {block name="inlineJavascriptBlocks"}
+      {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
+        <script type="text/javascript">{$inlineJavascriptBlock}</script>
+      {/foreach}
     {/block}
 
     {block name="orientationChangeJavascript"}

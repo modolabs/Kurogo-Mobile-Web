@@ -19,6 +19,6 @@
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$worldmapLink secondary=true}
 {/if}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$navItems navlistID="categories" navListHeading=$browseHint}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$navItems navlistID="categories" navListHeading=$browseHint subTitleNewline=true}
 
 {include file="findInclude:common/templates/footer.tpl"}
