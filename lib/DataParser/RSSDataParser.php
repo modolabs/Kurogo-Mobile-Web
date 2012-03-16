@@ -32,7 +32,7 @@ class RSSDataParser extends XMLDataParser
 
     protected static $startElements=array(
         'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY',
-        'ENCLOSURE', 'MEDIA:THUMBNAIL','MEDIA:CONTENT', 'IMAGE');
+        'ENCLOSURE', 'MEDIA:THUMBNAIL','MEDIA:CONTENT', 'IMAGE', 'LINK');
     protected static $endElements=array(
         'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'DESCRIPTION');
     
@@ -119,6 +119,21 @@ class RSSDataParser extends XMLDataParser
                 $element->init($this->initArgs);
                 $this->elementStack[] = $element;
                 break;
+            case 'LINK':
+                if (isset($attribs['REL'], $attribs['HREF']) && $attribs['REL'] == 'enclosure') {
+                    $attribs['URL'] = $attribs['HREF'];
+                    if ($this->enclosureIsImage($name, $attribs)) {
+                        $element = new $this->imageEnclosureClass($attribs);
+                    } else {
+                        $element = new $this->enclosureClass($attribs);
+                    }
+                    $element->init($this->initArgs);
+                    $element->setName('enclosure');
+                } else {
+                    $element = new XMLElement($name, $attribs, $this->getEncoding());
+                }
+                $this->elementStack[] = $element;
+                break;
             case 'IMAGE':
                 $this->elementStack[] = new $this->imageClass($attribs);
                 break;
@@ -155,7 +170,7 @@ class RSSDataParser extends XMLDataParser
                     $element->shouldHTMLDecodeCDATA($this->shouldHTMLDecodeCDATA($element));
                     $parent->addElement($element);
                 }
-                break;            
+                break;
         }
     }
 
