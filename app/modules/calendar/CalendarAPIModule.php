@@ -207,7 +207,7 @@ class CalendarAPIModule extends APIModule
             $value   = $event->get_attribute($aField);
             
             if ($value) {
-                if ($fieldInfo['type'] == 'category' && is_array($value)) {
+                if (self::argVal($fieldInfo, 'type', '') == 'category' && is_array($value)) {
                     $value = $this->apiArrayFromCategories($value);
                 }
                 
@@ -291,8 +291,7 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'category':
-                $catid = $this->getArg('catid', '');
-                if (!$catid) {
+                if (!$this->getArg('catid', false)) {
                     $error = new KurogoError(
                             5,
                             'Invalid Request',
@@ -301,6 +300,7 @@ class CalendarAPIModule extends APIModule
                 }
                 // very similar to events, fallthrough to share code
             case 'events':
+                $catid = $this->getArg('catid', '');
                 $type     = $this->getArg('type', 'static');
                 // the calendar argument needs to be urlencoded
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
@@ -470,11 +470,9 @@ class CalendarAPIModule extends APIModule
             case 'categories':
                 $type     = $this->getArg('type', 'static');
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-                $current  = $this->getArg('time', time());
-                $start    = $this->getStartArg($current);
+                $limit    = $this->getArg('limit', null);
 
                 $feed = $this->getFeed($calendar, $type);
-                $feed->setStartDate($start);
                 
                 $categories = $feed->getEventCategories($limit);
                 $response = $this->apiArrayFromCategories($categories);
