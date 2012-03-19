@@ -207,6 +207,10 @@ class CalendarAPIModule extends APIModule
             $value   = $event->get_attribute($aField);
             
             if ($value) {
+                if ($fieldInfo['type'] == 'category' && is_array($value)) {
+                    $value = $this->apiArrayFromCategories($value);
+                }
+                
                 if ($version < 2) {
                     $result[$title] = $value;
                     
@@ -225,6 +229,24 @@ class CalendarAPIModule extends APIModule
             }
         }
         
+        return $result;
+    }
+    
+    protected function apiArrayFromCategories($categories) {
+        $result = array();
+        foreach ($categories as $category) {
+            if (is_array($category)) {
+                $name = $category['name'];
+                $catid = $category['catid'];
+            } elseif ($category instanceof CalendarCategory) {
+                $name = $category->getName();
+                $catid = $category->getId();
+            }
+            $result[] = array(
+                'name' => $name,
+                'id'   => $catid,
+            );
+        }
         return $result;
     }
 
@@ -268,6 +290,16 @@ class CalendarAPIModule extends APIModule
                 
                 break;
 
+            case 'category':
+                $catid = $this->getArg('catid', '');
+                if (!$catid) {
+                    $error = new KurogoError(
+                            5,
+                            'Invalid Request',
+                            'Invalid catid parameter');
+                    $this->throwError($error);
+                }
+                // very similar to events, fallthrough to share code
             case 'events':
                 $type     = $this->getArg('type', 'static');
                 // the calendar argument needs to be urlencoded
@@ -289,7 +321,12 @@ class CalendarAPIModule extends APIModule
                 }
                 
                 if ($limit && $this->legacyController) {
+                    if ($catid) {
+                        $feed->addFilter('category', $catid);
+                    }
                     $iCalEvents = $feed->items(0, $limit);
+                } else if ($catid) {
+                    $iCalEvents = $feed->getEventsByCategory($catid);
                 } else {
                     $iCalEvents = $feed->items();
                 } 
@@ -430,16 +467,26 @@ class CalendarAPIModule extends APIModule
                 $this->setResponseVersion($responseVersion);
                 break;
 
+            case 'categories':
+                $type     = $this->getArg('type', 'static');
+                $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+                $current  = $this->getArg('time', time());
+                $start    = $this->getStartArg($current);
+
+                $feed = $this->getFeed($calendar, $type);
+                $feed->setStartDate($start);
+                
+                $categories = $feed->getEventCategories($limit);
+                $response = $this->apiArrayFromCategories($categories);
+                
+                $this->setResponse($response);
+                $this->setResponseVersion($responseVersion);
+                break;
+
             case 'resources':
                 //break;
 
             case 'user':
-                //break;
-
-            case 'categories':
-                //break;
-
-            case 'category':
                 //break;
 
             default:
@@ -447,5 +494,4 @@ class CalendarAPIModule extends APIModule
                 break;
         }
     }
-
 }
