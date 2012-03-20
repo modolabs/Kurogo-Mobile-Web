@@ -1510,16 +1510,23 @@ abstract class WebModule extends Module {
     }
     
     if ($this->page == '__nativeWebTemplates') {
-        if (!Kurogo::isLocalhost()) {
-            throw new KurogoConfigurationException("{$this->page} command can only be run from localhost");
-        }
-        
-        $title = 'Success!';
-        $message = 'Generated native web templates for '.implode(' and ', explode(',', $this->getArg('platform')));
+        $title = 'Error!';
+        $message = '';
         try {
-            $this->buildNativeWebTemplates();
+            if (!Kurogo::isLocalhost()) {
+                throw new KurogoException("{$this->page} command can only be run from localhost");
+            }
+            
+            $platforms = array_filter(array_map('trim', explode(',', $this->getArg('platform', ''))));
+            if (!$platforms) {
+                throw new KurogoException("No platforms specified");
+            }
+            
+            $this->buildNativeWebTemplates($platforms);
+            
+            $title = 'Success!';
+            $message = 'Generated native web templates for '.implode(' and ', $platforms);
         } catch (Exception $e) {
-            $title = 'Error!';
             $message = $e->getMessage();
         }
         $this->assign('contentTitle', $title);
@@ -1649,7 +1656,7 @@ abstract class WebModule extends Module {
     return $template;
   }
 
-  protected function buildNativeWebTemplates() {
+  protected function buildNativeWebTemplates($platforms) {
       $pages = array_keys($this->getModuleSections('pages'));
       if ($pages) {
          $pages = array_diff($pages, array('pane')); 
@@ -1663,8 +1670,6 @@ abstract class WebModule extends Module {
       if ($nativeConfig && $nativeConfig['additional_assets']) {
           $additionalAssets = $nativeConfig['additional_assets'];
       }
-      
-      $platforms = explode(',', $this->getArg('platform', 'unknown'));
       
       foreach ($platforms as $platform) {
           // Phone version
