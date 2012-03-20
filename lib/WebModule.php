@@ -1510,6 +1510,10 @@ abstract class WebModule extends Module {
     }
     
     if ($this->page == '__nativeWebTemplates') {
+        if (!Kurogo::isLocalhost()) {
+            throw new KurogoConfigurationException("{$this->page} command can only be run from localhost");
+        }
+        
         $title = 'Success!';
         $message = 'Generated native web templates for '.implode(' and ', explode(',', $this->getArg('platform')));
         try {
@@ -1646,10 +1650,6 @@ abstract class WebModule extends Module {
   }
 
   protected function buildNativeWebTemplates() {
-      if (!Kurogo::isLocalhost()) {
-          throw new KurogoConfigurationException("{$this->page} command can only be run from localhost");
-      }
-  
       $pages = array_keys($this->getModuleSections('pages'));
       if ($pages) {
          $pages = array_diff($pages, array('pane')); 

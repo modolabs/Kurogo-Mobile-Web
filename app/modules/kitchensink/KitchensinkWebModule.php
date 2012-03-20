@@ -30,7 +30,11 @@ class KitchensinkWebModule extends WebModule {
                     }
                 }
                 if (!isset($item['url'])) {
-                    $item['url'] = "#";
+                    $args = $this->args;
+                    if (isset($item['title'])) {
+                        $args['title'] = $item['title'];
+                    }
+                    $item['url'] = $this->buildBreadcrumbURL($this->page, $args);
                 }
                 $list['items'][] = $item;
             }
@@ -87,6 +91,9 @@ class KitchensinkWebModule extends WebModule {
                 break;
                 
             case 'results':
+                if ($title = $this->getArg('title')) {
+                    $this->setPageTitles($title);
+                }
                 $this->assign('next',    'Next');
                 $this->assign('prev',    'Prev');
                 $this->assign('nextURL', $this->buildBreadcrumbURL($this->page, $this->args, false));
@@ -95,6 +102,9 @@ class KitchensinkWebModule extends WebModule {
                 break;
 
             case 'nav':
+                if ($title = $this->getArg('title')) {
+                    $this->setPageTitles($title);
+                }
                 $this->assign('lists', $this->getListsForPage($this->page));
                 break;
                 
