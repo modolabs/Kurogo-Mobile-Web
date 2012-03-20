@@ -496,7 +496,7 @@ class KurogoWebBridge
         return 'media'.DIRECTORY_SEPARATOR.'web_bridge';
     }
     
-    public static function getAssetsConfiguration($module) {
+    public static function getAvailableMediaInfo($module) {
         $files = array_merge(
             (array)glob(WEB_BRIDGE_DIR."/*/$module.zip"), 
             (array)glob(WEB_BRIDGE_DIR."/*/$module-tablet.zip")
@@ -518,9 +518,14 @@ class KurogoWebBridge
                 $key .= "-tablet";
             }
             
+            $file = realpath_exists($file);
+            if (!$file) { continue; }
+            
             $info[$key] = array(
-                'md5' => md5_file(realpath_exists($file)),
-                'url' => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$name.zip",
+                'url'   => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$name.zip",
+                'file'  => $file,
+                'mtime' => filemtime($file),
+                'md5'   => md5_file($file),
             );
         }
         return $info ? $info : null;
