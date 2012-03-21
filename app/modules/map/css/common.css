@@ -266,6 +266,7 @@ body.fullscreen #tabscontainer {
 	text-align: left;
 	padding: 8px 37px 8px 8px;
 	background: url(/modules/map/images/map-callout.png) no-repeat right;
+	background-size: 35px 31px;
 	overflow: hidden;
 }
 
