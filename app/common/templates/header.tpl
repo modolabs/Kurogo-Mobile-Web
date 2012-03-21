@@ -37,15 +37,15 @@
         <script src="{$PERCENT_MOBILE_URL}" type="text/javascript" charset="utf-8"></script>
     {/if}
     
-    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
-      <script type="text/javascript">{$inlineJavascriptBlock}</script>
-    {/foreach}
-    
     {foreach $javascriptURLs as $url}
       <script src="{$url|escape}" type="text/javascript"></script>
     {/foreach}
     
     <script src="{$minify['js']|escape}" type="text/javascript"></script>
+    
+    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
+      <script type="text/javascript">{$inlineJavascriptBlock}</script>
+    {/foreach}
 
     <script type="text/javascript">
       function onOrientationChange() {ldelim}
