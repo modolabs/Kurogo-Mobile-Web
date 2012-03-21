@@ -521,22 +521,23 @@ class MapWebModule extends WebModule {
         $categories = array();
         $places = array();
         $feeds = $this->getFeedData();
-        if (count($feeds) == 1) {
-            $this->assignItemsFromFeed(key($feeds));
 
-        } else {
-            foreach ($this->getFeedData() as $id => $feed) {
-                if (isset($feed['HIDDEN']) && $feed['HIDDEN']) {
-                    continue;
-                }
-                $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
-                $categories[] = array(
-                    'id'       => $id,
-                    'title'    => $feed['TITLE'],
-                    'subtitle' => $subtitle,
-                    'url'      => $this->feedURL($id),
-                    );
+        foreach ($this->getFeedData() as $id => $feed) {
+            if (isset($feed['HIDDEN']) && $feed['HIDDEN']) {
+                continue;
             }
+            $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
+            $categories[] = array(
+                'id'       => $id,
+                'title'    => $feed['TITLE'],
+                'subtitle' => $subtitle,
+                'url'      => $this->feedURL($id),
+                );
+        }
+
+        if (count($categories) == 1) {
+            $this->assignItemsFromFeed($categories[0]['id']);
+        } else {
             $this->assign('navItems', $categories);
         }
     }

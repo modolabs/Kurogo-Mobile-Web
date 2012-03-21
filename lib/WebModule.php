@@ -74,14 +74,6 @@ abstract class WebModule extends Module {
   //
   
   protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
-    $currentTab = $tabKeys[0];
-    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
-      $currentTab = $this->args['tab'];
-      
-    } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
-      $currentTab = $defaultTab;
-    }
-    
     // prefill from config to get order
     $tabs = array();
     foreach ($this->pageConfig as $key => $value) {
@@ -109,6 +101,15 @@ abstract class WebModule extends Module {
       $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
       
       $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
+    }
+    
+    // Figure which tab should be selected
+    $currentTab = reset(array_keys($tabs));
+    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
+      $currentTab = $this->args['tab'];
+      
+    } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
+      $currentTab = $defaultTab;
     }
     
     $this->tabbedView = array(
