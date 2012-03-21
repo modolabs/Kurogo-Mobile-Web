@@ -29,6 +29,9 @@ class KurogoWebBridge
     const FILE_TYPE_JAVASCRIPT = 'js';
     const FILE_TYPE_ASSET      = 'asset';
     
+    const STUB_API_CLASS = 'KurogoWebBridgeAPIModule';
+    const STUB_API_CLASS_FILE = __FILE__;
+    
     // This global could be removed by using closures (ie php 5.3+)
     static protected $currentInstance = null;
     protected $processingFileType = self::FILE_TYPE_HTML;
@@ -485,49 +488,96 @@ class KurogoWebBridge
     }
     
     //
-    //  Payload calls
+    //  Check for existence of media assets calls
     //
-    
-    public static function getAssetsPath() {
-        return 'media/web_bridge';
-    }
     
     public static function getAssetsDir() {
         return 'media'.DIRECTORY_SEPARATOR.'web_bridge';
     }
     
-    public static function getAvailableMediaInfo($module) {
-        $files = array_merge(
-            (array)glob(WEB_BRIDGE_DIR."/*/$module.zip"), 
-            (array)glob(WEB_BRIDGE_DIR."/*/$module-tablet.zip")
-        );
+    public static function getAvailableMediaInfoForModule($id) {
+        $cacheKey = "webbridge-mediainfo-$id";
         
-        $info = array();
-        foreach ($files as $file) {
-            $name = basename($file, '.zip');
-            $dir = realpath(dirname($file));
-            
-            $parts = explode(DIRECTORY_SEPARATOR, $dir);
-            if (!$parts) { continue; }
-            
-            $platform = end($parts);
-            if (!$platform) { continue; }
-            
-            $key = $platform;
-            if ($name == "$module-tablet") {
-                $key .= "-tablet";
+        // use memory cache to make this more efficient
+        $info = Kurogo::getCache($cacheKey);
+        if ($info === false) {
+            $files = array_merge(
+                (array)glob(WEB_BRIDGE_DIR."/*/$id.zip"), 
+                (array)glob(WEB_BRIDGE_DIR."/*/$id-tablet.zip")
+            );
+        
+            $info = array();
+            foreach ($files as $file) {
+                $name = basename($file, '.zip');
+                $dir = realpath(dirname($file));
+                
+                $parts = explode(DIRECTORY_SEPARATOR, $dir);
+                if (!$parts) { continue; }
+                
+                $platform = end($parts);
+                if (!$platform) { continue; }
+                
+                $key = $platform;
+                if ($name == "$id-tablet") {
+                    $key .= "-tablet";
+                }
+                
+                $file = realpath_exists($file);
+                if (!$file) { continue; }
+                
+                $info[$key] = array(
+                    'url'   => FULL_URL_PREFIX."media/web_bridge/$platform/$name.zip",
+                    'file'  => $file,
+                    'mtime' => filemtime($file),
+                    'md5'   => md5_file($file),
+                );
             }
-            
-            $file = realpath_exists($file);
-            if (!$file) { continue; }
-            
-            $info[$key] = array(
-                'url'   => FULL_URL_PREFIX.self::getAssetsPath()."/$platform/$name.zip",
-                'file'  => $file,
-                'mtime' => filemtime($file),
-                'md5'   => md5_file($file),
+            Kurogo::setCache($cacheKey, $info);
+        }
+        return $info ? $info : array();
+    }
+    
+    public static function moduleHasMediaAssets($id) {
+        return count(self::getAvailableMediaInfoForModule($id)) > 0;
+    }
+    
+    public static function getHelloMessageForModule($id) {
+        $bridgeConfig = array();
+        
+        $mediaInfo = KurogoWebBridge::getAvailableMediaInfoForModule($id);
+        foreach ($mediaInfo as $key => $mediaItem) {
+            $bridgeConfig[$key] = array(
+                'md5' => $mediaItem['md5'],
+                'url' => $mediaItem['url'],
             );
         }
-        return $info ? $info : null;
+        
+        return $bridgeConfig ? $bridgeConfig : null;
+    }
+}
+
+//
+// This class is instantiated for modules with WebBridge support
+// but which do not have an API.
+//
+class KurogoWebBridgeAPIModule extends APIModule {
+    protected $id = '';
+    protected $vmin = 1;
+    protected $vmax = 1;
+    
+    // web bridge modules do not know their ids
+    public function setID($id) {
+        $this->id = $id;
+        if (!$this->configModule) {
+            $this->configModule = $this->id;
+        }
+    }
+    
+    protected function initializeForCommand() {
+        switch ($this->command) {
+            default:
+                $this->invalidCommand();
+                break;
+        }
     }
 }
