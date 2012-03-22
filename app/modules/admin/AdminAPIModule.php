@@ -140,7 +140,15 @@ class AdminAPIModule extends APIModule
                     if (isset($field['value'])) {
                         // value is set. used typically for hidden fields
                     } elseif (isset($field['valueMethod'])) {
-                        $field['value'] = call_user_func(array($module, $field['valueMethod']));
+                        if (is_array($field['valueMethod'])) {
+                            $method = array_shift($field['valueMethod']);
+                            $field['value'] = call_user_func_array(array($module, $method), $field['valueMethod']);
+                        } else {
+                            $field['value'] = call_user_func(array($module, $field['valueMethod']));
+                        }
+                        if (is_null($field['value']) && isset($field['default'])) {
+                            $field['value'] = $field['default'];
+                        }
                         unset($field['valueMethod']);
                     } elseif (isset($field['valueKey'])) {
                         $field['value'] = $module->getLocalizedString($field['valueKey']);
@@ -189,10 +197,13 @@ class AdminAPIModule extends APIModule
                     }
     
                     if (isset($field['value'])) {
-                        $value = $this->getUnconstantedValue($field['value'], $constant);
-                        if ($constant) {
-                            $field['value'] = $value;
-                            $field['constant'] = $constant;
+                        $useConstant = isset($field['useConstant']) ? $field['useConstant'] : true;
+                        if ($useConstant) {
+                            $value = $this->getUnconstantedValue($field['value'], $constant);
+                            if ($constant) {
+                                $field['value'] = $value;
+                                $field['constant'] = $constant;
+                            }
                         }
                     }
                 }
