@@ -1655,6 +1655,28 @@ abstract class WebModule extends Module {
     
     return $template;
   }
+  
+  public function getLastNativeWebTemplatesBuildForPlatform($platform) {
+    $media = KurogoWebBridge::getAvailableMediaInfoForModule($this->configModule);
+    if (isset($media[$platform])) {
+        return $this->elapsedTime($media[$platform]['mtime']);
+    }
+    
+    return null;
+  }
+
+  public function getNativeWebTemplatesURLForPlatform($platform) {
+    $media = KurogoWebBridge::getAvailableMediaInfoForModule($this->configModule);
+    if (isset($media[$platform])) {
+        return $media[$platform]['url'];
+    }
+    
+    return null;
+  }
+
+  public function buildNativeWebTemplatesForPlatform($platform) {
+    return $this->buildNativeWebTemplates(array($platform));
+  }
 
   protected function buildNativeWebTemplates($platforms) {
       $pages = array_keys($this->getModuleSections('pages'));
