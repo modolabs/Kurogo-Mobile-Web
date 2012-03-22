@@ -264,8 +264,9 @@ body.fullscreen #tabscontainer {
 	font-size: 15px;
 	line-height: 18px;	
 	text-align: left;
-	padding: 8px 20px 8px 8px;
-	background: url(/common/images/action-arrow.png) no-repeat right;
+	padding: 8px 37px 8px 8px;
+	background: url(/modules/map/images/map-callout.png) no-repeat right;
+	background-size: 35px 31px;
 	overflow: hidden;
 }
 
@@ -276,6 +277,17 @@ body.fullscreen #tabscontainer {
 .calloutDisclosure {
     margin: 6px 0;
 }
+
+.calloutTail {
+	position: absolute;
+	bottom: -10px;
+	width: 12px;
+	height: 10px;
+	left: 50%;
+	margin-left: -6px;
+	background: url(/modules/map/images/callout-tail.png) no-repeat center;
+	background-size: 12px 10px;
+}	
 
 #mapimage_infowindow {
     height: auto !important;

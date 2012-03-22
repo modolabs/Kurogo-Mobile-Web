@@ -32,7 +32,9 @@ KGOMapLoader.prototype.showDefaultCallout = function() {
     for (var id in this.placemarks) {
         count++;
         thePlacemark = id;
-        break;
+        if (count > 1) {
+            break;
+        }
     }
 
     if (count == 1) {
@@ -88,6 +90,7 @@ KGOMapLoader.prototype.generateInfoWindowContent = function(attribs) {
     if ("subtitle" in attribs && attribs["subtitle"] !== null) {
         content += '<div class="smallprint map_address">' + attribs["subtitle"] + '</div>';
     }
+    content += '<div class="calloutTail"></div>';
 
     var div = document.createElement("div");
     div.className = "calloutMain";

@@ -1,7 +1,7 @@
 var localizedStrings = {}
 
 $(document).ready(function() {
-    getLocalizedString(['BUTTON_ADD','BUTTON_EDIT','BUTTON_DONE','BUTTON_REMOVE','CONFIG_SAVED','ACTION_SUCCESSFUL','ADMIN_SECTION_REMOVE_PROMPT','ADMIN_SECTION_ADD_PROMPT']);            
+    getLocalizedString(['BUTTON_ADD','BUTTON_EDIT','BUTTON_DONE','BUTTON_REMOVE','CONFIG_SAVED','ACTION_RUNNING','ACTION_SUCCESSFUL','ADMIN_SECTION_REMOVE_PROMPT','ADMIN_SECTION_ADD_PROMPT']);            
     $('#message').hide();
 });
 
@@ -221,12 +221,34 @@ function appendFormField(parent, key, fieldData) {
         case 'label':
             parent.append('<span class="labeltext">'+fieldData.value+'</span>');
             break;
+        case 'link':
+            if (fieldData.value) {
+                parent.append('<a href="'+ fieldData.value +'">'+fieldData.value+'</a>');
+            }
+            break;
+        
         case 'hidden':
             parent.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', fieldData.value).addClass(inputClass).attr('id',id)).addClass('hidden');
             break;
             
         case 'action':
+            if (fieldData.dynamicParams) {
+                if (typeof fieldData.params == 'undefined') {
+                    fieldData.params = {}
+                }
+
+                for (param in fieldData.dynamicParams) {
+                    switch (fieldData.dynamicParams[param])
+                    {
+                        case 'moduleID':
+                            fieldData.params.module = moduleID;
+                            break;
+                    }
+                }
+            }
+        
             parent.append($('<a class="formbutton"">').append($('<div>').html(fieldData.value)).click(function() {
+                showMessage(fieldData.runningMessage ? fieldData.runningMessage : getLocalizedString('ACTION_RUNNING'), false, true);
                 makeAPICall('GET','admin',fieldData.action, fieldData.params, function() { 
                     showMessage(fieldData.message ? fieldData.message : getLocalizedString('ACTION_SUCCESSFUL'));
                 });

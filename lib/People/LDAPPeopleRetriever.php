@@ -242,6 +242,8 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     }
 
     protected function init($args) {
+        $args['PERSON_CLASS'] = isset($args['PERSON_CLASS']) ? $args['PERSON_CLASS'] : $this->personClass;
+    
         parent::init($args);
         
         if (isset($args['HOST'])) {
