@@ -229,6 +229,7 @@ abstract class DataRetriever {
     
     public function clearInternalCache() {
         $this->options = array();
+        $this->context = array();
         $this->requestInit = false;
         $this->parser()->clearInternalCache();
     }
