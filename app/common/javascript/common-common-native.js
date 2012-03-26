@@ -258,7 +258,7 @@
             // status callback
             var callbackId = this.callbackIdCounter++;
             this.callbacks[callbackId] = {
-                "callback"  : function (error, params) {
+                "callback" : function (error, params) {
                     if (typeof statusCallback != "undefined" && statusCallback) {
                         statusCallback(error, params);
                     }
@@ -332,6 +332,12 @@
         },
         
         loadURL: function (url) {
+            var lcURL = url.toLowerCase();
+            if (lcURL.indexOf("http://") == 0 || lcURL.indexOf("https://") == 0) {
+                // wrap external URLs so that we don't get confused by other iframes
+                url = "kgobridge://extlink/?url=".encodeURIComponent(url);
+            }
+            
             if (this.config.events) {
                 var iframe = document.createElement("IFRAME");
                 iframe.setAttribute("src", url);
