@@ -338,7 +338,7 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
         }
     }
 
-    private static function nonStandardTimezones() {
+    private static function timezoneMap() {
     	return array(
     		'US-Eastern' => 'America/New_York',
     		'US-Central' => 'America/Chicago',
@@ -348,21 +348,18 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
     }
     
     private static function timezoneFilter($tzid) {
-    	$nonStandardTimezones = self::nonStandardTimezones();
-    	if(array_key_exists($tzid, $nonStandardTimezones)) {
-    		return $nonStandardTimezones[$tzid];
-    	}else{
-    		return null;
+    	$timezoneMap = self::timezoneMap();
+    	if(array_key_exists($tzid, $timezoneMap)) {
+    		$tzid = $timezoneMap[$tzid];
     	}
+    	
+        return $tzid;
     }
     
     private static function getTimezoneForID($tzid) {
+        $tzid = self::timezoneFilter($tzid);
         try {
-        	if($timezone = self::timezoneFilter($tzid)) {
-        		return new DateTimeZone($timezone);
-        	}else{
-	            $timezone = new DateTimeZone($tzid);
-        	}
+            $timezone = new DateTimeZone($tzid);
         } catch (Exception $e) {
             Kurogo::log(LOG_WARNING, "Invalid timezone $tzid found when processing calendar", 'data');
             $timezone = null;
