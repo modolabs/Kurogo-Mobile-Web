@@ -17,6 +17,11 @@ class ICSDataParser extends DataParser
     protected function unfold($text) {
         return str_replace("\n ", "", $text);
     }
+    
+    protected function cleanContent($contents) {
+        $contents = str_replace("\r\n", "\n", trim($contents));
+        return $contents;
+    }
 
     public function getEventCategories()
     {
@@ -100,7 +105,8 @@ class ICSDataParser extends DataParser
         }
         $nesting = array();
         $nestingType = array();
-        $contents = str_replace("\r\n", "\n", $contents);
+        //all leading and trailing whitespace will be ignored
+        $contents = $this->cleanContent($contents);
         $lines = explode("\n", $this->unfold($contents));
         foreach ($lines as $line) {
             $contentline = $this->contentline($line);
