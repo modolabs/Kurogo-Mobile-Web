@@ -11,6 +11,7 @@ if (!function_exists('ldap_connect')) {
 define("LDAP_TIMELIMIT_EXCEEDED", 0x03);
 define("LDAP_SIZELIMIT_EXCEEDED", 0x04);
 define("LDAP_PARTIAL_RESULTS", 0x09);
+define("LDAP_ADMINLIMIT_EXCEEDED", 0x0B);
 define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 
 /**
@@ -232,12 +233,13 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             LDAP_PARTIAL_RESULTS => "There are more results than can be displayed. Please refine your search.",
             LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
             LDAP_INSUFFICIENT_ACCESS => "Insufficient permission to view this information.",
+            LDAP_ADMINLIMIT_EXCEEDED => "There are more results than can be displayed. Please refine your search."
         );
 
         if(isset($error_codes[$error_code])) {
             return $error_codes[$error_code];
         } else { // return a generic error message
-            return "Your request cannot be processed at this time. ($error_code)";
+            return ldap_err2str($error_code);
         }
     }
 
