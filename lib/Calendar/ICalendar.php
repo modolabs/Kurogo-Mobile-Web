@@ -337,10 +337,32 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
             $this->geo = implode(';', array_values($coordinates));
         }
     }
+
+    private static function nonStandardTimezones() {
+    	return array(
+    		'US-Eastern' => 'America/New_York',
+    		'US-Central' => 'America/Chicago',
+    		'US-Mountain' => 'America/Denver',
+    		'US-Pacific' => 'America/Los_Angeles',
+    	);
+    }
+    
+    private static function timezoneFilter($tzid) {
+    	$nonStandardTimezones = self::nonStandardTimezones();
+    	if(array_key_exists($tzid, $nonStandardTimezones)) {
+    		return $nonStandardTimezones[$tzid];
+    	}else{
+    		return null;
+    	}
+    }
     
     private static function getTimezoneForID($tzid) {
         try {
-            $timezone = new DateTimeZone($tzid);
+        	if($timezone = self::timezoneFilter($tzid)) {
+        		return new DateTimeZone($timezone);
+        	}else{
+	            $timezone = new DateTimeZone($tzid);
+        	}
         } catch (Exception $e) {
             Kurogo::log(LOG_WARNING, "Invalid timezone $tzid found when processing calendar", 'data');
             $timezone = null;
