@@ -22,89 +22,16 @@
         callbacks : {},
         callbackIdCounter : 0,
         
-        localizedString: function (key) {
-            if (key in this.config.localizedStrings) {
-                return this.config.localizedStrings[key];
-            } else {
-                return key;
-            }
+        // This code list is duplicated in iOS and Android code.  
+        // Do not change existing codes!
+        errorCodes : {
+            KGOBridgeErrorAPINotSupported : 1,
+            KGOBridgeErrorJSONConvertFailed : 2
         },
         
-        ajaxLoad: function () {
-            var pageURL = this.config.url+this.config.pagePath+"?"+this.config.ajaxArgs;
-            if (this.config.pageArgs.length) {
-                pageURL += "&"+this.config.pageArgs;
-            }
-            var timeout = this.config.timeout * 1000;
-            
-            var httpRequest = new XMLHttpRequest();
-            httpRequest.open("GET", pageURL, true);
-            
-            var that = this;
-            
-            var requestTimer = setTimeout(function() {
-                // some browsers set readyState to 4 on abort so remove handler first
-                httpRequest.onreadystatechange = function() { };
-                httpRequest.abort();
-                
-                that.initPageError(408); // http request timeout status code
-            }, timeout);
-            
-            httpRequest.onreadystatechange = function() {
-                // return if still in progress
-                if (httpRequest.readyState != 4) { return; }
-                
-                // Got answer, don't abort
-                clearTimeout(requestTimer);
-                
-                if (httpRequest.status == 200) {
-                    // Success
-                    var container = document.getElementById("container");
-                    container.innerHTML = httpRequest.responseText;
-                    
-                    // Grab script tags and appendChild them so they get evaluated
-                    var scripts = container.getElementsByTagName("script");
-                    var count = scripts.length; // scripts.length will change as we add elements
-                    
-                    for (var i = 0; i < count; i++) {
-                        var script = document.createElement("script");
-                        script.type = "text/javascript";
-                        script.text = scripts[i].text;
-                        container.appendChild(script);
-                    }
-                    
-                    if (typeof kgoBridgeOnAjaxLoad != 'undefined') {
-                        kgoBridgeOnAjaxLoad();
-                    } else {
-                        console.log("Warning! kgoBridgeOnAjaxLoad is not defined by the page content");
-                    }
-                    
-                } else {
-                    // Error
-                    that.initPageError(httpRequest.status);
-                }
-            }
-            
-            httpRequest.send(null);
-        },
-        
-        bridgeToAjaxLink: function (href) {
-            // must be able to pass through non-kgobridge links
-            var bridgePrefix = "kgobridge://link/";
-            var oldhref= href;
-            if (href.indexOf(bridgePrefix) == 0) {
-                href = this.config.url+"/"+href.substr(bridgePrefix.length);
-                
-                var anchor = '';
-                var anchorPos = href.indexOf("#");
-                if (anchorPos > 0) {
-                    anchor = href.substr(anchorPos);
-                    href = href.substr(0, anchorPos);
-                }
-                href = href+(href.indexOf("?") > 0 ? "&" : "?")+this.config.ajaxArgs+anchor;
-            }
-            return href;
-        },
+        // ====================================================================
+        // Bridge API
+        // ====================================================================
         
         //
         // Page load
@@ -120,8 +47,26 @@
         // Errors
         //
         
-        initPageError: function (status, title, message) {
-            this.handleError("pageinit", status, title, message);
+        initPageError: function (httpStatus, title, message) {
+            switch (httpStatus) {
+                case 401:
+                case 407:
+                    title = this.localizedString("ERROR_HTTP_UNAUTHORIZED_REQUEST_TITLE");
+                    message = this.localizedString("ERROR_HTTP_UNAUTHORIZED_REQUEST_MESSAGE");
+                    break;
+                case 408:
+                    title = this.localizedString("ERROR_HTTP_CONNECTION_TIMEOUT_TITLE");
+                    message = this.localizedString("ERROR_HTTP_CONNECTION_TIMEOUT_MESSAGE");
+                    break;
+                case 404:
+                case 503:
+                default:
+                    title = this.localizedString("ERROR_HTTP_CONNECTION_FAILED_TITLE");
+                    message = this.localizedString("ERROR_HTTP_CONNECTION_FAILED_MESSAGE");
+                    break;
+            }
+            
+            this.handleError("pageinit", httpStatus, title, message);
         },
 
         handleError: function (errorType, code, title, message) {
@@ -297,9 +242,9 @@
             }]);
         },
         
-        //
+        // ====================================================================
         // Low level implementation
-        //
+        // ====================================================================
         
         nativeAPI: function (category, type, params, statusCallback, additionalCallbacks) {
             var url = "kgobridge://"+escape(category)+"/"+escape(type);
@@ -396,6 +341,90 @@
             } else if (typeof console != "undefined" && typeof console.log != "undefined") {
                 console.log("DEBUG_MODE: kgoBridge would have called "+url);
             }
+        },
+        
+        localizedString: function (key) {
+            if (key in this.config.localizedStrings) {
+                return this.config.localizedStrings[key];
+            } else {
+                return key;
+            }
+        },
+        
+        ajaxLoad: function () {
+            var pageURL = this.config.url+this.config.pagePath+"?"+this.config.ajaxArgs;
+            if (this.config.pageArgs.length) {
+                pageURL += "&"+this.config.pageArgs;
+            }
+            var timeout = this.config.timeout * 1000;
+            
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open("GET", pageURL, true);
+            
+            var that = this;
+            
+            var requestTimer = setTimeout(function() {
+                // some browsers set readyState to 4 on abort so remove handler first
+                httpRequest.onreadystatechange = function() { };
+                httpRequest.abort();
+                
+                that.initPageError(408); // http request timeout status code
+            }, timeout);
+            
+            httpRequest.onreadystatechange = function() {
+                // return if still in progress
+                if (httpRequest.readyState != 4) { return; }
+                
+                // Got answer, don't abort
+                clearTimeout(requestTimer);
+                
+                if (httpRequest.status == 200) {
+                    // Success
+                    var container = document.getElementById("container");
+                    container.innerHTML = httpRequest.responseText;
+                    
+                    // Grab script tags and appendChild them so they get evaluated
+                    var scripts = container.getElementsByTagName("script");
+                    var count = scripts.length; // scripts.length will change as we add elements
+                    
+                    for (var i = 0; i < count; i++) {
+                        var script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.text = scripts[i].text;
+                        container.appendChild(script);
+                    }
+                    
+                    if (typeof kgoBridgeOnAjaxLoad != 'undefined') {
+                        kgoBridgeOnAjaxLoad();
+                    } else {
+                        console.log("Warning! kgoBridgeOnAjaxLoad is not defined by the page content");
+                    }
+                    
+                } else {
+                    // Error
+                    that.initPageError(httpRequest.status);
+                }
+            }
+            
+            httpRequest.send(null);
+        },
+        
+        bridgeToAjaxLink: function (href) {
+            // must be able to pass through non-kgobridge links
+            var bridgePrefix = "kgobridge://link/";
+            var oldhref= href;
+            if (href.indexOf(bridgePrefix) == 0) {
+                href = this.config.url+"/"+href.substr(bridgePrefix.length);
+                
+                var anchor = '';
+                var anchorPos = href.indexOf("#");
+                if (anchorPos > 0) {
+                    anchor = href.substr(anchorPos);
+                    href = href.substr(0, anchorPos);
+                }
+                href = href+(href.indexOf("?") > 0 ? "&" : "?")+this.config.ajaxArgs+anchor;
+            }
+            return href;
         }
     };
     

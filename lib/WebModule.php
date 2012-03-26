@@ -1522,7 +1522,9 @@ abstract class WebModule extends Module {
                 throw new KurogoException("No platforms specified");
             }
             
-            $this->buildNativeWebTemplates($platforms);
+            foreach ($platforms as $platform) {
+                $this->buildNativeWebTemplatesForPlatform($platform);
+            }
             
             $title = 'Success!';
             $message = 'Generated native web templates for '.implode(' and ', $platforms);
@@ -1675,10 +1677,6 @@ abstract class WebModule extends Module {
   }
 
   public function buildNativeWebTemplatesForPlatform($platform) {
-    return $this->buildNativeWebTemplates(array($platform));
-  }
-
-  protected function buildNativeWebTemplates($platforms) {
       $pages = array_keys($this->getModuleSections('pages'));
       if ($pages) {
          $pages = array_diff($pages, array('pane')); 
@@ -1693,16 +1691,14 @@ abstract class WebModule extends Module {
           $additionalAssets = $nativeConfig['additional_assets'];
       }
       
-      foreach ($platforms as $platform) {
-          // Phone version
-          $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_PHONE, $platform, KurogoWebBridge::BROWSER);
+      // Phone version
+      $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_PHONE, $platform, KurogoWebBridge::BROWSER);
+      $rewriter->saveTemplates($pages, $additionalAssets);
+      
+      if (Kurogo::getOptionalSiteVar('NATIVE_TABLET_ENABLED', 1)) {
+          // Tablet version
+          $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_TABLET, $platform, KurogoWebBridge::BROWSER);
           $rewriter->saveTemplates($pages, $additionalAssets);
-          
-          if (Kurogo::getOptionalSiteVar('NATIVE_TABLET_ENABLED', 1)) {
-              // Tablet version
-              $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_TABLET, $platform, KurogoWebBridge::BROWSER);
-              $rewriter->saveTemplates($pages, $additionalAssets);
-          }
       }
   }
 
