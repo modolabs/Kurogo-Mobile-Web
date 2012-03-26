@@ -10,6 +10,8 @@ class DataResponse
     protected $responseCode;
     protected $responseStatus;
     protected $responseError;
+    // target encoding
+    protected $sourceEncoding;
     protected $context=array(); // response defined.
 
     public function getResponseFile() {
@@ -44,6 +46,9 @@ class DataResponse
     }
     
     public function init($args) {
+        if(isset($args['SOURCE_ENCODING']) && strlen($args['SOURCE_ENCODING']) > 0) {
+            $this->sourceEncoding = $args['SOURCE_ENCODING'];
+        }
     }
     
     public function getResponse() {
@@ -64,6 +69,10 @@ class DataResponse
     
     public function setResponse($response) {
         $this->responseTimestamp = time();
+        // only string can be converted to specified encoding
+        if($this->sourceEncoding && is_string($response)) {
+            $response = mb_convert_encoding($response, "UTF-8", $this->sourceEncoding);
+        }
         $this->response = $response;
     }    
 
