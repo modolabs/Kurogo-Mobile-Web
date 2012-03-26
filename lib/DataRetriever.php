@@ -133,11 +133,7 @@ abstract class DataRetriever {
     }
     
     protected function initResponse() {
-        $options = array();
-        if (isset($this->initArgs['SOURCE_ENCODING'])) {
-            $options['SOURCE_ENCODING'] = $this->initArgs['SOURCE_ENCODING'];
-        }
-        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, $options);
+        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, $this->initArgs);
         foreach ($this->context as $var=>$value) {
             $response->setContext($var, $value);
         }
