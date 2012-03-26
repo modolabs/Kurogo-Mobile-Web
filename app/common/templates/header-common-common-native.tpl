@@ -22,6 +22,13 @@
   {* will be called by onAjaxLoad() *}
 {/block}
 
+{block name="css"}
+  <style type="text/css">
+  * { -webkit-touch-callout: none; }
+  </style>
+  {$smarty.block.parent}
+{/block}
+
 {block name="javascript"}
   <script type="text/javascript">
       // Native apps replace this with js which fixes per-OS/version issues
