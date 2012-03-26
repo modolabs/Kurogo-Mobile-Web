@@ -11,6 +11,7 @@ if (!function_exists('ldap_connect')) {
 define("LDAP_TIMELIMIT_EXCEEDED", 0x03);
 define("LDAP_SIZELIMIT_EXCEEDED", 0x04);
 define("LDAP_PARTIAL_RESULTS", 0x09);
+define("LDAP_ADMINLIMIT_EXCEEDED", 0x0B);
 define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 
 /**
@@ -228,17 +229,15 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected function generateErrorMessage($error_code) {
         $error_codes = array(
             // LDAP error codes.
-            LDAP_SIZELIMIT_EXCEEDED => Kurogo::getLocalizedString('LDAP_SIZELIMIT_EXCEEDED'),
-            LDAP_PARTIAL_RESULTS => Kurogo::getLocalizedString('LDAP_PARTIAL_RESULTS'),
-            LDAP_TIMELIMIT_EXCEEDED => Kurogo::getLocalizedString('LDAP_TIMELIMIT_EXCEEDED'),
-            LDAP_INSUFFICIENT_ACCESS => Kurogo::getLocalizedString('LDAP_INSUFFICIENT_ACCESS'),
+            LDAP_SIZELIMIT_EXCEEDED =>'ERROR_TOO_MANY_RESULTS',
+            LDAP_PARTIAL_RESULTS => 'ERROR_TOO_MANY_RESULTS',
+            LDAP_TIMELIMIT_EXCEEDED => 'ERROR_SERVER',
+            LDAP_INSUFFICIENT_ACCESS => 'ERROR_SERVER',
+            LDAP_ADMINLIMIT_EXCEEDED => 'ERROR_TOO_MANY_RESULTS'
         );
-
-        if(isset($error_codes[$error_code])) {
-            return $error_codes[$error_code];
-        } else { // return a generic error message
-            return sprintf(Kurogo::getLocalizedString('LDAP_GENERIC_ERROR'), $error_code);
-        }
+        
+        $key = isset($error_codes[$error_code]) ? $error_codes[$error_code] : 'LDAP_GENERIC_ERROR';
+        return Kurogo::getLocalizedString($key, $error_code);
     }
 
     protected function init($args) {
