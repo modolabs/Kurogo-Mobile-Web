@@ -237,7 +237,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         if(isset($error_codes[$error_code])) {
             return $error_codes[$error_code];
         } else { // return a generic error message
-            return "Your request cannot be processed at this time. ($error_name)";
+            return "Your request cannot be processed at this time. ($error_code)";
         }
     }
 
