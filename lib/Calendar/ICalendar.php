@@ -337,8 +337,27 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
             $this->geo = implode(';', array_values($coordinates));
         }
     }
+
+    private static function timezoneMap() {
+    	return array(
+    		'US-Eastern' => 'America/New_York',
+    		'US-Central' => 'America/Chicago',
+    		'US-Mountain' => 'America/Denver',
+    		'US-Pacific' => 'America/Los_Angeles',
+    	);
+    }
+    
+    private static function timezoneFilter($tzid) {
+    	$timezoneMap = self::timezoneMap();
+    	if(array_key_exists($tzid, $timezoneMap)) {
+    		$tzid = $timezoneMap[$tzid];
+    	}
+    	
+        return $tzid;
+    }
     
     private static function getTimezoneForID($tzid) {
+        $tzid = self::timezoneFilter($tzid);
         try {
             $timezone = new DateTimeZone($tzid);
         } catch (Exception $e) {

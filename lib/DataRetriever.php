@@ -133,7 +133,7 @@ abstract class DataRetriever {
     }
     
     protected function initResponse() {
-        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, array());
+        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, $this->initArgs);
         foreach ($this->context as $var=>$value) {
             $response->setContext($var, $value);
         }
