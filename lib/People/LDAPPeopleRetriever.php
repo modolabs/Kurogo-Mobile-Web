@@ -229,18 +229,15 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected function generateErrorMessage($error_code) {
         $error_codes = array(
             // LDAP error codes.
-            LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed. Please refine your search.",
-            LDAP_PARTIAL_RESULTS => "There are more results than can be displayed. Please refine your search.",
-            LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
-            LDAP_INSUFFICIENT_ACCESS => "Insufficient permission to view this information.",
-            LDAP_ADMINLIMIT_EXCEEDED => "There are more results than can be displayed. Please refine your search."
+            LDAP_SIZELIMIT_EXCEEDED =>'ERROR_TOO_MANY_RESULTS',
+            LDAP_PARTIAL_RESULTS => 'ERROR_TOO_MANY_RESULTS',
+            LDAP_TIMELIMIT_EXCEEDED => 'ERROR_SERVER',
+            LDAP_INSUFFICIENT_ACCESS => 'ERROR_SERVER',
+            LDAP_ADMINLIMIT_EXCEEDED => 'ERROR_TOO_MANY_RESULTS'
         );
-
-        if(isset($error_codes[$error_code])) {
-            return $error_codes[$error_code];
-        } else { // return a generic error message
-            return ldap_err2str($error_code);
-        }
+        
+        $key = isset($error_codes[$error_code]) ? $error_codes[$error_code] : 'ERROR_GENERIC_SERVER_ERROR';
+        return Kurogo::getLocalizedString($key, $error_code, ldap_err2str($error_code));
     }
 
     protected function init($args) {
