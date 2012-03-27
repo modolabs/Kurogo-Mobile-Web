@@ -29,10 +29,10 @@
             </tr>
           </table>
           {foreach $hiddenArgs as $arg => $value}
-            <input type="hidden" name="{$arg}" value="{$value}" />
+            <input type="hidden" name="{$arg}" value="{$value|escape}" />
           {/foreach}
           {foreach $breadcrumbSamePageArgs as $arg => $value}
-            <input type="hidden" name="{$arg}" value="{$value}" />
+            <input type="hidden" name="{$arg}" value="{$value|escape}" />
           {/foreach}
         </form>
   
@@ -51,10 +51,10 @@
             </tr>
           </table>
           {foreach $hiddenArgs as $arg => $value}
-            <input type="hidden" name="{$arg}" value="{$value}" />
+            <input type="hidden" name="{$arg}" value="{$value|escape}" />
           {/foreach}
           {foreach $breadcrumbArgs as $arg => $value}
-            <input type="hidden" name="{$arg}" value="{$value}" />
+            <input type="hidden" name="{$arg}" value="{$value|escape}" />
           {/foreach}
         </form>
       </div>
