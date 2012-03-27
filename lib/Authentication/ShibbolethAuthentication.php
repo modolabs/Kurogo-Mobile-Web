@@ -72,6 +72,8 @@ class ShibbolethUser extends User
             if ( ($field = $this->AuthenticationAuthority->getField('lastname')) && isset($_SERVER[$field])) {
                 $this->setLastName($_SERVER[$field]);
             }
+            
+            return true;
         }
     }
 }
