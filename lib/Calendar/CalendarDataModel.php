@@ -86,6 +86,7 @@ class CalendarDataModel extends ItemListDataModel
     }
 
     public function getEventsByCategory($cateID) {
+        $limit = $this->getLimit();
         $this->setLimit(null);
         $items = $this->items();
         $events = array();
@@ -94,6 +95,9 @@ class CalendarDataModel extends ItemListDataModel
             if(in_array($cateID, $eventCategories)) {
                 $events[] = $item;
             }
+        }
+        if ($limit) {
+            $events = $this->limitItems($events, 0, $limit);
         }
         return $events;
     }

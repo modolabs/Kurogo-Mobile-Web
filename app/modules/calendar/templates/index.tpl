@@ -16,6 +16,10 @@
   {include file="findInclude:common/templates/navlist.tpl" navlistItems=$resources}
 {/if}
 
+{if count($categories)}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories}
+{/if}
+
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$calendarPages}
 
 {capture name="selectSection" assign="selectSection"}
