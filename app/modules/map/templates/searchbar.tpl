@@ -10,7 +10,7 @@
                     <input id="search_terms"
                         class="search-form"
                         type="text"
-                        value="{$searchTerms|default:''}"
+                        value="{$searchTerms|default:''|escape}"
                         name="filter"
                         placeholder={"MAP_SEARCH_PLACEHOLDER"|getLocalizedString}
                         onfocus="androidPlaceholderFix(this);showSearchFormButtons();" />
