@@ -335,7 +335,7 @@
             var lcURL = url.toLowerCase();
             if (lcURL.indexOf("http://") == 0 || lcURL.indexOf("https://") == 0) {
                 // wrap external URLs so that we don't get confused by other iframes
-                url = "kgobridge://extlink/?url=".encodeURIComponent(url);
+                url = "kgobridge://external/link?url="+encodeURIComponent(url);
             }
             
             if (this.config.events) {
