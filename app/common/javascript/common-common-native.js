@@ -136,9 +136,7 @@
                 if ("button" in params && params["button"].indexOf('alternate') === 0) {
                     var index = +params["button"].substr(9);
                     if (index >= 0 && index < actionURLs.length) {
-                        setTimeout(function () {
-                            that.loadURL(actionURLs[index]);
-                        }, 100);
+                        that.loadURL(actionURLs[index]);
                     }
                 }
             });
@@ -169,9 +167,18 @@
             
             var additionalCallbacks = [];
             if (typeof buttonCallback != "undefined") {
+                // give native dialog time to dismiss
+                var delayedButtonCallback = function () {
+                    var that = this;
+                    var args = arguments;
+                    setTimeout(function () {
+                        buttonCallback.apply(that, args);
+                    }, 100);
+                };
+                
                 additionalCallbacks.push({
                     "param"     : "buttonClickedCallback",
-                    "callback"  : buttonCallback,
+                    "callback"  : delayedButtonCallback,
                     "repeating" : false
                 });
             }
@@ -189,7 +196,7 @@
             };
             
             // optional params
-            if (typeof destructiveActionTitle == "string") {
+            if (typeof destructiveButtonTitle == "string") {
                 params["destructiveButtonTitle"] = destructiveButtonTitle;
             }
             if (typeof alternateButtonTitles != "undefined") {
@@ -203,9 +210,18 @@
             
             var additionalCallbacks = [];
             if (typeof buttonCallback != "undefined") {
+                // give native dialog time to dismiss
+                var delayedButtonCallback = function () {
+                    var that = this;
+                    var args = arguments;
+                    setTimeout(function () {
+                        buttonCallback.apply(that, args);
+                    }, 100);
+                };
+                
                 additionalCallbacks.push({
                     "param"     : "buttonClickedCallback",
-                    "callback"  : buttonCallback,
+                    "callback"  : delayedButtonCallback,
                     "repeating" : false
                 });
             }

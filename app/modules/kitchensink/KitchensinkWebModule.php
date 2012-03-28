@@ -47,7 +47,7 @@ class KitchensinkWebModule extends WebModule {
     protected function initializeForPage() {
         switch ($this->page) {
             case 'index':
-                $this->assign('links', array(
+                $links = array(
                     array(
                         'title' => 'Text',
                         'url'   => $this->buildBreadcrumbURL('text', array()),
@@ -68,7 +68,14 @@ class KitchensinkWebModule extends WebModule {
                         'title' => 'Detail',
                         'url'   => $this->buildBreadcrumbURL('detail', array()),
                     ),
-                ));
+                );
+                if ($this->browser == 'native') {
+                    $links[] = array(
+                        'title' => 'AppQ Dialogs',
+                        'url'   => $this->buildBreadcrumbURL('dialogs', array()),
+                    );
+                }
+                $this->assign('links', $links);
                 break;
                 
             case 'text':
@@ -129,7 +136,29 @@ class KitchensinkWebModule extends WebModule {
                 }
                 $this->enableTabs(array_keys($detailConfig['tabs']));
                 break;
-
+                
+            case 'dialogs':
+                $buttons = array();
+                
+                $configs = $this->loadPageConfigFile($this->page, false);
+                foreach ($configs as $config) {
+                    if (!isset($config['title'], 
+                               $config['description'], 
+                               $config['api'], 
+                               $config['arguments'])) {
+                        continue;
+                    }
+                    
+                    $buttons[] = array(
+                        'title'       => $config['title'],
+                        'description' => $config['description'],
+                        'javascript'  => "kgoBridge.{$config['api']}(".implode(', ', $config['arguments']).
+                            ", null, function (error, params) { alert('You clicked button type \''+params['button']+'\''); }); return false;",
+                    );
+                }
+                
+                $this->assign('buttons', $buttons);
+                break;
         }
     }
 }

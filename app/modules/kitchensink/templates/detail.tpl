@@ -8,7 +8,7 @@
   
   <div class="somebuttons">
     {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
-    {include file="findInclude:common/templates/share.tpl" shareURL=$videoURL shareRemark=$shareRemark shareEmailURL=$shareEmailURL}
+    {include file="findInclude:common/templates/share.tpl" shareURL=$shareURL shareRemark=$shareRemark shareEmailURL=$shareEmailURL}
   </div>
   
   
