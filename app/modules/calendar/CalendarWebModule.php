@@ -553,8 +553,10 @@ class CalendarWebModule extends WebModule {
         }
 
         //get the categories
-        $categories = $this->getEventCategories();
-        $this->assign('categories', $categories);
+        if ($categories = $this->getEventCategories()) {
+            $this->assign('categories', $categories);
+            $this->assign('categoryHeading', $this->getLocalizedString('CATEGORY_HEADING'));
+        }
 
         $this->loadPageConfigFile('index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
@@ -624,8 +626,8 @@ class CalendarWebModule extends WebModule {
         }
 
         // get events by category id
-        if ($maxEvent = $this->getOptionalModuleVar('SHOW_MAX_EVENTS')) {
-            $feed->setLimit($maxEvent);
+        if ($limit = $this->getOptionalModuleVar('SHOW_MAX_EVENTS', null, 'categories')) {
+            $feed->setLimit($limit);
         }
         $iCalEvents = $feed->getEventsByCategory($catid);
         

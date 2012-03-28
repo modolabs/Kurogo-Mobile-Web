@@ -16,10 +16,6 @@
   {include file="findInclude:common/templates/navlist.tpl" navlistItems=$resources}
 {/if}
 
-{if count($categories)}
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories}
-{/if}
-
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$calendarPages}
 
 {capture name="selectSection" assign="selectSection"}
@@ -48,6 +44,12 @@
     {/foreach}
   </select>
 {/capture}
+
+{if count($categories)}
+{block name="categoryList"}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories navListHeading=$categoryHeading}
+{/block}
+{/if}
 
 {include file="findInclude:common/templates/search.tpl" additionalInputs=$selectSection}
 
