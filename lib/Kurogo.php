@@ -1061,7 +1061,7 @@ class Kurogo
 
       if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
         if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
-            $module = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
+            $module = Kurogo::getOptionalSiteVar("DEFAULT", $this->homeModuleID,'urls');
         }
       }
       

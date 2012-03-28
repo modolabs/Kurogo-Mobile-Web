@@ -26,6 +26,8 @@ abstract class WebModule extends Module {
   protected $templatePage = 'index';
 
   protected $deviceClassifier;  
+
+  protected $homeModuleID;
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
   
@@ -472,6 +474,9 @@ abstract class WebModule extends Module {
         }
 
         $this->moduleName = $this->getModuleVar('title','module');
+
+        $homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
+        $this->homeModuleID = $homeModuleID;
 
         $this->pagetype = $this->getPagetype();
         $this->platform = $this->getPlatform();
@@ -1470,7 +1475,8 @@ abstract class WebModule extends Module {
     
     $moduleStrings = $this->getOptionalModuleSection('strings');
     $this->assign('moduleStrings', $moduleStrings);
-    $this->assign('homeLink', $this->buildURLForModule('home','',array()));
+    $this->assign('homeLink', $this->buildURLForModule($this->homeModuleID,'',array()));
+    $this->assign('homeModuleID', $this->homeModuleID);
     
     $this->assignLocalizedStrings();
 
@@ -1624,3 +1630,4 @@ abstract class WebModule extends Module {
         ), false);
     }
 }
+  
