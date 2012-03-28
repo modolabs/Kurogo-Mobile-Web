@@ -419,6 +419,22 @@ class CalendarWebModule extends WebModule {
         return 0;
     }
 
+    protected function getEventCategories() {
+        $categories = array();
+        if ($categoriesData = $this->getOptionalModuleSection('categories')) {
+            if (isset($categoriesData['SHOW_CATEGORIES']) && $categoriesData['SHOW_CATEGORIES']) {
+                $feed = $this->getFeed($this->getDefaultFeed('static'), 'static');
+                $limit = isset($categoriesData['SHOW_POPULAR_CATEGORIES']) ? intval($categoriesData['SHOW_POPULAR_CATEGORIES']) : 0;
+                $categoryObjects = $feed->getEventCategories($limit);
+                
+                foreach ($categoryObjects as $categoryObject) {
+                    $categories[] = $this->linkForCategory($categoryObject);
+                }
+            }
+        }
+        return $categories;
+    }
+    
   protected function initializeForPage() {
     switch ($this->page) {
       case 'help':
@@ -536,6 +552,12 @@ class CalendarWebModule extends WebModule {
             $this->assign('resources', $resources);
         }
 
+        //get the categories
+        if ($categories = $this->getEventCategories()) {
+            $this->assign('categories', $categories);
+            $this->assign('categoryHeading', $this->getLocalizedString('CATEGORY_HEADING'));
+        }
+
         $this->loadPageConfigFile('index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
         $this->assign('dateFormat', $this->getLocalizedString("LONG_DATE_FORMAT"));
@@ -599,11 +621,16 @@ class CalendarWebModule extends WebModule {
             $end = clone $start;
             $end->setTime(23,59,59);
             $feed->setEndDate($end);
+        } else {
+            $this->assign('current', 0);
         }
 
         // get events by category id
+        if ($limit = $this->getOptionalModuleVar('SHOW_MAX_EVENTS', null, 'categories')) {
+            $feed->setLimit($limit);
+        }
         $iCalEvents = $feed->getEventsByCategory($catid);
-
+        
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
             $events[] = $this->linkForItem($iCalEvent, array(
