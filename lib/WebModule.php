@@ -106,7 +106,8 @@ abstract class WebModule extends Module {
     }
     
     // Figure which tab should be selected
-    $currentTab = reset(array_keys($tabs));
+    $currentTab = array_keys($tabs);
+    $currentTab = reset($currentTab);    
     if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
       $currentTab = $this->args['tab'];
       
