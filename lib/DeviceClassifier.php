@@ -81,6 +81,10 @@ class DeviceClassifier {
                 $this->platform = 'iphone'; // currently not used but just in case
             }
         }
+        // Do this after caching and setting cookies or the value of TOUCH_ENABLED would be effectively cached
+        if ($this->pagetype == 'touch' && !Kurogo::getOptionalSiteVar('TOUCH_ENABLED', 1)) {
+            $this->pagetype = 'basic';
+        }
     }
     
     // This function generates the response for the classification core api
