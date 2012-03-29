@@ -25,9 +25,49 @@ class StatsWebModule extends WebModule {
         
         return $interval_types;
     }
-   
+    
+    public function setRefresh($content) {
+    
+        $this->assign('refreshPage', $content);
+    }
+    
+    protected function migratingData() {
+        $start = $this->getArg('start', 0);
+        $limit = $this->getArg('limit', 100000);
+        
+        $message = '';
+        $jumpMessage = '';
+        if ($table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE", "")) {
+            $result = KurogoStats::migratingData($table, $start, $limit);
+            if ($result) {
+                $option = array(
+                    'start' => $start + $limit,
+                    'limit' => $limit
+                );
+                $jumpUrl = $this->buildbreadcrumbURL('migrating', $option, false);
+                $message = "The stats data is migrating, Please wait and don't leave this page. ";
+                $jumpMessage = 'If the browser did not jump, please click <a href="'.$jumpUrl.'">here</a>';
+                $this->setRefresh('3;url=' . $jumpUrl);
+            } else {
+                $message = 'Congratulations, the data have all been migrated successfully';
+            }
+            
+        } else {
+            $message = 'Not found the stats table';
+        }
+        
+        $this->assign('title', 'Stats data is migrating, Please wait');
+        $this->assign('message', $message);
+        $this->assign('jumpMessage', $jumpMessage);
+    }
+    
 	protected function initializeForPage() {
 	
+	    if ($this->page == 'migrating') {
+	        $this->migratingData();
+            return;
+	    }
+	    
 	    if (!Kurogo::getOptionalSiteVar('STATS_ENABLED', true)) {
 	        throw new KurogoException($this->getLocalizedString('STATS_DISABLED'));
 	    }
@@ -221,7 +261,7 @@ class StatsWebModule extends WebModule {
             }
         }
 
-        return KurogoStats::retrieveStats($kurogoOption);
+        return KurogoStats::retrieveStats($kurogoOption, $chartData);
 	}
 
     protected function getIntervalTimesForInterval($interval, $data=null) {

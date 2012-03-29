@@ -116,6 +116,32 @@ class db {
     }
   
     /*
+     * Returns an array of sources (tables) in the database. 
+     * @return array Array of tablenames in the database
+     */
+    public function listSources() {
+        $sql = '';
+        switch ($this->dbType) {
+            case 'mysql':
+                $sql = "SHOW TABLES";
+                break;
+            case 'sqlite':
+                $sql = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;";
+                break;
+            default:
+                throw new KurogoException("The mobil framwork don't support the database");
+        }
+        
+        $tables = array();
+        $result = $this->query($sql);
+        while ($row = $result->fetch()) {
+            $tables[] = current($row);
+        }
+
+        return $tables;
+    }
+    
+    /*
      * Handle query error
      */
     private function errorHandler($sql, $errorInfo, $ignoreErrors, $catchErrorCodes) {

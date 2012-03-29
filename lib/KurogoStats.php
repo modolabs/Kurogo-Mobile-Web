@@ -8,6 +8,7 @@ Kurogo::includePackage('db');
 class KurogoStats { 
 
 	private $conn;
+	protected static $tableSharding = 'month';
 	
 	private static function connection() {
 	    static $conn;
@@ -76,6 +77,112 @@ class KurogoStats {
 		return $visitID;
 	}
 
+    private static function getStatsTable($time = 0) {
+        $time = $time > 0 ? $time : time();
+        $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
+        $tableName = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+        
+        if (!$tableSharding) {
+            return $tableName;
+        }
+
+        $time = self::foramtTimePosition($time, $tableSharding);
+        
+        $tableName = $tableName . '_' . date('Y_m_d', $time);
+
+        return $tableName;
+    }
+    
+    private static function foramtTimePosition($time, $sharding) {
+        switch ($sharding) {
+            case 'week':
+                $time = $time - (86400 * (date('w', $time)));
+                $time = mktime(0,0,0,date('m', $time),date('d', $time),date('Y', $time));
+                break;
+            case 'day':
+                $time = mktime(0,0,0,date('m', $time),date('d', $time),date('Y', $time));
+                break;
+            case 'month':
+                $time = mktime(0,0,0,date('m', $time), 1, date('Y', $time));
+                break;
+            default:
+                throw new KurogoConfigurationException("The KUROGO_STATS_SHARDING_TYPE config error in site.ini.");
+                break;
+        }
+        
+        return $time;
+    }
+    
+    private static function getStatsTables($chartData) {
+        $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
+        $tableName = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+        
+        if (!$tableSharding) {
+            return $table;
+        }
+        
+        $statsTables = array();
+        
+        //parse all tables of databases
+        $timeForTables = array();
+        $conn = self::connection();
+        if ($allTables = $conn->listSources()) {
+            foreach ($allTables as $key => $table) {
+                if (preg_match('/^'.preg_quote($tableName, '/').'_(.*)$/is', $table, $matches)) {
+                    if (isset($matches[1]) && $matches[1]) {
+                        list($year, $month, $day) = explode('_', $matches[1]);
+                        $timeForTables[$table] = mktime(0, 0, 0, $month, $day, $year);
+                    }
+                }
+            }
+        }
+        
+        $intervalForTable = array(
+            'start' => 0,
+            'end'   => 0
+        );
+        if (isset($chartData['start']) && $chartData['start'] > 0) {
+            $intervalForTable['start'] = self::foramtTimePosition($chartData['start'], $tableSharding);
+        }
+        if (isset($chartData['end']) && $chartData['end'] > 0) {
+            $intervalForTable['end'] = self::foramtTimePosition($chartData['end'], $tableSharding);
+        }
+        
+        //start filter the tables
+        foreach ($timeForTables as $table => $time) {
+            if ($intervalForTable['start'] > 0 && $intervalForTable['end'] > 0) {
+                if ($time >= $intervalForTable['start'] && $time <= $intervalForTable['end']) {
+                    $statsTables[] = $table;
+                }
+            } elseif ($intervalForTable['start'] > 0) {
+                if ($time >= $intervalForTable['start']) {
+                    $statsTables[] = $table;
+                }
+            } elseif ($intervalForTable['end'] < 0) {
+                if ($time <= $intervalForTable['end']) {
+                    $statsTables[] = $table;
+                }
+            } else {
+                $statsTables[] = $table;
+            }
+        }
+
+        $statsTables = array_unique($statsTables);
+        if (!$statsTables) {
+            return null;
+        } elseif (count($statsTables) == 1) {
+            return current($statsTables);
+        } else {
+            $tablesString = array();
+            foreach ($statsTables as $table) {
+                $tablesString[] = "SELECT * FROM " . $table;
+            }
+            
+            return '(' . implode(' UNION ALL ', $tablesString) . ') AS kurogo_stats';
+        }
+
+    }
+    
     public static function logView($service, $id, $page, $data, $dataLabel, $size=0) {
     
         switch ($service)
@@ -103,9 +210,10 @@ class KurogoStats {
             $user = false;
         }
 
+        $current = time();
 		$logData = array(
 		    'timestamp' => time(),
-		    'date'      => date('Y-m-d H:i:s'),
+		    'date'      => date('Y-m-d H:i:s', $current),
 		    'site'      => SITE_KEY,
 		    'service'   => $service,
 		    'requestURI'=> $requestURI,
@@ -132,22 +240,23 @@ class KurogoStats {
         } catch (KurogoDataServerException $e) {
             throw new KurogoConfigurationException("Database not configured for statistics. To disable stats, set STATS_ENABLED=0 in site.ini");
         }
+        
+        $table = self::getStatsTable($current);
         $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)", 
-            Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1"), 
+            $table, 
             implode(",", array_keys($logData)), 
             implode(",", array_fill(0, count($logData), '?'))
         );
-        
         if (!$result = $conn->query($sql, array_values($logData), db::IGNORE_ERRORS)) {
-            self::createStatsTables();
+            self::createStatsTables($table);
             $result = $conn->query($sql, array_values($logData));
         }
         
         return $result;
     }
 
-    private static function createStatsTables() {
-        $table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+    private static function createStatsTables($table) {
+        //$table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
         $createSQL = "CREATE TABLE $table (
                 timestamp int(11),
                 date datetime,
@@ -195,7 +304,7 @@ class KurogoStats {
     public static function validFields() {
         return array(
             'timestamp',
-            'date,',
+            'date',
             'service',
             'site',
             'requestURI',
@@ -244,7 +353,7 @@ class KurogoStats {
         return array_merge($group, $extraFields);
     }
     
-    public static function retrieveStats(KurogoStatsOption $OptionObject) {
+    public static function retrieveStats(KurogoStatsOption $OptionObject, $chartData = array()) {
         // get data type, group and fields
         $type = $OptionObject->getType();
         $group = $OptionObject->getGroup();
@@ -288,10 +397,20 @@ class KurogoStats {
             $filters[] = $filter->getDBString();
             $params[] = $filter->getValue();
         }
+
+        //prime the results as necessary
+        $result = self::initStatsResult($OptionObject);
         
         // build the query
-        $table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
-        $sql = "SELECT " . implode(',', $fields) . " FROM " . $table;
+        //$table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+        if (!$tables = self::getStatsTables($chartData)) {
+            if ($result) {
+                return $result;
+            } else {
+                return 0;
+            }
+        }
+        $sql = "SELECT " . implode(',', $fields) . " FROM " . $tables;
         $sql .= $filters ? " WHERE " . implode(' AND ', $filters) : '';
         $sql .= $group ? " GROUP BY " . implode(', ', $group) : '';
 
@@ -310,11 +429,9 @@ class KurogoStats {
             }
         }
 
-        //prime the results as necessary
-        $result = self::initStatsResult($OptionObject);
-
         //query 
 		$conn = self::connection();
+		
         $data = $conn->query($sql, $params);
         
         while ($row = $data->fetch()) {
@@ -373,5 +490,37 @@ class KurogoStats {
             }
         }
         return $result;
+    }
+    
+    public static function migratingData($table, $start = 0, $limit = 0) {
+    
+        $fields = self::validFields();
+        
+        $conn = self::connection();
+        $oldSql = "SELECT * FROM $table";
+        $oldSql .= $limit ? " LIMIT $start, $limit" : '';
+
+        $isHaveData = false;
+        $data = $conn->query($oldSql, array());
+        while ($row = $data->fetch()) {
+            $isHaveData = true;
+            if ($row['timestamp'] > 0) {
+                $newTable = self::getStatsTable($row['timestamp']);
+                
+                $insertData = array_combine($fields, $row);
+                $insertSql = sprintf("INSERT INTO %s (%s) VALUES (%s)", 
+                    $newTable, 
+                    implode(",", array_keys($insertData)), 
+                    implode(",", array_fill(0, count($insertData), '?'))
+                );
+                
+                if (!$result = $conn->query($insertSql, array_values($insertData), db::IGNORE_ERRORS)) {
+                    self::createStatsTables($newTable);
+                    $result = $conn->query($insertSql, array_values($insertData));
+                }
+            }
+        }
+        
+        return $isHaveData;
     }
 }
