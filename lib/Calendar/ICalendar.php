@@ -367,6 +367,19 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
         return $timezone;
     }
 
+    /**
+     * reset the end time when the start time is less than the start time
+     */
+    protected function rectifyRange() {
+        if ($this->range) {
+            $start = $this->range->get_start();
+            $end = $this->range->get_end();
+            if ($end < $start) {
+                $this->range->set_end($start);
+            }
+        }
+    }
+    
     public function set_attribute($attr, $value, $params=NULL) {
         switch ($attr) {
             case 'UID':
@@ -476,6 +489,8 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
                             break;
                     }
                 }
+                //correct start and end time
+                $this->rectifyRange();
                 break;
             case 'TRANSP':
                 $this->transparency = $value;
