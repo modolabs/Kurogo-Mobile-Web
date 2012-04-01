@@ -33,7 +33,7 @@ class AthleticsAPIModule extends APIModule
                 
                 $sports = array();
                 foreach ($sportsConfig as $key => $sportData) {
-                    $image = "modules/{$this->configModule}/images/" .
+                    $image = FULL_URL_BASE . "modules/{$this->configModule}/images/" .
                         (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])) .
                         $this->imageExt;
                     $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'icon' => $image);
