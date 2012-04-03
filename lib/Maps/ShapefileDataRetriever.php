@@ -22,7 +22,7 @@ class ShapefileDataRetriever extends DataRetriever
 
             $zip = new ZipArchive();
             if (strpos($this->fileStem, 'http') === 0 || strpos($this->fileStem, 'ftp') === 0) {
-                $tmpFile = Kurogo::tempFile('.zip');
+                $tmpFile = Kurogo::tempFile();
                 copy($this->fileStem, $tmpFile);
                 $zip->open($tmpFile);
             } else {
