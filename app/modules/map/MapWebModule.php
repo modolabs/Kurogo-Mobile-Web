@@ -201,7 +201,6 @@ class MapWebModule extends WebModule {
         if ($this->dataModel && $feedId !== $this->dataModel->getFeedId()) {
             $this->dataModel = null;
         }
-
         if ($this->dataModel === null) {
             $feedData = $this->getCurrentFeed($feedId);
             $this->dataModel = mapModelFromFeedData($feedData);
@@ -366,7 +365,7 @@ class MapWebModule extends WebModule {
         if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
             $feedId = $params['feed'];
             $this->loadFeedData($feedId);
-            if ($this->isMapDrivenUI()) {
+            if ($this->isMapDrivenUI($feedId)) {
                 if (!isset($params['group']) && $this->feedGroup) {
                     $params['group'] = $this->feedGroup;
                 }
@@ -448,9 +447,9 @@ class MapWebModule extends WebModule {
 
         $linkOptions = array('feed' => $feedId, 'group' => $this->feedGroup);
 
-        if (count($listItems) == 1) {
+        if (count($listItems) == 1 && !$this->getArg('listview')) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
-            header("Location: " .  URL_BASE. $link['url']);
+            header("Location: " .  rtrim(URL_BASE, '/') . $link['url']);
             return;
         }
 
@@ -522,22 +521,23 @@ class MapWebModule extends WebModule {
         $categories = array();
         $places = array();
         $feeds = $this->getFeedData();
-        if (count($feeds) == 1) {
-            $this->assignItemsFromFeed(key($feeds));
 
-        } else {
-            foreach ($this->getFeedData() as $id => $feed) {
-                if (isset($feed['HIDDEN']) && $feed['HIDDEN']) {
-                    continue;
-                }
-                $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
-                $categories[] = array(
-                    'id'       => $id,
-                    'title'    => $feed['TITLE'],
-                    'subtitle' => $subtitle,
-                    'url'      => $this->feedURL($id),
-                    );
+        foreach ($this->getFeedData() as $id => $feed) {
+            if (isset($feed['HIDDEN']) && $feed['HIDDEN']) {
+                continue;
             }
+            $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
+            $categories[] = array(
+                'id'       => $id,
+                'title'    => $feed['TITLE'],
+                'subtitle' => $subtitle,
+                'url'      => $this->feedURL($id),
+                );
+        }
+
+        if (count($categories) == 1) {
+            $this->assignItemsFromFeed($categories[0]['id']);
+        } else {
             $this->assign('navItems', $categories);
         }
     }
@@ -682,7 +682,7 @@ class MapWebModule extends WebModule {
 
                 $externalLinks[] = array(
                     'title' => $this->getLocalizedString('VIEW_IN_GOOGLE_MAPS'),
-                    'url'   => 'http://maps.google.com?ll='.$centerText,
+                    'url'   => 'http://maps.google.com?q=loc:'.$centerText,
                     'class' => 'external',
                     );
                 
@@ -740,6 +740,7 @@ class MapWebModule extends WebModule {
             case 'index': // no breadcrumbs
                 if ($this->getOptionalModuleVar('SHOW_LISTVIEW_BY_DEFAULT') && !$this->getArg('mapview')) {
                     $this->args['listview'] = 1;
+                    $this->generateBookmarkLink();
                 }
                 // fall through to campus branch
 

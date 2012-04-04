@@ -44,7 +44,7 @@
   {/block}
 
   {block name="deviceDetection"}
-    {if $moduleID == 'home' && $showDeviceDetection}
+    {if $moduleID == $homeModuleID && $showDeviceDetection}
       <table class="devicedetection">
         <tr><th>Pagetype:</th><td>{$pagetype}</td></tr>
         <tr><th>Platform:</th><td>{$platform}</td></tr>

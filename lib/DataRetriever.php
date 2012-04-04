@@ -33,6 +33,7 @@ abstract class DataRetriever {
     
     public function setCacheLifeTime($cacheLifetime) {
         $this->cacheLifetime = $cacheLifetime;
+        $this->cache->setCacheLifetime($cacheLifetime);
     }
 
     protected function setCacheKey($cacheKey) {
@@ -81,6 +82,13 @@ abstract class DataRetriever {
         return null;
     }
     
+    protected function clearResponseCache($cacheKey, $cacheGroup) {
+        if ($cacheKey) {
+            $this->cache->setCacheGroup($cacheGroup);
+            return $this->cache->delete($cacheKey);
+        }
+    }
+    
     protected function cacheResponse($cacheKey, $cacheGroup, DataResponse $response) {
         if ($cacheKey) {
             $this->cache->setCacheGroup($cacheGroup);
@@ -125,7 +133,7 @@ abstract class DataRetriever {
     }
     
     protected function initResponse() {
-        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, array());
+        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, $this->initArgs);
         foreach ($this->context as $var=>$value) {
             $response->setContext($var, $value);
         }
@@ -216,10 +224,12 @@ abstract class DataRetriever {
                 
         $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
         $this->cache = DataCache::factory($cacheClass, $args);
+        $this->cache->setCacheLifetime($this->DEFAULT_CACHE_LIFETIME);
     }
     
     public function clearInternalCache() {
         $this->options = array();
+        $this->context = array();
         $this->requestInit = false;
         $this->parser()->clearInternalCache();
     }
@@ -331,6 +341,11 @@ abstract class DataRetriever {
 
            case DataParser::PARSE_MODE_RESPONSE:
                 $data = $this->parseResponse($response, $parser);
+                if ($response->getResponseError()) {
+                    $cacheKey = $this->shouldCacheRequest() ? $this->cacheKey() : null;
+                    $cacheGroup = $this->cacheGroup();
+                    $this->clearResponseCache($cacheKey, $cacheGroup);
+                }
                 break;
             default:
                 throw new KurogoConfigurationException("Unknown parse mode");

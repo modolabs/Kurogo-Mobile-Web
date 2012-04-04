@@ -28,6 +28,7 @@ class NewsWebModule extends WebModule {
   protected $showPubDate = false;
   protected $showAuthor = false;
   protected $showLink = false;
+  protected $showBodyThumbnail = true;
   protected $legacyController = false;
   
   public static function validateFeed($section, $feedData) {
@@ -202,6 +203,7 @@ class NewsWebModule extends WebModule {
         $this->showPubDate = isset($feedData['SHOW_PUBDATE']) ? $feedData['SHOW_PUBDATE'] : false;
         $this->showAuthor = isset($feedData['SHOW_AUTHOR']) ? $feedData['SHOW_AUTHOR'] : false;
         $this->showLink = isset($feedData['SHOW_LINK']) ? $feedData['SHOW_LINK'] : false;
+        $this->showBodyThumbnail = isset($feedData['SHOW_BODY_THUMBNAIL']) ? $feedData['SHOW_BODY_THUMBNAIL'] : true;
     }    
     
     protected function htmlEncodeFeedString($string) {
@@ -266,6 +268,7 @@ class NewsWebModule extends WebModule {
         $this->assign('link',          $story->getLink());
         $this->assign('ajax',          $this->getArg('ajax'));
         $this->assign('showLink',      $this->showLink);
+        $this->assign('showBodyThumbnail', $this->showBodyThumbnail);
         break;
         
       case 'search':

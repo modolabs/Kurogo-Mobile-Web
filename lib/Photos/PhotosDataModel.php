@@ -21,6 +21,27 @@ class PhotosDataModel extends ItemListDataModel {
         return $this->getItem($id);
     }
     
+    public function getPrevAndNextID($id){
+    	$photos = $this->items();
+    	foreach ($photos as $index =>$photo){
+    		if($photo->getID() == $id){
+    			
+				if($index-1 >= 0){
+					$preId = $photos[$index-1]->getID();
+				}else{
+					$preId = 0;
+				}
+				
+				if($index+1 < count($photos)){
+					$nextId = $photos[$index+1]->getID();
+				}else{
+					$nextId = 0;
+				}
+				return array('prev' => $preId,
+							 'next' => $nextId);
+    		}
+    	}
+    }
     public function getAlbumSize() {
 		return count($this->getPhotos());
     }

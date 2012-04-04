@@ -26,6 +26,8 @@ abstract class WebModule extends Module {
   protected $templatePage = 'index';
 
   protected $deviceClassifier;  
+
+  protected $homeModuleID;
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
   
@@ -74,31 +76,43 @@ abstract class WebModule extends Module {
   //
   
   protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
-    $currentTab = $tabKeys[0];
+    // prefill from config to get order
+    $tabs = array();
+    foreach ($this->pageConfig as $key => $value) {
+      if (strpos($key, 'tab_') === 0) {
+        $tabKey = substr($key, 4);
+        if (in_array($tabKey, $tabKeys)) {
+          $tabs[$tabKey] = array(
+            'title' => $value,
+          );
+        }
+      }
+    }
+    
+    // Fill out rest of tabs
+    foreach ($tabKeys as $tabKey) {
+      // Fill out default titles for tabs not in config:
+      if (!isset($tabs[$tabKey]) || !is_array($tabs[$tabKey])) {
+        $tabs[$tabKey] = array(
+          'title' => ucwords($tabKey),
+        );
+      }
+      
+      $tabArgs = $this->args;
+      $tabArgs['tab'] = $tabKey;
+      $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
+      
+      $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
+    }
+    
+    // Figure which tab should be selected
+    $currentTab = array_keys($tabs);
+    $currentTab = reset($currentTab);    
     if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
       $currentTab = $this->args['tab'];
       
     } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
       $currentTab = $defaultTab;
-    }
-    
-    $tabs = array();
-    foreach ($tabKeys as $tabKey) {
-      $title = ucwords($tabKey);
-      $configKey = "tab_{$tabKey}";
-      if (isset($this->pageConfig, $this->pageConfig[$configKey]) && 
-          strlen($this->pageConfig[$configKey])) {
-        $title = $this->pageConfig[$configKey];
-      }
-      
-      $tabArgs = $this->args;
-      $tabArgs['tab'] = $tabKey;
-      
-      $tabs[$tabKey] = array(
-        'title' => $title,
-        'url'   => $this->buildBreadcrumbURL($this->page, $tabArgs, false),
-        'javascript' => isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '',
-      );
     }
     
     $this->tabbedView = array(
@@ -461,6 +475,9 @@ abstract class WebModule extends Module {
         }
 
         $this->moduleName = $this->getModuleVar('title','module');
+
+        $homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
+        $this->homeModuleID = $homeModuleID;
 
         $this->pagetype = $this->getPagetype();
         $this->platform = $this->getPlatform();
@@ -1066,11 +1083,11 @@ abstract class WebModule extends Module {
   //
   
   private function encodeBreadcrumbParam($breadcrumbs) {
-    return urlencode(gzdeflate(json_encode($breadcrumbs), 9));
+    return gzdeflate(json_encode($breadcrumbs), 9);
   }
   
   private function decodeBreadcrumbParam($breadcrumbs) {
-    if ($json = @gzinflate(urldecode($breadcrumbs))) {
+    if ($json = @gzinflate($breadcrumbs)) {
         return json_decode($json, true);
     }
 
@@ -1459,7 +1476,8 @@ abstract class WebModule extends Module {
     
     $moduleStrings = $this->getOptionalModuleSection('strings');
     $this->assign('moduleStrings', $moduleStrings);
-    $this->assign('homeLink', $this->buildURLForModule('home','',array()));
+    $this->assign('homeLink', $this->buildURLForModule($this->homeModuleID,'',array()));
+    $this->assign('homeModuleID', $this->homeModuleID);
     
     $this->assignLocalizedStrings();
 
@@ -1613,3 +1631,4 @@ abstract class WebModule extends Module {
         ), false);
     }
 }
+  

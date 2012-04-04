@@ -9,7 +9,7 @@
     {$hiddenArgs = array_merge($extraArgs, $hiddenArgs)}
   {/if}
   {foreach $hiddenArgs as $arg => $value}
-    <input type="hidden" name="{$arg}" value="{$value}" />
+    <input type="hidden" name="{$arg}" value="{$value|escape}" />
   {/foreach}
 {/capture}
 

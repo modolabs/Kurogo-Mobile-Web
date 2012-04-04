@@ -132,7 +132,19 @@ class PhotosWebModule extends WebModule {
             	$controller = $this->getFeed($album);
                 $id = base64_decode($this->getArg('id'));
                 $photo = $controller->getPhoto($id);
+                $preAndNextId = $controller->getPrevAndNextID($id);
+                
+                if($preAndNextId['prev']){
+                	$this->assign('prevURL', $this->buildBreadcrumbURL('show', array('id' => base64_encode($preAndNextId['prev']), 'album' => $album), false));
+                }
+                
+                if($preAndNextId['next']){
+                	$this->assign('nextURL', $this->buildBreadcrumbURL('show', array('id' => base64_encode($preAndNextId['next']), 'album' => $album), false));
+                }
+                
                 $this->assign('photoURL',    $photo->getUrl());
+                $this->assign('prev', $this->getLocalizedString('PREVIOUS_TEXT'));
+                $this->assign('next', $this->getLocalizedString('NEXT_TEXT'));
                 $this->assign('photoTitle',  $photo->getTitle());
                 $this->assign('photoAuthor', $photo->getAuthor());
                 $this->assign('photoDate',   $this->timeText($photo));
