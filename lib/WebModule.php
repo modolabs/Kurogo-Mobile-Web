@@ -476,9 +476,6 @@ abstract class WebModule extends Module {
 
         $this->moduleName = $this->getModuleVar('title','module');
 
-        $homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
-        $this->homeModuleID = $homeModuleID;
-
         $this->pagetype = $this->getPagetype();
         $this->platform = $this->getPlatform();
 
@@ -1400,6 +1397,14 @@ abstract class WebModule extends Module {
         $this->assign('moduleHomeLinkText', $this->getLocalizedString('HOME_LINK', $this->getModuleName()));
     }
   
+    protected function getHomeModuleID() {
+        if (!$this->homeModuleID) {
+            $this->homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
+        }
+        
+        return $this->homeModuleID;
+    }
+    
   private function setPageVariables() {
     $this->loadTemplateEngineIfNeeded();
         
@@ -1476,8 +1481,8 @@ abstract class WebModule extends Module {
     
     $moduleStrings = $this->getOptionalModuleSection('strings');
     $this->assign('moduleStrings', $moduleStrings);
-    $this->assign('homeLink', $this->buildURLForModule($this->homeModuleID,'',array()));
-    $this->assign('homeModuleID', $this->homeModuleID);
+    $this->assign('homeLink', $this->buildURLForModule($this->getHomeModuleID(),'',array()));
+    $this->assign('homeModuleID', $this->getHomeModuleID());
     
     $this->assignLocalizedStrings();
 
