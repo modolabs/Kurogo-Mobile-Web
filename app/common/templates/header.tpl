@@ -7,7 +7,7 @@
     <meta http-equiv="refresh" content="{$refreshPage}" />
   {/if}
   <title>{if !$isModuleHome}{$moduleName}: {/if}{$pageTitle|strip_tags|escape:'htmlall'}</title>
-  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="shortcut icon" href="{$smarty.const.FULL_URL_BASE|nosecure}common/images/favicon.ico" />
   <link href="{$minify['css']|escape}" rel="stylesheet" media="all" type="text/css"/>
   {foreach $inlineCSSBlocks as $css}
     <style type="text/css" media="screen">
