@@ -236,8 +236,8 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             LDAP_ADMINLIMIT_EXCEEDED => 'ERROR_TOO_MANY_RESULTS'
         );
         
-        $key = isset($error_codes[$error_code]) ? $error_codes[$error_code] : 'LDAP_GENERIC_ERROR';
-        return Kurogo::getLocalizedString($key, $error_code);
+        $key = isset($error_codes[$error_code]) ? $error_codes[$error_code] : 'ERROR_GENERIC_SERVER_ERROR';
+        return Kurogo::getLocalizedString($key, $error_code, ldap_err2str($error_code));
     }
 
     protected function init($args) {
