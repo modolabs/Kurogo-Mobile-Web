@@ -169,7 +169,7 @@ class LoginWebModule extends WebModule {
                 if ($this->isLoggedIn()) {
                     $this->redirectTo('index', array('logout'=>$authorityIndex));
                 } else {
-                    $this->redirectToModule('home','',array('logout'=>$authorityIndex));
+                    $this->redirectToModule($this->homeModuleID,'',array('logout'=>$authorityIndex));
                 }
             } else {
                 //there was an error logging out
@@ -247,7 +247,7 @@ class LoginWebModule extends WebModule {
                     if ($urlArray) {
                         self::redirectToArray($urlArray);
                     } else {
-                        $this->redirectToModule('home','',array('login'=>$authorityIndex));
+                        $this->redirectToModule($this->homeModuleID,'',array('login'=>$authorityIndex));
                     }
                     break;
 

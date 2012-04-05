@@ -20,6 +20,7 @@ define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
 {
     protected $DEFAULT_PARSER_CLASS = 'LDAPPeopleParser';
+    protected $MIN_PHONE_SEARCH = PeopleRetriever::MIN_PHONE_SEARCH;
     protected $personClass = 'LDAPPerson';
     protected $host;
     protected $port=389;
@@ -157,8 +158,8 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             array_shift($phone_bits);
             $searchString = implode("", $phone_bits); // remove any separators. This might be an issue for people with formatted numbers in their directory
             $filter = new LDAPFilter($this->getField('phone'), $searchString);
-        } elseif (preg_match('/^[0-9]+/', $searchString)) { //partial phone number
-            $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_TRAILING);
+        } elseif (preg_match('/^[0-9]{'. $this->MIN_PHONE_SEARCH . ',}/', $searchString)) { //partial phone number
+            $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
 
             $names = preg_split("/\s+/", $searchString);
@@ -204,6 +205,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             }
 
         } else {
+            $filter = null;
             $this->errorMsg = "Invalid query";
         }
 

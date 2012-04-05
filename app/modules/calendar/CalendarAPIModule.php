@@ -468,15 +468,19 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'categories':
-                $type     = $this->getArg('type', 'static');
-                $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-                $limit    = $this->getArg('limit', null);
+                $categories = array();
 
-                $feed = $this->getFeed($calendar, $type);
+                if ($this->getOptionalModuleVar('SHOW_CATEGORIES', false, 'categories')) {
+                    $type     = $this->getArg('type', 'static');
+                    $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+                    $limit    = $this->getArg('limit', $this->getOptionalModuleVar('SHOW_POPULAR_CATEGORIES',null,'categories'));
+    
+                    $feed = $this->getFeed($calendar, $type);
+                    
+                    $categories = $feed->getEventCategories($limit);
+                }
                 
-                $categories = $feed->getEventCategories($limit);
                 $response = $this->apiArrayFromCategories($categories);
-                
                 $this->setResponse($response);
                 $this->setResponseVersion($responseVersion);
                 break;
