@@ -191,7 +191,7 @@ class KurogoStats {
             return '(' . implode(' UNION ALL ', $tablesString) . ') AS kurogo_stats';
         }
     }
-    
+    /*
     public static function logView($service, $id, $page, $data, $dataLabel, $size=0) {
     
         switch ($service)
@@ -263,7 +263,81 @@ class KurogoStats {
         
         return $result;
     }
+    */
+    
+    /**
+     * export the stats data to the database
+     */
+    public static function exportStatsData() {
+        
+    }
+    
+    public static function logView($service, $id, $page, $data, $dataLabel, $size=0) {
+        switch ($service)
+        {
+            case 'web':
+            case 'api':
+                break;
+            default;
+                throw new Exception("Invalid service $service");
+                break;
+        }
+        
+		$deviceClassifier = Kurogo::deviceClassifier();
 
+        $ip = Kurogo::determineIP();
+        $requestURI = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $visitID = self::getVisitID($service);
+
+        if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
+            $session = Kurogo::getSession();
+            $user = $session->getUser();
+        } else {
+            $user = false;
+        }
+
+        $statsLogFile = Kurogo::getSiteVar('KUROGO_STATS_LOG_FILE');
+        if (empty($statsLogFile)) {
+            //Kurogo::log(LOG_DEBUG, "Stats log file not configured for statistics", 'stats');
+            throw new KurogoConfigurationException("Stats log file not configured for statistics. To disable stats, set STATS_ENABLED=0 in site.ini");
+        }
+        
+        $current = time();
+        $logData = array(
+		    'timestamp' => time(),
+		    'date'      => date('Y-m-d H:i:s', $current),
+		    'site'      => SITE_KEY,
+		    'service'   => $service,
+		    'requestURI'=> $requestURI,
+		    'referrer'  => $referrer,
+		    'referredSite'   => intval(self::isFromThisSite($referrer)),
+		    'referredModule' => intval(self::isFromModule($referrer, $id)),
+		    'userAgent' => $userAgent,
+		    'ip'        => $ip,
+		    'user'      => $user ? $user->getUserID() : '',
+		    'authority' => $user ? $user->getAuthenticationAuthorityIndex() : '',
+            'visitID'   => $visitID,            		    
+		    'pagetype'  => $deviceClassifier->getPageType(),
+		    'platform'  => $deviceClassifier->getPlatform(),
+		    'moduleID'  => $id,
+		    'page'      => $page,
+		    'data'      => $data,
+		    'dataLabel' => $dataLabel,
+		    'size'      => $size,
+		    'elapsed'   => Kurogo::getElapsed()
+		);
+		
+		$fields = array_fill(0, count($logData), '%s');
+		$values = array_values($logData);
+		array_unshift($values, implode("\t", $fields));
+		
+		$content = call_user_func_array('sprintf', $values) . PHP_EOL;
+		self::fileAppend($statsLogFile, $content);
+		return true;
+    }
+    
     private static function createSQLForMysql($table) {
         $createSQL = "CREATE TABLE $table (
                 id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -590,5 +664,20 @@ class KurogoStats {
         }
         
         return $isHaveData;
+    }
+    
+    private static function fileAppend($file, $data = '') {
+        if ($file) {
+            $dir = dirname($file);
+            if (!file_exists($dir)) {
+                if (!mkdir($dir, 0755, true)) {
+                    throw new KurogoConfigurationException("could not create ".$dir);
+                    return false;
+                }
+            }
+            $handle = fopen($file, 'a+');
+            fwrite($handle, $data);
+            fclose($handle);
+        }
     }
 }
