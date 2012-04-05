@@ -272,9 +272,23 @@
             }
             
             // status callback
+            var that = this;
             var callbackId = this.callbackIdCounter++;
             this.callbacks[callbackId] = {
                 "callback" : function (error, params) {
+                    if (error !== null && "code" in error) {
+                        var code = error["code"];
+                        var title = "title" in error ? error["title"] : "Unknown Title";
+                        var message = "message" in error ? error["message"] : "Unknown message";
+                        
+                        for (codeKey in that.errorCodes) {
+                            if (that.errorCodes[codeKey] == code) {
+                                code = codeKey;
+                                break;
+                            }
+                        }
+                        that.log("kgoBridge api returned error "+code+" ("+title+" : "+message+")");
+                    }
                     if (typeof statusCallback != "undefined" && statusCallback) {
                         statusCallback(error, params);
                     }
@@ -360,8 +374,8 @@
                 document.documentElement.appendChild(iframe);
                 iframe.parentNode.removeChild(iframe);
                 iframe = null;
-            } else if (typeof console != "undefined" && typeof console.log != "undefined") {
-                console.log("DEBUG_MODE: kgoBridge would have called "+url);
+            } else {
+                this.log("kgoBridge would have called "+url);
             }
         },
         
@@ -419,7 +433,7 @@
                     if (typeof kgoBridgeOnAjaxLoad != 'undefined') {
                         kgoBridgeOnAjaxLoad();
                     } else {
-                        console.log("Warning! kgoBridgeOnAjaxLoad is not defined by the page content");
+                        that.log("Warning! kgoBridgeOnAjaxLoad is not defined by the page content");
                     }
                     
                 } else {
@@ -447,6 +461,15 @@
                 href = href+(href.indexOf("?") > 0 ? "&" : "?")+this.config.ajaxArgs+anchor;
             }
             return href;
+        },
+        
+        log: function (message) {
+            if (this.config.events) {
+                this.loadURL("kgobridge://console/log?message="+encodeURIComponent(message));
+                
+            } else if (typeof console != "undefined" && typeof console.log != "undefined") {
+                console.log("KGO_LOG: "+message);
+            }
         }
     };
     
