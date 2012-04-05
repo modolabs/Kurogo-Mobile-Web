@@ -42,6 +42,8 @@ class PeopleAPIModule extends APIModule
     
     private function formatPerson($person) {
         $result = array();
+        $result['uid'] = $person->getId();
+
         foreach ($this->fieldConfig as $fieldID => $fieldOptions) {
             $attributes = array();
             for ($i = 0; $i < count($fieldOptions['attributes']); $i++) {
