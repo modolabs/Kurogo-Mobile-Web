@@ -6,7 +6,7 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
 {
     protected $DEFAULT_PARSER_CLASS='TwitterDataParser';
     protected $OAuthProviderClass='TwitterOAuthProvider';
-    protected $cacheFolder='Twitter';
+    protected $cacheGroup='Twitter';
 
     public function search($q, $start=0, $limit=null) {
         Debug::Die_herE();    
@@ -44,6 +44,11 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
         }
         
     }
+
+    public function cacheKey()
+    {
+        return URLDataRetriever::cacheKey();
+    }
 }
 
 class TwitterDataParser extends DataParser
@@ -61,8 +66,8 @@ class TwitterDataParser extends DataParser
     private function parseUser($entry) {
         $user = new TwitterUser();
         $user->setUserID($entry['id_str']);
-        $user->setName($entry['name']);
-        $user->setImageURL(IS_SECURE ? $entry['profile_image_url_https'] : $entry['profile_image_url']);
+        $user->setName('@'.$entry['screen_name']);
+        $user->setImageURL(ImageLoader::cacheImage(IS_SECURE ? $entry['profile_image_url_https'] : $entry['profile_image_url'], array()));
         return $user;
     }
 
@@ -100,15 +105,39 @@ class TwitterDataParser extends DataParser
 
 class TwitterUser extends SocialMediaUser
 {
+    public function getProfileURL()
+    {
+        return 'https://twitter.com/intent/user?'.http_build_query(array('user_id' => $this->getUserID()));
+    }
 }
 
 class TwitterPost extends SocialMediaPost
 {
-    public function getReplyURL() {
-        Debug::die_here($this);
+    public function getServiceName()
+    {
+        return 'twitter';
     }
-    
+    public function getReplyURL() {
+        return 'https://twitter.com/intent/tweet?'.http_build_query(array('in_reply_to' => $this->getID()));
+    }
     public function getLikeURL() {
-        Debug::die_here($this);
+        return 'https://twitter.com/intent/favorite?'.http_build_query(array('tweet_id' => $this->getID()));
+    }
+    public function getShareURL()
+    {
+        return 'https://twitter.com/intent/retweet?'.http_build_query(array('tweet_id' => $this->getID()));
+    }
+    public function getLinks()
+    {
+        $links = array();
+        $links['reply'] = array('url' => $this->getReplyURL(), 'title' => 'Reply', 'service' => $this->getServiceName());
+        $links['share'] = array('url' => $this->getShareURL(), 'title' => 'Retweet', 'service' => $this->getServiceName());
+        $links['like']  = array('url' => $this->getLikeURL(),  'title' => 'Favorite', 'service' => $this->getServiceName());
+        return $links;
+    }
+
+    public function linkify($post)
+    {
+        return parent::linkify($post);
     }
 }

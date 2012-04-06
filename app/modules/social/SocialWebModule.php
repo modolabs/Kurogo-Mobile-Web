@@ -52,13 +52,14 @@ class SocialWebModule extends WebModule
         
         $link = array(
             'url'     =>$url,
-            'title'   =>$post->getBody(),
-            'subtitle'=>$subtitle,
-            'sort'    =>$post->getCreated()->format('U')
+            'body'    =>$post->getBody(),
+            'created' =>$this->elapsedTime($post->getCreated()->format('U')),
+            'sort'    =>$post->getCreated()->format('U'),
+            'class'   =>$post->getServiceName()
         );
         
         if ($author) {
-            $link['label'] = $author->getName();
+            $link['author'] = $author->getName();
             $link['img'] = $author->getImageURL();
         }
         
@@ -96,7 +97,13 @@ class SocialWebModule extends WebModule
                 
                 // @TODO sort by whatever 
                 array_multisort($sort, SORT_DESC, $posts);
+                
 
+                $firstPost = array_shift($posts);
+                $this->assign('firstPost', $firstPost);
+
+                $this->assign('titleTruncate', 140);
+                $this->assign('firstPostTitleTruncate', 200);
                 $this->assign('needToAuth',$needToAuth);
                 $this->assign('posts',$posts);
                 break;
@@ -111,10 +118,11 @@ class SocialWebModule extends WebModule
                     throw new Exception("Cannot find item $id");
                 }
                 $this->assign('postDate', $post->getCreated()->format('l F j, Y g:i a'));
-                $this->assign('postBody', nl2br($post->getBody()));
+                $this->assign('postBody', nl2br($post->linkify($post->getBody())));
                 $this->assign('postLinks', $post->getLinks());
                 if ($author = $controller->getUser($post->getAuthor())) {
                     $this->assign('authorName', $author->getName());
+                    $this->assign('authorURL', $author->getProfileURL());
                     $this->assign('authorImageURL', $author->getImageURL());
                 }
                 break;

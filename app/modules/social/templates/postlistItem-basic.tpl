@@ -12,7 +12,11 @@
     {if $item['url']}
       <a href="{$item['url']}" class="{$item['class']|default:''}">
     {/if}
+    {if $titleTruncate}
+      {$item['title']|truncate:$titleTruncate}
+    {else}
       {$item['title']}
+    {/if}
     {if $item['url']}
       </a>
     {/if}
