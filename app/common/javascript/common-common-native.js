@@ -296,9 +296,9 @@
                         // Remove other callbacks on error
                         for (var i = 0; i < additionalCallbacks.length; i++) {
                             if (typeof additionalCallbacks[i]["remove"] == "undefined" || !additionalCallbacks[i]["remove"]) {
-                                var callbackId = this.callbackIdForCallback(additionalCallbacks[i]["callback"]);
+                                var callbackId = that.callbackIdForCallback(additionalCallbacks[i]["callback"]);
                                 if (callbackId) {
-                                    delete this.callbacks[callbackId];
+                                    delete that.callbacks[callbackId];
                                 }
                             }
                         }
