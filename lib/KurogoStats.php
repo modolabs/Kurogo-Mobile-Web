@@ -350,10 +350,10 @@ class KurogoStats {
                 'summaryTimes' => 1,
             );
         } else {
-            $statsData[$statsKey]['viewCount'] = $statsData[$statsKey]['viewCount'] + 1;
-            $statsData[$statsKey]['sizeCount'] = $statsData[$statsKey]['sizeCount'] + $data['size'];
-            $statsData[$statsKey]['elapsed'] = $statsData[$statsKey]['elapsed'] + $data['elapsed'];
-            $statsData[$statsKey]['summaryTimes'] = $statsData[$statsKey]['summaryTimes'] + 1;
+            $statsData[$statsKey]['viewCount'] +=  1;
+            $statsData[$statsKey]['sizeCount'] += $data['size'];
+            $statsData[$statsKey]['elapsed'] += $data['elapsed'];
+            $statsData[$statsKey]['summaryTimes'] += 1;
         }
     }
     /**
@@ -377,16 +377,16 @@ class KurogoStats {
             throw new Exception("Unable to write to Temporary Directory $tempLogFolder");
         }
         
-        /*
+        
         if (!rename($statsLogFile, $statsLogFileCopy)) {
             Kurogo::log(LOG_DEBUG, "failed to rename $statsLogFile to $statsLogFileCopy", 'kurogostats');
             return; 
         }
-        */
+        
         $statsData = array();
         $handle = fopen($statsLogFileCopy, 'r');
         while (!feof($handle)) {
-            $line = fgets($handle, 1024);
+            $line = trim(fgets($handle, 1024));
             $value = explode("\t", $line);
             if ((count($value) != count(self::validFields())) || !isset($value[0]) || intval($value[0]) <= 0) {
                 continue;
@@ -394,21 +394,18 @@ class KurogoStats {
             //insert the raw data to the database
             $logData = array_combine(self::validFields(), $value);
             self::insertStatsToMainTable($logData);
-            
             //summary the stats data
             self::summaryStatsData($statsData, $logData);
-            
         }
+        
         fclose($handle);
-        //unlink($statsLogFileCopy);
+        unlink($statsLogFileCopy);
         
         if ($statsData) {
             foreach ($statsData as $statsKey => $statsValue) {
                 self::updateStatsToSummaryTable($statsKey, $statsValue);
             }
         }
-        
-        exit;
     }
     
     /**
@@ -469,7 +466,6 @@ class KurogoStats {
         }
         
         $summaryTable = Kurogo::getOptionalSiteVar("KUROGO_STATS_SUMMARY_TABLE","kurogo_stats_module_v1");
-        
         $sql = "SELECT * FROM " . $summaryTable;
         $sql .= $filters ? " WHERE " . implode(' AND ', $filters) : '';
         
@@ -549,8 +545,8 @@ class KurogoStats {
         $logData = array(
 		    'timestamp' => time(),
 		    'date'      => date('Y-m-d H:i:s', $current),
-		    'site'      => SITE_KEY,
 		    'service'   => $service,
+		    'site'      => SITE_KEY,
 		    'requestURI'=> $requestURI,
 		    'referrer'  => $referrer,
 		    'referredSite'   => intval(self::isFromThisSite($referrer)),
@@ -692,8 +688,8 @@ class KurogoStats {
         return array(
             'timestamp',
             'date',
-            'site',
             'service',
+            'site',
             'requestURI',
             'referrer',
             'referredSite',
@@ -881,32 +877,31 @@ class KurogoStats {
     public static function migratingData($table, $start = 0, $limit = 0) {
     
         $fields = self::validFields();
-        
         $conn = self::connection();
         $oldSql = "SELECT * FROM $table";
         $oldSql .= $limit ? " LIMIT $start, $limit" : '';
 
         $isHaveData = false;
+        $statsData = array();
         $data = $conn->query($oldSql, array());
         while ($row = $data->fetch()) {
             $isHaveData = true;
             if ($row['timestamp'] > 0) {
                 $newTable = self::getStatsTable($row['timestamp']);
+                //insert the raw data to the database
+                $logData = array_combine($fields, $row);
+                self::insertStatsToMainTable($logData);
                 
-                $insertData = array_combine($fields, $row);
-                $insertSql = sprintf("INSERT INTO %s (%s) VALUES (%s)", 
-                    $newTable, 
-                    implode(",", array_keys($insertData)), 
-                    implode(",", array_fill(0, count($insertData), '?'))
-                );
-                
-                if (!$result = $conn->query($insertSql, array_values($insertData), db::IGNORE_ERRORS)) {
-                    self::createStatsTables($newTable);
-                    $result = $conn->query($insertSql, array_values($insertData));
-                }
+                //summary the stats data
+                self::summaryStatsData($statsData, $logData);
             }
         }
-        
+
+        if ($statsData) {
+            foreach ($statsData as $statsKey => $statsValue) {
+                self::updateStatsToSummaryTable($statsKey, $statsValue);
+            }
+        }
         return $isHaveData;
     }
     

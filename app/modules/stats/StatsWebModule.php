@@ -33,7 +33,7 @@ class StatsWebModule extends WebModule {
     
     protected function migratingData() {
         $start = $this->getArg('start', 0);
-        $limit = $this->getArg('limit', 100000);
+        $limit = $this->getArg('limit', 50000);
         
         $message = '';
         $jumpMessage = '';
