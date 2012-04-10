@@ -16,7 +16,7 @@ class SOAPDataRetriever extends DataRetriever {
     protected $soapClient;
     protected $soapOptions = array('trace' => 1); //use it and wsdl to instantiate SoapClient
     protected $method;
-    protected $parameters;
+    protected $parameters=array();
     protected $location;
     protected $uri;
     protected $action;
@@ -63,7 +63,6 @@ class SOAPDataRetriever extends DataRetriever {
         $args = array_merge(Kurogo::getOptionalSiteSection('soap'), $args);
         if (isset($args['WSDL']) && $args['WSDL']) {
             $this->setWSDL($args['WSDL']);
-            $this->location = $args['WSDL'];
         }
         
         if (isset($args['BASE_URL'])) {

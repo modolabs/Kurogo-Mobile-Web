@@ -685,10 +685,14 @@ class MapWebModule extends WebModule {
                     'url'   => 'http://maps.google.com?q=loc:'.$centerText,
                     'class' => 'external',
                     );
+
+                $directionsURL = $this->getMapDevice()->pageSupportsDynamicMap()
+                    ? 'http://maps.google.com?daddr='.$centerText
+                    : 'http://maps.google.com/m/directions?daddr='.$centerText;
                 
                 $externalLinks[] = array(
                     'title' => $this->getLocalizedString('GET_DIRECTIONS_FROM_GOOGLE'),
-                    'url'   => 'http://maps.google.com?daddr='.$centerText,
+                    'url'   => $directionsURL,
                     'urlID' => 'directionsLink',
                     'class' => 'external',
                     );
