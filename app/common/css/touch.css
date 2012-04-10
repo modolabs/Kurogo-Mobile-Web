@@ -854,8 +854,12 @@ h2.icon {
 	padding: 0.6em 0.33em;
 }
 
+#tabscontainer {
+	padding: 0 10px;
+}
+
 #tabbodies {
-	margin: -12px -0.5em 0 -0.5em;
+	margin: -10px -10px 0 -10px;
 	clear: both;
 	border-top: 1px solid #bbb;
 }
