@@ -1208,10 +1208,7 @@ h2.icon {
 	margin: 0 -12px 0 -12px;
 	clear: both;
 	border-top: 1px solid #bbb;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
-	border-bottom-right-radius: 8px;	
-	border-bottom-left-radius: 8px;	
+	border-bottom: 1px solid #bbb;
 }
 
 .shaded #tabbodies {
