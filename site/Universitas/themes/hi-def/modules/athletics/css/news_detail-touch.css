@@ -1,0 +1,9 @@
+body.AthleticsModule #navbar {
+    background-color: @@@focal_background_color@@@;	
+    margin-bottom: 0;
+}
+
+.news {
+    background-color: @@@focal_background_color@@@;	
+    padding: 10px;
+}
