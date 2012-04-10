@@ -23,11 +23,4 @@ class TestWebModule extends NewsWebModule {
                 $this->assign('storyURL',      'dummy');
         }
     }
-    
-    protected function initializeForPage() {
-        parent::initializeForPage();
-        if ($this->page == 'index') {
-            $this->setWebBridgePageRefresh(true);
-        }
-    }
 }

@@ -1266,7 +1266,14 @@ abstract class WebModule extends Module {
       if (isset($pageData[$this->page])) {
         $pageConfig = $pageData[$this->page];
         
-        if (isset($pageConfig['pageTitle']) && strlen($pageConfig['pageTitle'])) {
+        if (KurogoWebBridge::isNativeCall()) {
+          $this->hasWebBridgePageRefresh = self::argVal($pageConfig, 'nativePageRefresh', false);
+        }
+        
+        if (KurogoWebBridge::isNativeCall() && self::argVal($pageConfig, 'nativePageTitle', '')) {
+          $this->pageTitle = $pageConfig['nativePageTitle'];
+          
+        } else if (isset($pageConfig['pageTitle']) && strlen($pageConfig['pageTitle'])) {
           $this->pageTitle = $pageConfig['pageTitle'];
         }
         
