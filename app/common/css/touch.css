@@ -887,6 +887,10 @@ h2.icon {
 	margin-top: 2px;
 }
 
+.tabbody ul.results {
+	margin: 0 -0.5em;
+}
+
 .tabstrip ,
 #tabstrip {
 	list-style-type: none;
