@@ -167,18 +167,9 @@
             
             var additionalCallbacks = [];
             if (typeof buttonCallback != "undefined") {
-                // give native dialog time to dismiss
-                var delayedButtonCallback = function () {
-                    var that = this;
-                    var args = arguments;
-                    setTimeout(function () {
-                        buttonCallback.apply(that, args);
-                    }, 100);
-                };
-                
                 additionalCallbacks.push({
                     "param"     : "buttonClickedCallback",
-                    "callback"  : delayedButtonCallback,
+                    "callback"  : buttonCallback,
                     "repeating" : false
                 });
             }
@@ -210,18 +201,9 @@
             
             var additionalCallbacks = [];
             if (typeof buttonCallback != "undefined") {
-                // give native dialog time to dismiss
-                var delayedButtonCallback = function () {
-                    var that = this;
-                    var args = arguments;
-                    setTimeout(function () {
-                        buttonCallback.apply(that, args);
-                    }, 100);
-                };
-                
                 additionalCallbacks.push({
                     "param"     : "buttonClickedCallback",
-                    "callback"  : delayedButtonCallback,
+                    "callback"  : buttonCallback,
                     "repeating" : false
                 });
             }
@@ -344,11 +326,17 @@
                     params = {};
                 }
                 
-                this.callbacks[callbackId]["callback"](error, params);
-                
-                if (!this.callbacks[callbackId]["repeating"]) {
-                    delete this.callbacks[callbackId];
-                }
+                // Callbacks frequently perform operations which will not work
+                // at the time the native app sends the callback (alert, log, etc)
+                // So delay the callback by 100ms to avoid these problems.
+                var that = this;
+                setTimeout(function () {
+                    that.callbacks[callbackId]["callback"].call(that, error, params);
+                    
+                    if (!that.callbacks[callbackId]["repeating"]) {
+                        delete that.callbacks[callbackId];
+                    }
+                }, 100);
             }
         },
         
