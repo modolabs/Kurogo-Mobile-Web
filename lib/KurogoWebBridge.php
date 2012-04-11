@@ -90,11 +90,13 @@ class KurogoWebBridge
         $zipPath .= DIRECTORY_SEPARATOR.basename($path);
         
         if (is_file($path)) {
+            // Make sure repeatedly zipping the file doesn't modify it.
+            // Since the zipfile contains the file modtime, force it to a set value.
+            touch($path, 1234567890);  // 2009/02/13 23:31:30 UTC ... because
+            
             $zip->addFile($path, $zipPath);
             
         } else if (is_dir($path)) {
-            $zip->addEmptyDir($zipPath);
-            
             $handle = opendir($path);
             while ($entry = readdir($handle)) {
                 if ($entry != '..' && $entry != '.' && $entry != '') {
