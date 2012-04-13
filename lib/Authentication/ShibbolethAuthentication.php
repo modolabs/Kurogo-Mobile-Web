@@ -13,7 +13,7 @@ class ShibbolethAuthentication extends AuthenticationAuthority
         }
         
         $user = null;
-        return AUTH_FAIL;
+        return AUTH_FAILED;
     }
 
     public function getUser($login) {
