@@ -182,7 +182,7 @@ class CalendarAPIModule extends APIModule
         $result = array(
             'id'            => $event->get_uid(),
             'title'         => $event->get_summary(),
-            'description'   => $event->get_description(),
+            'description'   => nl2br($event->get_description()),
             'start'         => $event->get_start(),
             'end'           => $event->get_end(),
             'allday'        => ($event->isAllDay()),
