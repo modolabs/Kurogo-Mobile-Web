@@ -12,6 +12,7 @@
 class CurlDataRetriever extends URLDataRetriever {
 	protected $curl;
 	protected $returnHeader = false;
+	protected $postFields = array();
 	
     public function __wakeup() {
         $this->initCurl($this->initArgs);
@@ -34,6 +35,8 @@ class CurlDataRetriever extends URLDataRetriever {
         		if($key == 'CURLOPT_HEADER' && $value == 1) {
         			$this->returnHeader = true;
         		}
+        	}elseif(preg_match("/POST_(.*)/", $key, $postFieldName)) {
+        		$this->postFields[strtolower($postFieldName[1])] = $value;
         	}
         }
     }
@@ -42,11 +45,16 @@ class CurlDataRetriever extends URLDataRetriever {
         curl_setopt($this->curl, $key, $value);
     }
 	
+    protected function setPostFields() {
+        $this->setCurlOption(CURLOPT_POSTFIELDS, $this->postFields);
+    }
+    
     protected function setCurlMethod() {
         $method = $this->method();
         switch($method) {
             case "POST":
                 $this->setCurlOption(CURLOPT_POST, 1);
+                $this->setPostFields();
                 break;
             default:
                 $this->setCurlOption(CURLOPT_HTTPGET, 1);
