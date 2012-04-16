@@ -26,6 +26,10 @@ class Kurogo
     protected $module;
     protected $request;
 
+    const REDIRECT_PERMANENT = 301;
+    const REDIRECT_TEMPORARY = 302;
+    const REDIRECT_SEE_OTHER = 303;
+
     private function __construct() {
         $this->startTime = microtime(true);
     }
@@ -543,8 +547,7 @@ class Kurogo
         if ($host != strtolower($host)) {
             $url = 'http'.(IS_SECURE ? 's' : '').'://' . strtolower($host) . $path;
             self::log(LOG_INFO, "Redirecting to lowercase url $url", 'kurogo');
-            header("Location: $url");
-            exit();
+            Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
           }
                   
         //
@@ -644,8 +647,7 @@ class Kurogo
                     $site = $siteConfig->getVar('DEFAULT_SITE');
                     array_splice($paths, 1, 1, array($site, $paths[1]));
                     $url = implode("/", $paths);
-                    header("Location: $url");
-                    die();
+                    Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
                 }
             }
 
@@ -1098,6 +1100,14 @@ class Kurogo
         includePackage('Cache');
         return KurogoMemoryCache::getCacheClasses();
         
+    }
+    
+    // REDIRECT_PERMANENT (301): Use this when you want search engines to see the redirect.
+    // REDIRECT_SEE_OTHER (303): Use when redirecting from forms (POST -> GET).
+    // REDIRECT_TEMPORARY (302): Use in all other situations (default).
+    public static function redirectToURL($url, $code=self::REDIRECT_TEMPORARY) {
+        header("Location: $url", true, $code);
+        exit();
     }
 }
 

@@ -359,15 +359,14 @@ abstract class WebModule extends Module {
         return false;
   }
 
-  public function redirectToModule($id, $page, $args=array()) {
+  public function redirectToModule($id, $page, $args=array(), $type=Kurogo::REDIRECT_TEMPORARY) {
     $url = self::buildURLForModule($id, $page, $args);
     //error_log('Redirecting to: '.$url);
     Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url",'module');
-    header("Location: ". URL_PREFIX . ltrim($url, '/'));
-    exit;
+    Kurogo::redirectToURL(URL_PREFIX . ltrim($url, '/'), $type);
   }
 
-  protected function redirectTo($page, $args=null, $preserveBreadcrumbs=false) {
+  protected function redirectTo($page, $args=null, $preserveBreadcrumbs=false, $type=Kurogo::REDIRECT_TEMPORARY) {
     if (!isset($args)) { $args = $this->args; }
     
     $url = '';
@@ -379,8 +378,7 @@ abstract class WebModule extends Module {
     
     //error_log('Redirecting to: '.$url);
     Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url",'module');
-    header("Location: ". URL_PREFIX . ltrim($url, '/'));
-    exit;
+    Kurogo::redirectToURL(URL_PREFIX . ltrim($url, '/'), $type);
   }
 
     protected function buildURLFromArray($params) {
@@ -549,8 +547,7 @@ abstract class WebModule extends Module {
 
         $redirect= sprintf("https://%s%s%s", $secure_host, $secure_port == 443 ? '': ":$secure_port", $_SERVER['REQUEST_URI']);
         Kurogo::log(LOG_DEBUG, "Redirecting to secure url $redirect",'module');
-        header("Location: $redirect");          
-        exit();
+        Kurogo::redirectToURL($redirect, Kurogo::REDIRECT_PERMANENT);
     }
 
   //
