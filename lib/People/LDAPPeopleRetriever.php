@@ -34,6 +34,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
     protected $baseAttributes = array();
+    protected $searchFields = array();
     
     protected function retrieveResponse() {
         $response = $this->initResponse();
@@ -144,6 +145,18 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         return $filter;
     }
 
+    protected function additionalFilters($searchString) {
+        $filters = array();
+        if ($this->searchFields) {
+            foreach ($this->searchFields as $field) {
+                $filters[] = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_NO_ESCAPE);
+            }
+            return new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
+        }
+        
+        return null;
+    }
+    
     protected function buildSearchFilter($searchString) {
 
         $this->errorNo = $this->errorMsg = null;
@@ -203,7 +216,14 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
                     
                     $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
             }
-
+            
+            //build search for additional fields
+            if ($additionalFilters = $this->additionalFilters($searchString)) {
+                if ($filter instanceof LDAPCompoundFilter) {
+                    $filter->addFilter($additionalFilters);
+                }
+            }
+                    
         } else {
             $filter = null;
             $this->errorMsg = "Invalid query";
@@ -263,6 +283,10 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $this->baseAttributes = $args['ATTRIBUTES'];
         }
 
+        if (isset($args['SEARCH_FIELDS'])) {
+            $this->searchFields = $args['SEARCH_FIELDS'];
+        }
+        
         $this->fieldMap = array(
             'userid'=>isset($args['LDAP_USERID_FIELD']) ? $args['LDAP_USERID_FIELD'] : 'uid',
             'email'=>isset($args['LDAP_EMAIL_FIELD']) ? $args['LDAP_EMAIL_FIELD'] : 'mail',
@@ -376,6 +400,10 @@ class LDAPCompoundFilter extends LDAPFilter
             throw new KurogoConfigurationException(sprintf("Only %d filters found (2 minimum)", count($filters)));
         }
     
+    }
+    
+    public function addFilter(LDAPFilter $filter) {
+        $this->filters[] = $filter;
     }
     
     function __toString() {
