@@ -387,8 +387,7 @@ class AthleticsWebModule extends WebModule {
         
                 if (!$content = $this->cleanContent($story->getContent())) {
                   if ($url = $story->getLink()) {
-                      header("Location: $url");
-                      exit();
+                      Kurogo::redirectToURL($url);
                   } else {
                       throw new KurogoDataException($this->getLocalizedString('ERROR_CONTENT_NOT_FOUND', $storyID));
                   }

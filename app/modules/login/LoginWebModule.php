@@ -182,8 +182,7 @@ class LoginWebModule extends WebModule {
         case 'forgotpassword':
             //redirect to forgot password url
             if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
-                header("Location: $forgetPasswordURL");
-                exit();
+                Kurogo::redirectToURL($forgetPasswordURL);
             } else {
                 $this->redirectTo('index', array());
             }

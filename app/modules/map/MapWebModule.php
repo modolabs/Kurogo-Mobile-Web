@@ -449,8 +449,7 @@ class MapWebModule extends WebModule {
 
         if (count($listItems) == 1 && !$this->getArg('listview')) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
-            header("Location: " .  rtrim(URL_BASE, '/') . $link['url']);
-            return;
+            Kurogo::redirectToURL(rtrim(URL_BASE, '/') . $link['url']);
         }
 
         $this->selectedPlacemarks = array();

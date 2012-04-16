@@ -103,8 +103,7 @@ abstract class OAuthProvider
             //redirect to auth page
             $url = $this->getAuthURL($options);
             Kurogo::log(LOG_DEBUG, "Redirecting to AuthURL $url", 'auth');
-            header("Location: " . $url);
-            exit();
+            Kurogo::redirectToURL($url);
         }
     }
 
