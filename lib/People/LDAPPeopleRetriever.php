@@ -144,27 +144,6 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_AND, $givenNameFilter, $snFilter);
         return $filter;
     }
-
-    protected function additionalFilters($searchString) {
-        $filters = array();
-        if ($this->searchFields && !empty($searchString)) {
-            $searchFields = array_unique($this->searchFields);
-            $defaultFields = array(
-                $this->getField('firstname'),
-                $this->getField('lastname'),
-                $this->getField('email')
-            );
-            if ($diffFields = array_diff($searchFields, $defaultFields)) {
-                foreach ($searchFields as $field) {
-                    $filters[] = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_NO_ESCAPE);
-                }
-                
-                return new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
-            }
-        }
-        
-        return null;
-    }
     
     protected function checkSearchFields() {
         if ($this->searchFields) {

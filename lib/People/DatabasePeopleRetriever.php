@@ -23,29 +23,6 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
         return false;
     }
     
-    protected function additionalFilters($searchString) {
-        $filters = array();
-        if ($this->searchFields) {
-            $searchFields = array_unique($this->searchFields);
-            $defaultFields = array(
-                $this->getField('firstname'),
-                $this->getField('lastname'),
-                $this->getField('email')
-            );
-            if ($diffFields = array_diff($searchFields, $defaultFields)) {
-                print_r($diffFields);
-                exit;
-                foreach ($searchFields as $field) {
-                    $filters[] = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_NO_ESCAPE);
-                }
-                
-                return new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
-            }
-        }
-        
-        return null;
-    }
-    
     protected function checkSearchFields() {
         if ($this->searchFields) {
             $searchFields = array_unique($this->searchFields);
