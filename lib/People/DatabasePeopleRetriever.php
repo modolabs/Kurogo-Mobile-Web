@@ -23,17 +23,16 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
         return false;
     }
     
-    protected function checkSearchFields() {
+    protected function getSearchFields() {
         if ($this->searchFields) {
-            $searchFields = array_unique($this->searchFields);
             $defaultFields = array(
                 $this->getField('firstname'),
                 $this->getField('lastname'),
                 $this->getField('email')
             );
             
-            if ($diffFields = array_diff($searchFields, $defaultFields)) {
-                return $searchFields;
+            if ($searchFields = array_diff($this->searchFields, $defaultFields)) {
+                return array_unique($searchFields);
             }
         }
         
@@ -58,14 +57,6 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
         } elseif ($this->getField('phone') && preg_match('/^[0-9]+/', $searchString)) { //partial phone number
             $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('phone'));
             $parameters = array($searchString.'%');
-        } elseif ($fields = $this->checkSearchFields()) {
-            $where = array();
-            foreach ($fields as $field) {
-                $where[] = sprintf("%s = ?", $field);
-                $parameters[] = $searchString;
-            }
-            $where = implode(" OR ", $where);
-            $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
 
             $names = preg_split("/\s+/", $searchString);
@@ -110,9 +101,19 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
 
                     $where = implode(" OR ", $where);
             }
-
-            $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
             
+            //build search for additional fields
+            if ($searchField = $this->getSearchFields()) {
+                $fieldWhere = array();
+                foreach ($searchField as $field) {
+                    $fieldWhere[] = sprintf("%s = ?", $field);
+                    $parameters[] = $searchString;
+                }
+                
+                $where .= ' OR ' . implode(" OR ", $fieldWhere);
+            }
+            
+            $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
 
         } else {
             $this->errorMsg = "Invalid query";

@@ -145,23 +145,22 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         return $filter;
     }
     
-    protected function checkSearchFields() {
+    protected function getSearchFields() {
         if ($this->searchFields) {
-            $searchFields = array_unique($this->searchFields);
             $defaultFields = array(
                 $this->getField('firstname'),
                 $this->getField('lastname'),
                 $this->getField('email')
             );
             
-            if ($diffFields = array_diff($searchFields, $defaultFields)) {
-                return $searchFields;
+            if ($searchFields = array_diff($this->searchFields, $defaultFields)) {
+                return array_unique($searchFields);
             }
         }
         
         return null;
     }
-    
+
     protected function buildSearchFilter($searchString) {
 
         $this->errorNo = $this->errorMsg = null;
@@ -178,17 +177,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $filter = new LDAPFilter($this->getField('phone'), $searchString);
         } elseif (preg_match('/^[0-9]{'. $this->MIN_PHONE_SEARCH . ',}/', $searchString)) { //partial phone number
             $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
-        
-        //build search for additional fields
-        } elseif ($fields = $this->checkSearchFields()) {
-            $filters = array();
-            foreach ($fields as $field) {
-                $filters[] = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_NO_ESCAPE);
-            }
-            $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
-            
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
-
             $names = preg_split("/\s+/", $searchString);
             $nameCount = count($names);
             switch ($nameCount)
@@ -230,7 +219,15 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
                     
                     $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
             }
-      
+            
+            //build search for additional fields
+            if (($searchFields = $this->getSearchFields()) && ($filter instanceOf LDAPCompoundFilter)) {
+                foreach ($searchFields as $field) {
+                    $fieldFilter = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_NO_ESCAPE);
+                    $filter->addFilter($fieldFilter);
+                }
+            }
+            
         } else {
             $filter = null;
             $this->errorMsg = "Invalid query";
