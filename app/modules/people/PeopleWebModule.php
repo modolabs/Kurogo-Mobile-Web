@@ -59,7 +59,8 @@ class PeopleWebModule extends WebModule {
         if (isset($info['format'])) {
             $value = vsprintf($this->replaceFormat($info['format']), $values);
         } else {
-            $value = implode(' ', $values);
+            $delimiter = isset($info['delimiter']) ? $info['delimiter'] : ' ';
+            $value = implode($delimiter, $values);
         }
     
         $detail = array(

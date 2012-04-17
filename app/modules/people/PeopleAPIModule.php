@@ -57,7 +57,8 @@ class PeopleAPIModule extends APIModule
                 $values = $person->getField($attribute);
                 if ($values) {
                     if (is_array($values)) {
-                        $attributes[$label] = $values[0];
+                        $delimiter = isset($fieldOptions['delimiter']) ? $fieldOptions['delimiter'] : ' ';
+                        $attributes[$label] = implode($delimiter, $values);
                     } else {
                         $attributes[$label] = $values;
                     }
