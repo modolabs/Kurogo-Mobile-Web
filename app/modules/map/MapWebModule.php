@@ -474,6 +474,10 @@ class MapWebModule extends WebModule {
             }
         }
 
+        if (isset($this->feedGroups[$this->feedGroup])) {
+            $this->assign('feedgroupTitle', $this->feedGroups[$this->feedGroup]['title']);
+        }
+
         if ($isMapView) {
             $this->setTemplatePage('fullscreen');
             $this->initializeDynamicMap();
