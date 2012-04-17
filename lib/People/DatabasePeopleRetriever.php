@@ -13,6 +13,7 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
     protected $personClass = 'DatabasePerson';
     protected $sortFields=array('lastname','firstname');
     protected $attributes = array();
+    protected $searchFields = array();
 
     public function debugInfo() {
         return sprintf("Using Database");
@@ -22,13 +23,53 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
         return false;
     }
     
+    protected function additionalFilters($searchString) {
+        $filters = array();
+        if ($this->searchFields) {
+            $searchFields = array_unique($this->searchFields);
+            $defaultFields = array(
+                $this->getField('firstname'),
+                $this->getField('lastname'),
+                $this->getField('email')
+            );
+            if ($diffFields = array_diff($searchFields, $defaultFields)) {
+                print_r($diffFields);
+                exit;
+                foreach ($searchFields as $field) {
+                    $filters[] = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_NO_ESCAPE);
+                }
+                
+                return new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
+            }
+        }
+        
+        return null;
+    }
+    
+    protected function checkSearchFields() {
+        if ($this->searchFields) {
+            $searchFields = array_unique($this->searchFields);
+            $defaultFields = array(
+                $this->getField('firstname'),
+                $this->getField('lastname'),
+                $this->getField('email')
+            );
+            
+            if ($diffFields = array_diff($searchFields, $defaultFields)) {
+                return $searchFields;
+            }
+        }
+        
+        return null;
+    }
+    
     protected function buildSearchQuery($searchString) {
         $sql = "";
         $parameters = array();
 
         if (empty($searchString)) {
             $this->errorMsg = "Query was blank";
-            return;
+            return;  
         } elseif (Validator::isValidEmail($searchString)) {
             $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('email'));
             $parameters = array('%'.$searchString.'%');
@@ -40,6 +81,14 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
         } elseif ($this->getField('phone') && preg_match('/^[0-9]+/', $searchString)) { //partial phone number
             $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('phone'));
             $parameters = array($searchString.'%');
+        } elseif ($fields = $this->checkSearchFields()) {
+            $where = array();
+            foreach ($fields as $field) {
+                $where[] = sprintf("%s = ?", $field);
+                $parameters[] = $searchString;
+            }
+            $where = implode(" OR ", $where);
+            $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
 
             $names = preg_split("/\s+/", $searchString);
@@ -97,7 +146,6 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
     }
     
     public function search($searchString, &$response=null) {
-
         $this->setQuery($this->buildSearchQuery($searchString));
         $this->setOption('action', 'search');
         $this->setContext('value', $searchString);
@@ -151,6 +199,10 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
             'lastname'=>isset($args['DB_LASTNAME_FIELD']) ? $args['DB_LASTNAME_FIELD'] : 'lastname',
             'phone'=>isset($args['DB_PHONE_FIELD']) ? $args['DB_PHONE_FIELD'] : ''
         );
+        
+        if (isset($args['SEARCH_FIELDS'])) {
+            $this->searchFields = $args['SEARCH_FIELDS'];
+        }
         
         $this->setContext('fieldMap',$this->fieldMap);
     }
