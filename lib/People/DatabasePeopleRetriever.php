@@ -106,8 +106,8 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
             if ($searchField = $this->getSearchFields()) {
                 $fieldWhere = array();
                 foreach ($searchField as $field) {
-                    $fieldWhere[] = sprintf("%s = ?", $field);
-                    $parameters[] = $searchString;
+                    $fieldWhere[] = sprintf("%s LIKE ?", $field);
+                    $parameters[] = "%" . $searchString . "%";
                 }
                 
                 $where .= ' OR ' . implode(" OR ", $fieldWhere);

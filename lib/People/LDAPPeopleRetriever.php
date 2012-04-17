@@ -223,7 +223,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             //build search for additional fields
             if (($searchFields = $this->getSearchFields()) && ($filter instanceOf LDAPCompoundFilter)) {
                 foreach ($searchFields as $field) {
-                    $fieldFilter = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_NO_ESCAPE);
+                    $fieldFilter = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
                     $filter->addFilter($fieldFilter);
                 }
             }
