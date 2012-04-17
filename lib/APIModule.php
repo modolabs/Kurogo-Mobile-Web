@@ -42,7 +42,6 @@ abstract class APIModule extends Module
         $this->throwError($error);
     }
     
-  
    /**
      * The module must be run securely (https)
      */
@@ -115,9 +114,9 @@ abstract class APIModule extends Module
         }
         
         //error_log('Redirecting to: '.$url);
-        header("Location: $url");
-        exit;
+        Kurogo::redirectToURL($url);
     }
+
    /**
      * Factory method
      * @param string $id the module id to load

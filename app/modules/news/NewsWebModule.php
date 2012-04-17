@@ -234,8 +234,7 @@ class NewsWebModule extends WebModule {
         
         if (!$content = $this->cleanContent($story->getContent())) {
           if ($url = $story->getLink()) {
-              header("Location: $url");
-              exit();
+              Kurogo::redirectToURL($url);
           } 
           
           // no content or link. Attempt to get description

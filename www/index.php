@@ -201,8 +201,7 @@ if (!strlen($path) || $path == '/') {
     $url = URL_PREFIX . $url . "/";
   }
   
-  header("Location: $url");
-  exit;
+  Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
 } 
 
 $parts = explode('/', ltrim($path, '/'), 2);
@@ -265,8 +264,7 @@ if ($parts[0]==API_URL_PREFIX) {
           }
         }
         Kurogo::log(LOG_NOTICE, "Redirecting to $url", 'kurogo');
-        header("Location: " . $url);
-        exit;
+        Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
       }
     }
     
@@ -278,8 +276,7 @@ if ($parts[0]==API_URL_PREFIX) {
       
     } else {
       // redirect with trailing slash for completeness
-      header("Location: ./$id/");
-      exit;
+      Kurogo::redirectToURL("./$id/", Kurogo::REDIRECT_PERMANENT);
     }
 
     $Kurogo->setRequest($id, $page, $args);
