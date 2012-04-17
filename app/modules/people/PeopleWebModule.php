@@ -304,20 +304,28 @@ class PeopleWebModule extends WebModule {
           
                     $this->assign('searchTerms', $searchTerms);
           
+                    $startIndex = $this->getArg('start', 1);
+                    $limit = $this->getOptionalModuleVar('LIMIT', 20);
+                    $PeopleController->setStart($startIndex);
+                    $PeopleController->setLimit($limit);
+          
                     $this->setLogData($searchTerms);
                     $people = $this->searchItems($searchTerms);
                     $this->assign('searchError', $PeopleController->getResponseError());
 
                     if ($people !== false) {
                         $resultCount = count($people);
+                        $totalItems = $this->getFeed('people')->getTotalItems();
             
-                        switch ($resultCount) 
+                        switch ($totalItems) 
                         {
                             case 1:
                                 $person = $people[0];
                                 $this->logView();
                                 $this->redirectTo('detail', array(
-                                    'uid'=>$person->getId()
+                                    'uid'=>$person->getId(),
+                                    'total'=>1,
+                                    'filter'=>$this->getArg('filter')
                                     )
                                 );
                                 break;
@@ -329,7 +337,24 @@ class PeopleWebModule extends WebModule {
                                     $results[] = $this->linkforItem($person);
                                 }
                                 //error_log(print_r($results, true));
-                                $this->assign('resultCount', $resultCount);
+                                if($totalItems > $resultCount)
+                                {
+                                    if($startIndex + $limit <= $totalItems)
+                                    {
+                                        $nextLink = $this->buildURL('search', array('filter' => $searchTerms, 'start' => $startIndex + $limit));
+                                        $next = array('title' => 'Next '.$limit.' results', 'url' => $nextLink, 'class' => 'next');
+                                        array_push($results, $next);
+                                    }
+                                    if($startIndex > 1)
+                                    {
+                                        $prevLink = $this->buildURL('search', array('filter' => $searchTerms, 'start' => $startIndex - $limit));
+                                        $prev = array('title' => 'Previous '.$limit.' results', 'url' => $prevLink, 'class' => 'prev');
+                                        array_unshift($results, $prev);
+                                    }
+                                    
+                                }
+                                
+                                $this->assign('resultCount', $this->getFeed('people')->getTotalItems());
                                 $this->assign('results', $results);
                                 break;
                         }
