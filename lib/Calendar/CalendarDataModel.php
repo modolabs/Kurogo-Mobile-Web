@@ -264,7 +264,8 @@ class CalendarDataModel extends ItemListDataModel
         $startTimestamp = $this->startTimestamp() ? $this->startTimestamp() : CalendarDataController::START_TIME_LIMIT;
         $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : CalendarDataController::END_TIME_LIMIT;
         $range = new TimeRange($startTimestamp, $endTimestamp);
-        
+        //set total items number
+        $this->setTotalItems(count($events));
         $events = $calendar->getEventsInRange($range, $this->getLimit(), $this->filters);
         return $this->limitItems($events, $this->getStart(), $this->getLimit());
     }
