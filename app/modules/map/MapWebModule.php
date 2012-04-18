@@ -47,7 +47,7 @@ class MapWebModule extends WebModule {
                 $groupData = array();
                 foreach ($this->getModuleSections($configName) as $id => $feedData) {
                     $feedId = mapIdForFeedData($feedData);
-                    $feedData['group'] = $id;
+                    $feedData['group'] = $groupID;
                     $groupData[$feedId] = $feedData;
                     if ($requestedFeedId == $feedId) {
                         $this->feedGroup = $groupID;
