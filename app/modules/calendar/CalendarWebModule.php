@@ -651,9 +651,6 @@ class CalendarWebModule extends WebModule {
         $feed     = $this->getFeed($calendar, $type);
         $title    = $this->getFeedTitle($calendar, $type);
         $this->setLogData($type . ':' . $calendar, $title);
-        $this->setPageTitle($title);
-        $this->setBreadcrumbTitle('List');
-        $this->setBreadcrumbLongTitle($title);
         
         $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $start->setTime(0,0,0);
