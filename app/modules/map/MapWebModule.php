@@ -925,6 +925,7 @@ class MapWebModule extends WebModule {
                         'lat' => $point['lat'],
                         'lon' => $point['lon'],
                         )));
+                $placemark->setId($id);
                 $placemark->setTitle($groupData['title']);
                 $placemark->setURL($this->groupURL($id));
                 $placemarks[] = $placemark;
