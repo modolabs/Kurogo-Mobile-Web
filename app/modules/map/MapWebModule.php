@@ -784,6 +784,7 @@ class MapWebModule extends WebModule {
                     }
                 }
 
+                $this->assign('showAllCampuses', $this->getOptionalModuleVar('SHOW_ALL_CAMPUSES_LINK', true));
                 break;
             
             case 'bookmarks':
