@@ -67,6 +67,7 @@ abstract class WebModule extends Module {
   protected $canBeRemoved = true;
   protected $canBeDisabled = true;
   protected $canBeHidden = true;
+  protected $canAllowRobots = true;
   protected $hideFooterLinks = false;
   
   //
@@ -513,7 +514,7 @@ abstract class WebModule extends Module {
   protected function moduleDisabled() {
     $this->redirectToModule('error', '', array_merge($this->getArrayForRequest(), array('code'=>'disabled')));
   }
-  
+
     public static function getAllThemes() {
         $themes = array();
         $d = dir(SITE_DIR . "/themes");
@@ -558,6 +559,18 @@ abstract class WebModule extends Module {
         }
         
         return $modules;
+    }
+    
+    public function allowRobots() {
+        if (!$this->canAllowRobots) {
+            return false;
+        } else {
+            return $this->getOptionalModuleVar('robots', 1) ? true : false;
+        }
+    }
+    
+    public function canAllowRobots() {
+        return $this->canAllowRobots;
     }
     
     public function canBeAddedToHomeScreen() {

@@ -141,6 +141,11 @@ function CacheHeaders($file)
 
 $url_patterns = array(
   array(
+    'pattern' => ';^.*robots.txt$;', 
+    'func'    => '_phpFile',
+    'params'  => array(LIB_DIR.'/robots.php'),
+  ),
+  array(
     'pattern' => ';^.*favicon.ico$;', 
     'func'    => '_outputFile',
     'params'  => array(THEME_DIR.'/common/images/favicon.ico'),
