@@ -437,7 +437,8 @@ class LDAPPeopleParser extends PeopleDataParser
     }
         
     public function parseResponse(DataResponse $response) {
-
+        $this->setResponse($response);
+        
         $data = $response->getResponse();    
 
         if (!is_resource($data) || get_resource_type($data) != 'ldap result') {

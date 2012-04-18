@@ -304,7 +304,7 @@ class PeopleWebModule extends WebModule {
           
                     $this->assign('searchTerms', $searchTerms);
           
-                    $startIndex = $this->getArg('start', 1);
+                    $startIndex = $this->getArg('start', 0);
                     $limit = $this->getOptionalModuleVar('LIMIT', 20);
                     $PeopleController->setStart($startIndex);
                     $PeopleController->setLimit($limit);
@@ -315,8 +315,8 @@ class PeopleWebModule extends WebModule {
 
                     if ($people !== false) {
                         $resultCount = count($people);
-                        $totalItems = $this->getFeed('people')->getTotalItems();
-            
+                        $totalItems = $PeopleController->getTotalItems();
+
                         switch ($totalItems) 
                         {
                             case 1:
@@ -342,16 +342,15 @@ class PeopleWebModule extends WebModule {
                                     if($startIndex + $limit <= $totalItems)
                                     {
                                         $nextLink = $this->buildURL('search', array('filter' => $searchTerms, 'start' => $startIndex + $limit));
-                                        $next = array('title' => 'Next '.$limit.' results', 'url' => $nextLink, 'class' => 'next');
+                                        $next = array('title' => $this->getLocalizedString("NEXT_PEOPLE_TEXT", $limit), 'url' => $nextLink, 'class' => 'pagerlink');
                                         array_push($results, $next);
                                     }
-                                    if($startIndex > 1)
+                                    if($startIndex > 0)
                                     {
                                         $prevLink = $this->buildURL('search', array('filter' => $searchTerms, 'start' => $startIndex - $limit));
-                                        $prev = array('title' => 'Previous '.$limit.' results', 'url' => $prevLink, 'class' => 'prev');
+                                        $prev = array('title' => $this->getLocalizedString("PREVIOUS_PEOPLE_TEXT", $limit), 'url' => $prevLink, 'class' => 'pagerlink');
                                         array_unshift($results, $prev);
                                     }
-                                    
                                 }
                                 
                                 $this->assign('resultCount', $this->getFeed('people')->getTotalItems());
