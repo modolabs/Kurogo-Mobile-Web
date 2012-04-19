@@ -152,7 +152,7 @@ class KurogoShellDispatcher {
             $Kurogo = Kurogo::sharedInstance();
             $Kurogo->setRequest($shell, $command, $args);
 
-            if ($module = ShellModule::factory($id, $page, $args)) {
+            if ($module = ShellModule::factory($shell, $command, $args)) {
                 $Kurogo->setCurrentModule($module);
                 $module->displayPage();
             } else {
