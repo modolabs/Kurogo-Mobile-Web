@@ -30,6 +30,8 @@ abstract class WebModule extends Module {
   protected $homeModuleID;
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
+
+  protected $ajaxContentLoad = false;
   
   protected $imageExt = '.png';
   
@@ -487,6 +489,8 @@ abstract class WebModule extends Module {
                 $this->imageExt = '.gif';
                 break;
         }
+
+        $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
         
         if ($page) {
             // Pull in fontsize
@@ -1416,6 +1420,7 @@ abstract class WebModule extends Module {
     $this->assign('isModuleHome', $this->page == 'index');
     $this->assign('request_uri' , $_SERVER['REQUEST_URI']);
     $this->assign('hideFooterLinks' , $this->hideFooterLinks);
+    $this->assign('ajaxContentLoad', $this->ajaxContentLoad);
     $this->assign('charset', Kurogo::getCharset());
     
     // Font size for template
