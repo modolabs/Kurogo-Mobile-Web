@@ -1,17 +1,20 @@
 #!/usr/bin/php -q
 <?php
-require_once realpath(dirname(__FILE__).'/../Kurogo.php');
 
 class KurogoShellDispatcher {
 
     protected $stdin; //standard input stream
     protected $stdout; //standard output stream
     protected $stderr; //standard error stream
-    protected $params;
+    protected $params = array();
     protected $args = array();
     protected $initArgs = array();
+    protected $shell = '';
     protected $shellCommand = '';
     protected $shellClass = null;
+    protected $siteName;
+    protected $workingPath;
+    protected $rootDir;
     
     public function getParams() {
         return $this->params;
@@ -21,10 +24,26 @@ class KurogoShellDispatcher {
         return $this->args;
     }
     
+    public function getRootDir() {
+        return $this->rootDir;
+    }
+    
+    public function getSiteName() {
+        return $this->siteName ? $this->siteName : '';
+    }
+    
     public function getShellCommand() {
         return $this->shellCommand;
     }
     
+    function shiftArgs() {
+		if (empty($this->args)) {
+			return false;
+		}
+		unset($this->args[0]);
+		$this->args = array_values($this->args);
+		return true;
+	}
     /**
      * Constructor
      *
@@ -36,14 +55,12 @@ class KurogoShellDispatcher {
         $this->initConstants();
         $this->parseParams($args);
         $this->initEnvironment();
+        $this->dispatch();
     }
     
     protected function initConstants() {
         define('KUROGO_SHELL', true);
         
-        $Kurogo = Kurogo::sharedInstance();
-        $Kurogo->initialize();
-
         if (function_exists('ini_set')) {
             ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
             ini_set('html_errors', false);
@@ -56,11 +73,42 @@ class KurogoShellDispatcher {
         $this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
+		
+		$rootDir = $this->getRootDir();
+		$kurogoFile = $this->getRootDir() . '/lib/Kurogo.php';
+
+		if ($kurogoFile && require_once($kurogoFile)) {
+		    $Kurogo = Kurogo::sharedInstance();
+		    
+		    $path = $this->getSiteName();
+		    $Kurogo->initialize($path);
+		} else {
+		    $this->stderr("\nKurogo Console: ");
+			$this->stderr("\nUnable to load Kurogo class");
+			exit();
+		}
+		$this->shiftArgs();
     }
 
     protected function parseParams($params) {
         $this->_parseParams($params);
         
+        if (isset($this->params['working'])) {
+            $this->workingPath = $this->params['working'];
+            unset($this->params['working']);
+        }
+        
+        if (isset($this->params['site'])) {
+            $this->siteName = $this->params['site'];
+            unset($this->params['site']);
+        }
+
+        if (isset($this->params['root'])) {
+            $this->rootDir = $this->params['root'];
+            unset($this->params['root']);
+        } else {
+            $this->rootDir = realpath(substr(dirname(__FILE__), 0, -12));
+        }
     }
     
     protected function _parseParams($params) {
@@ -87,6 +135,36 @@ class KurogoShellDispatcher {
         }
     }
     
+    protected function dispatch() {
+        if (isset($this->args[0])) {
+            $shell = $this->args[0];
+            $command = 'index';
+            
+            $this->shell = $shell;
+            $this->shiftArgs();
+            
+            if (isset($this->args[0]) && $this->args[0]) {
+                $command = $this->args[0];
+            }
+            $this->shellCommand = $command;
+            $args = $this->getParams();
+
+            $Kurogo = Kurogo::sharedInstance();
+            $Kurogo->setRequest($shell, $command, $args);
+
+            if ($module = ShellModule::factory($id, $page, $args)) {
+                $Kurogo->setCurrentModule($module);
+                $module->displayPage();
+            } else {
+                throw new KurogoException("Module $shell cannot be loaded");
+            }
+            
+        } else {
+            $this->stderr("\nKurogo Console: ");
+			$this->stderr("\nNot found the shell module");
+			exit();
+        }
+    }
     /**
      * Prompts the user for input, and returns it.
      *

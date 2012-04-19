@@ -2,6 +2,8 @@
 clear
 
 LIB=${0/%kurogo/}
-exec php -q ${LIB}KurogoShell.php -working "$@"
+APP=`pwd`
+
+exec php -q ${LIB}KurogoShell.php -working "${APP}" "$@"
 
 exit;
