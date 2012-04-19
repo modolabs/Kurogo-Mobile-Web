@@ -1,5 +1,4 @@
 #!/bin/bash
-clear
 
 LIB=${0/%KurogoShell/}
 APP=`pwd`
