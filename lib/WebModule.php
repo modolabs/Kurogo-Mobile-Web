@@ -1090,15 +1090,11 @@ abstract class WebModule extends Module {
   //
   
   private function encodeBreadcrumbParam($breadcrumbs) {
-    return gzdeflate(json_encode($breadcrumbs), 9);
+    return json_encode($breadcrumbs);
   }
   
   private function decodeBreadcrumbParam($breadcrumbs) {
-    if ($json = @gzinflate($breadcrumbs)) {
-        return json_decode($json, true);
-    }
-
-    return null;
+    return json_decode($breadcrumbs, true);
   }
   
   private function loadBreadcrumbs() {
