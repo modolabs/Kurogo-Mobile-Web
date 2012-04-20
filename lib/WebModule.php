@@ -27,7 +27,6 @@ abstract class WebModule extends Module {
 
   protected $deviceClassifier;  
 
-  protected $homeModuleID;
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
 
@@ -762,7 +761,7 @@ abstract class WebModule extends Module {
         $disabledModules = $includeDisabled || !$disabledIDs ? array() : array_combine($disabledIDs, $disabledIDs);
 
         $modules = array(
-            'home'     => $this->pagetype == 'tablet' ? array('home'=>'Home') : array(),
+            'home'     => $this->pagetype == 'tablet' ? array($this->getHomeModuleID()=>'Home') : array(),
             'primary'  => array_diff_key($moduleNavConfig->getOptionalSection('primary_modules'), $disabledModules),
             'secondary'=> array_diff_key($moduleNavConfig->getOptionalSection('secondary_modules'), $disabledModules)
         );
@@ -778,7 +777,8 @@ abstract class WebModule extends Module {
     protected function getAllModuleNavigationData($includeDisabled=self::INCLUDE_DISABLED_MODULES) {
     
         $moduleConfig = $this->getModuleNavigationIDs($includeDisabled);
-    
+        $homeModuleID = $this->getHomeModuleID();
+        
         $modules = array(
             'home'    => array(),
             'primary' => array(),
@@ -816,7 +816,7 @@ abstract class WebModule extends Module {
                     'url'         => "/$moduleID/",
                     'disableable' => !in_array($moduleID, $modulesThatCannotBeDisabled),
                     'disabled'    => $includeDisabled && in_array($moduleID, $disabledIDs),
-                    'img'         => "/modules/home/images/{$moduleID}{$imgSuffix}".$this->imageExt,
+                    'img'         => "/modules/{$homeModuleID}/images/{$moduleID}{$imgSuffix}".$this->imageExt,
                     'class'       => implode(' ', $classes),
                 );
 
@@ -841,7 +841,7 @@ abstract class WebModule extends Module {
   protected function getUserSortedModules($modules) {
     // sort primary modules if sort cookie is set
     if (isset($_COOKIE[MODULE_ORDER_COOKIE])) {
-      $sortedIDs = array_merge(array('home'), explode(",", $_COOKIE[MODULE_ORDER_COOKIE]));
+      $sortedIDs = array_merge(array($this->getHomeModuleID()), explode(",", $_COOKIE[MODULE_ORDER_COOKIE]));
       $unsortedIDs = array_diff(array_keys($modules['primary']), $sortedIDs);
             
       $sortedModules = array();
@@ -1406,14 +1406,6 @@ abstract class WebModule extends Module {
         $this->assign('homeLinkText', $this->getLocalizedString('HOME_LINK', Kurogo::getSiteString('SITE_NAME')));
         $this->assign('moduleHomeLinkText', $this->getLocalizedString('HOME_LINK', $this->getModuleName()));
     }
-  
-    protected function getHomeModuleID() {
-        if (!$this->homeModuleID) {
-            $this->homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
-        }
-        
-        return $this->homeModuleID;
-    }
     
   private function setPageVariables() {
     $this->loadTemplateEngineIfNeeded();
@@ -1524,7 +1516,7 @@ abstract class WebModule extends Module {
     
     // Access Key Start
     $accessKeyStart = count($this->breadcrumbs);
-    if ($this->configModule != 'home') {
+    if ($this->configModule != $this->getHomeModuleID()) {
       $accessKeyStart++;  // Home link
     }
     $this->assign('accessKeyStart', $accessKeyStart);
