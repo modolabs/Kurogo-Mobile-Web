@@ -151,10 +151,10 @@ class KurogoShellDispatcher {
 
             $Kurogo = Kurogo::sharedInstance();
             $Kurogo->setRequest($shell, $command, $args);
-
-            if ($module = ShellModule::factory($shell, $command, $args)) {
+    
+            if ($module = ShellModule::factory($shell, $command, $args, $this)) {
                 $Kurogo->setCurrentModule($module);
-                $module->displayPage();
+                $module->executeCommand();
             } else {
                 throw new KurogoException("Module $shell cannot be loaded");
             }
@@ -165,13 +165,9 @@ class KurogoShellDispatcher {
 			exit();
         }
     }
+    
     /**
      * Prompts the user for input, and returns it.
-     *
-     * @param string $prompt Prompt text.
-     * @param mixed $options Array or string of options.
-     * @param string $default Default input value.
-     * @return Either the default value, or the user provided input.
      */
     public function getInput($prompt, $options = null, $default = null) {
         if (is_array($options)) {
