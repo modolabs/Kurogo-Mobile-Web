@@ -4,8 +4,6 @@ includePackage('News');
 class NewsShellModule extends ShellModule {
 
     protected $id = 'news';
-    protected $vmin = 1;
-    protected $vmax = 1;
     protected $legacyController = false;
     protected static $defaultModel = 'NewsDataModel';
     protected static $defaultController = 'RSSDataController';
@@ -45,14 +43,8 @@ class NewsShellModule extends ShellModule {
                 $feed = $this->getFeed($categoryID);
                 
                 $maxResults = $this->getOptionalModuleVar('MAX_RESULTS', 5);
-                $response = array(
-                    'id' => $categoryID,
-                    'maxResults' => $maxResults,
-                    'result' => 'success'
-                );
                 
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
+                return 0;
                 break;
                 
             case 'test':

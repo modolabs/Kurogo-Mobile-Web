@@ -54,7 +54,7 @@ class KurogoShellDispatcher {
         $this->initConstants();
         $this->parseParams($args);
         $this->initEnvironment();
-        $this->dispatch();
+        $this->stop($this->dispatch());
     }
     
     protected function initConstants() {
@@ -73,22 +73,38 @@ class KurogoShellDispatcher {
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
 		
-		$rootDir = $this->getRootDir();
+		if (!$this->bootstrap()) {
+		    /*
+		    $this->stderr(PHP_EOL . "Kurogo Console: ");
+			$this->stderr(PHP_EOL . "Unable to load Kurogo class");
+			$this->stop();
+			*/
+			$this->stop(ShellModule::SHELL_LOAD_KUROGO_ERROR);
+		}
+
+		$this->shiftArgs();
+    }
+
+	protected function bootstrap() {
+        $rootDir = $this->getRootDir();
 		$kurogoFile = $rootDir . '/lib/Kurogo.php';
 
 		if ($kurogoFile && require_once($kurogoFile)) {
 		    $Kurogo = Kurogo::sharedInstance();
-		    
 		    $path = $this->getSiteName();
 		    $Kurogo->initialize($path);
-		} else {
-		    $this->stderr("\nKurogo Console: ");
-			$this->stderr("\nUnable to load Kurogo class");
-			exit();
-		}
-		$this->shiftArgs();
-    }
-
+		    
+		    //init some must constance in command line
+		    if (defined('KUROGO_SHELL')) {
+                define('COOKIE_PATH', URL_BASE);
+            }
+            
+            return true;
+		} 
+		
+        return false;
+	}
+	
     protected function parseParams($params) {
         $this->_parseParams($params);
         
@@ -153,16 +169,16 @@ class KurogoShellDispatcher {
     
             if ($module = ShellModule::factory($shell, $command, $args, $this)) {
                 $Kurogo->setCurrentModule($module);
-                $module->executeCommand();
-            } else {
-                throw new KurogoException("Module $shell cannot be loaded");
+                return $module->executeCommand();
             }
-            
-        } else {
-            $this->stderr("\nKurogo Console: ");
-			$this->stderr("\nNot found the shell module");
-			exit();
         }
+        
+        $this->stop(ShellModule::SHELL_NOT_FOUND_MODULE);
+        /*
+        $this->stderr(PHP_EOL . "Kurogo Console: ");
+	    $this->stderr(PHP_EOL . "Not found the shell module");
+		$this->stop();
+		*/
     }
     
     /**
@@ -176,9 +192,9 @@ class KurogoShellDispatcher {
         }
         
         if (is_null($default)) {
-			$this->stdout($prompt . " $printOptions \n" . '> ', false);
+			$this->stdout($prompt . " $printOptions " . PHP_EOL . '> ', false);
 		} else {
-			$this->stdout($prompt . " $printOptions \n" . "[$default] > ", false);
+			$this->stdout($prompt . " $printOptions " . PHP_EOL . "[$default] > ", false);
 		}
 		$result = fgets($this->stdin);
 
@@ -195,16 +211,19 @@ class KurogoShellDispatcher {
     
     public function stdout($string, $newLine = true) {
         if ($newLine) {
-            fwrite($this->stdout, $string . "\n");
+            fwrite($this->stdout, $string . PHP_EOL);
         } else {
             fwrite($this->stdout, $string);
         }
     }
     
     public function stderr($string) {
-        fwrite($this->stderr, 'Error: '. $string);
+        fwrite($this->stderr, $string);
+    }
+    
+    public function stop($status = 0) {
+        exit($status);
     }
 }
 
 $dispatcher = new KurogoShellDispatcher($argv);
-
