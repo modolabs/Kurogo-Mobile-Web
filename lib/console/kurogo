@@ -1,9 +1,0 @@
-#!/bin/bash
-clear
-
-LIB=${0/%kurogo/}
-APP=`pwd`
-
-exec php -q ${LIB}KurogoShell.php -working "${APP}" "$@"
-
-exit;

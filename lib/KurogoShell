@@ -1,0 +1,9 @@
+#!/bin/bash
+clear
+
+LIB=${0/%KurogoShell/}
+APP=`pwd`
+
+exec php -q ${LIB}KurogoShellDispatcher.php -working "${APP}" "$@"
+
+exit;

@@ -225,7 +225,8 @@ abstract class ShellModule extends Module {
      */
     public function executeCommand() {
         if (empty($this->command)) {
-            throw new KurogoException("Command not specified");
+            $error = new KurogoError(5, 'Command not specified', "");
+            $this->throwError($error);
         }
         $this->loadResponseIfNeeded();
         $this->loadSiteConfigFile('strings');

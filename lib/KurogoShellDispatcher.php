@@ -11,7 +11,6 @@ class KurogoShellDispatcher {
     protected $initArgs = array();
     protected $shell = '';
     protected $shellCommand = '';
-    protected $shellClass = null;
     protected $siteName;
     protected $workingPath;
     protected $rootDir;
@@ -75,7 +74,7 @@ class KurogoShellDispatcher {
 		$this->stderr = fopen('php://stderr', 'w');
 		
 		$rootDir = $this->getRootDir();
-		$kurogoFile = $this->getRootDir() . '/lib/Kurogo.php';
+		$kurogoFile = $rootDir . '/lib/Kurogo.php';
 
 		if ($kurogoFile && require_once($kurogoFile)) {
 		    $Kurogo = Kurogo::sharedInstance();
@@ -107,7 +106,7 @@ class KurogoShellDispatcher {
             $this->rootDir = $this->params['root'];
             unset($this->params['root']);
         } else {
-            $this->rootDir = realpath(substr(dirname(__FILE__), 0, -12));
+            $this->rootDir = realpath(substr(dirname(__FILE__), 0, -4));
         }
     }
     
