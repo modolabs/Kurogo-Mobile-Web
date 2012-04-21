@@ -94,6 +94,25 @@ abstract class ShellModule extends Module {
         return $config->getSectionVars(true);
     }
 
+    public static function getAllModules() {
+        $configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
+        $modules = array();
+    
+        foreach ($configFiles as $file) {
+            if (preg_match("#" . preg_quote(SITE_CONFIG_DIR,"#") . "/([^/]+)/module.ini$#", $file, $bits)) {
+                $id = $bits[1];
+                try {
+                    if ($module = ShellModule::factory($id)) {
+                       $modules[$id] = $module;
+                    }
+                } catch (KurogoException $e) {
+                }
+            }
+        }
+        ksort($modules);    
+        return $modules;        
+    }
+      
     /**
      * Prompts the user for input, and returns it.
      */
