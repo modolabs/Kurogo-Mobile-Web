@@ -6,7 +6,7 @@ class PeopleAPIModule extends APIModule
 {
     protected $id = 'people';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
     protected static $defaultModel = 'PeopleDataModel';
     protected static $defaultController = 'LDAPPeopleController'; //legacy
     private $fieldConfig;
@@ -42,6 +42,8 @@ class PeopleAPIModule extends APIModule
     
     private function formatPerson($person) {
         $result = array();
+        $result['uid'] = $person->getId();
+
         foreach ($this->fieldConfig as $fieldID => $fieldOptions) {
             $attributes = array();
             for ($i = 0; $i < count($fieldOptions['attributes']); $i++) {
@@ -55,7 +57,8 @@ class PeopleAPIModule extends APIModule
                 $values = $person->getField($attribute);
                 if ($values) {
                     if (is_array($values)) {
-                        $attributes[$label] = $values[0];
+                        $delimiter = isset($fieldOptions['delimiter']) ? $fieldOptions['delimiter'] : ' ';
+                        $attributes[$label] = implode($delimiter, $values);
                     } else {
                         $attributes[$label] = $values;
                     }
@@ -164,7 +167,7 @@ class PeopleAPIModule extends APIModule
                     }
                     
                     $this->setResponse($response);
-                    $this->setResponseVersion(1);
+                    $this->setResponseVersion(2);
                         
                 } else {
                     $this->invalidCommand();

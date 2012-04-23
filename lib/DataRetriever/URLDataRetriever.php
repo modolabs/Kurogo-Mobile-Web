@@ -280,6 +280,8 @@ class URLDataRetriever extends DataRetriever {
 
         if (!isset($url_parts['scheme'])) {
              $this->DEFAULT_RESPONSE_CLASS="FileDataResponse";
+        }else {
+             $this->DEFAULT_RESPONSE_CLASS="HTTPDataResponse";
         }
         
         $response = $this->initResponse();

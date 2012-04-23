@@ -27,6 +27,7 @@ abstract class DataRetriever {
     protected $cacheRequest = true;
     protected $cacheLifetime = null; //if null it will use cache default.
     protected $requestInit = false; //whether initRequest has been called or not
+    protected $lastResponse;
     protected $parser;
 
     abstract protected function retrieveResponse();
@@ -129,6 +130,7 @@ abstract class DataRetriever {
             }
         }
         
+        $this->lastResponse = $response;
         return $response;
     }
     
@@ -308,12 +310,20 @@ abstract class DataRetriever {
     }
 
     public function getResponseError() {
+        if ($this->lastResponse) {
+            return $this->lastResponse->getResponseError();
+        }
+        
         if ($response = $this->getResponse()) {
             return $response->getResponseError();
         }
     }
 
     public function getResponseCode() {
+        if ($this->lastResponse) {
+            return $this->lastResponse->getCode();
+        }
+
         if ($response = $this->getResponse()) {
             return $response->getCode();
         }

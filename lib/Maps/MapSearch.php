@@ -167,7 +167,9 @@ class MapSearch extends DataRetriever {
     protected function doSearchByText($query) {
         $allResults = array();
     	foreach ($this->feeds as $id => $feedData) {
-            $feedData['group'] = $this->feedGroup;
+    	    if ($this->feedGroup) {
+                $feedData['group'] = $this->feedGroup;
+            }
             $controller = mapModelFromFeedData($feedData);
 
             if ($controller->canSearch()) {

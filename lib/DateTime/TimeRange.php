@@ -141,9 +141,16 @@ class TimeRange {
     * Returns whether any part of the 2 ranges overlap
     */
   public function overlaps(TimeRange $range) {
-    if ($range->get_start() >= $this->end) return FALSE;
-    elseif ($range->get_end() <= $this->start) return FALSE;
-    else return TRUE;
+    
+    if($this->start == $this->end) { // KGO-666
+          if ($range->get_start() > $this->end) return FALSE;
+          elseif ($range->get_end() < $this->start) return FALSE;
+          else return TRUE;
+      }else {
+          if ($range->get_start() >= $this->end) return FALSE;
+          elseif ($range->get_end() <= $this->start) return FALSE;
+          else return TRUE;
+      }
   }
 
   /**

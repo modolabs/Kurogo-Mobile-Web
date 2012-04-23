@@ -171,8 +171,7 @@ function exceptionHandlerForDevelopment($exception) {
     $error = print_r($exception, TRUE);
 	
 	if ($url = getErrorURL($exception, $errtime)) {
-    	header('Location: ' . $url);
-    	die(0);
+	    Kurogo::redirectToURL($url);
     } else {
     	header('Content-type: text/plain; charset=' . Kurogo::getCharset());
 		die("A serious error has occurred: \n\n" . $error);
@@ -208,8 +207,7 @@ function exceptionHandlerForProduction(Exception $exception) {
     }
 
     if ($url = getErrorURL($exception)) {
-		header('Location: ' . $url);
-		die(0);
+        Kurogo::redirectToURL($url);
 	} else {
 		die("A serious error has occurred");
 	}
