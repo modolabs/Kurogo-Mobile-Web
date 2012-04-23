@@ -42,7 +42,7 @@
     </table>
     
     <p class="nonfocal centered">
-      <a href="../home/">{"RETURN_HOME"|getLocalizedString}</a>
+      <a href="../{$homeModuleID}/">{"RETURN_HOME"|getLocalizedString}</a>
     </p>
   </div>
 {/block}

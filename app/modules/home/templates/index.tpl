@@ -14,7 +14,7 @@
     {/if}
   {/if}
   <h1 id="homelogo"{if isset($topItem)} class="roomfornew"{/if}>
-    <img src="/modules/{$moduleID}/images/logo-home{$imageExt}" width="{$banner_width|default:265}" height="{$banner_height|default:45}" alt="{$strings.SITE_NAME|escape}" />
+    <img src="/modules/{$configModule}/images/logo-home{$imageExt}" width="{$banner_width|default:265}" height="{$banner_height|default:45}" alt="{$strings.SITE_NAME|escape}" />
   </h1>
   {/block}
 {/capture}
@@ -57,7 +57,7 @@
 {if $SHOW_DOWNLOAD_TEXT}
 <p id="download">
     <a href="/download/">
-      <img src="/modules/{$moduleID}/images/download{$imageExt}"
+      <img src="/modules/{$configModule}/images/download{$imageExt}"
       alt="" align="absmiddle" />
       {$SHOW_DOWNLOAD_TEXT}
     </a>

@@ -163,7 +163,7 @@ Dynamic Home Screen Information
 ===============================
 
 The :doc:`Home Module <modulehome>` is used to show the available modules to the users. In the default
-implementation, the list of modules and their titles and images is specified statically in the home/module.ini
+implementation, the list of modules and their titles and images is specified statically in the {homeModuleID}/module.ini
 file. In this case the information presented on the home screen is always the same.
 
 In some scenarios it may be necessary to have that information be more dynamic. This would permit custom
@@ -183,7 +183,7 @@ to utilize this you must do the following:
   * *url* - The url to the module. Defaults to /moduleid. Should only be changed in unusual circumstances
   * *selected* - Whether this module is selected. This is used by the tablet interface since the nav bar
     is persistent.
-  * *img* - A URL to the module icon. The default is /modules/home/images/{moduleID}.{$this->imageExt}. 
+  * *img* - A URL to the module icon. The default is /modules/{homeModuleID}/images/{moduleID}.{$this->imageExt}. 
   * *class* - The CSS class (space delimited) 
   
   Your implementation should alter the values as necessary and return the updated associative array.   

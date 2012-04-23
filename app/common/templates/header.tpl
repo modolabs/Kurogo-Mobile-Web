@@ -131,7 +131,7 @@
           {/if}
           
         {/if}
-        {if $moduleID != 'home' || !$breadcrumb@first}
+        {if $configModule != $homeModuleID || !$breadcrumb@first}
           <a href="{$breadcrumb['url']|sanitize_url}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
             {if $breadcrumb@first}
               <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="{$module_nav_image_width|default:28}" height="{$module_nav_image_height|default:28}" alt="" />

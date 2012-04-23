@@ -1,6 +1,6 @@
 {capture name="banner" assign="banner"}
   <div id="navbar">
-    <img src="/modules/{$moduleID}/images/home.png" width="40" height="40" alt="" class="moduleicon" />
+    <img src="/modules/{$configModule}/images/home.png" width="40" height="40" alt="" class="moduleicon" />
     <span class="pagetitle">
       {$strings.SITE_NAME}
     </span>        
