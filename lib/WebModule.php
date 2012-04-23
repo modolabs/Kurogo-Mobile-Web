@@ -71,6 +71,7 @@ abstract class WebModule extends Module {
   protected $canBeDisabled = true;
   protected $canBeHidden = true;
   protected $canAllowRobots = true;
+  protected $defaultAllowRobots = true;
   protected $hideFooterLinks = false;
   
   //
@@ -567,10 +568,11 @@ abstract class WebModule extends Module {
     }
     
     public function allowRobots() {
-        if (!$this->canAllowRobots) {
-            return false;
+        // Returns integers so the admin module can use this function
+        if ($this->canAllowRobots && $this->getOptionalModuleVar('robots', $this->defaultAllowRobots)) {
+            return 1;
         } else {
-            return $this->getOptionalModuleVar('robots', 1) ? true : false;
+            return 0;
         }
     }
     

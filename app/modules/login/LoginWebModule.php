@@ -9,12 +9,13 @@
   * @subpackage Login
   */
 class LoginWebModule extends WebModule {
-  protected $id = 'login';
+    protected $id = 'login';
+    protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
   
-  // ensure that the login module always has access 
-  protected function getAccessControlLists($type) {
+    // ensure that the login module always has access 
+    protected function getAccessControlLists($type) {
         return array(AccessControlList::allAccess());
-  }
+    }
   
     public function isEnabled() {
         return Kurogo::getSiteVar('AUTHENTICATION_ENABLED') && parent::isEnabled();

@@ -11,6 +11,7 @@
 class CustomizeWebModule extends WebModule {
     protected $id = 'customize';
     protected $canBeHidden = false;
+    protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
     
     private function getModuleCustomizeList() {    
         $navModules = $this->getAllModuleNavigationData(self::INCLUDE_DISABLED_MODULES);
