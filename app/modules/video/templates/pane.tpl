@@ -2,7 +2,7 @@
   {foreach $videos as $video}
     <a id="videos_{$video@index}" href="{$video['url']}"{if $video@first} class="current"{/if}>
       <div class="thumbnail">
-        <img src="{if $video['img']}{$video['img']}{else}/modules/{$moduleID}/images/video-placeholder.png{/if}" />
+        <img src="{if $video['img']}{$video['img']}{else}/modules/{$configModule}/images/video-placeholder.png{/if}" />
       </div>
       <h2 class="title">{$video["title"]}</h2>
       {$video['subtitle']}

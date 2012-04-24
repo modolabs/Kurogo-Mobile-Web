@@ -11,6 +11,7 @@
 class AdminWebModule extends WebModule {
     protected $id = 'admin';
     protected $canBeRemoved = false;
+    protected $canAllowRobots = false;
   
     private function getNavSections() {
         $navSections = array(

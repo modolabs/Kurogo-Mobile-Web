@@ -15,6 +15,7 @@ class ErrorWebModule extends WebModule {
   protected $canBeAddedToHomeScreen = false;
   protected $canBeRemoved = false;
   protected $canBeDisabled = false;
+  protected $canAllowRobots = false;
   
     protected function getError($code) {
         static $errors = array(
