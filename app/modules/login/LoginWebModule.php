@@ -9,12 +9,13 @@
   * @subpackage Login
   */
 class LoginWebModule extends WebModule {
-  protected $id = 'login';
+    protected $id = 'login';
+    protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
   
-  // ensure that the login module always has access 
-  protected function getAccessControlLists($type) {
+    // ensure that the login module always has access 
+    protected function getAccessControlLists($type) {
         return array(AccessControlList::allAccess());
-  }
+    }
   
     public function isEnabled() {
         return Kurogo::getSiteVar('AUTHENTICATION_ENABLED') && parent::isEnabled();
@@ -58,8 +59,10 @@ class LoginWebModule extends WebModule {
     
     // initialize
     $authenticationAuthorities = array(
+        'total'=>0,
         'direct'=>array(),
-        'indirect'=>array()
+        'indirect'=>array(),
+        'auto'=>array()
     );
     
     $invalidAuthorities = array();
@@ -82,8 +85,13 @@ class LoginWebModule extends WebModule {
 
             if ($USER_LOGIN=='FORM') {
                 $authenticationAuthorities['direct'][$authorityIndex] = $authorityData;
+                $authenticationAuthorities['total']++;
             } elseif ($USER_LOGIN=='LINK') {
                 $authenticationAuthorities['indirect'][$authorityIndex] = $authorityData;
+                $authenticationAuthorities['total']++;
+            } elseif ($USER_LOGIN=='AUTO') {
+                $authenticationAuthorities['auto'][$authorityIndex] = $authorityData;
+                $authenticationAuthorities['total']++;
             }
         } catch (KurogoConfigurationException $e) {
             Kurogo::log(LOG_WARNING, "Invalid authority data for %s: %s", $authorityIndex, $e->getMessage(), 'auth');
@@ -92,7 +100,7 @@ class LoginWebModule extends WebModule {
     }
                  
     //see if we have any valid authorities
-    if (count($authenticationAuthorities['direct'])==0 && count($authenticationAuthorities['indirect'])==0) {
+    if ($authenticationAuthorities['total']==0) {
         $message = $this->getLocalizedString("ERROR_NO_AUTHORITIES");
         if (count($invalidAuthorities)>0) {
             $message .= sprintf(" %s invalid authorit%s found:\n", count($invalidAuthorities), count($invalidAuthorities)>1 ?'ies':'y');
@@ -182,8 +190,7 @@ class LoginWebModule extends WebModule {
         case 'forgotpassword':
             //redirect to forgot password url
             if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
-                header("Location: $forgetPasswordURL");
-                exit();
+                Kurogo::redirectToURL($forgetPasswordURL);
             } else {
                 $this->redirectTo('index', array());
             }
@@ -273,6 +280,11 @@ class LoginWebModule extends WebModule {
             //sometimes messages are passed. This probably has some 
             if ($messagekey = $this->getArg('messagekey')) {
                 $this->assign('messagekey', $this->getLocalizedString($messagekey));
+                try {
+                    $message = $this->getLocalizedString($messagekey);
+                    $this->assign('message', $message);
+                } catch (KurogoException $e) {
+                }
             }
             
             if ($this->isLoggedIn()) {
@@ -334,11 +346,16 @@ class LoginWebModule extends WebModule {
                 $this->setTemplatePage('loggedin');
             } else { // not logged in
             
-                // if there is only 1 authority then redirect to the login page for that authority
+                // if there is only 1 direct authority then redirect to the login page for that authority
                 if (!$multipleAuthorities && count($authenticationAuthorities['direct'])) {
                     $this->redirectTo('login', array_merge($urlArray, array('authority'=>key($authenticationAuthorities['direct']))));
                 }
 
+                // if there is only 1 auto authority then redirect to the login page for that authority
+                if (!$multipleAuthorities && count($authenticationAuthorities['auto']) && !$messagekey) {
+                    $this->redirectTo('login', array_merge($urlArray, array('authority'=>key($authenticationAuthorities['auto']))));
+                }
+                
                 // do we have any indirect authorities?
                 if (count($authenticationAuthorities['indirect'])) {
                     if (!$indirectMessage = $this->getOptionalModuleVar('LOGIN_INDIRECT_MESSAGE')) {

@@ -34,6 +34,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
     protected $baseAttributes = array();
+    protected $searchFields = array();
     
     protected function retrieveResponse() {
         $response = $this->initResponse();
@@ -63,7 +64,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $error_reporting = ini_get('error_reporting');
             error_reporting($error_reporting & ~E_WARNING);
         }
-        
+
         if ($this->filter instanceOf LDAPFilter) {
             $result = ldap_search($ds, $this->searchBase,
                 strval($this->filter), $this->getAttributes(), 0, 0, 
@@ -143,6 +144,22 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_AND, $givenNameFilter, $snFilter);
         return $filter;
     }
+    
+    protected function getSearchFields() {
+        if ($this->searchFields) {
+            $defaultFields = array(
+                $this->getField('firstname'),
+                $this->getField('lastname'),
+                $this->getField('email')
+            );
+            
+            if ($searchFields = array_diff($this->searchFields, $defaultFields)) {
+                return array_unique($searchFields);
+            }
+        }
+        
+        return null;
+    }
 
     protected function buildSearchFilter($searchString) {
 
@@ -161,7 +178,6 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         } elseif (preg_match('/^[0-9]{'. $this->MIN_PHONE_SEARCH . ',}/', $searchString)) { //partial phone number
             $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
-
             $names = preg_split("/\s+/", $searchString);
             $nameCount = count($names);
             switch ($nameCount)
@@ -203,7 +219,15 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
                     
                     $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
             }
-
+            
+            //build search for additional fields
+            if (($searchFields = $this->getSearchFields()) && ($filter instanceOf LDAPCompoundFilter)) {
+                foreach ($searchFields as $field) {
+                    $fieldFilter = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
+                    $filter->addFilter($fieldFilter);
+                }
+            }
+            
         } else {
             $filter = null;
             $this->errorMsg = "Invalid query";
@@ -263,6 +287,10 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $this->baseAttributes = $args['ATTRIBUTES'];
         }
 
+        if (isset($args['SEARCH_FIELDS'])) {
+            $this->searchFields = $args['SEARCH_FIELDS'];
+        }
+        
         $this->fieldMap = array(
             'userid'=>isset($args['LDAP_USERID_FIELD']) ? $args['LDAP_USERID_FIELD'] : 'uid',
             'email'=>isset($args['LDAP_EMAIL_FIELD']) ? $args['LDAP_EMAIL_FIELD'] : 'mail',
@@ -376,6 +404,10 @@ class LDAPCompoundFilter extends LDAPFilter
             throw new KurogoConfigurationException(sprintf("Only %d filters found (2 minimum)", count($filters)));
         }
     
+    }
+    
+    public function addFilter(LDAPFilter $filter) {
+        $this->filters[] = $filter;
     }
     
     function __toString() {

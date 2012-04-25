@@ -898,7 +898,7 @@ class AdminAPIModule extends APIModule
                 
                 Kurogo::log(LOG_NOTICE, "Updating module layout", 'admin');
                 $data = $this->getArg('data', array());
-                $config = ModuleConfigFile::factory('home', 'module');
+                $config = ModuleConfigFile::factory($this->getHomeModuleID(), 'module');
                 if (!isset($data['primary_modules'])) {
                     $data['primary_modules'] = array();
                 }

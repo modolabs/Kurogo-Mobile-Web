@@ -24,6 +24,7 @@ class PeopleWebModule extends WebModule {
     protected $contactGroups = array();
     protected $controllers = array();
     protected $legacyController = true;
+    protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);

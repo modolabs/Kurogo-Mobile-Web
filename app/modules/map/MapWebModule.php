@@ -47,7 +47,7 @@ class MapWebModule extends WebModule {
                 $groupData = array();
                 foreach ($this->getModuleSections($configName) as $id => $feedData) {
                     $feedId = mapIdForFeedData($feedData);
-                    $feedData['group'] = $id;
+                    $feedData['group'] = $groupID;
                     $groupData[$feedId] = $feedData;
                     if ($requestedFeedId == $feedId) {
                         $this->feedGroup = $groupID;
@@ -449,8 +449,7 @@ class MapWebModule extends WebModule {
 
         if (count($listItems) == 1 && !$this->getArg('listview')) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
-            header("Location: " .  rtrim(URL_BASE, '/') . $link['url']);
-            return;
+            Kurogo::redirectToURL(rtrim(URL_BASE, '/') . $link['url']);
         }
 
         $this->selectedPlacemarks = array();
@@ -479,6 +478,15 @@ class MapWebModule extends WebModule {
             $this->setTemplatePage('fullscreen');
             $this->initializeDynamicMap();
         } else {
+            if (isset($this->feedGroups[$this->feedGroup])) {
+                $feedData = $this->getCurrentFeed($feedId);
+                $showCampusTitle = isset($feedData['SHOW_CAMPUS_TITLE']) ? $feedData['SHOW_CAMPUS_TITLE'] : false;
+                if ($showCampusTitle) {
+                    $title = $this->feedGroups[$this->feedGroup]['title'] . " " . $title;
+                }
+            }
+
+
             $this->assign('title',  $title);
             $this->assign('navItems', $results);
             if ($this->numGroups > 1) {
@@ -785,6 +793,7 @@ class MapWebModule extends WebModule {
                     }
                 }
 
+                $this->assign('showAllCampuses', $this->getOptionalModuleVar('SHOW_ALL_CAMPUSES_LINK', true));
                 break;
             
             case 'bookmarks':
@@ -916,6 +925,7 @@ class MapWebModule extends WebModule {
                         'lat' => $point['lat'],
                         'lon' => $point['lon'],
                         )));
+                $placemark->setId($id);
                 $placemark->setTitle($groupData['title']);
                 $placemark->setURL($this->groupURL($id));
                 $placemarks[] = $placemark;
