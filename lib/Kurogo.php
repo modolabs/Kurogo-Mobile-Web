@@ -105,6 +105,19 @@ class Kurogo
         return Kurogo::getOptionalSiteVar('TMP_DIR', sys_get_temp_dir());
     }
     
+    public static function tempFile($prefix='kgo') {
+        $tempDir = self::tempDirectory();
+        if (!is_writable($tempDir)) {
+            throw new KurogoConfigurationException("Temporary directory $tempDir not available");
+        }
+        
+        $umask = umask(0177);
+        $tempFile = tempnam($tempDir, $prefix);
+        umask($umask);
+        
+        return $tempFile;
+    }
+    
     public static function moduleLinkForItem($moduleID, $object, $options=null) {
         $module = WebModule::factory($moduleID);
         return $module->linkForItem($object, $options);
