@@ -206,6 +206,15 @@ class AdminAPIModule extends APIModule
                             }
                         }
                     }
+                    
+                    if (isset($field['enabledMethod'])) {
+                        if (is_array($field['enabledMethod'])) {
+                            $field['enabled'] = call_user_func($field['enabledMethod']);
+                        } else {
+                            $field['enabled'] = $module->$field['enabledMethod']();
+                        }
+                        unset($field['enabledMethod']);
+                    }
                 }
                 break;
                 
