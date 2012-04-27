@@ -1,3 +1,22 @@
+.nav li.icon {
+	padding: 0;
+	min-height: 0;
+}
+
+.nav li.icon a {
+	margin: 0;
+	padding: 0 0 0 34px;
+	min-height: 34px;
+	line-height: 34px;
+}
+
+.nav li.icon a img {
+	width: 28px;
+	height: 28px;
+	top: 3px;
+	left: 3px;
+}
+
 li.story {
     height: 70pt;
 	margin: 0;

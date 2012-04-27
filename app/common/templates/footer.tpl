@@ -1,3 +1,4 @@
+{if !$ajaxContentLoad}
   {if $moduleDebug && count($moduleDebugStrings)}
     <p class="legend nonfocal">
       {foreach $moduleDebugStrings as $string}
@@ -44,7 +45,7 @@
   {/block}
 
   {block name="deviceDetection"}
-    {if $moduleID == $homeModuleID && $showDeviceDetection}
+    {if $configModule == $homeModuleID && $showDeviceDetection}
       <table class="devicedetection">
         <tr><th>Pagetype:</th><td>{$pagetype}</td></tr>
         <tr><th>Platform:</th><td>{$platform}</td></tr>
@@ -86,3 +87,4 @@
 {/block}
 </body>
 </html>
+{/if}

@@ -46,7 +46,7 @@
 </tr>
 {foreach $modules as $moduleData}
 <tr>
-    <td><img src="/modules/home/images/compliant/{$moduleData.id}.png" width="30" height="30" alt="{$moduleData.title|escape}" /></td>
+    <td><img src="/modules/{$homeModuleID}/images/compliant/{$moduleData.id}.png" width="30" height="30" alt="{$moduleData.title|escape}" /></td>
     <td><a href="{$moduleData.url}">{$moduleData.title|escape}</a></td>
     <td>{$moduleData.id}</td>
     <td>{$moduleData.type}</td>

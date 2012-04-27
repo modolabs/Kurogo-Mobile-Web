@@ -42,7 +42,7 @@ class EmergencyNoticeDataModel extends DataModel
             
             $items = $this->getData();
             foreach ($items as $item) {
-                if (($now - $item->getPubTimestamp()) > $this->NOTICE_EXPIRATION) {
+                if ($this->NOTICE_EXPIRATION && (($now - $item->getPubTimestamp()) > $this->NOTICE_EXPIRATION)) {
                     break; // items too old
                 }
                 

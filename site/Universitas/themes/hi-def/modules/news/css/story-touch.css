@@ -1,4 +1,9 @@
-body.NewsModule #navbar, .news {
-	/* Background color for news listing and story; should be white in most cases */
+body.NewsModule #navbar {
     background-color: @@@focal_background_color@@@;	
+    margin-bottom: 0;
+}
+
+.news {
+    background-color: @@@focal_background_color@@@;	
+    padding: 10px;
 }

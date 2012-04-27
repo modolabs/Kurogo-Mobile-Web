@@ -1204,14 +1204,15 @@ h2.icon {
 	padding-left: 7px;
 }
 
+#tabscontainer {
+	padding: 0 12px;
+}
+
 #tabbodies {
 	margin: 0 -12px 0 -12px;
 	clear: both;
 	border-top: 1px solid #bbb;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
-	border-bottom-right-radius: 8px;	
-	border-bottom-left-radius: 8px;	
+	border-bottom: 1px solid #bbb;
 }
 
 .shaded #tabbodies {

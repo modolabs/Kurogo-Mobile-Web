@@ -647,13 +647,13 @@ class CalendarWebModule extends WebModule {
         $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
         $type     = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-        $limit    = $this->getArg('limit', 20);
         $feed     = $this->getFeed($calendar, $type);
         $title    = $this->getFeedTitle($calendar, $type);
         $this->setLogData($type . ':' . $calendar, $title);
-        $this->setPageTitle($title);
-        $this->setBreadcrumbTitle('List');
-        $this->setBreadcrumbLongTitle($title);
+
+        //paging settings
+        $startEvent = $this->getArg('start', 0);
+        $limit    = $this->getArg('limit', 20);
         
         $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $start->setTime(0,0,0);
@@ -661,12 +661,32 @@ class CalendarWebModule extends WebModule {
         $feed->setStartDate($start);
         
         if ($this->legacyController) {
-            $iCalEvents = $feed->items(0, $limit);
+            $iCalEvents = $feed->items($startEvent, $limit);
         } else {
+        	$feed->setStart($startEvent);
             $feed->setLimit($limit);
             $iCalEvents = $feed->items();
         } 
-                        
+
+        $totalItems = $feed->getTotalItems();
+        $previousEventsURL = null;
+        $nextEventsURL = null;
+        if ($totalItems > $limit) {
+          $args = $this->args;
+          if ($startEvent > 0) {
+            $args['start'] = $startEvent - $limit;
+            $previousEventsURL = $this->buildBreadcrumbURL($this->page, $args, false);
+          }
+          
+          if (($totalItems - $startEvent) > $limit) {
+            $args['start'] = $startEvent + $limit;
+            $nextEventsURL = $this->buildBreadcrumbURL($this->page, $args, false);
+          }
+        }
+        $this->assign('maxPerPage',     $limit);
+        $this->assign('previousEventsURL',    $previousEventsURL);
+        $this->assign('nextEventsURL',        $nextEventsURL);
+        
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
         

@@ -2,7 +2,7 @@
   {foreach $stories as $story}
     <a id="newsStory_{$story@index}" href="{$story['url']}"{if $story@first} class="current"{/if}>
       <div class="thumbnail">
-        <img src="{if $story['img']}{$story['img']}{else}/modules/{$moduleID}/images/news-placeholder.png{/if}" />
+        <img src="{if $story['img']}{$story['img']}{else}/modules/{$configModule}/images/news-placeholder.png{/if}" />
       </div>
       <h2 class="title">{$story["title"]}</h2>
       {$story['subtitle']}
