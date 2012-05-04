@@ -10,7 +10,7 @@
             "disabled":{"labelKey":"ADMIN_MODULE_GENERAL_DISABLED_TITLE","type":"inversecheckbox","config":"module","section":"module","descriptionKey":"ADMIN_MODULE_GENERAL_DISABLED_DESCRIPTION"},
             "secure":{"labelKey":"ADMIN_MODULE_GENERAL_SECURE_TITLE","type":"checkbox","config":"module","section":"module","descriptionKey":"ADMIN_MODULE_GENERAL_SECURE_DESCRIPTION"},
             "search":{"labelKey":"ADMIN_MODULE_GENERAL_SEARCH_TITLE","type":"checkbox","config":"module","section":"module","descriptionKey":"ADMIN_MODULE_GENERAL_SEARCH_DESCRIPTION"},
-            "robots":{"labelKey":"ADMIN_MODULE_GENERAL_ROBOTS_TITLE","type":"checkbox","config":"module","section":"module","descriptionKey":"ADMIN_MODULE_GENERAL_ROBOTS_DESCRIPTION", "valueMethod":"allowRobots"},
+            "robots":{"labelKey":"ADMIN_MODULE_GENERAL_ROBOTS_TITLE","type":"checkbox","config":"module","section":"module","descriptionKey":"ADMIN_MODULE_GENERAL_ROBOTS_DESCRIPTION", "valueMethod":"allowRobots", "enabledMethod":"canAllowRobots"},
             "help":{"labelKey":"ADMIN_MODULE_GENERAL_HELP_TITLE","type":"paragraph","config":"module","section":"strings","descriptionKey":"ADMIN_MODULE_GENERAL_HELP_DESCRIPTION","omitBlankValue":true}
        }
     },

@@ -1,17 +1,19 @@
 {capture name="banner" assign="banner"}
   {block name="banner-notice"}
   {if $bannerNotice}
+  <div class="banner-notice">
     {if $bannerURL}
-      <a class="banner-notice"  href="{$bannerURL}">
+      <a href="{$bannerURL}" class="banner-message">
     {else}
-      <div class="banner-notice">
+      <span class="banner-message">
     {/if}
-        {$bannerNotice['title']}
+      {$bannerNotice['title']}
     {if $bannerURL}
       </a>
     {else}
-      </div>
+      </span>
     {/if}
+    </div>
   {/if}
   <h1 id="homelogo"{if isset($topItem)} class="roomfornew"{/if}>
     <img src="/modules/{$configModule}/images/logo-home{$imageExt}" width="{$banner_width|default:265}" height="{$banner_height|default:45}" alt="{$strings.SITE_NAME|escape}" />
