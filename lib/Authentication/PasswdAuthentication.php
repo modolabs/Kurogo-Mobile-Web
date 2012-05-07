@@ -79,7 +79,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         }        
 
         /* some quick validation */        
-        if (strlen($user['userID'])==0 | !preg_match("/^[a-f0-9]{32}$/", $user['md5'])) {
+        if (strlen($user['userID'])==0 || !preg_match("/^[a-f0-9]{32}$/", $user['md5'])) {
             Kurogo::log(LOG_WARNING,"Invalid user line: $line",'auth');
             $user = false;
         }
