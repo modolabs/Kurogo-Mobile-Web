@@ -32,6 +32,9 @@ class DiskCache {
                     throw new KurogoDataException("Could not create $path");
                 }
             }
+            if (!realpath_exists($path)) {
+                throw new KurogoDataException("Path $path is not valid for cache");
+            }
         }
         
         if (!is_writable($path)) {
@@ -75,13 +78,7 @@ class DiskCache {
     if ($filename === NULL) {
       return $this->path;
     } else {
-      // this replaces %20 with + signs
-      $filename = urlencode(urldecode($filename));
-
-      return $this->path . '/' 
-           . $this->prefix 
-           . $filename 
-           . $this->suffix;
+      return $this->path.'/'.Watchdog::safeFilename($this->prefix.$filename.$this->suffix);
     }
   }
 

@@ -120,6 +120,22 @@ class Watchdog {
         // path is invalid or outside Kurogo directories
         return false;
     }
+    
+    protected function _safeFilename($filename) {
+        $ext = '';
+        $parts = explode('.', $filename);
+        if (count($parts) > 1 && ctype_alnum(end($parts))) {
+            $ext = array_pop($parts);
+            $filename = implode('.', $parts);
+        }
+        
+        // Make sure not to double url encode if the name is already encoded
+        $filename = urlencode(urldecode($filename));
+        if ($ext) {
+            $filename .= ".$ext";
+        }
+        return $filename;
+    }
 
     //
     // Shared instance of Watchdog class
@@ -137,6 +153,10 @@ class Watchdog {
     //
     // Public static helper functions
     //
+
+    public static function safeFilename($filename) {
+        return self::sharedInstance()->_safeFilename($filename);
+    }
 
     public static function safePath($path) {
         return self::sharedInstance()->_safePath($path);
