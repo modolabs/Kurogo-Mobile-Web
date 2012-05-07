@@ -131,7 +131,7 @@ function hideSearchFormButtons() {
     } else {
         removeClass(toolbar, "single-campus");
     }
-    scrollTo(0, 1);
+    scrollToTop();
 }
 
 ///// window size

@@ -1,3 +1,7 @@
+function scrollToTop() {
+	scrollTo(0,0); 
+}
+
 (function (window) {
     function kgoBridgeHandler(config) {
         if (typeof config == 'object') {
