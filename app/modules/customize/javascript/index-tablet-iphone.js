@@ -63,7 +63,7 @@ function init() {
         }
     };
     
-    window.scrollTo(0,1);
+    scrollToTop();
 }
 
 function startmove(event) {

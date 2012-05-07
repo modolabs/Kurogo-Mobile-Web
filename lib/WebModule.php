@@ -45,7 +45,7 @@ abstract class WebModule extends Module {
   private $inlineJavascriptBlocks = array();
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
-  private $onLoadBlocks = array('scrollTo(0,1);');
+  private $onLoadBlocks = array('scrollToTop();');
   private $javascriptURLs = array();
 
   private $moduleDebugStrings = array();
