@@ -362,6 +362,10 @@ abstract class WebModule extends Module {
         return false;
   }
 
+  public function redirectToURL($url, $type=Kurogo::REDIRECT_TEMPORARY) {
+    Kurogo::redirectToURL($url, $type);
+  }
+
   public function redirectToModule($id, $page, $args=array(), $type=Kurogo::REDIRECT_TEMPORARY) {
     $url = self::buildURLForModule($id, $page, $args);
     //error_log('Redirecting to: '.$url);
