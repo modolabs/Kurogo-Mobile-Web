@@ -1704,10 +1704,10 @@ abstract class WebModule extends Module {
           throw new KurogoConfigurationException("module does not have any pages defined in pages.ini");
       }
       
-      $additionalAssets = array();
+      $additionalAssets = $this->nativeWebTemplateAssets();
       $nativeConfig = $this->getOptionalModuleSection('native_template');
       if ($nativeConfig && $nativeConfig['additional_assets']) {
-          $additionalAssets = $nativeConfig['additional_assets'];
+          $additionalAssets = array_unique(array_merge($additionalAssets, $nativeConfig['additional_assets']));
       }
       
       // Phone version
@@ -1771,6 +1771,14 @@ abstract class WebModule extends Module {
     protected function initializeForNativeTemplatePage() {
     }
     
+    //
+    // Subclass this function to manually specify additional local assets which must
+    // be loaded.  Return an array of asset paths. (e.g. '/common/images/button.png')
+    // Note: these can also be listed in module.ini in the [native_templates] section.
+    public function nativeWebTemplateAssets() {
+        return array();
+    }
+
     //
     // Subclass this function and return an array of items for a given search term and feed
     //
