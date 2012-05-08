@@ -331,6 +331,10 @@ abstract class WebModule extends Module {
   
     return "/$id/$page".(strlen($argString) ? "?$argString" : "");
   }
+
+  protected function buildExternalURL($url) {
+    return $url;
+  }
   
   protected function buildMailToLink($to, $subject, $body) {
     $to = trim($to);
@@ -360,6 +364,10 @@ abstract class WebModule extends Module {
         }
         
         return false;
+  }
+
+  public function redirectToURL($url, $type=Kurogo::REDIRECT_TEMPORARY) {
+    Kurogo::redirectToURL($url, $type);
   }
 
   public function redirectToModule($id, $page, $args=array(), $type=Kurogo::REDIRECT_TEMPORARY) {
