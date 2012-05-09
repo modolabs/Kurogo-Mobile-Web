@@ -1,4 +1,4 @@
-{include file="findInclude:common/templates/header.tpl"}
+{include file="findInclude:modules/login/templates/header.tpl"}
 
 {if $message}
 <p class="nonfocal error">{$message|escape}</p>
@@ -8,4 +8,4 @@
 
 {include file="findInclude:modules/login/templates/loginForm.tpl"}
 
-{include file="findInclude:common/templates/footer.tpl"}
+{include file="findInclude:modules/login/templates/footer.tpl"}

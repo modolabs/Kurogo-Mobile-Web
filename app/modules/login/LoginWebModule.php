@@ -39,6 +39,7 @@ class LoginWebModule extends WebModule {
     }
 
   protected function initializeForPage() {
+    $this->assign('nativeApp', (bool) $this->getArg('nativeApp', false));
   
     if (!Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
         throw new KurogoConfigurationException($this->getLocalizedString("ERROR_AUTHENTICATION_DISABLED"));
