@@ -409,7 +409,7 @@ abstract class WebModule extends Module {
       KurogoWebBridge::redirectTo($url);
     } else {
       Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url", 'module');
-      Kurogo::redirectToURL(URL_PREFIX . ltrim($url, '/'), $type);
+      Kurogo::redirectToURL($url, $type);
     }
   }
 
