@@ -9,12 +9,13 @@
   * @subpackage Login
   */
 class LoginWebModule extends WebModule {
-  protected $id = 'login';
+    protected $id = 'login';
+    protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
   
-  // ensure that the login module always has access 
-  protected function getAccessControlLists($type) {
+    // ensure that the login module always has access 
+    protected function getAccessControlLists($type) {
         return array(AccessControlList::allAccess());
-  }
+    }
   
     public function isEnabled() {
         return Kurogo::getSiteVar('AUTHENTICATION_ENABLED') && parent::isEnabled();
@@ -38,7 +39,21 @@ class LoginWebModule extends WebModule {
     }
 
   protected function initializeForPage() {
-  
+    $nativeApp = (bool) $this->getArg('nativeApp', false);
+    $this->assign('nativeApp', $nativeApp);
+
+    // Default args to pass through forms and urls
+    $defaultArgs = array();
+    if ($nativeApp) {
+        $defaultArgs['nativeApp'] = 1;
+    }
+    
+    // If this is a native app, use the native app GA id
+    if ($nativeApp) {
+        $this->assign('GOOGLE_ANALYTICS_ID', 
+          Kurogo::getOptionalSiteVar('GOOGLE_ANALYTICS_NATIVE_ID'));
+    }
+    
     if (!Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
         throw new KurogoConfigurationException($this->getLocalizedString("ERROR_AUTHENTICATION_DISABLED"));
     }
@@ -131,7 +146,7 @@ class LoginWebModule extends WebModule {
             
             if (!$this->isLoggedIn($authorityIndex)) {
                 // they aren't logged in
-                $this->redirectTo('index', array());
+                $this->redirectTo('index', $defaultArgs);
             } elseif ($user = $this->getUser($authorityIndex)) {
                 $authority = $user->getAuthenticationAuthority();
                 
@@ -146,7 +161,7 @@ class LoginWebModule extends WebModule {
                 $this->setTemplatePage('message');
             } else {
                 //This honestly should never happen
-                $this->redirectTo('index', array());
+                $this->redirectTo('index', $defaultArgs);
             }
             
             break;
@@ -157,7 +172,7 @@ class LoginWebModule extends WebModule {
 
             if (!$this->isLoggedIn($authorityIndex)) {
                 //not logged in
-                $this->redirectTo('index', array());
+                $this->redirectTo('index', $defaultArgs);
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 $user = $this->getUser($authority);
 
@@ -165,7 +180,7 @@ class LoginWebModule extends WebModule {
                 $result = $session->logout($authority, $hard);
             } else {
                 //This honestly should never happen
-                $this->redirectTo('index', array());
+                $this->redirectTo('index', $defaultArgs);
             }
                 
             if ($result) { 
@@ -174,7 +189,7 @@ class LoginWebModule extends WebModule {
 
                 //if they are still logged in return to the login page, otherwise go home.
                 if ($this->isLoggedIn()) {
-                    $this->redirectTo('index', array('logout'=>$authorityIndex));
+                    $this->redirectTo('index', array_merge(array('logout'=>$authorityIndex), $defaultArgs));
                 } else {
                     $this->redirectToModule($this->getHomeModuleID(),'',array('logout'=>$authorityIndex));
                 }
@@ -191,7 +206,7 @@ class LoginWebModule extends WebModule {
             if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
                 Kurogo::redirectToURL($forgetPasswordURL);
             } else {
-                $this->redirectTo('index', array());
+                $this->redirectTo('index', $defaultArgs);
             }
             break;            
             
@@ -201,7 +216,7 @@ class LoginWebModule extends WebModule {
             $password       = $this->argVal($_POST, 'loginPassword', '');
             $options = array_merge($urlArray, array(
                 'remainLoggedIn'=>$remainLoggedIn
-            ));
+            ), $defaultArgs);
             
             $session  = $this->getSession();
             $session->setRemainLoggedIn($remainLoggedIn);
@@ -228,7 +243,7 @@ class LoginWebModule extends WebModule {
                     $loginMessage = $this->getLocalizedString('LOGIN_DIRECT_MESSAGE', Kurogo::getSiteString('SITE_NAME'));
                 }
                 $this->assign('LOGIN_DIRECT_MESSAGE', $loginMessage);
-                $this->assign('urlArray', $urlArray);
+                $this->assign('urlArray', array_merge($urlArray, $defaultArgs));
                 break;
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 //indirect logins handling the login process themselves. Send a return url so the indirect authority can come back here
@@ -251,7 +266,7 @@ class LoginWebModule extends WebModule {
                     $this->setLogData($user, $user->getFullName());
                     $this->logView();
                     if ($urlArray) {
-                        self::redirectToArray($urlArray);
+                        self::redirectToArray(array_merge($urlArray, $defaultArgs));
                     } else {
                         $this->redirectToModule($this->getHomeModuleID(),'',array('login'=>$authorityIndex));
                     }
@@ -271,7 +286,7 @@ class LoginWebModule extends WebModule {
                     } else {
                         $this->redirectTo('index', array_merge(
                             array('messagekey'=>'ERROR_LOGIN_INDIRECT'),
-                            $options));
+                            $options, $defaultArgs));
                     }
             }
             
@@ -290,13 +305,13 @@ class LoginWebModule extends WebModule {
             
                 //if the url is set then redirect
                 if ($urlArray) {
-                    self::redirectToArray($urlArray);
+                    self::redirectToArray(array_merge($urlArray, $defaultArgs));
                 }
 
                 //if there is only 1 authority then redirect to logout confirm
                 if (!$multipleAuthorities) {
                     $user = $this->getUser();
-                    $this->redirectTo('logoutConfirm', array('authority'=>$user->getAuthenticationAuthorityIndex()));
+                    $this->redirectTo('logoutConfirm', array_merge(array('authority'=>$user->getAuthenticationAuthorityIndex()), $defaultArgs));
                 }
 
                 //more than 1 authority. There could be 1 or more actual logged in users
@@ -347,12 +362,12 @@ class LoginWebModule extends WebModule {
             
                 // if there is only 1 direct authority then redirect to the login page for that authority
                 if (!$multipleAuthorities && count($authenticationAuthorities['direct'])) {
-                    $this->redirectTo('login', array_merge($urlArray, array('authority'=>key($authenticationAuthorities['direct']))));
+                    $this->redirectTo('login', array_merge($urlArray, array('authority'=>key($authenticationAuthorities['direct'])), $defaultArgs));
                 }
 
                 // if there is only 1 auto authority then redirect to the login page for that authority
                 if (!$multipleAuthorities && count($authenticationAuthorities['auto']) && !$messagekey) {
-                    $this->redirectTo('login', array_merge($urlArray, array('authority'=>key($authenticationAuthorities['auto']))));
+                    $this->redirectTo('login', array_merge($urlArray, array('authority'=>key($authenticationAuthorities['auto'])), $defaultArgs));
                 }
                 
                 // do we have any indirect authorities?

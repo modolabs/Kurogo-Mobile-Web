@@ -45,7 +45,7 @@ abstract class WebModule extends Module {
   private $inlineJavascriptBlocks = array();
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
-  private $onLoadBlocks = array('scrollTo(0,1);');
+  private $onLoadBlocks = array('scrollToTop();');
   private $javascriptURLs = array();
 
   private $moduleDebugStrings = array();
@@ -71,6 +71,7 @@ abstract class WebModule extends Module {
   protected $canBeDisabled = true;
   protected $canBeHidden = true;
   protected $canAllowRobots = true;
+  protected $defaultAllowRobots = true;
   protected $hideFooterLinks = false;
   
   //
@@ -330,6 +331,10 @@ abstract class WebModule extends Module {
   
     return "/$id/$page".(strlen($argString) ? "?$argString" : "");
   }
+
+  protected function buildExternalURL($url) {
+    return $url;
+  }
   
   protected function buildMailToLink($to, $subject, $body) {
     $to = trim($to);
@@ -359,6 +364,10 @@ abstract class WebModule extends Module {
         }
         
         return false;
+  }
+
+  public function redirectToURL($url, $type=Kurogo::REDIRECT_TEMPORARY) {
+    Kurogo::redirectToURL($url, $type);
   }
 
   public function redirectToModule($id, $page, $args=array(), $type=Kurogo::REDIRECT_TEMPORARY) {
@@ -567,10 +576,11 @@ abstract class WebModule extends Module {
     }
     
     public function allowRobots() {
-        if (!$this->canAllowRobots) {
-            return false;
+        // Returns integers so the admin module can use this function
+        if ($this->canAllowRobots && $this->getOptionalModuleVar('robots', $this->defaultAllowRobots)) {
+            return 1;
         } else {
-            return $this->getOptionalModuleVar('robots', 1) ? true : false;
+            return 0;
         }
     }
     

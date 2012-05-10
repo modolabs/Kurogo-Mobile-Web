@@ -1,7 +1,7 @@
 <?php
 
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
-define('KUROGO_VERSION', '1.4');
+define('KUROGO_VERSION', '1.4.1');
 
 //
 // And a double quote define for ini files (php 5.1 can't escape them)
@@ -103,6 +103,19 @@ class Kurogo
     
     public static function tempDirectory() {
         return Kurogo::getOptionalSiteVar('TMP_DIR', sys_get_temp_dir());
+    }
+    
+    public static function tempFile($prefix='kgo') {
+        $tempDir = self::tempDirectory();
+        if (!is_writable($tempDir)) {
+            throw new KurogoConfigurationException("Temporary directory $tempDir not available");
+        }
+        
+        $umask = umask(0177);
+        $tempFile = tempnam($tempDir, $prefix);
+        umask($umask);
+        
+        return $tempFile;
     }
     
     public static function moduleLinkForItem($moduleID, $object, $options=null) {
