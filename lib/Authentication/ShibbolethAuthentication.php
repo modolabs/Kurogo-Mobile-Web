@@ -3,7 +3,8 @@
 class ShibbolethAuthentication extends AuthenticationAuthority
 {
     protected $userClass = 'ShibbolethUser';
-    protected $fieldMap=array();
+    protected $fieldMap = array();
+    protected $attributes = array();
 
     protected function auth($login, $password, &$user) {
 
@@ -49,6 +50,10 @@ class ShibbolethAuthentication extends AuthenticationAuthority
                 $this->fieldMap[$key] = $value;
             }
         }
+        
+        if (isset($args['SHIB_ATTRIBUTES']) && is_array($args['SHIB_ATTRIBUTES'])) {
+            $this->attributes = $args['SHIB_ATTRIBUTES'];
+        }
     }
 }
 
@@ -72,6 +77,12 @@ class ShibbolethUser extends User
             if ( ($field = $this->AuthenticationAuthority->getField('lastname')) && isset($_SERVER[$field])) {
                 $this->setLastName($_SERVER[$field]);
             }
+            
+            foreach ($this->attributes as $attribute) {
+                if (isset($_SERVER[$attribute])) {
+                    $this->setAttribute($attribute, $_SERVER[$attribute]);
+                }
+            }            
             
             return true;
         }
