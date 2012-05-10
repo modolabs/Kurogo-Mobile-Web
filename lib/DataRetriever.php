@@ -115,6 +115,7 @@ abstract class DataRetriever {
     }
     
     public function getResponse() {
+        $this->lastResponse = null;
         $cacheKey = $this->shouldCacheRequest() ? $this->cacheKey() : null;
         $cacheGroup = $this->cacheGroup();
         
