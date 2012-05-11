@@ -327,6 +327,33 @@ if (typeof makeAPICall === 'undefined' && typeof jQuery === 'undefined') {
   }
 }
 
+function getCSSValue(element, key) {
+    if (window.getComputedStyle) {
+        return document.defaultView.getComputedStyle(element, null).getPropertyValue(key);
+        
+    } else if (elelementem.currentStyle) {
+        if (key == 'float') { 
+            key = 'styleFloat'; 
+        } else {
+            var re = /(\-([a-z]){1})/g; // hyphens to camel case
+            if (re.test(key)) {
+                key = key.replace(re, function () {
+                    return arguments[2].toUpperCase();
+                });
+            }
+        }
+        return element.currentStyle[key] ? element.currentStyle[key] : null;
+    }
+    return '';
+}
+
+function getCSSHeight(element) {
+    return element.offsetHeight
+        - parseFloat(getCSSValue(element, 'border-top-width')) 
+        - parseFloat(getCSSValue(element, 'border-bottom-width'))
+        - parseFloat(getCSSValue(element, 'padding-top'))
+        - parseFloat(getCSSValue(element, 'padding-bottom'));
+}
 
 
 
