@@ -115,33 +115,37 @@ class VideoWebModule extends WebModule
         
         switch ($this->page)
         {  
-              case 'pane':
-                $start = 0;
-                $maxPerPage = $this->getOptionalModuleVar('MAX_PANE_RESULTS', 5);
-                $data = array(
-                    'noBreadcrumbs'=>true,
-                    'section'=>$section
-                );
-
-                if ($this->legacyController) {
-                    $items = $controller->items($start, $maxPerPage);
-                } else {
-                    $controller->setStart($start);
-                    $controller->setLimit($maxPerPage);
-                    $items = $controller->items();
+            case 'pane':
+                if ($this->ajaxContentLoad) {
+                  $start = 0;
+                  $maxPerPage = $this->getOptionalModuleVar('MAX_PANE_RESULTS', 5);
+                  $data = array(
+                      'noBreadcrumbs'=>true,
+                      'section'=>$section
+                  );
+  
+                  if ($this->legacyController) {
+                      $items = $controller->items($start, $maxPerPage);
+                  } else {
+                      $controller->setStart($start);
+                      $controller->setLimit($maxPerPage);
+                      $items = $controller->items();
+                  }
+                  $videos = array();
+  
+                  foreach ($items as $video) {
+                      $videos[] = $this->linkForItem($video, $data);
+                  }
+                  
+                  foreach ($videos as $i => $video) {
+                      $videos[$i]['url'] = $this->buildURL('index').
+                          '#'.urlencode(FULL_URL_PREFIX.ltrim($video['url'], '/'));
+                  }
+  
+                  $this->assign('stories', $videos);
                 }
-                $videos = array();
-
-                foreach ($items as $video) {
-                    $videos[] = $this->linkForItem($video, $data);
-                }
-                
-                foreach ($videos as $i => $video) {
-                    $videos[$i]['url'] = $this->buildURL('index').
-                        '#'.urlencode(FULL_URL_PREFIX.ltrim($video['url'], '/'));
-                }
-
-                $this->assign('videos', $videos);
+                $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                $this->addInternalJavascript('/common/javascript/lib/paneStories.js');
                 break;
             case 'search':
             case 'index':

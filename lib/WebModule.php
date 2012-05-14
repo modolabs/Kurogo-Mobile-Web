@@ -979,7 +979,7 @@ abstract class WebModule extends Module {
       $data = $cache->read($cacheName);
       
     } else {
-      $memberArrays = array(
+      $properties = array(
         'inlineCSSBlocks',
         'cssURLs',
         'inlineJavascriptBlocks',
@@ -988,9 +988,13 @@ abstract class WebModule extends Module {
         'onLoadBlocks',
         'javascriptURLs',
       );
-      $data = array();
-      foreach ($memberArrays as $memberName) {
-        $data[$memberName] = $this->$memberName;
+      $data = array(
+          'properties' => array(),
+          'minifyCSS'  => '',
+          'minifyJS'   => '',
+      );
+      foreach ($properties as $property) {
+        $data['properties'][$property] = $this->$property;
       }
   
       // Add page Javascript and CSS if any
@@ -1002,12 +1006,12 @@ abstract class WebModule extends Module {
       
       $javascript = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['js'], '/'), false, $context);
       if ($javascript) {
-        array_unshift($data['inlineJavascriptBlocks'], $javascript);
+        $data['minifyJS'] = $javascript;
       }
   
       $css = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['css'], '/'), false, $context);
       if ($css) {
-        array_unshift($data['inlineCSSBlocks'], $css);
+        $data['minifyCSS'] = $css;
       }
       
       $cache->write($data, $cacheName);
@@ -1016,8 +1020,16 @@ abstract class WebModule extends Module {
     return $data;
   }
   protected function importCSSAndJavascript($data) {
-    foreach ($data as $memberName => $arrays) {
+    foreach ($data['properties'] as $memberName => $arrays) {
       $this->$memberName = array_unique(array_merge($this->$memberName, $arrays));
+    }
+    
+    if ($data['minifyCSS']) {
+      array_unshift($this->inlineCSSBlocks, $data['minifyCSS']);
+    }
+    
+    if ($data['minifyJS']) {
+      array_unshift($this->inlineJavascriptBlocks, $data['minifyJS']);
     }
   }
   protected function addJQuery($version='1.5.1') {

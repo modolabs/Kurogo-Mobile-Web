@@ -22,6 +22,18 @@ function updateNavSlider() {
         document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
         document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
     }
+=======
+    if (navScroller) {
+      var current = Math.abs(navScroller.x);
+        var max = Math.abs(navScroller.maxScrollX);
+    
+        var canScrollLeft = (current > 0);
+        var canScrollRight = (current < max-1);
+      
+        document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
+        document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
+    }
+>>>>>>> upstream
 }
 
 function navSliderScrollLeft() {
@@ -39,9 +51,11 @@ function navSliderScrollRight() {
 // Change wrapper height based on device orientation.
 function setContainerWrapperHeight() {
   document.getElementById('container').style.height = 'auto';
-
+  
+  var footerNav = document.getElementById('footernav');
+  
 	var navbarHeight = document.getElementById('navbar').offsetHeight;
-  var footerNavHeight = document.getElementById('footernav').offsetHeight;
+  var footerNavHeight = footerNav ? footerNav.offsetHeight : 0;
 	var wrapperHeight = window.innerHeight - navbarHeight - footerNavHeight;
 	var containerHeight = document.getElementById('container').offsetHeight;
 	
@@ -119,15 +133,16 @@ function tabletInit() {
     bounceLock: true
   });
 
-
-  navScroller = iScrollInit('navsliderwrapper', { 
-    hScrollbar: false,
-    vScrollbar: false,
-    bounce: false,
-    bounceLock: true,
-    onScrollStart: updateNavSlider,
-    onScrollEnd: updateNavSlider
-  });
+  if (document.getElementById('navsliderwrapper')) {
+    navScroller = iScrollInit('navsliderwrapper', { 
+      hScrollbar: false,
+      vScrollbar: false,
+      bounce: false,
+      bounceLock: true,
+      onScrollStart: updateNavSlider,
+      onScrollEnd: updateNavSlider
+    });
+  }
 
     handleWindowResize();
     updateNavSlider();
