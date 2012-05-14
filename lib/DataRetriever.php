@@ -115,14 +115,22 @@ abstract class DataRetriever {
     }
     
     public function getResponse() {
+        $this->lastResponse = null;
         $cacheKey = $this->shouldCacheRequest() ? $this->cacheKey() : null;
         $cacheGroup = $this->cacheGroup();
         
         if (!$response = $this->getCachedResponse($cacheKey, $cacheGroup)) {
 
+            $startTime = microtime(true);
             $response = $this->retrieveResponse();
+            $endTime = microtime(true);
             if (!$response instanceOf DataResponse) {
                 throw new KurogoDataException("Response must be instance of DataResponse");
+            }
+            // if the retriever did not set the start/end time, set it here. it will include some overhead
+            if (!$response->getEndTime()) {
+                $response->setStartTime($startTime);
+                $response->setEndTime($endTime);
             }
             $response->setRetriever($this);
             if (!$response->getResponseError()) {

@@ -10,9 +10,34 @@ class DataResponse
     protected $responseCode;
     protected $responseStatus;
     protected $responseError;
+    protected $responseStartTime;
+    protected $responseEndTime;
+    protected $responseTimeElapsed;
     // target encoding
     protected $sourceEncoding;
     protected $context=array(); // response defined.
+    
+    public function setStartTime($time) {
+        $this->responseStartTime = $time;
+        $this->responseTimeElapsed = $this->responseEndTime - $this->responseStartTime;
+    }
+
+    public function setEndTime($time) {
+        $this->responseEndTime = $time;
+        $this->responseTimeElapsed = $this->responseEndTime - $this->responseStartTime;
+    }
+    
+    public function getStartTime() {
+        return $this->responseStartTime;
+    }
+
+    public function getEndTime() {
+        return $this->responseEndTime;
+    }
+
+    public function getTimeElapsed() {
+        return $this->responseTimeElapsed;
+    }
 
     public function getResponseFile() {
         throw new KurogoDataException("getResponseFile() does not yet work with " . get_Class($this));

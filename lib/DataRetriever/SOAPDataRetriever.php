@@ -172,17 +172,20 @@ class SOAPDataRetriever extends DataRetriever {
 
         Kurogo::log(LOG_DEBUG, sprintf("Calling SOAP Method %s", $method), 'soap');
 
+
+        $response = $this->initResponse();
+        $response->setStartTime(microtime(true));
         try {
             $data = $soapClient->__soapCall($method, $parameters, $options, $headers, $outputHeaders);
         } catch (SoapFault $fault) {
             throw new KurogoDataException($fault->getMessage(), $fault->getCode());
         }
+        $response->setEndTime(microtime(true));
 
         if (!$lastResponseHeaders = $soapClient->__getLastResponseHeaders()) {
             $lastResponseHeaders = array();
         }
         
-        $response = $this->initResponse();
         if ($this->authority) {
             $response->setContext('authority', $this->authority);
         }
