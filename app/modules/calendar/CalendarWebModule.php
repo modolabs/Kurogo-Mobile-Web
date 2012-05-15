@@ -441,25 +441,27 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'pane':
-        $start = new DateTime(date('Y-m-d H:i:s', time()), $this->timezone);
-        $start->setTime(0,0,0);
-        $end = clone $start;
-        $end->setTime(23,59,59);
-
-        $type     = $this->getArg('type', 'static');
-        $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-        $feed = $this->getFeed($calendar, $type);
-        $feed->setStartDate($start);
-        $feed->setEndDate($end);
-        
-        $iCalEvents = $feed->items();
-        $options['noBreadcrumbs'] = true;
-        $events = array();
-        foreach($iCalEvents as $iCalEvent) {
-          $events[] = $this->linkforItem($iCalEvent, $options, false);
+        if ($this->ajaxContentLoad) {
+          $start = new DateTime(date('Y-m-d H:i:s', time()), $this->timezone);
+          $start->setTime(0,0,0);
+          $end = clone $start;
+          $end->setTime(23,59,59);
+  
+          $type     = $this->getArg('type', 'static');
+          $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+          $feed = $this->getFeed($calendar, $type);
+          $feed->setStartDate($start);
+          $feed->setEndDate($end);
+          
+          $iCalEvents = $feed->items();
+          $options['noBreadcrumbs'] = true;
+          $events = array();
+          foreach($iCalEvents as $iCalEvent) {
+            $events[] = $this->linkforItem($iCalEvent, $options, false);
+          }
+          
+          $this->assign('events', $events);
         }
-        
-        $this->assign('events', $events);
         break;
       
       case 'resources':
