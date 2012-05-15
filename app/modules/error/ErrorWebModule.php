@@ -61,6 +61,7 @@ class ErrorWebModule extends WebModule {
       }
       $this->pagetype = Kurogo::deviceClassifier()->getPagetype();
       $this->platform = Kurogo::deviceClassifier()->getPlatform();
+      $this->browser  = Kurogo::deviceClassifier()->getBrowser();
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);
       $this->args = $args;
