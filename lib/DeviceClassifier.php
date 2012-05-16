@@ -61,7 +61,7 @@ class DeviceClassifier {
             }
         }
         
-        return $classification;        
+        return $classification;
     }
     
     protected function stringForClassification($classification, $computerReadable=true) {

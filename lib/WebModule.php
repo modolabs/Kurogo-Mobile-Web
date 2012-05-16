@@ -30,7 +30,7 @@ abstract class WebModule extends Module {
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
   protected $browser = 'unknown';
-  
+
   protected $ajaxContentLoad = false;
   
   protected $hasWebBridgePageRefresh = false;
