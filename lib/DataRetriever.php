@@ -132,12 +132,12 @@ abstract class DataRetriever {
                 $response->setStartTime($startTime);
                 $response->setEndTime($endTime);
             }
-            $response->setRetriever($this);
             if (!$response->getResponseError()) {
                 $this->cacheResponse($cacheKey, $cacheGroup, $response);
             }
         }
         
+        $response->setRetriever($this);
         $this->lastResponse = $response;
         return $response;
     }
