@@ -227,6 +227,10 @@ abstract class DataRetriever {
                 $args['PARSER_CLASS'] = 'PassthroughDataParser';
             }            
         }
+
+        if (!isset($args['CACHE_LIFETIME'])) {
+            $args['CACHE_LIFETIME'] = $this->DEFAULT_CACHE_LIFETIME;
+        }
         
         // instantiate the parser class
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
@@ -234,7 +238,6 @@ abstract class DataRetriever {
                 
         $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
         $this->cache = DataCache::factory($cacheClass, $args);
-        $this->cache->setCacheLifetime($this->DEFAULT_CACHE_LIFETIME);
     }
     
     public function clearInternalCache() {
