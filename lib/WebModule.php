@@ -352,7 +352,11 @@ abstract class WebModule extends Module {
   }
 
   protected function buildExternalURL($url) {
-    return $url;
+    if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+      return KurogoWebBridge::getExternalLink($url);
+    } else {
+      return $url;
+    }
   }
   
   protected function buildMailToLink($to, $subject, $body) {

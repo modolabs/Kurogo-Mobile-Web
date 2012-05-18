@@ -23,6 +23,7 @@ class KurogoWebBridge
     const AJAX_PARAMETER        = 'ajax';
     
     const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
+    const BRIDGE_URL_DOWNLOAD_LINK = 'kgobridge://download/';
     
     const FILE_TYPE_HTML       = 'html';
     const FILE_TYPE_CSS        = 'css';
@@ -470,7 +471,9 @@ class KurogoWebBridge
     }
     
     public static function removeAddedParameters(&$args) {
-        unset($args[self::AJAX_PARAMETER]);
+        if (is_array($args)) {
+            unset($args[self::AJAX_PARAMETER]);
+        }
     }
     
     //
@@ -482,6 +485,18 @@ class KurogoWebBridge
         
         return self::BRIDGE_URL_INTERNAL_LINK."$id/$page".
             ($args ? '?'.http_build_query($args) : '');
+    }
+    
+    public static function getExternalLink($url) {
+        if (strpos($url, self::BRIDGE_URL_INTERNAL_LINK) === 0) {
+            // Use different scheme for urls which should be external but are in Kurogo
+            // These must always be files to be downloaded -- internal web pages
+            // should be Kurogo pages and use internal links so authn works properly.
+            $url = self::BRIDGE_URL_DOWNLOAD_LINK.'?'.http_build_query(array(
+                'url' => str_replace(self::BRIDGE_URL_INTERNAL_LINK, FULL_URL_PREFIX, $url),
+            ));
+        }
+        return $url;
     }
     
     public static function redirectTo($url) {
