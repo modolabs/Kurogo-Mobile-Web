@@ -163,6 +163,6 @@ class YouTubeVideoObject extends VideoObject
     }
     
     public function getPlayerURL() {
-        return sprintf("http://www.youtube.com/embed/%s", $this->getID());
+        return sprintf("http://www.youtube.com/embed/%s?showinfo=0", $this->getID());
     }
 }
