@@ -135,6 +135,11 @@ class ArcGISDataParser extends DataParser implements MapDataParser
                     if ($fieldInfo['type'] == 'esriFieldTypeOID') {
                         $this->currentFolder->setIdField($fieldInfo['name']);
                         continue;
+                    } else if (strtolower($fieldInfo['name']) == 'shape'
+                            || strtolower($fieldInfo['name']) == 'shape_length'
+                            || strtolower($fieldInfo['name']) == 'shape_area')
+                    {
+                        continue;
                     } else if ($fieldInfo['type'] == 'esriFieldTypeGeometry') {
                         $this->currentFolder->setGeometryField($fieldInfo['name']);
                         continue;
