@@ -154,7 +154,7 @@ function developmentErrorLog($exception){
 /**
   * Exception Handler set in Kurogo::initialize()
   */
-function exceptionHandlerForError($exception) {
+function exceptionHandlerForError(Exception $exception) {
     $bt = $exception->getTrace();
     array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
     Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
@@ -163,7 +163,7 @@ function exceptionHandlerForError($exception) {
     die("There was a serious error: " . $exception->getMessage());
 }
 
-function exceptionHandlerForDevelopment($exception) {
+function exceptionHandlerForDevelopment(Exception $exception) {
     $bt = $exception->getTrace();
     array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
     Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
@@ -213,7 +213,38 @@ function exceptionHandlerForProduction(Exception $exception) {
 	}
 }
 
-function exceptionHandlerForAPI($exception) {
+function exceptionHandlerForProductionAPI(Exception $exception) {
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, sprintf("A %s has occured: %s", get_class($exception), $exception->getMessage()), "exception", $bt);
+    if ($exception instanceOf KurogoException) {
+        $sendNotification = $exception->shouldSendNotification();
+    } else {
+        $sendNotification = true;
+    }
+
+    if ($sendNotification) {
+        $to = Kurogo::getSiteVar('DEVELOPER_EMAIL');
+        if (!Kurogo::deviceClassifier()->isSpider() && $to) {
+            mail($to, 
+              "API experiencing problems",
+              "The following command is throwing exceptions:\n\n" .
+              "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
+              "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
+              "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
+              "Exception:\n\n" . 
+              var_export($exception, true)
+            );
+        }
+    }
+
+    $response = new APIResponse();
+    $response->setVersion(0);
+    $response->setError(new KurogoError($exception->getCode(), "Error", "An error has occurred"));
+    $response->display();
+}
+
+function exceptionHandlerForAPI(Exception $exception) {
     $bt = $exception->getTrace();
     array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
     Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
