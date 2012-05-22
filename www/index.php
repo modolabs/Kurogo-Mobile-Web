@@ -212,7 +212,12 @@ if (!strlen($path) || $path == '/') {
 $parts = explode('/', ltrim($path, '/'), 2);
 
 if ($parts[0]==API_URL_PREFIX) {
-    set_exception_handler("exceptionHandlerForAPI");
+    if (Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+        set_exception_handler("exceptionHandlerForProductionAPI");
+    } else {
+        set_exception_handler("exceptionHandlerForAPI");
+    }
+
     $parts = explode('/', ltrim($path, '/'));
 
     switch (count($parts))
