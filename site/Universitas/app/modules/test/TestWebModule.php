@@ -13,7 +13,6 @@ class TestWebModule extends NewsWebModule {
             case 'search':
                 // ellipsizer javascript on search and index pages:
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
-                $this->addOnLoad('setupNewsListing();');
                 break;
                 
             case 'story':
