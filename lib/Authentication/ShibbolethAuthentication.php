@@ -9,6 +9,7 @@ class ShibbolethAuthentication extends AuthenticationAuthority
     protected function auth($login, $password, &$user) {
 
         $user = new $this->userClass($this);
+        $user->setShibbolethAttributes($this->attributes);
         if ($user->loadUserData()) {
             return AUTH_OK;
         }
@@ -19,6 +20,7 @@ class ShibbolethAuthentication extends AuthenticationAuthority
 
     public function getUser($login) {
         $user = new $this->userClass($this);
+        $user->setShibbolethAttributes($this->attributes);
         $user->loadUserData();
         if ($user->getUserID() == $login) {
             return $user;
@@ -59,6 +61,11 @@ class ShibbolethAuthentication extends AuthenticationAuthority
 
 class ShibbolethUser extends User
 {
+    protected $shibbolethAttributes = array();
+
+    public function setShibbolethAttributes($attributes) {
+        $this->shibbolethAttributes = $attributes;
+    }
     public function loadUserData() {
         if (isset($_SERVER['REMOTE_USER'])) {
             $this->setUserID($_SERVER['REMOTE_USER']);
@@ -78,7 +85,7 @@ class ShibbolethUser extends User
                 $this->setLastName($_SERVER[$field]);
             }
             
-            foreach ($this->attributes as $attribute) {
+            foreach ($this->shibbolethAttributes as $attribute) {
                 if (isset($_SERVER[$attribute])) {
                     $this->setAttribute($attribute, $_SERVER[$attribute]);
                 }
