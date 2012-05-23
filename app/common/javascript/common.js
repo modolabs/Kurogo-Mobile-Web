@@ -45,6 +45,60 @@ function showTab(strID, objTrigger) {
 	onDOMChange();
 }
 
+function onOrientationChange() {
+    /* the galaxy tab sends orientation change events constantly */
+    if (typeof onOrientationChange.lastOrientation == 'undefined') {
+        onOrientationChange.lastOrientation = null;
+    }
+    
+    var newOrientation = getOrientation();
+    
+    if (newOrientation != onOrientationChange.lastOrientation) {
+        rotateScreen();
+        
+        if (typeof onOrientationChange.callbackFunctions !== 'undefined') {
+            for (var i = 0; i < onOrientationChange.callbackFunctions.length; i++) {
+                onOrientationChange.callbackFunctions[i]();
+            }
+        }
+        
+        onOrientationChange.lastOrientation = newOrientation;
+    }
+}
+
+function onResize() {
+    if (typeof onResize.callbackFunctions !== 'undefined') {
+        for (var i = 0; i < onResize.callbackFunctions.length; i++) {
+            onResize.callbackFunctions[i]();
+        }
+    }
+}
+
+function addOrientationChangeCallback(callback) {
+    if (typeof onOrientationChange.callbackFunctions == 'undefined') {
+        onOrientationChange.callbackFunctions = [];
+    }
+    onOrientationChange.callbackFunctions.push(callback);
+    
+    if (typeof onResize.callbackFunctions == 'undefined') {
+        onResize.callbackFunctions = [];
+    }
+    onResize.callbackFunctions.push(callback);
+}
+
+function setupOrientationChangeHandlers() {
+    if (window.addEventListener) {
+        window.addEventListener("orientationchange", onOrientationChange, false);
+    } else if (window.attachEvent) {
+        window.attachEvent("onorientationchange", onOrientationChange);
+    }
+    if (window.addEventListener) {
+        window.addEventListener("resize", onResize, false);
+    } else if (window.attachEvent) {
+        window.attachEvent("onresize", onResize);
+    }
+}
+
 function rotateScreen() {
   setOrientation(getOrientation());
   setTimeout(scrollToTop, 500);
@@ -327,11 +381,70 @@ if (typeof makeAPICall === 'undefined' && typeof jQuery === 'undefined') {
   }
 }
 
+function ajaxContentIntoContainer(options) {
+    if (typeof options != 'object') { return; } // safety
+    
+    var defaults = {
+        url: null, 
+        container: null, 
+        timeout: 60, 
+        success: function () {},
+        error: function (code) {} 
+    };
+    for (var i in defaults) {
+        if (typeof options[i] == 'undefined') {
+            options[i] = defaults[i];
+        }
+    }
+    if (!options.url || !options.container) { return; } // safety
+    
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open("GET", options.url, true);
+    
+    var requestTimer = setTimeout(function() {
+        // some browsers set readyState to 4 on abort so remove handler first
+        httpRequest.onreadystatechange = function() { };
+        httpRequest.abort();
+        
+        options.error(408); // http request timeout status code
+    }, options.timeout * 1000);
+    
+    httpRequest.onreadystatechange = function() {
+        // return if still in progress
+        if (httpRequest.readyState != 4) { return; }
+        
+        // Got answer, don't abort
+        clearTimeout(requestTimer);
+        
+        if (httpRequest.status == 200) { // Success
+            options.container.innerHTML = httpRequest.responseText;
+            
+            // Grab script tags and appendChild them so they get evaluated
+            var scripts = options.container.getElementsByTagName("script");
+            var count = scripts.length; // scripts.length will change as we add elements
+            
+            for (var i = 0; i < count; i++) {
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.text = scripts[i].text;
+                options.container.appendChild(script);
+            }
+            
+            options.success();
+            
+        } else {
+            options.error(httpRequest.status);
+        }
+    };
+    
+    httpRequest.send(null);
+}
+
 function getCSSValue(element, key) {
     if (window.getComputedStyle) {
         return document.defaultView.getComputedStyle(element, null).getPropertyValue(key);
         
-    } else if (elelementem.currentStyle) {
+    } else if (element.currentStyle) {
         if (key == 'float') { 
             key = 'styleFloat'; 
         } else {

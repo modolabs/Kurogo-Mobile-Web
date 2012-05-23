@@ -48,36 +48,13 @@
     {/foreach}
 
     <script type="text/javascript">
-      function onOrientationChange() {ldelim}
-        {* the galaxy tab sends orientation change events constantly *}
-        if (typeof onOrientationChange.lastOrientation == 'undefined') {ldelim}
-          onOrientationChange.lastOrientation = null;
-        {rdelim}
-        var newOrientation = getOrientation();
-        if (newOrientation != onOrientationChange.lastOrientation) {ldelim}
-          rotateScreen();
-          {foreach $onOrientationChangeBlocks as $script}
-            {$script}
-          {/foreach}
-        {rdelim}
-        onOrientationChange.lastOrientation = newOrientation;
-      {rdelim}
-      if (window.addEventListener) {ldelim}
-        window.addEventListener("orientationchange", onOrientationChange, false);
-      {rdelim} else if (window.attachEvent) {ldelim}
-        window.attachEvent("onorientationchange", onOrientationChange);
-      {rdelim}
+      setupOrientationChangeHandlers();
       {if count($onOrientationChangeBlocks)}
-        function onResize() {ldelim}
+        addOnOrientationChangeCallback(function () {ldelim}
           {foreach $onOrientationChangeBlocks as $script}
             {$script}
           {/foreach}
-        {rdelim}
-        if (window.addEventListener) {ldelim}
-          window.addEventListener("resize", onResize, false);
-        {rdelim} else if (window.attachEvent) {ldelim}
-          window.attachEvent("onresize", onResize);
-        {rdelim}
+        {rdelim});
       {/if}
     </script>
     
@@ -183,5 +160,35 @@
       <div id="container">
     {/block}
 {else}
-  {block name="ajaxContentHeader"}{/block}
+  {block name="ajaxContentHeader"}
+    {foreach $inlineCSSBlocks as $css}
+      <style type="text/css" media="screen">
+        {$css}
+      </style>
+    {/foreach}
+
+    <script type="text/javascript">
+      {foreach $inlineJavascriptBlocks as $script}
+        {$script}
+      {/foreach}
+      
+      {foreach $inlineJavascriptFooterBlocks as $script}
+        {$script}
+      {/foreach}
+      
+      {foreach $onLoadBlocks as $script}
+        {$script}
+      {/foreach}
+    
+      {if count($onOrientationChangeBlocks)}
+        addOnOrientationChangeCallback(function () {ldelim}
+          {foreach $onOrientationChangeBlocks as $script}
+            {$script}
+          {/foreach}
+        {rdelim});
+      {/if}
+      
+      onOrientationChange();
+    </script>
+  {/block}
 {/if}

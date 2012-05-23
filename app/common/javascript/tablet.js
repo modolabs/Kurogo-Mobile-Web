@@ -241,29 +241,51 @@ function scrollToTop() {
             }
             addClass(link,'listSelected');
             this.detailScroller.scrollTo(0,0);
-            var httpRequest = new XMLHttpRequest();
-            httpRequest.open("GET", link.href+'&ajax=1', true);
-            httpRequest.onreadystatechange = function() {
-                if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-                    self.content.innerHTML = httpRequest.responseText;
-                    
+            
+            ajaxContentIntoContainer({
+                url: link.href+'&ajax=1', 
+                container: self.content, 
+                timeout: 60, 
+                success: function () {
                     var hash = '#'+encodeURIComponent(removeBreadcrumbParameter(link.href));
                     if (window.history && window.history.pushState && window.history.replaceState && // Regexs from history js plugin
                       !((/ Mobile\/([1-7][a-z]|(8([abcde]|f(1[0-8]))))/i).test(navigator.userAgent) || // disable for versions of iOS < 4.3 (8F190)
-                         (/AppleWebKit\/5([0-2]|3[0-2])/i).test(navigator.userAgent))) { // disable for the mercury iOS browser and older webkit
-                      history.pushState({}, document.title, hash);
+                         (/AppleWebKit\/5([0-2]|3[0-3])/i).test(navigator.userAgent))) { // disable for the mercury iOS browser and older webkit/uiwebview
+                      window.history.pushState({}, document.title, hash);
                     } else {
                       location.hash = hash;
                     }
                     
-                    self.detailScroller.refresh();
                     if (typeof moduleHandleWindowResize != 'undefined') {
                         moduleHandleWindowResize(e);
                     }
+                    
+                    var refreshOnLoad = function () {
+                        setTimeout(function () {
+                            self.detailScroller.refresh();
+                        }, 0);
+                    };
+                    
+                    // As images load the height of the detail view will change so
+                    // refresh the scroller when each image loads:
+                    var images = self.content.getElementsByTagName("img");
+                    for (var i = 0; i < images.length; i++) {
+                        // ignore images with a height attribute since the DOM already knows their height
+                        if (images[i].getAttribute("height")) { continue; }
+                        
+                        if (images[i].addEventListener) {
+                            images[i].addEventListener("load", refreshOnLoad, false);
+                        } else if (images[i].attachEvent) {
+                            images[i].attachEvent("onload", refreshOnLoad);
+                        }
+                    }
+                    refreshOnLoad();
+                },
+                error: function (code) {
                 }
-            }
+            });
+            
             showLoadingMsg(this.options.content);
-            httpRequest.send(null);
             e && e.preventDefault();
             return false;
         },
