@@ -55,11 +55,3 @@
 {/block}
 
 {block name="navbar"}{/block}
-
-{block name="ajaxContentHeader"}
-  <script type="text/javascript">
-    {$smarty.block.parent}
-    
-    kgoBridge.initPage({$webBridgeOnPageLoadParams});
-  </script>
-{/block}

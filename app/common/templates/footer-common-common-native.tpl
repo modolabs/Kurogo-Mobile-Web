@@ -8,6 +8,12 @@
 
 {block name="deviceDetection"}{/block}
 
-{block name="footerJavascript"}
-  {* will be called by onAjaxLoad() *}
+{block name="footerJavascript"}{* called on ajax load *}{/block}
+
+{block name="ajaxContentFooter"}
+  {$smarty.block.parent}
+  
+  <script type="text/javascript">
+    kgoBridge.initPage({$webBridgeOnPageLoadParams});
+  </script>
 {/block}
