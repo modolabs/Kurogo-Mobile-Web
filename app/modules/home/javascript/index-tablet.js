@@ -3,34 +3,20 @@ function loadModulePages(modulePanes) {
         var elem = document.getElementById(info['elementId']);
         if (!elem) { return; }
         
-        var httpRequest = new XMLHttpRequest();
-        httpRequest.open("GET", info['ajaxURL'], true);
-        httpRequest.onreadystatechange = function() {
-            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-                var div = document.createElement("div");
-                div.innerHTML = httpRequest.responseText;
-                
+        ajaxContentIntoContainer({
+            url: info['ajaxURL'], 
+            container: elem, 
+            timeout: 60, 
+            success: function () {
                 removeClass(elem, 'loading');
-                elem.innerHTML = "";
-                
-                for (var i = 0; i < div.childNodes.length; i++) {
-                    var node = div.childNodes[i].cloneNode(true);
-                    var nodeName = node.nodeName;
-                    
-                    if (nodeName == "SCRIPT") {
-                        document.body.appendChild(node);
-                    } else if (nodeName == "STYLE") {
-                        document.getElementsByTagName("head")[0].appendChild(node);
-                    } else {
-                        elem.appendChild(node);
-                    }
-                }
-                
                 onDOMChange();
                 moduleHandleWindowResize();
+            },
+            error: function (code) {
+                removeClass(elem, 'loading');
+                elem.innerHTML = "Module failed to load";
             }
-        }
-        httpRequest.send(null);
+        });
     }
     
     for (var pane in modulePanes) {
