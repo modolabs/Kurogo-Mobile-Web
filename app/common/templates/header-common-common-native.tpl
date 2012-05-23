@@ -58,22 +58,8 @@
 
 {block name="ajaxContentHeader"}
   <script type="text/javascript">
-      {foreach $inlineJavascriptBlocks as $script}
-          {$script}
-      {/foreach}
-      
-      {foreach $inlineJavascriptFooterBlocks as $script}
-          {$script}
-      {/foreach}
-      
-      function kgoBridgeOnAjaxLoad() {ldelim}
-          {foreach $onLoadBlocks as $script}
-              {$script}
-          {/foreach}
-          
-          onOrientationChange();
-          
-          kgoBridge.initPage({$webBridgeOnPageLoadParams});
-      {rdelim}
+    {$smarty.block.parent}
+    
+    kgoBridge.initPage({$webBridgeOnPageLoadParams});
   </script>
 {/block}

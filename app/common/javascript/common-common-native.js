@@ -384,57 +384,13 @@ function scrollToTop() {
             if (this.config.pageArgs.length) {
                 pageURL += "&"+this.config.pageArgs;
             }
-            var timeout = this.config.timeout * 1000;
             
-            var httpRequest = new XMLHttpRequest();
-            httpRequest.open("GET", pageURL, true);
-            
-            var that = this;
-            
-            var requestTimer = setTimeout(function() {
-                // some browsers set readyState to 4 on abort so remove handler first
-                httpRequest.onreadystatechange = function() { };
-                httpRequest.abort();
-                
-                that.initPageError(408); // http request timeout status code
-            }, timeout);
-            
-            httpRequest.onreadystatechange = function() {
-                // return if still in progress
-                if (httpRequest.readyState != 4) { return; }
-                
-                // Got answer, don't abort
-                clearTimeout(requestTimer);
-                
-                if (httpRequest.status == 200) {
-                    // Success
-                    var container = document.getElementById("container");
-                    container.innerHTML = httpRequest.responseText;
-                    
-                    // Grab script tags and appendChild them so they get evaluated
-                    var scripts = container.getElementsByTagName("script");
-                    var count = scripts.length; // scripts.length will change as we add elements
-                    
-                    for (var i = 0; i < count; i++) {
-                        var script = document.createElement("script");
-                        script.type = "text/javascript";
-                        script.text = scripts[i].text;
-                        container.appendChild(script);
-                    }
-                    
-                    if (typeof kgoBridgeOnAjaxLoad != 'undefined') {
-                        kgoBridgeOnAjaxLoad();
-                    } else {
-                        that.log("Warning! kgoBridgeOnAjaxLoad is not defined by the page content");
-                    }
-                    
-                } else {
-                    // Error
-                    that.initPageError(httpRequest.status);
-                }
-            }
-            
-            httpRequest.send(null);
+            ajaxContentIntoContainer({
+                url: pageURL, 
+                container: document.getElementById("container"), 
+                timeout: this.config.timeout, 
+                error: this.initPageError
+            });
         },
         
         bridgeToAjaxLink: function (href) {
