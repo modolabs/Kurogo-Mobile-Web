@@ -22,18 +22,6 @@ function updateNavSlider() {
         document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
         document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
     }
-=======
-    if (navScroller) {
-      var current = Math.abs(navScroller.x);
-        var max = Math.abs(navScroller.maxScrollX);
-    
-        var canScrollLeft = (current > 0);
-        var canScrollRight = (current < max-1);
-      
-        document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
-        document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
-    }
->>>>>>> upstream
 }
 
 function navSliderScrollLeft() {
