@@ -74,7 +74,7 @@ function onResize() {
     }
 }
 
-function addOrientationChangeCallback(callback) {
+function addOnOrientationChangeCallback(callback) {
     if (typeof onOrientationChange.callbackFunctions == 'undefined') {
         onOrientationChange.callbackFunctions = [];
     }
@@ -417,17 +417,22 @@ function ajaxContentIntoContainer(options) {
         clearTimeout(requestTimer);
         
         if (httpRequest.status == 200) { // Success
-            options.container.innerHTML = httpRequest.responseText;
+            options.container.innerHTML = "";
             
-            // Grab script tags and appendChild them so they get evaluated
-            var scripts = options.container.getElementsByTagName("script");
-            var count = scripts.length; // scripts.length will change as we add elements
+            var div = document.createElement("div");
+            div.innerHTML = httpRequest.responseText;
             
-            for (var i = 0; i < count; i++) {
-                var script = document.createElement("script");
-                script.type = "text/javascript";
-                script.text = scripts[i].text;
-                options.container.appendChild(script);
+            // Manually appendChild elements so scripts get evaluated
+            for (var i = 0; i < div.childNodes.length; i++) {
+                var node = div.childNodes[i].cloneNode(true);
+                
+                if (node.nodeName == "SCRIPT") {
+                    document.body.appendChild(node);
+                } else if (node.nodeName == "STYLE") {
+                    document.getElementsByTagName("head")[0].appendChild(node);
+                } else {
+                    options.container.appendChild(node);
+                }
             }
             
             options.success();
