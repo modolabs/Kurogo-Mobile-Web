@@ -13,8 +13,8 @@
               {$gaArgs['_path'] = null}
               {$gaLabel = http_build_query($gaArgs, '', '&')}
             {/if}
-            <li{if $tabKey == $tabbedView['current']} class="active"{/if}>
-              <a href="{block name='tabLink'}#top{/block}" onclick="{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', '{$tabKey} tab', '{$gaLabel}']);{/if}showTab('{$tabKey}Tab', this);{$tabInfo['javascript']}">{$tabInfo['title']}</a>
+            <li id="{$tabInfo['id']}-tab" {if $tabKey == $tabbedView['current']} class="active"{/if}>
+              <a href="{block name='tabLink'}#top{/block}" onclick="{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', '{$tabKey} tab', '{$gaLabel}']);{/if}showTab('{$tabInfo['id']}');{$tabInfo['javascript']}">{$tabInfo['title']}</a>
             </li>
           {/block}
           
@@ -30,7 +30,7 @@
   <div id="tabbodies">
     {foreach $tabbedView['tabs'] as $tabKey => $tabInfo}
       {if isset($tabbedView['tabs'][$tabKey])}
-        <div class="tabbody" id="{$tabKey}Tab" {if count($tabBodies) > 1}style="display:none"{/if}>
+        <div class="tabbody" id="{$tabInfo['id']}-tabbody" {if count($tabBodies) > 1}style="display:none"{/if}>
           {$tabBodies[$tabKey]}
         </div>
       {/if}
