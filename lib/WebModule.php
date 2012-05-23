@@ -107,7 +107,7 @@ abstract class WebModule extends Module {
       $tabArgs = $this->args;
       $tabArgs['tab'] = $tabKey;
       $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
-      
+      $tabs[$tabKey]['id'] = "{$this->configModule}-{$this->page}-{$tabKey}";
       $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
     }
     
@@ -127,7 +127,7 @@ abstract class WebModule extends Module {
     );
 
     $currentJS = $tabs[$currentTab]['javascript'];
-    $this->addInlineJavascriptFooter("showTab('{$currentTab}Tab');{$currentJS}");
+    $this->addInlineJavascriptFooter("showTab('{$tabs[$currentTab]['id']}');{$currentJS}");
   }
   
   //

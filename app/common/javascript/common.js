@@ -1,48 +1,49 @@
-var currentTab;
-
 String.prototype.strip = function() {
     return this.replace(/^\s+/, '').replace(/\s+$/, '');
 }
 
-function showTab(strID, objTrigger) {
-// Displays the tab with ID strID
-	var objTab = document.getElementById(strID);
-	if(objTab) {
-		show(strID);
-		if(currentTab && (currentTab != objTab)) {
-			hide(currentTab.id);
-			//currentTab.style.display = "none";
-		}
-	}
-	currentTab = objTab; // Remember which is the currently displayed tab
-	
-	// Set the clicked tab to look current
-	var objTabs = document.getElementById("tabs");
-  if (objTabs) {
-    var arrTabs = objTabs.getElementsByTagName("li");
-    if(objTrigger) {
-      for(var i=0; i<arrTabs.length; i++) {
-        arrTabs[i].className="";
-      }
-      var objTriggerTab = objTrigger.parentNode;
-      if(objTriggerTab) {
-        objTriggerTab.className="active";
-      }
+function showTab(id) {
+    var tabId = id+'-tab';
+    var tabbodyId = id+'-tabbody';
+    
+    var tab = document.getElementById(tabId);
+    var tabbody = document.getElementById(tabbodyId);
+    var tabBodies = tabbody.parentNode.childNodes;
+    if (!tab || !tabbody || !tabBodies) { return; } // safety check
+    
+    var tabs = tab.parentNode.getElementsByTagName('li');
+    if (!tabs) { return; } // safety check
+    
+    // Display the tab body and hide others
+    for (var i = 0; i < tabBodies.length; i++) {
+        if (tabBodies[i].id == tabbodyId) {
+            show(tabBodies[i].id);
+        } else {
+            hide(tabBodies[i].id);
+        }
     }
-
+    
+    // Display the tab and hide others
+    for (var i = 0; i < tabs.length; i++) {
+        if (tabs[i].id == tabId) {
+            addClass(tabs[i], 'active');
+        } else {
+            removeClass(tabs[i], 'active');
+        }
+    }
+    
     // fake resize event in case tab body was resized while hidden 
     if (document.createEvent) {
-      var e = document.createEvent('HTMLEvents');
-      e.initEvent('resize', true, true);
-      window.dispatchEvent(e);
+        var e = document.createEvent('HTMLEvents');
+        e.initEvent('resize', true, true);
+        window.dispatchEvent(e);
     
     } else if( document.createEventObject ) {
-      var e = document.createEventObject();
-      document.documentElement.fireEvent('onresize', e);
+        var e = document.createEventObject();
+        document.documentElement.fireEvent('onresize', e);
     }
-  }
-	
-	onDOMChange();
+    
+    onDOMChange();
 }
 
 function onOrientationChange() {
