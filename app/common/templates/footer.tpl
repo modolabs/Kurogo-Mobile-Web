@@ -88,4 +88,26 @@
 {/block}
 </body>
 </html>
+{else}
+  {block name="ajaxContentFooter"}
+    <script type="text/javascript">
+      {foreach $inlineJavascriptFooterBlocks as $script}
+        {$script}
+      {/foreach}
+      
+      {foreach $onLoadBlocks as $script}
+        {$script}
+      {/foreach}
+    
+      {if count($onOrientationChangeBlocks)}
+        addOnOrientationChangeCallback(function () {ldelim}
+          {foreach $onOrientationChangeBlocks as $script}
+            {$script}
+          {/foreach}
+        {rdelim});
+      {/if}
+      
+      onOrientationChange();
+    </script>
+  {/block}
 {/if}
