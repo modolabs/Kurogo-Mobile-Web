@@ -7,12 +7,16 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
     protected $DEFAULT_PARSER_CLASS='TwitterDataParser';
     protected $OAuthProviderClass='TwitterOAuthProvider';
     protected $cacheGroup='Twitter';
-
-    public function search($q, $start=0, $limit=null) {
-        Debug::Die_herE();    
-        return $this->retrieveData();
+    protected $user;
+    
+    public function getServiceName() {
+        return 'twitter';
     }
     
+    public function getAccount() {
+        return $this->user;
+    }
+
     public function getUser($userID) {
         $this->setBaseURL("http://api.twitter.com/1/users/show/$userID.json");
         return $this->getData();
@@ -32,6 +36,8 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
     }
     
     protected function setUser($user) {
+        /* @TODO Validate User string */
+        $this->user = $user;
         $this->setBaseURL('http://api.twitter.com/1/statuses/user_timeline.json');
         $this->addFilter('screen_name', $user);
         $this->addFilter('trim_user', 1);

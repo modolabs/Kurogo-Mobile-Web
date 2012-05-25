@@ -8,25 +8,33 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
     protected $userURL;
     protected $clientId;
     protected $clientSecret;
-    
-    public function search($q, $start=0, $limit=null)
-    {
-        Debug::Die_herE();
+    protected $user;
+
+    public function getServiceName() {
+        return 'facebook';
     }
+    
+    public function getAccount() {
+        return $this->user;
+    }
+    
     public function getUser($userID)
     {
         $this->setBaseURL($this->graphURL.$userID);
         $this->setOption('action', 'user');
         return $this->getData();
     }
+    
     public function canRetrieve()
     {
         return true;
+    
     }
     public function canPost()
     {
         return false;
     }
+    
     public function auth(array $options)
     {
     }
@@ -36,28 +44,37 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
         $this->setBaseURL($this->graphURL.$id);
         return $this->getData();
     }
+    
     public function setUser($user)
     {
         $this->user = $user;
         $this->userURL = $this->graphURL.$user;
         $this->setBaseURL($this->userURL.'/feed');
     }
+    
     public function init($args) {
         parent::init($args);
-        if (isset($args['ACCOUNT'])) {
-            $this->setUser($args['ACCOUNT']);
+
+        if (!isset($args['ACCOUNT'])) {
+            throw new KurogoConfigurationException("ACCOUNT must be set for Facebook");
         }
-        if (isset($args['OAUTH_CONSUMER_KEY']))
-        {
-            $this->clientId = $args['OAUTH_CONSUMER_KEY'];
-        }
-        if (isset($args['OAUTH_CONSUMER_SECRET']))
-        {
-            $this->clientSecret = $args['OAUTH_CONSUMER_SECRET'];
-        }
-        $this->getAccessToken();
         
+        $this->setUser($args['ACCOUNT']);
+
+        if (!isset($args['OAUTH_CONSUMER_KEY'])) {
+            throw new KurogoConfigurationException("OAUTH_CONSUMER_KEY must be set for Facebook");
+        }
+        $this->clientId = $args['OAUTH_CONSUMER_KEY'];
+
+        if (!isset($args['OAUTH_CONSUMER_SECRET'])) {
+            throw new KurogoConfigurationException("OAUTH_CONSUMER_SECRET must be set for Facebook");
+        }
+        $this->clientSecret = $args['OAUTH_CONSUMER_SECRET'];
+
+        // @TODO why is this done every time??        
+        $this->getAccessToken();
     }
+    
     private function getAccessToken()
     {
         $query = array(
@@ -68,7 +85,6 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
         $atURL = 'https://graph.facebook.com/oauth/access_token?'.http_build_query($query);
         list($name, $token) = explode('=', file_get_contents($atURL));
         $this->addFilter($name, $token);
-       
     }
 
 }
