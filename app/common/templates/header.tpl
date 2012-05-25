@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+{if !$ajaxContentLoad}<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
@@ -37,15 +37,15 @@
         <script src="{$PERCENT_MOBILE_URL}" type="text/javascript" charset="utf-8"></script>
     {/if}
     
-    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
-      <script type="text/javascript">{$inlineJavascriptBlock}</script>
-    {/foreach}
-    
     {foreach $javascriptURLs as $url}
       <script src="{$url|escape}" type="text/javascript"></script>
     {/foreach}
     
     <script src="{$minify['js']|escape}" type="text/javascript"></script>
+    
+    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
+      <script type="text/javascript">{$inlineJavascriptBlock}</script>
+    {/foreach}
 
     <script type="text/javascript">
       function onOrientationChange() {ldelim}
@@ -131,7 +131,7 @@
           {/if}
           
         {/if}
-        {if $moduleID != 'home' || !$breadcrumb@first}
+        {if $configModule != $homeModuleID || !$breadcrumb@first}
           <a href="{$breadcrumb['url']|sanitize_url}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
             {if $breadcrumb@first}
               <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="{$module_nav_image_width|default:28}" height="{$module_nav_image_height|default:28}" alt="" />
@@ -182,3 +182,6 @@
     {block name="containerStart"}
       <div id="container">
     {/block}
+{else}
+  {block name="ajaxContentHeader"}{/block}
+{/if}

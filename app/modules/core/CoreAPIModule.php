@@ -4,7 +4,7 @@ class CoreAPIModule extends APIModule
 {
     protected $id = 'core';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
 
     // special factory method for core
     public static function factory($id='core', $command='', $args=array()) {
@@ -24,12 +24,19 @@ class CoreAPIModule extends APIModule
             case 'hello':
             
                 $allmodules = $this->getAllModules();
-                $homeModules = $this->getModuleNavigationIDs();
+                $homeModuleData = $this->getModuleNavigationData();
+                $homeModules = array(
+                    'primary'=> isset($homeModuleData['primary']) ? array_keys($homeModuleData['primary']) : array(),
+                    'secondary'=>isset($homeModuleData['secondary']) ? array_keys($homeModuleData['secondary']) : array()
+                );
+
                 foreach ($allmodules as $moduleID=>$module) {
                     if ($module->isEnabled()) {
                         $home = false;
+                        
+                        
                         if ( ($key = array_search($moduleID, $homeModules['primary'])) !== FALSE) {
-                            $home = array('type'=>'primary', 'order'=>$key);
+                            $home = array('type'=>'primary', 'order'=>$key, 'title'=>$homeModuleData['primary'][$moduleID]);
                         } elseif (($key = array_search($moduleID, $homeModules['secondary'])) !== FALSE) {
                             $home = array('type'=>'secondary', 'order'=>$key);
                         }
@@ -54,7 +61,7 @@ class CoreAPIModule extends APIModule
                     'default'=>Kurogo::defaultModule()
                 );
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion(2);
                 break;
                 
             case 'classify':

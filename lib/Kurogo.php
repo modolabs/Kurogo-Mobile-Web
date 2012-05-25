@@ -1,7 +1,7 @@
 <?php
 
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
-define('KUROGO_VERSION', '1.4 RC2');
+define('KUROGO_VERSION', '1.4.1');
 
 //
 // And a double quote define for ini files (php 5.1 can't escape them)
@@ -25,6 +25,10 @@ class Kurogo
     protected $cacher;
     protected $module;
     protected $request;
+
+    const REDIRECT_PERMANENT = 301;
+    const REDIRECT_TEMPORARY = 302;
+    const REDIRECT_SEE_OTHER = 303;
 
     private function __construct() {
         $this->startTime = microtime(true);
@@ -99,6 +103,19 @@ class Kurogo
     
     public static function tempDirectory() {
         return Kurogo::getOptionalSiteVar('TMP_DIR', sys_get_temp_dir());
+    }
+    
+    public static function tempFile($prefix='kgo') {
+        $tempDir = self::tempDirectory();
+        if (!is_writable($tempDir)) {
+            throw new KurogoConfigurationException("Temporary directory $tempDir not available");
+        }
+        
+        $umask = umask(0177);
+        $tempFile = tempnam($tempDir, $prefix);
+        umask($umask);
+        
+        return $tempFile;
     }
     
     public static function moduleLinkForItem($moduleID, $object, $options=null) {
@@ -543,8 +560,7 @@ class Kurogo
         if ($host != strtolower($host)) {
             $url = 'http'.(IS_SECURE ? 's' : '').'://' . strtolower($host) . $path;
             self::log(LOG_INFO, "Redirecting to lowercase url $url", 'kurogo');
-            header("Location: $url");
-            exit();
+            Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
           }
                   
         //
@@ -644,8 +660,7 @@ class Kurogo
                     $site = $siteConfig->getVar('DEFAULT_SITE');
                     array_splice($paths, 1, 1, array($site, $paths[1]));
                     $url = implode("/", $paths);
-                    header("Location: $url");
-                    die();
+                    Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
                 }
             }
 
@@ -1061,7 +1076,8 @@ class Kurogo
 
       if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
         if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
-            $module = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
+            $homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
+            $module = Kurogo::getOptionalSiteVar("DEFAULT", $homeModuleID,'urls');
         }
       }
       
@@ -1097,6 +1113,14 @@ class Kurogo
         includePackage('Cache');
         return KurogoMemoryCache::getCacheClasses();
         
+    }
+    
+    // REDIRECT_PERMANENT (301): Use this when you want search engines to see the redirect.
+    // REDIRECT_SEE_OTHER (303): Use when redirecting from forms (POST -> GET).
+    // REDIRECT_TEMPORARY (302): Use in all other situations (default).
+    public static function redirectToURL($url, $code=self::REDIRECT_TEMPORARY) {
+        header("Location: $url", true, $code);
+        exit();
     }
 }
 

@@ -14,6 +14,7 @@ class VideoAPIModule extends APIModule {
     protected function arrayFromVideo($video) {
         $videoArray = array(
             "id"              => $video->getID(),
+            "type"            => $video->getType(),
             "title"           => $video->getTitle(),
             "description"     => strip_tags($video->getDescription()),
             "author"          => $video->getAuthor(),

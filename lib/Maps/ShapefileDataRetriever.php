@@ -22,11 +22,7 @@ class ShapefileDataRetriever extends DataRetriever
 
             $zip = new ZipArchive();
             if (strpos($this->fileStem, 'http') === 0 || strpos($this->fileStem, 'ftp') === 0) {
-                $tmpDir = Kurogo::tempDirectory();
-                if (!is_writable($tmpDir)) {
-                    throw new KurogoConfigurationException("Temporary directory $tmpDir not available");
-                }
-                $tmpFile = $tmpDir.'/tmp.zip';
+                $tmpFile = Kurogo::tempFile();
                 copy($this->fileStem, $tmpFile);
                 $zip->open($tmpFile);
             } else {

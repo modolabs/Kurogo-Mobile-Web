@@ -28,6 +28,8 @@ abstract class DrupalCCKDataParser extends RSSDataParser
     // overide this for fields that have only one value
     protected $singletonFields = array();
 
+    protected $useDescriptionForContent = true;
+
     public function parseData($data) {
         $rssItems = parent::parseData($data);
         $items = array();

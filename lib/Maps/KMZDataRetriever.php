@@ -11,11 +11,7 @@ class KMZDataRetriever extends URLDataRetriever
             throw new KurogoException("class ZipArchive (php-zip) not available");
         }
 
-        $tmpDir = Kurogo::tempDirectory();
-        if (!is_writable($tmpDir)) {
-            throw new KurogoConfigurationException("Temporary directory $tmpDir not available");
-        }
-        $tmpFile = $tmpDir.'/tmp.kmz';
+        $tmpFile = Kurogo::tempFile();
 
         // this is the same as parent
         if (!$this->requestURL = $this->url()) {

@@ -23,7 +23,7 @@ class DrupalCCKItem {
    }
 
    public function getCCKField($field) {
-     return $this->cckFields[$field];
+     return isset($this->cckFields[$field]) ? $this->cckFields[$field] : null;
    }
 
 }  

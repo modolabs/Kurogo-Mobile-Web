@@ -24,6 +24,7 @@ class PeopleWebModule extends WebModule {
     protected $contactGroups = array();
     protected $controllers = array();
     protected $legacyController = true;
+    protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -59,7 +60,8 @@ class PeopleWebModule extends WebModule {
         if (isset($info['format'])) {
             $value = vsprintf($this->replaceFormat($info['format']), $values);
         } else {
-            $value = implode(' ', $values);
+            $delimiter = isset($info['delimiter']) ? $info['delimiter'] : ' ';
+            $value = implode($delimiter, $values);
         }
     
         $detail = array(

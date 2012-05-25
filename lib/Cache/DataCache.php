@@ -123,7 +123,7 @@ class DataCache
     
     public function getFullPath($key) {
 
-        $return = $this->getCacheFolder($this->cacheGroup) . DIRECTORY_SEPARATOR . $key;
+        $return = $this->getCacheFolder($this->cacheGroup) . DIRECTORY_SEPARATOR . Watchdog::safeFilename($key);
         return $return;
     }
 
@@ -177,6 +177,7 @@ class DataCache
         if ($memoryCache = $this->getMemoryCache()) {
             $memoryCache->delete($this->getMemoryCacheKey($key));
         }
+        $this->deleteValueFromDisk($key);
     }
 
     public function set($key, $data) {
@@ -204,6 +205,13 @@ class DataCache
         }
         $folder = $this->getCacheFolder($cacheGroup);
         return Kurogo::rmdir($folder);
+    }
+    
+    protected function deleteValueFromDisk($key) {
+        $path = $this->getFullPath($key);
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
     
     protected function setValueToDisk($key, $data) {

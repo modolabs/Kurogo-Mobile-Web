@@ -14,6 +14,7 @@ abstract class Module
     protected $id='none';
     protected $configModule;
     protected $moduleName = '';
+    protected $homeModuleID;
     protected $args = array();
     protected $configs = array();
     protected $logView = true;
@@ -742,12 +743,19 @@ abstract class Module
     protected function getModuleNavigationConfig() {
         static $moduleNavConfig;
         if (!$moduleNavConfig) {
-            $moduleNavConfig = ModuleConfigFile::factory('home', 'module');
+            $moduleNavConfig = ModuleConfigFile::factory($this->getHomeModuleID(), 'module');
         }
         
         return $moduleNavConfig;
     }
- 
+    
+    protected function getHomeModuleID() {
+        if (!$this->homeModuleID) {
+            $this->homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
+        }
+        
+        return $this->homeModuleID;
+    }
 
     /**
       * Action to take when the module is disabled

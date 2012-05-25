@@ -11,6 +11,7 @@ if (!function_exists('ldap_connect')) {
 define("LDAP_TIMELIMIT_EXCEEDED", 0x03);
 define("LDAP_SIZELIMIT_EXCEEDED", 0x04);
 define("LDAP_PARTIAL_RESULTS", 0x09);
+define("LDAP_ADMINLIMIT_EXCEEDED", 0x0B);
 define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 
 /**
@@ -19,6 +20,7 @@ define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
 {
     protected $DEFAULT_PARSER_CLASS = 'LDAPPeopleParser';
+    protected $MIN_PHONE_SEARCH = PeopleRetriever::MIN_PHONE_SEARCH;
     protected $personClass = 'LDAPPerson';
     protected $host;
     protected $port=389;
@@ -32,6 +34,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
     protected $baseAttributes = array();
+    protected $searchFields = array();
     
     protected function retrieveResponse() {
         $response = $this->initResponse();
@@ -61,7 +64,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $error_reporting = ini_get('error_reporting');
             error_reporting($error_reporting & ~E_WARNING);
         }
-        
+
         if ($this->filter instanceOf LDAPFilter) {
             $result = ldap_search($ds, $this->searchBase,
                 strval($this->filter), $this->getAttributes(), 0, 0, 
@@ -141,6 +144,22 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_AND, $givenNameFilter, $snFilter);
         return $filter;
     }
+    
+    protected function getSearchFields() {
+        if ($this->searchFields) {
+            $defaultFields = array(
+                $this->getField('firstname'),
+                $this->getField('lastname'),
+                $this->getField('email')
+            );
+            
+            if ($searchFields = array_diff($this->searchFields, $defaultFields)) {
+                return array_unique($searchFields);
+            }
+        }
+        
+        return null;
+    }
 
     protected function buildSearchFilter($searchString) {
 
@@ -156,10 +175,9 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             array_shift($phone_bits);
             $searchString = implode("", $phone_bits); // remove any separators. This might be an issue for people with formatted numbers in their directory
             $filter = new LDAPFilter($this->getField('phone'), $searchString);
-        } elseif (preg_match('/^[0-9]+/', $searchString)) { //partial phone number
-            $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_TRAILING);
+        } elseif (preg_match('/^[0-9]{'. $this->MIN_PHONE_SEARCH . ',}/', $searchString)) { //partial phone number
+            $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
-
             $names = preg_split("/\s+/", $searchString);
             $nameCount = count($names);
             switch ($nameCount)
@@ -201,8 +219,17 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
                     
                     $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
             }
-
+            
+            //build search for additional fields
+            if (($searchFields = $this->getSearchFields()) && ($filter instanceOf LDAPCompoundFilter)) {
+                foreach ($searchFields as $field) {
+                    $fieldFilter = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
+                    $filter->addFilter($fieldFilter);
+                }
+            }
+            
         } else {
+            $filter = null;
             $this->errorMsg = "Invalid query";
         }
 
@@ -228,20 +255,20 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected function generateErrorMessage($error_code) {
         $error_codes = array(
             // LDAP error codes.
-            LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed. Please refine your search.",
-            LDAP_PARTIAL_RESULTS => "There are more results than can be displayed. Please refine your search.",
-            LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
-            LDAP_INSUFFICIENT_ACCESS => "Insufficient permission to view this information.",
+            LDAP_SIZELIMIT_EXCEEDED =>'ERROR_TOO_MANY_RESULTS',
+            LDAP_PARTIAL_RESULTS => 'ERROR_TOO_MANY_RESULTS',
+            LDAP_TIMELIMIT_EXCEEDED => 'ERROR_SERVER',
+            LDAP_INSUFFICIENT_ACCESS => 'ERROR_SERVER',
+            LDAP_ADMINLIMIT_EXCEEDED => 'ERROR_TOO_MANY_RESULTS'
         );
-
-        if(isset($error_codes[$error_code])) {
-            return $error_codes[$error_code];
-        } else { // return a generic error message
-            return "Your request cannot be processed at this time. ($error_name)";
-        }
+        
+        $key = isset($error_codes[$error_code]) ? $error_codes[$error_code] : 'ERROR_GENERIC_SERVER_ERROR';
+        return Kurogo::getLocalizedString($key, $error_code, ldap_err2str($error_code));
     }
 
     protected function init($args) {
+        $args['PERSON_CLASS'] = isset($args['PERSON_CLASS']) ? $args['PERSON_CLASS'] : $this->personClass;
+    
         parent::init($args);
         
         if (isset($args['HOST'])) {
@@ -260,6 +287,10 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $this->baseAttributes = $args['ATTRIBUTES'];
         }
 
+        if (isset($args['SEARCH_FIELDS'])) {
+            $this->searchFields = $args['SEARCH_FIELDS'];
+        }
+        
         $this->fieldMap = array(
             'userid'=>isset($args['LDAP_USERID_FIELD']) ? $args['LDAP_USERID_FIELD'] : 'uid',
             'email'=>isset($args['LDAP_EMAIL_FIELD']) ? $args['LDAP_EMAIL_FIELD'] : 'mail',
@@ -373,6 +404,10 @@ class LDAPCompoundFilter extends LDAPFilter
             throw new KurogoConfigurationException(sprintf("Only %d filters found (2 minimum)", count($filters)));
         }
     
+    }
+    
+    public function addFilter(LDAPFilter $filter) {
+        $this->filters[] = $filter;
     }
     
     function __toString() {

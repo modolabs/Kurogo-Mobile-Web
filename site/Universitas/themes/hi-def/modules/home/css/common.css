@@ -1,0 +1,13 @@
+.banner-notice {
+  background-color: #fff;
+  background-image: url('/common/images/alert.png');
+  background-position: 5px center;
+  background-size: 28px 28px;
+  border-color: #ccc;
+  font-size: 88.23%;
+}
+.banner-notice .banner-message, .banner-notice a.banner-message { 
+  background-image: url('/common/images/action-arrow.png');
+  padding: 10px 24px 10px 36px;
+  color: #000;
+}
