@@ -11,17 +11,23 @@ class SocialAPIModule extends APIModule
     protected $items = array();
 
     public function arrayForPost(SocialMediaPost $post, $data=null) {
-
         $array = array(
-            'body'    =>$post->getBody(),
+            'id'=>$post->getID(),
+            'service'=>$post->getServiceName(),
+            'postHTML'=>nl2br($post->linkify($post->getBody())),
+            'postLinks'=>$post->getLinks(),
             'created' =>$post->getCreated()->format('U'),
             'sort' =>$post->getCreated()->format('U'),
             'author'  =>$post->getAuthor(),
+
         );
         
         if (isset($data['feed'])) {
-            if ($author = $data['feed']->getUser($post->getAuthor())) {
-                $array['author'] = $author->getName();
+            $array['feed'] = $data['feed'];
+            if ($author = $this->feeds[$data['feed']]->getUser($post->getAuthor())) {
+                $array['authorName'] = $author->getName();
+                $array['authorURL'] = $author->getProfileURL();
+                $array['authorImageURL'] = $author->getImageURL();
             }
         }
         
@@ -63,7 +69,7 @@ class SocialAPIModule extends APIModule
                 if ($feed = $this->getArg('feed', null)) {
                 
                     if (isset($this->feeds[$feed])) {
-                        $feeds = array($this->feeds[$feed]);
+                        $feeds = array($feed=>$this->feeds[$feed]);
                     } else {
                         KurogoDebug::debug($this->feeds, true);
                         throw new KurogoDataException("Invalid feed $feed");
@@ -76,7 +82,7 @@ class SocialAPIModule extends APIModule
                     if ($controller->canRetrieve()) {
                         $items = $controller->getPosts();
                         foreach ($items as $post) {
-                            $item = $this->arrayForPost($post, array('feed'=>$controller));
+                            $item = $this->arrayForPost($post, array('feed'=>$feed));
                             $sort[] = $item['sort'];
                             $posts[] = $item;
                         }
