@@ -42,6 +42,9 @@ class SocialAPIModule extends APIModule
                 }
                 $this->setResponse(true);
                 $this->setResponseVersion(1);
+            default:
+                $this->invalidCommand();
+                break;
                 
         }
     }
