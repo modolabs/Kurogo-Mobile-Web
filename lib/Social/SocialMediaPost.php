@@ -15,6 +15,7 @@ abstract class SocialMediaPost implements KurogoObject
     protected $links=array();
     protected $images=array();
     protected $retriever;
+    protected $serviceName;
 
     abstract public function getReplyURL();
     abstract public function getLikeURL();
@@ -30,6 +31,11 @@ abstract class SocialMediaPost implements KurogoObject
         }   
         
         return true;     
+    }
+
+    public function getServiceName()
+    {
+        return $this->serviceName;
     }
     
     public function getID() {

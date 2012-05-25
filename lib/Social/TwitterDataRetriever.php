@@ -113,10 +113,7 @@ class TwitterUser extends SocialMediaUser
 
 class TwitterPost extends SocialMediaPost
 {
-    public function getServiceName()
-    {
-        return 'twitter';
-    }
+    protected $serviceName = 'twitter';
     public function getReplyURL() {
         return 'https://twitter.com/intent/tweet?'.http_build_query(array('in_reply_to' => $this->getID()));
     }

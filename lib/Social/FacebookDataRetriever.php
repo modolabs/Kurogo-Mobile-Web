@@ -156,10 +156,8 @@ class FacebookUser extends SocialMediaUser
 
 class FacebookPost extends SocialMediaPost
 {
-    public function getServiceName()
-    {
-        return 'facebook';
-    }
+    protected $serviceName = 'twitter';
+
     public function getReplyURL() {
         return null;
     }
