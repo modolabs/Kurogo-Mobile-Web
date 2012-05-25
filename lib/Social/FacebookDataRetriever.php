@@ -129,11 +129,6 @@ class FacebookDataParser extends DataParser
         return $user;
     }
 
-    public function parseResponse(DataResponse $response) {
-        $data = $response->getResponse();
-        return $this->parseData($data);
-    }
-        
     public function parseData($data) 
     {
         if ($data = json_decode($data, true)) {
