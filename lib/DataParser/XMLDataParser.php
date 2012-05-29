@@ -28,8 +28,7 @@ abstract class XMLDataParser extends DataParser
 
     protected function startElement($xml_parser, $name, $attribs)
     {
-        if(count($this->elementStack) > 0)
-        {
+        if (!is_null($this->data) && $this->data !== '' && count($this->elementStack) > 0) {
             $parent = end($this->elementStack);
             $parent->setValue($parent->value().$this->data);
         }
