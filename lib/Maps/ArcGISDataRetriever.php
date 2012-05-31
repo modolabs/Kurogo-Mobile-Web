@@ -45,10 +45,22 @@ class ArcGISDataRetriever extends URLDataRetriever
                     );
 
             case self::ACTION_SEARCH:
-                return array(
-                    'text' => $this->searchFilters['text'],
-                    'f'    => 'json',
+                $displayField = null;
+                if (isset($this->selectedLayer)) {
+                    $displayField = $this->parser->getDisplayFieldForFolder($this->selectedLayer);
+                }
+                if ($displayField) {
+                    $searchText = strtoupper($this->searchFilters['text']);
+                    return array(
+                        'where' => "UPPER($displayField) LIKE '%$searchText%'",
+                        'f'    => 'json',
                     );
+                } else {
+                    return array(
+                        'text' => $this->searchFilters['text'],
+                        'f'    => 'json',
+                        );
+                }
 
             case self::ACTION_SEARCH_NEARBY:
                 $bbox = normalizedBoundingBox(
@@ -101,7 +113,7 @@ class ArcGISDataRetriever extends URLDataRetriever
 
         $data = parent::getData();
 
-        if ($data === null && $this->action == self::ACTION_CATEGORIES) {
+        if ($data === null) {
             $data = array();
         }
 

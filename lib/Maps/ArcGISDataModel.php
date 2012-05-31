@@ -31,11 +31,18 @@ class ArcGISDataModel extends MapDataModel
         return $this->returnPlacemarks($this->retriever->getData());
     }
     
-    protected function doSearch($categories) {
+    protected function doSearch($categories, $action) {
         $results = array();
+        $this->retriever->setAction($action);
+
         if (count($categories) > 1) {
             foreach ($categories as $category) {
                 $this->retriever->setSelectedLayer($category->getId());
+                if ($action == ArcGISDataRetriever::ACTION_SEARCH) {
+                    $this->retriever->setAction(ArcGISDataRetriever::ACTION_CATEGORIES);
+                    $this->retriever->getData();
+                    $this->retriever->setAction($action);
+                }
                 $results = array_merge($results, $this->returnPlacemarks($this->retriever->getData()));
             }
         } else {
@@ -66,14 +73,12 @@ class ArcGISDataModel extends MapDataModel
     public function search($searchTerms) {
         $categories = $this->leafCategories(); 
         $this->retriever->setSearchFilters(array('text' => $searchTerms));
-        $this->retriever->setAction(ArcGISDataRetriever::ACTION_SEARCH);
-        return $this->doSearch($categories);
+        return $this->doSearch($categories, ArcGISDataRetriever::ACTION_SEARCH);
     }
 
     public function searchByProximity($center, $tolerance, $maxItems=0) {
         $categories = $this->leafCategories(); 
         $this->retriever->setSearchFilters(array('center' => $center, 'tolerance' => $tolerance));
-        $this->retriever->setAction(ArcGISDataRetriever::ACTION_SEARCH_NEARBY);
-        return $this->doSearch($categories);
+        return $this->doSearch($categories, ArcGISDataRetriever::ACTION_SEARCH_NEARBY);
     }
 }
