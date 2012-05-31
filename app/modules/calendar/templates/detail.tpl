@@ -2,7 +2,7 @@
 
 {block name="title"}
 <div class="nonfocal">
-  <h2>{$title}</h2>
+  <h1>{$title}</h1>
   <p class="smallprint">{$date}</p>
 </div>
 {/block}
