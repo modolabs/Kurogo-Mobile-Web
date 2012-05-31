@@ -63,7 +63,6 @@ class ArcGISDataRetriever extends URLDataRetriever
                     'f'            => 'json',
                     );
         }
-
         return parent::parameters();
     }
 
@@ -95,6 +94,11 @@ class ArcGISDataRetriever extends URLDataRetriever
 
     // intercept this since we sometimes have to parse two calls to get everything
     public function getData(&$response=null) {
+        // this happens when we start out at the top level of a service instance
+        if (!$this->selectedLayer && $this->action == self::ACTION_PLACEMARKS) {
+            return array();
+        }
+
         $data = parent::getData();
 
         if ($data === null && $this->action == self::ACTION_CATEGORIES) {
