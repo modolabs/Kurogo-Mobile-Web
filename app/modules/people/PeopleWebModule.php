@@ -231,6 +231,12 @@ class PeopleWebModule extends WebModule {
         );
     }
 
+    public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null) {
+        return array_merge(
+            parent::linkForValue($value, $callingModule, $otherValue), 
+            array('class' => 'action people'));
+    }
+    
     protected function getContactGroup($group) {
         if (!$this->contactGroups) {
             $this->contactGroups = $this->getModuleSections('contacts-groups');
