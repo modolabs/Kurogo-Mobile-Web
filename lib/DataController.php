@@ -269,7 +269,7 @@ abstract class DataController
         
         if (isset($args['HTTPS_PROXY_URL'])) {
             $streamContextOpts['https'] = array(
-                'proxy'          => $proxyConfigs['HTTPS_PROXY_URL'], 
+                'proxy'          => $args['HTTPS_PROXY_URL'], 
                 'request_fulluri'=> TRUE
             );
         }
