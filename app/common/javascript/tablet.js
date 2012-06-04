@@ -36,8 +36,6 @@ function navSliderScrollRight() {
 
 // Change wrapper height based on device orientation.
 function setContainerWrapperHeight() {
-  document.getElementById('container').style.height = 'auto';
-  
   var footerNav = document.getElementById('footernav');
   
 	var navbarHeight = document.getElementById('navbar').offsetHeight;
@@ -46,10 +44,6 @@ function setContainerWrapperHeight() {
 	var containerHeight = document.getElementById('container').offsetHeight;
 	
 	document.getElementById('wrapper').style.height = wrapperHeight + 'px';
-	
-	if (containerHeight < wrapperHeight) {
-	  document.getElementById('container').style.height = wrapperHeight + 'px';
-	}
 	
 	// when this exists, make it fill the screen
 	var fillscreen = document.getElementById('fillscreen');
@@ -83,50 +77,57 @@ function handleWindowResize(e) {
     }
 } 
 
+var moduleProvidesScrollers = false;
+
 function tabletInit() {
-   setOrientation(getOrientation());
-    if(!document.getElementById('navbar')) {
+    setOrientation(getOrientation());
+    if (!document.getElementById('navbar')) {
         // page has no footer so do not attempt
         // to use fancy tablet container
         return;
     }
 
-  setContainerWrapperHeight();
-  
-  // Adjust wrapper height on orientation change or resize
-  var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
-  window.addEventListener(resizeEvent, function() {setTimeout(handleWindowResize,0)}, false);
-
-  document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
-  
-  containerScroller = new iScroll('wrapper', { 
-    checkDOMChanges: false, 
-    hScrollbar: false,
-    desktopCompatibility: true,
-    bounce: false,
-    bounceLock: true
-  });
-
-  if (document.getElementById('navsliderwrapper')) {
-    navScroller = new iScroll('navsliderwrapper', { 
-      checkDOMChanges: false, 
-      hScrollbar: false,
-      vScrollbar: false,
-      desktopCompatibility: true,
-      bounce: false,
-      bounceLock: true,
-      onScrollStart: updateNavSlider,
-      onScrollEnd: updateNavSlider
-    });
-  }
-
-    handleWindowResize();
+    setContainerWrapperHeight();
+    
+    // Adjust wrapper height on orientation change or resize
+    var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+    window.addEventListener(resizeEvent, function() { setTimeout(handleWindowResize, 0) }, false);
+    
+    document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
+    
+    if (document.getElementById('navsliderwrapper')) {
+        navScroller = new iScroll('navsliderwrapper', { 
+            checkDOMChanges: false, 
+            hScrollbar: false,
+            vScrollbar: false,
+            desktopCompatibility: true,
+            bounce: false,
+            bounceLock: true,
+            onScrollStart: updateNavSlider,
+            onScrollEnd: updateNavSlider
+        });
+    }
+    
     updateNavSlider();
-
-  //run module init if present
-  if (typeof moduleInit != 'undefined') {
-    moduleInit();
-  }
+    
+    // run module init if present
+    // module init can change value of moduleProvidesScrollers to
+    // disable container scroller if it provides its own for a splitview
+    if (typeof moduleInit != 'undefined') {
+        moduleInit();
+    }
+  
+    if (!moduleProvidesScrollers) {
+        containerScroller = new iScroll('wrapper', { 
+            checkDOMChanges: false, 
+            hScrollbar: false,
+            desktopCompatibility: true,
+            bounce: false,
+            bounceLock: true
+        });
+    }
+    
+    handleWindowResize();
 }
 
 function scrollToTop() {
@@ -411,8 +412,8 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
         }
     }
     
-    containerScroller.destroy();
-    containerScroller = null;
+    moduleProvidesScrollers = true;
+    document.getElementById('container').style.height = "100%";
     
     moduleHandleWindowResize();
 
