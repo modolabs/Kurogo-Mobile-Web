@@ -30,18 +30,55 @@ class ArcGISDataModel extends MapDataModel
         $this->setupRetrieverForPlacemarks();
         return $this->returnPlacemarks($this->retriever->getData());
     }
+    
+    protected function doSearch($categories, $action) {
+        $results = array();
+        $this->retriever->setAction($action);
 
+        if (count($categories) > 1) {
+            foreach ($categories as $category) {
+                $this->retriever->setSelectedLayer($category->getId());
+                if ($action == ArcGISDataRetriever::ACTION_SEARCH) {
+                    $this->retriever->setAction(ArcGISDataRetriever::ACTION_CATEGORIES);
+                    $this->retriever->getData();
+                    $this->retriever->setAction($action);
+                }
+                $results = array_merge($results, $this->returnPlacemarks($this->retriever->getData()));
+            }
+        } else {
+            $results = $this->returnPlacemarks($this->retriever->getData());
+        }
+        return $results;
+    }
+
+    protected function leafCategories($categories=array()) {
+        $result = array();
+        if (!$categories) {
+            $categories = $this->categories();
+        }
+        foreach ($categories as $category) {
+            $children = $category->categories();
+            if (!$children) {
+                $result[] = $category;
+            } else {
+                $result = array_merge($result, $this->leafCategories($children));
+            }
+        }
+        return $result;
+    }
+
+    // for the following search functions, the call to categories()
+    // causes us to initialize internal variables like projection
+    // it also causes the retriever's action to be set to "categories"
     public function search($searchTerms) {
-        $this->categories(); // retriever needs to do this to initialize internal variables like projection
+        $categories = $this->leafCategories(); 
         $this->retriever->setSearchFilters(array('text' => $searchTerms));
-        $this->retriever->setAction(ArcGISDataRetriever::ACTION_SEARCH);
-        return $this->returnPlacemarks($this->retriever->getData());
+        return $this->doSearch($categories, ArcGISDataRetriever::ACTION_SEARCH);
     }
 
     public function searchByProximity($center, $tolerance, $maxItems=0) {
-        $this->categories(); // retriever needs to do this to initialize internal variables like projection
+        $categories = $this->leafCategories(); 
         $this->retriever->setSearchFilters(array('center' => $center, 'tolerance' => $tolerance));
-        $this->retriever->setAction(ArcGISDataRetriever::ACTION_SEARCH_NEARBY);
-        return $this->returnPlacemarks($this->retriever->getData());
+        return $this->doSearch($categories, ArcGISDataRetriever::ACTION_SEARCH_NEARBY);
     }
 }

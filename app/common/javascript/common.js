@@ -1,48 +1,103 @@
-var currentTab;
-
 String.prototype.strip = function() {
     return this.replace(/^\s+/, '').replace(/\s+$/, '');
 }
 
-function showTab(strID, objTrigger) {
-// Displays the tab with ID strID
-	var objTab = document.getElementById(strID);
-	if(objTab) {
-		show(strID);
-		if(currentTab && (currentTab != objTab)) {
-			hide(currentTab.id);
-			//currentTab.style.display = "none";
-		}
-	}
-	currentTab = objTab; // Remember which is the currently displayed tab
-	
-	// Set the clicked tab to look current
-	var objTabs = document.getElementById("tabs");
-  if (objTabs) {
-    var arrTabs = objTabs.getElementsByTagName("li");
-    if(objTrigger) {
-      for(var i=0; i<arrTabs.length; i++) {
-        arrTabs[i].className="";
-      }
-      var objTriggerTab = objTrigger.parentNode;
-      if(objTriggerTab) {
-        objTriggerTab.className="active";
-      }
+function showTab(id) {
+    var tabId = id+'-tab';
+    var tabbodyId = id+'-tabbody';
+    
+    var tab = document.getElementById(tabId);
+    var tabbody = document.getElementById(tabbodyId);
+    var tabBodies = tabbody.parentNode.childNodes;
+    if (!tab || !tabbody || !tabBodies) { return; } // safety check
+    
+    var tabs = tab.parentNode.getElementsByTagName('li');
+    if (!tabs) { return; } // safety check
+    
+    // Display the tab body and hide others
+    for (var i = 0; i < tabBodies.length; i++) {
+        if (tabBodies[i].id == tabbodyId) {
+            show(tabBodies[i].id);
+        } else {
+            hide(tabBodies[i].id);
+        }
     }
-
+    
+    // Display the tab and hide others
+    for (var i = 0; i < tabs.length; i++) {
+        if (tabs[i].id == tabId) {
+            addClass(tabs[i], 'active');
+        } else {
+            removeClass(tabs[i], 'active');
+        }
+    }
+    
     // fake resize event in case tab body was resized while hidden 
     if (document.createEvent) {
-      var e = document.createEvent('HTMLEvents');
-      e.initEvent('resize', true, true);
-      window.dispatchEvent(e);
+        var e = document.createEvent('HTMLEvents');
+        e.initEvent('resize', true, true);
+        window.dispatchEvent(e);
     
     } else if( document.createEventObject ) {
-      var e = document.createEventObject();
-      document.documentElement.fireEvent('onresize', e);
+        var e = document.createEventObject();
+        document.documentElement.fireEvent('onresize', e);
     }
-  }
-	
-	onDOMChange();
+    
+    onDOMChange();
+}
+
+function onOrientationChange() {
+    /* the galaxy tab sends orientation change events constantly */
+    if (typeof onOrientationChange.lastOrientation == 'undefined') {
+        onOrientationChange.lastOrientation = null;
+    }
+    
+    var newOrientation = getOrientation();
+    
+    if (newOrientation != onOrientationChange.lastOrientation) {
+        rotateScreen();
+        
+        if (typeof onOrientationChange.callbackFunctions !== 'undefined') {
+            for (var i = 0; i < onOrientationChange.callbackFunctions.length; i++) {
+                onOrientationChange.callbackFunctions[i]();
+            }
+        }
+        
+        onOrientationChange.lastOrientation = newOrientation;
+    }
+}
+
+function onResize() {
+    if (typeof onResize.callbackFunctions !== 'undefined') {
+        for (var i = 0; i < onResize.callbackFunctions.length; i++) {
+            onResize.callbackFunctions[i]();
+        }
+    }
+}
+
+function addOnOrientationChangeCallback(callback) {
+    if (typeof onOrientationChange.callbackFunctions == 'undefined') {
+        onOrientationChange.callbackFunctions = [];
+    }
+    onOrientationChange.callbackFunctions.push(callback);
+    
+    if (typeof onResize.callbackFunctions == 'undefined') {
+        onResize.callbackFunctions = [];
+    }
+    onResize.callbackFunctions.push(callback);
+}
+
+function setupOrientationChangeHandlers() {
+    if (window.addEventListener) {
+        window.addEventListener("orientationchange", onOrientationChange, false);
+    } else if (window.attachEvent) {
+        window.attachEvent("onorientationchange", onOrientationChange);
+    }
+    if (window.addEventListener) {
+        window.addEventListener("resize", onResize, false);
+    } else if (window.attachEvent) {
+        window.attachEvent("onresize", onResize);
+    }
 }
 
 function rotateScreen() {
@@ -327,6 +382,97 @@ if (typeof makeAPICall === 'undefined' && typeof jQuery === 'undefined') {
   }
 }
 
+function ajaxContentIntoContainer(options) {
+    if (typeof options != 'object') { return; } // safety
+    
+    var defaults = {
+        url: null, 
+        container: null, 
+        timeout: 60, 
+        success: function () {},
+        error: function (code) {} 
+    };
+    for (var i in defaults) {
+        if (typeof options[i] == 'undefined') {
+            options[i] = defaults[i];
+        }
+    }
+    if (!options.url || !options.container) { return; } // safety
+    
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open("GET", options.url, true);
+    
+    var requestTimer = setTimeout(function() {
+        // some browsers set readyState to 4 on abort so remove handler first
+        httpRequest.onreadystatechange = function() { };
+        httpRequest.abort();
+        
+        options.error(408); // http request timeout status code
+    }, options.timeout * 1000);
+    
+    httpRequest.onreadystatechange = function() {
+        // return if still in progress
+        if (httpRequest.readyState != 4) { return; }
+        
+        // Got answer, don't abort
+        clearTimeout(requestTimer);
+        
+        if (httpRequest.status == 200) { // Success
+            options.container.innerHTML = "";
+            
+            var div = document.createElement("div");
+            div.innerHTML = httpRequest.responseText;
+            
+            // Manually appendChild elements so scripts get evaluated
+            for (var i = 0; i < div.childNodes.length; i++) {
+                var node = div.childNodes[i].cloneNode(true);
+                
+                if (node.nodeName == "SCRIPT") {
+                    document.body.appendChild(node);
+                } else if (node.nodeName == "STYLE") {
+                    document.getElementsByTagName("head")[0].appendChild(node);
+                } else {
+                    options.container.appendChild(node);
+                }
+            }
+            
+            options.success();
+            
+        } else {
+            options.error(httpRequest.status);
+        }
+    };
+    
+    httpRequest.send(null);
+}
+
+function getCSSValue(element, key) {
+    if (window.getComputedStyle) {
+        return document.defaultView.getComputedStyle(element, null).getPropertyValue(key);
+        
+    } else if (element.currentStyle) {
+        if (key == 'float') { 
+            key = 'styleFloat'; 
+        } else {
+            var re = /(\-([a-z]){1})/g; // hyphens to camel case
+            if (re.test(key)) {
+                key = key.replace(re, function () {
+                    return arguments[2].toUpperCase();
+                });
+            }
+        }
+        return element.currentStyle[key] ? element.currentStyle[key] : null;
+    }
+    return '';
+}
+
+function getCSSHeight(element) {
+    return element.offsetHeight
+        - parseFloat(getCSSValue(element, 'border-top-width')) 
+        - parseFloat(getCSSValue(element, 'border-bottom-width'))
+        - parseFloat(getCSSValue(element, 'padding-top'))
+        - parseFloat(getCSSValue(element, 'padding-bottom'));
+}
 
 
 

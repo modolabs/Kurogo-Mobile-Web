@@ -580,20 +580,20 @@ ul.focal li:first-child {
 }
 
 .label {
-    display: block;
-    width: 6em;
-    font-size: 85%;
-    position: relative;
-    line-height: 1.3em;
-    font-weight: bold;
-    text-align: right;
-    vertical-align: top;
+  display: block;
+  font-size: 85%;
+  line-height: 1.3em;
+  font-weight: bold;
+  text-align: right;
+  vertical-align: top;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .value {
     display: block;
-    margin-top: -1.2em;
-    margin-left: 5.5em;
     font-size: 100%;
     min-height: 1.3em;
     line-height: 1.3em;
