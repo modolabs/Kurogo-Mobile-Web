@@ -4,11 +4,10 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
 {
     protected $DEFAULT_PARSER_CLASS='FacebookDataParser';
     protected $cacheGroup = 'Facebook';
-    protected $graphURL = 'https://graph.facebook.com/';
-    protected $userURL;
     protected $clientId;
     protected $clientSecret;
     protected $user;
+    protected $accessToken;
 
     public function getServiceName() {
         return 'facebook';
@@ -20,7 +19,8 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
     
     public function getUser($userID)
     {
-        $this->setBaseURL($this->graphURL.$userID);
+        $this->clearInternalCache();
+        $this->setBaseURL(sprintf('https://graph.facebook.com/%s/', $this->user));
         $this->setOption('action', 'user');
         return $this->getData();
     }
@@ -41,15 +41,28 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
     
     public function getItem($id, &$response=null)
     {
-        $this->setBaseURL($this->graphURL.$id);
+        $this->clearInternalCache();
+        $this->setBaseURL(sprintf('https://graph.facebook.com/%s', $id));
         return $this->getData();
+    }
+    
+    protected function initRequest() {
+        switch ($this->getOption('action'))
+        {
+            case 'posts':
+                $this->setBaseURL(sprintf('https://graph.facebook.com/%s/feed', $this->user));
+                break;
+        }
+        
+        if ($this->accessToken) {
+            $this->addParameter('access_token', $this->accessToken);
+        }
+        
     }
     
     public function setUser($user)
     {
         $this->user = $user;
-        $this->userURL = $this->graphURL.$user;
-        $this->setBaseURL($this->userURL.'/feed');
     }
     
     public function init($args) {
@@ -70,23 +83,21 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
             throw new KurogoConfigurationException("OAUTH_CONSUMER_SECRET must be set for Facebook");
         }
         $this->clientSecret = $args['OAUTH_CONSUMER_SECRET'];
-
-        // @TODO why is this done every time??        
-        $this->getAccessToken();
+        
+        $this->accessToken = $this->getAccessToken();
     }
     
     private function getAccessToken()
     {
-        $query = array(
-            'client_id'     => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'grant_type'    => 'client_credentials'
-        );
-        $atURL = 'https://graph.facebook.com/oauth/access_token?'.http_build_query($query);
-        list($name, $token) = explode('=', file_get_contents($atURL));
-        $this->addFilter($name, $token);
+        $this->setBaseURL('https://graph.facebook.com/oauth/access_token');
+        $this->addParameter('client_id', $this->clientId);
+        $this->addParameter('client_secret', $this->clientSecret);
+        $this->addParameter('grant_type', 'client_credentials');
+        $response = $this->getResponse();
+        list($name, $token) = explode("=", $response->getResponse());
+        $this->clearInternalCache();
+        return $token;
     }
-
 }
 
 class FacebookDataParser extends DataParser
