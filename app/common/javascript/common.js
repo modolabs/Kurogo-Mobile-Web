@@ -8,11 +8,13 @@ function showTab(id) {
     
     var tab = document.getElementById(tabId);
     var tabbody = document.getElementById(tabbodyId);
-    var tabBodies = tabbody.parentNode.childNodes;
-    if (!tab || !tabbody || !tabBodies) { return; } // safety check
+    if (!tab || !tabbody) { return; } // safety check
     
     var tabs = tab.parentNode.getElementsByTagName('li');
     if (!tabs) { return; } // safety check
+    
+    var tabBodies = tabbody.parentNode.childNodes;
+    if (!tabBodies) { return; } // safety check
     
     // Display the tab body and hide others
     for (var i = 0; i < tabBodies.length; i++) {
