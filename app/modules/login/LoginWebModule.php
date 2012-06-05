@@ -91,7 +91,7 @@ class LoginWebModule extends WebModule {
             $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
             $authorityData['listclass'] = $authority->getAuthorityClass();
             $authorityData['title'] = $authorityData['TITLE'];
-            $authorityData['url'] = $this->buildURL('login', array_merge($urlArray, array(
+            $authorityData['url'] = $this->buildURL('login', array_merge($defaultArgs, $urlArray, array(
                 'authority'=>$authorityIndex,
                 'remainLoggedIn'=>$remainLoggedIn,
                 'startOver'=>1
@@ -132,7 +132,7 @@ class LoginWebModule extends WebModule {
     $this->assign('authenticationAuthorities', $authenticationAuthorities);
     $this->assign('allowRemainLoggedIn', $allowRemainLoggedIn);
     if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
-        $this->assign('FORGET_PASSWORD_URL', $this->buildBreadcrumbURL('forgotpassword', array()));
+        $this->assign('FORGET_PASSWORD_URL', $this->buildBreadcrumbURL('forgotpassword', $defaultArgs));
         $this->assign('FORGET_PASSWORD_TEXT', $this->getOptionalModuleVar('FORGET_PASSWORD_TEXT', $this->getLocalizedString('FORGET_PASSWORD_TEXT')));
     }
     
@@ -156,7 +156,7 @@ class LoginWebModule extends WebModule {
                     $user->getFullName()
                 ));
                 
-                $this->assign('url', $this->buildURL('logout', array('authority'=>$authorityIndex)));
+                $this->assign('url', $this->buildURL('logout', array_merge($defaultArgs, array('authority'=>$authorityIndex))));
                 $this->assign('linkText', $this->getLocalizedString('SIGN_OUT'));
                 $this->setTemplatePage('message');
             } else {
@@ -325,7 +325,7 @@ class LoginWebModule extends WebModule {
                         'class'=>$authority->getAuthorityClass(),
                         'title'=>count($sessionUsers)>1 ? $this->getLocalizedString("SIGN_OUT_AUTHORITY", array($authority->getAuthorityTitle(), $user->getFullName())) : $this->getLocalizedString('SIGN_OUT'),
                         'subtitle'=>count($sessionUsers)>1 ? $this->getLocalizedString('SIGN_OUT') : '',
-                        'url'  =>$this->buildBreadcrumbURL('logout', array('authority'=>$authorityIndex), false)
+                        'url'  =>$this->buildBreadcrumbURL('logout', array_merge($defaultArgs, array('authority'=>$authorityIndex)), false)
                     );
                     
                     //remove the authority from the list of available authorities (since they are logged in)
