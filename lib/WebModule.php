@@ -7,6 +7,8 @@
   * Breadcrumb Parameter
   */
 define('MODULE_BREADCRUMB_PARAM', '_b');
+define('MODULE_AJAX_BREADCRUMB_TITLE', '_bt');
+define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_blt');
 define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
@@ -333,6 +335,18 @@ abstract class WebModule extends Module {
     return "/$id/$page".(strlen($argString) ? "?$argString" : "");
   }
 
+  protected function buildAjaxURL($page, $args=array()) {
+      return self::buildAjaxURLForModule($this->configModule, $page, $args);
+  }
+
+  public static function buildAjaxURLForModule($id, $page, $args=array()) {
+      $argString = '';
+      if (isset($args) && count($args)) {
+          $argString = http_build_query($args);
+      }
+      return FULL_URL_PREFIX."$id/$page".(strlen($argString) ? "?$argString" : '');
+  }
+  
   protected function buildExternalURL($url) {
     return $url;
   }
@@ -1228,6 +1242,31 @@ abstract class WebModule extends Module {
     return "/$id/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
   }
   
+  protected function buildAjaxBreadcrumbURL($page, $args, $addBreadcrumb=true) {
+      return $this->buildAjaxBreadcrumbURLForModule($this->configModule, $page, $args, $addBreadcrumb);
+  }
+  
+  protected function buildAjaxBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
+      if ($this->pagetype == 'basic' || $this->pagetype == 'touch') {
+          // behavior for touch and basic where no ajax is used
+          return $this->buildBreadcrumbURLForModule($this->configModule, $page, $args, true);
+          
+      } else {
+          // forward breadcrumb title
+          $args[MODULE_AJAX_BREADCRUMB_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_TITLE, $this->breadcrumbTitle);
+          
+          // forward breadcrumb title
+          $args[MODULE_AJAX_BREADCRUMB_LONG_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_LONG_TITLE, $this->breadcrumbLongTitle);
+          
+          // forward current breadcrumb arg rather than adding
+          if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
+              $args[MODULE_BREADCRUMB_PARAM] = $this->args[MODULE_BREADCRUMB_PARAM];
+          }
+          
+          return $this->buildAjaxURLForModule($id, $page, $args);
+      }
+  }
+  
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
     return $prefix.http_build_query($this->getBreadcrumbArgs($addBreadcrumb));
   }
@@ -1268,6 +1307,16 @@ abstract class WebModule extends Module {
       } else {
         $this->pageConfig = array();
       }
+    }
+    
+    // Ajax overrides for breadcrumb title and long title
+    if (isset($this->args[MODULE_AJAX_BREADCRUMB_TITLE])) {
+      $this->breadcrumbTitle = $this->args[MODULE_AJAX_BREADCRUMB_TITLE];
+      $this->breadcrumbLongTitle = $this->breadcrumbTitle;
+    }
+    
+    if (isset($this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE])) {
+      $this->breadcrumbLongTitle = $this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE];
     }
   }
   
