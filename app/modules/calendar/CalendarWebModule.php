@@ -775,12 +775,15 @@ class CalendarWebModule extends WebModule {
         }
 
         $this->setLogData($event->get_uid(), $event->get_summary());
-            
-        // build the list of attributes
-        $allKeys = array_keys($calendarFields);
-
+        
+        $headerFields = array('summary', 'datetime'); // referenced separately
+        $title = $event->get_attribute('summary');
+        $date = $this->valueForType('datetime', $event->get_attribute('datetime'));
+        
         $fields = array();
         foreach ($calendarFields as $key => $info) {
+          if (in_array($key, $headerFields)) { continue; } // legacy configs may have these
+          
           $field = array();
           
           $value = $event->get_attribute($key);
@@ -832,8 +835,10 @@ class CalendarWebModule extends WebModule {
           }
           
           $fields[] = $field;
-        }        
+        }
 
+        $this->assign('title', $title);
+        $this->assign('date', $date);
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
         break;

@@ -252,7 +252,7 @@ class TemplateEngine extends Smarty {
         if (Kurogo::getSiteVar('DEVICE_DEBUG')) {
             // if we are in debugging mode we need to also rewrite full paths with hostnames
             $source = preg_replace(
-                ';(<[^>]+)(url\("?\'?|href\s*=\s*"|src\s*=\s*")'.FULL_URL_BASE.';', '\1\2'.FULL_URL_PREFIX, $source);
+                ';(<[^>]+)(url\("?\'?|href\s*=\s*"|src\s*=\s*")('.FULL_URL_PREFIX.'|'.FULL_URL_BASE.');', '\1\2'.FULL_URL_PREFIX, $source);
         }
         
         // Most of the following code comes from the stripwhitespace filter:

@@ -297,6 +297,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             'fullname'=>isset($args['LDAP_FULLNAME_FIELD']) ? $args['LDAP_FULLNAME_FIELD'] : '',
             'firstname'=>isset($args['LDAP_FIRSTNAME_FIELD']) ? $args['LDAP_FIRSTNAME_FIELD'] : 'givenname',
             'lastname'=>isset($args['LDAP_LASTNAME_FIELD']) ? $args['LDAP_LASTNAME_FIELD'] : 'sn',
+            'photodata'=>isset($args['LDAP_PHOTODATA_FIELD']) ? $args['LDAP_PHOTODATA_FIELD'] : 'jpegphoto',
             'phone'=>isset($args['LDAP_PHONE_FIELD']) ? $args['LDAP_PHONE_FIELD'] : 'telephonenumber'
         );
         $this->setContext('fieldMap', $this->fieldMap);
@@ -367,8 +368,8 @@ class LDAPFilter
 */
 class LDAPCompoundFilter extends LDAPFilter
 {
-    const JOIN_TYPE_AND='&';
-    const JOIN_TYPE_OR='|';
+    const JOIN_TYPE_AND = '&';
+    const JOIN_TYPE_OR = '|';
     protected $joinType;
     protected $filters=array();
     
@@ -384,7 +385,7 @@ class LDAPCompoundFilter extends LDAPFilter
                 throw new KurogoConfigurationException("Invalid join type $joinType");                
         }
     
-        for ($i=1; $i < func_num_args(); $i++) {
+        for ($i = 1; $i < func_num_args(); $i++) {
             $filter = func_get_arg($i);
             if ($filter instanceOF LDAPFilter) { 
                 $this->filters[] = $filter;
@@ -434,13 +435,11 @@ class LDAPPeopleParser extends PeopleDataParser
         }
         
         $results = array();
-        $person = new $this->personClass($ds, $entry);
-        $person->setFieldMap($fieldMap);
+        $person = new $this->personClass($ds, $entry, $fieldMap);
         $results[] = $person;
 
         while ($entry = ldap_next_entry($ds, $entry)) {
-			$person = new $this->personClass($ds, $entry);
-			$person->setFieldMap($fieldMap);
+			$person = new $this->personClass($ds, $entry, $fieldMap);
 			$results[] = $person;
         }
 
@@ -480,7 +479,7 @@ class LDAPPeopleParser extends PeopleDataParser
         $fieldMap = $response->getContext('fieldMap');
         
         $parsedData = $this->parseSearch($data, $ds, $fieldMap);
-        if ($this->getOption('action')=='user') {
+        if ($this->getOption('action') == 'user') {
             $parsedData = isset($parsedData[0]) ? $parsedData[0] : false;
             $this->setTotalItems($parsedData ? 1 : 0);
         } else {
@@ -502,15 +501,12 @@ class LDAPPerson extends Person {
     
     protected $dn;
     protected $fieldMap=array();
+    protected $photoMIMEType = 'image/jpeg';
     
     public function getDn() {
         return $this->dn;
     }
 
-    public function setFieldMap(array $fieldMap) {
-        $this->fieldMap = $fieldMap;
-    }
-    
     public function getName() {
         if ($this->fieldMap['fullname']) {
             return $this->getFieldSingle($this->fieldMap['fullname']);
@@ -534,19 +530,35 @@ class LDAPPerson extends Person {
         return NULL;
     }
     
-    public function __construct($ldap, $entry) {
+    public function getPhotoMIMEType() {
+        return $this->photoMIMEType;
+    }
+    
+    public function getPhotoData() {
+        return $this->getFieldSingle($this->fieldMap['photodata']);
+    }
+
+    public function __construct($ldap, $entry, array $fieldMap) {
         $ldapEntry = ldap_get_attributes($ldap, $entry);
         $this->dn = ldap_get_dn($ldap, $entry);
+        $this->fieldMap = $fieldMap;
         $this->attributes = array();
     
-        for ($i=0; $i<$ldapEntry['count']; $i++) {
+        for ($i = 0; $i < $ldapEntry['count']; $i++) {
             $attribute = $ldapEntry[$i];
             $attrib = strtolower($attribute);
             $count = $ldapEntry[$attribute]['count'];
-            $this->attributes[$attrib] = array();
-            for ($j=0; $j<$count; $j++) {
-                if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attrib])) {
-                    $this->attributes[$attrib][] = str_replace('$', "\n", $ldapEntry[$attribute][$j]);
+            
+            if ($attrib == $this->fieldMap['photodata']) {
+                if ($data = @ldap_get_values_len($ldap, $entry, $attribute)) {
+                    $this->attributes[$attrib] = $data; // Get binary photo data
+                }
+            } else {
+                $this->attributes[$attrib] = array();
+                for ($j = 0; $j < $count; $j++) {
+                    if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attrib])) {
+                        $this->attributes[$attrib][] = str_replace('$', "\n", $ldapEntry[$attribute][$j]);
+                    }
                 }
             }
         }
