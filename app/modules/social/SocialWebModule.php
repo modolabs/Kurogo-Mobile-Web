@@ -120,6 +120,7 @@ class SocialWebModule extends WebModule
                 $this->assign('postDate', $post->getCreated()->format('l F j, Y g:i a'));
                 $this->assign('postBody', nl2br($post->linkify($post->getBody())));
                 $this->assign('postLinks', $post->getLinks());
+                $this->assign('postImages', $post->getImages());
                 if ($author = $controller->getUser($post->getAuthor())) {
                     $this->assign('authorName', $author->getName());
                     $this->assign('authorURL', $author->getProfileURL());

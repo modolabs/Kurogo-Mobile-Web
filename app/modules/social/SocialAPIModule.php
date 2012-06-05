@@ -16,10 +16,10 @@ class SocialAPIModule extends APIModule
             'service'=>$post->getServiceName(),
             'postHTML'=>nl2br($post->linkify($post->getBody())),
             'postLinks'=>$post->getLinks(),
+            'postImages' =>$post->getImages(),
             'created' =>$post->getCreated()->format('U'),
             'sort' =>$post->getCreated()->format('U'),
             'author'  =>$post->getAuthor(),
-
         );
         
         if (isset($data['feed'])) {

@@ -111,6 +111,29 @@ class FacebookDataParser extends DataParser
         {
             $post->setBody($entry['message']);
         }
+        
+        if (isset($entry['likes'])) {
+            $post->setLikeCount($entry['likes']['count']);
+        }
+        
+        switch ($entry['type'])
+        {
+            case 'photo':
+                if (isset($entry['source'])) {
+                    $post->addImage($entry['source']);
+                } elseif (preg_match("/^(.*)_s\.jpg$/", $entry['picture'], $bits)) {
+                    $post->addImage($bits[1].'_n.jpg');
+                } else {
+                    $post->addImage($entry['picture']);
+                }
+                break;
+            case 'link':
+            case 'video':
+                break;
+            default:
+                KurogoDebug::debug($entry, true);
+        }
+        
         return $post;
     }
 
