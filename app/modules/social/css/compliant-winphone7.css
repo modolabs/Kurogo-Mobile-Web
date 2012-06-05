@@ -1,0 +1,20 @@
+.feedlinks a.twitter {
+  background-image: url(/common/images/button-twitter-24.png);
+}
+.feedlinks a.facebook {
+  background-image: url(/common/images/button-facebook-24.png);
+}
+.feedlinks a.youtube {
+  background-image: url(/common/images/button-youtube-24.png);
+}
+
+.featured.twitter .author, .results li.twitter .author
+{
+    background-image: url(/common/images/button-twitter-16.png);
+}
+
+.featured.facebook .author, .results li.facebook .author
+{
+    background-image: url(/common/images/button-facebook-16.png);
+}
+
