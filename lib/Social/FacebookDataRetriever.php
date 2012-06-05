@@ -129,9 +129,10 @@ class FacebookDataParser extends DataParser
                 break;
             case 'link':
             case 'video':
+            case 'status':
                 break;
             default:
-                KurogoDebug::debug($entry, true);
+                throw new KurogoDataException("Unhandled facebook type " . $entry['type']);
         }
         
         return $post;
