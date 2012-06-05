@@ -7,8 +7,9 @@
   * Breadcrumb Parameter
   */
 define('MODULE_BREADCRUMB_PARAM', '_b');
-define('MODULE_AJAX_BREADCRUMB_TITLE', '_bt');
-define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_blt');
+define('MODULE_AJAX_BREADCRUMB_TITLE', '_abt');
+define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_ablt');
+define('MODULE_AJAX_CONTAINER_PAGE', '_acp');
 define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
@@ -34,6 +35,7 @@ abstract class WebModule extends Module {
   protected $browser = 'unknown';
 
   protected $ajaxContentLoad = false;
+  protected $ajaxContainerPage = '';
   
   protected $imageExt = '.png';
   
@@ -521,6 +523,7 @@ abstract class WebModule extends Module {
         }
 
         $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
+        $this->ajaxContainerPage = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->page);
         
         if ($page) {
             // Pull in fontsize
@@ -1152,8 +1155,10 @@ abstract class WebModule extends Module {
       if (!is_array($breadcrumbs)) { $breadcrumbs = array(); }
     }
 
-    if ($this->page != 'index') {
+    if ($this->page != 'index' && $this->ajaxContainerPage != 'index') {
       // Make sure a module homepage is first in the breadcrumb list
+      // Unless this page is being ajaxed in... then the original 
+      // parent page might be the index page.
       $addModuleHome = false;
       if (!count($breadcrumbs)) {
         $addModuleHome = true; // no breadrumbs
@@ -1215,11 +1220,14 @@ abstract class WebModule extends Module {
     if ($addBreadcrumb) {
       $args = $this->args;
       unset($args[MODULE_BREADCRUMB_PARAM]);
+      unset($args[MODULE_AJAX_BREADCRUMB_TITLE]);
+      unset($args[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
+      unset($args[MODULE_AJAX_CONTAINER_PAGE]);
       
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
         'lt' => $this->breadcrumbLongTitle,
-        'p'  => $this->page,
+        'p'  => $this->ajaxContentLoad ? $this->ajaxContainerPage : $this->page,
         'a'  => http_build_query($args),
       );
     }
@@ -1257,6 +1265,9 @@ abstract class WebModule extends Module {
           
           // forward breadcrumb title
           $args[MODULE_AJAX_BREADCRUMB_LONG_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_LONG_TITLE, $this->breadcrumbLongTitle);
+          
+          // forward parent page id
+          $args[MODULE_AJAX_CONTAINER_PAGE] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->ajaxContainerPage);
           
           // forward current breadcrumb arg rather than adding
           if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
