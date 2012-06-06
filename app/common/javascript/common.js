@@ -158,12 +158,24 @@ function setOrientation(orientation) {
     addClass(body, orientation);
 }
 
+// Localized ajax loading and error content
+// takes either an element or an id
+function showAjaxLoadingMsg(e) {
+    if (typeof e == 'string') {
+        e = document.getElementById(element);
+    }
+	if (e) {
+		e.innerHTML = AJAX_CONTENT_LOADING_HTML;
+	}
+	onDOMChange();
+}
 
-function showLoadingMsg(strID) {
-// Show a temporary loading message in the element with ID strID
-	var objToStuff = document.getElementById(strID);
-	if(objToStuff) {
-		objToStuff.innerHTML = '<div class="loading"><img src="'+URL_BASE+'common/images/loading.gif" width="27" height="21" alt="Loading" align="absmiddle" />Loading data...</div>';
+function showAjaxErrorMsg(e) {
+    if (typeof e == 'string') {
+        e = document.getElementById(element);
+    }
+	if (e) {
+		e.innerHTML = AJAX_CONTENT_ERROR_HTML;
 	}
 	onDOMChange();
 }
@@ -414,6 +426,8 @@ function ajaxContentIntoContainer(options) {
         url: null, 
         container: null, 
         timeout: 60, 
+        loadMessage: true,
+        errorMessage: true,
         success: function () {},
         error: function (code) {} 
     };
@@ -466,11 +480,18 @@ function ajaxContentIntoContainer(options) {
             options.success();
             
         } else {
+            if (options.errorMessage) {
+                showAjaxErrorMsg(options.container);
+            }
             options.error(httpRequest.status);
         }
         
         _removeCompletedRequest(httpRequest);
     };
+    
+    if (options.loadMessage) {
+        showAjaxLoadingMsg(options.container);
+    }
     
     httpRequest.send(null);
     

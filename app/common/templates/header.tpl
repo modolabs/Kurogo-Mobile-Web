@@ -30,6 +30,18 @@
     {/block}
   {/capture}
   
+  {capture name="ajaxContentLoadingHTML" assign="ajaxContentLoadingHTML"}{strip}
+    {block name="ajaxContentLoadingHTML"}
+      <div class="loading"><img src="/common/images/loading.gif" width="27" height="21" alt="Loading" align="absmiddle" /> {"AJAX_CONTENT_LOADING"|getLocalizedString}</div>
+    {/block}
+  {/strip}{/capture}
+  
+  {capture name="ajaxContentErrorHTML" assign="ajaxContentErrorHTML"}{strip}
+    {block name="ajaxContentErrorHTML"}
+      <div class="nonfocal">{"AJAX_CONTENT_LOAD_FAILED"|getLocalizedString}</div>
+    {/block}
+  {/strip}{/capture}
+  
   {capture name="headerJavascript" assign="headerJavascript"}
     {block name="urlBaseJavascript"}
       <script type="text/javascript">
@@ -38,6 +50,13 @@
       </script>
     {/block}
     
+    {block name="ajaxJavascript"}
+      <script type="text/javascript">
+        var AJAX_CONTENT_LOADING_HTML = '{$ajaxContentLoadingHTML|escape:"quotes"}';
+        var AJAX_CONTENT_ERROR_HTML = '{$ajaxContentErrorHTML|escape:"quotes"}';
+      </script>
+    {/block}
+
     {block name="analyticsJavascript"}
       {if strlen($GOOGLE_ANALYTICS_ID)}
         <script type="text/javascript">

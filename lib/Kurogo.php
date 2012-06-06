@@ -139,6 +139,12 @@ class Kurogo
     }
     
     public function addPackage($packageName, $subpackageName=null) {
+        // allow Package/Subpackage string
+        if (preg_match("#([a-zA-Z0-9]+)/([a-zA-Z0-9]+)#", $packageName, $bits)) {
+            $packageName = $bits[1];
+            $subpackageName = $bits[2];
+        }
+        
         if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
             throw new KurogoConfigurationException("Invalid Package name $packageName");
         }

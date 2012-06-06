@@ -10,15 +10,21 @@ class Sanitizer
 {
     static protected $tagTypes = array(
         // Groups of tags by type which can be combined by separating with '|' (eg: 'inline|block')
-        'inline' => array('<b>', '<em>', '<strong>', '<span>', '<code>'),
+        'inline' => array('<b>', '<strong>', '<i>', '<em>', '<span>', '<code>'),
         'block'  => array('<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>'),
         'link'   => array('<a>'),
-        'media'  => array('<img>', '<video>', '<audio>'),
-        'list'   => array('<ol>', '<ul>', '<li>'),
+        'media'  => array('<img>', '<video>', '<audio>', '<iframe>'),
+        'list'   => array('<ol>', '<ul>', '<li>', '<dl>', '<dd>', '<dt>'),
         'table'  => array('<table>', '<thead>', '<tbody>', '<tr>', '<th>', '<td>'),
         
         // Groups of tags by use case
-        'editor' => array('<b>', '<em>', '<strong>', '<span>', '<div>', '<blockquote>', '<p>', '<hr>', '<a>', '<img>', '<video>', '<audio>', '<ol>', '<ul>', '<li>', '<table>', '<thead>', '<tbody>', '<tr>', '<th>', '<td>'),
+        'editor' => array(
+            '<b>', '<strong>', '<i>', '<em>', '<span>', '<code>', 
+            '<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', 
+            '<a>', 
+            '<img>', '<video>', '<audio>', '<iframe>', 
+            '<ol>', '<ul>', '<li>', '<dl>', '<dd>', '<dt>', 
+            '<table>', '<thead>', '<tbody>', '<tr>', '<th>', '<td>'),
     );
     
     //
