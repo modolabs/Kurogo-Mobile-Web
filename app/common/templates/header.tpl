@@ -18,10 +18,26 @@
     <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
   {/foreach}
   
+  {capture name="ajaxContentLoadingHTML" assign="ajaxContentLoadingHTML"}{strip}
+    {block name="ajaxContentLoadingHTML"}
+      <div class="loading"><img src="/common/images/loading.gif" width="27" height="21" alt="Loading" align="absmiddle" /> {"AJAX_CONTENT_LOADING"|getLocalizedString}</div>
+    {/block}
+  {/strip}{/capture}
+  
+  {capture name="ajaxContentErrorHTML" assign="ajaxContentErrorHTML"}{strip}
+    {block name="ajaxContentErrorHTML"}
+      <div class="nonfocal">{"AJAX_CONTENT_LOAD_FAILED"|getLocalizedString}</div>
+    {/block}
+  {/strip}{/capture}
+  
   {block name="javascript"}
       <script type="text/javascript">
         var URL_BASE='{$smarty.const.URL_BASE}';
         var API_URL_PREFIX='{$smarty.const.API_URL_PREFIX}';
+      </script>
+      <script type="text/javascript">
+        var AJAX_CONTENT_LOADING_HTML = '{$ajaxContentLoadingHTML|escape:"quotes"}';
+        var AJAX_CONTENT_ERROR_HTML = '{$ajaxContentErrorHTML|escape:"quotes"}';
       </script>
     {if strlen($GOOGLE_ANALYTICS_ID)}
       <script type="text/javascript">

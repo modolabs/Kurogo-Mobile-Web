@@ -286,7 +286,6 @@ function scrollToTop() {
                 }
             });
             
-            showLoadingMsg(this.options.content);
             e && e.preventDefault();
             return false;
         },
