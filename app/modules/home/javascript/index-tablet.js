@@ -7,6 +7,7 @@ function loadModulePages(modulePanes) {
             url: info['ajaxURL'], 
             container: elem, 
             timeout: 60, 
+            loadMessage: false,
             success: function () {
                 removeClass(elem, 'loading');
                 onDOMChange();
@@ -14,7 +15,6 @@ function loadModulePages(modulePanes) {
             },
             error: function (code) {
                 removeClass(elem, 'loading');
-                elem.innerHTML = "Module failed to load";
             }
         });
     }
