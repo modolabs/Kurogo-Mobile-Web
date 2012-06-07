@@ -36,7 +36,7 @@ Steps
     
     class TwitterWebModule extends WebModule
     {
-      protected $id='twitter'
+      protected $id='twitter';
       protected function initializeForPage() {
       }
     }
