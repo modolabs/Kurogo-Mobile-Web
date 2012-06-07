@@ -20,7 +20,7 @@
   
   {capture name="ajaxContentLoadingHTML" assign="ajaxContentLoadingHTML"}{strip}
     {block name="ajaxContentLoadingHTML"}
-      <div class="loading"><img src="/common/images/loading.gif" width="27" height="21" alt="Loading" align="absmiddle" /> {"AJAX_CONTENT_LOADING"|getLocalizedString}</div>
+      <div class="loading"><div><img src="/common/images/loading.gif" width="27" height="21" alt="Loading" align="absmiddle" />{"AJAX_CONTENT_LOADING"|getLocalizedString}</div></div>
     {/block}
   {/strip}{/capture}
   
