@@ -63,13 +63,13 @@ class SocialAPIModule extends APIModule
                 break;
             case 'posts':
                 $posts = array();
+                $limit = $this->getArg('limit');
                 
                 if ($feed = $this->getArg('feed', null)) {
                 
                     if (isset($this->feeds[$feed])) {
                         $feeds = array($feed=>$this->feeds[$feed]);
                     } else {
-                        KurogoDebug::debug($this->feeds, true);
                         throw new KurogoDataException("Invalid feed $feed");
                     }
                 } else {
@@ -78,6 +78,9 @@ class SocialAPIModule extends APIModule
                 
                 foreach ($feeds as $feed=>$controller) {                                
                     if ($controller->canRetrieve()) {
+                        if ($limit) {
+                            $controller->setOption('limit', $limit);
+                        }
                         $items = $controller->getPosts();
                         foreach ($items as $post) {
                             $item = $this->arrayForPost($post, array('feed'=>$feed));
