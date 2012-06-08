@@ -1,7 +1,5 @@
 <?php
 
-includePackage('Social');
-
 class SocialWebModule extends WebModule
 {
     protected $id = 'social';

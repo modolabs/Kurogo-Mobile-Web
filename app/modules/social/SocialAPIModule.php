@@ -1,7 +1,5 @@
 <?php
 
-includePackage('Social');
-
 class SocialAPIModule extends APIModule
 {
     protected $id = 'social';
