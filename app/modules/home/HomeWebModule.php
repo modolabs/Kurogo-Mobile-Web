@@ -43,7 +43,11 @@ class HomeWebModule extends WebModule {
                 $this->importCSSAndJavascript($cssAndJavascript);
 
                 $pageData = $module->getPageData();
-                if (isset($pageData[$this->page], 
+                if (isset($pageData['pane'], 
+                          $pageData['pane']['pageTitle']) && strlen($pageData['pane']['pageTitle'])) {
+                    
+                    $title = $pageData['pane']['pageTitle'];
+                } elseif (isset($pageData[$this->page], 
                           $pageData[$this->page]['pageTitle']) && strlen($pageData[$this->page]['pageTitle'])) {
                     
                     $title = $pageData[$this->page]['pageTitle'];
