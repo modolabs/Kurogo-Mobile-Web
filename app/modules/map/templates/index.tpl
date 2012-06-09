@@ -15,7 +15,7 @@
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
 {/if}
 
-{if $campuses}
+{if $campuses && $showAllCampuses}
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$worldmapLink secondary=true}
 {/if}
 

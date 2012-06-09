@@ -11,6 +11,7 @@
 class AdminWebModule extends WebModule {
     protected $id = 'admin';
     protected $canBeRemoved = false;
+    protected $canAllowRobots = false;
   
     private function getNavSections() {
         $navSections = array(
@@ -42,6 +43,7 @@ class AdminWebModule extends WebModule {
         if (!isset($configData[$type])) {
             $files = array(
                 APP_DIR . "/common/config/admin-{$type}.json",
+                SHARED_APP_DIR . "/common/config/admin-{$type}.json",
                 SITE_APP_DIR . "/common/config/admin-{$type}.json"
             );
             $data = array();

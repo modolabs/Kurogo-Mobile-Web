@@ -34,6 +34,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
     protected $baseAttributes = array();
+    protected $searchFields = array();
     
     protected function retrieveResponse() {
         $response = $this->initResponse();
@@ -63,7 +64,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $error_reporting = ini_get('error_reporting');
             error_reporting($error_reporting & ~E_WARNING);
         }
-        
+
         if ($this->filter instanceOf LDAPFilter) {
             $result = ldap_search($ds, $this->searchBase,
                 strval($this->filter), $this->getAttributes(), 0, 0, 
@@ -143,6 +144,22 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_AND, $givenNameFilter, $snFilter);
         return $filter;
     }
+    
+    protected function getSearchFields() {
+        if ($this->searchFields) {
+            $defaultFields = array(
+                $this->getField('firstname'),
+                $this->getField('lastname'),
+                $this->getField('email')
+            );
+            
+            if ($searchFields = array_diff($this->searchFields, $defaultFields)) {
+                return array_unique($searchFields);
+            }
+        }
+        
+        return null;
+    }
 
     protected function buildSearchFilter($searchString) {
 
@@ -161,7 +178,6 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         } elseif (preg_match('/^[0-9]{'. $this->MIN_PHONE_SEARCH . ',}/', $searchString)) { //partial phone number
             $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
-
             $names = preg_split("/\s+/", $searchString);
             $nameCount = count($names);
             switch ($nameCount)
@@ -203,7 +219,15 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
                     
                     $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $filters);
             }
-
+            
+            //build search for additional fields
+            if (($searchFields = $this->getSearchFields()) && ($filter instanceOf LDAPCompoundFilter)) {
+                foreach ($searchFields as $field) {
+                    $fieldFilter = new LDAPFilter($field, $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
+                    $filter->addFilter($fieldFilter);
+                }
+            }
+            
         } else {
             $filter = null;
             $this->errorMsg = "Invalid query";
@@ -263,12 +287,17 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $this->baseAttributes = $args['ATTRIBUTES'];
         }
 
+        if (isset($args['SEARCH_FIELDS'])) {
+            $this->searchFields = $args['SEARCH_FIELDS'];
+        }
+        
         $this->fieldMap = array(
             'userid'=>isset($args['LDAP_USERID_FIELD']) ? $args['LDAP_USERID_FIELD'] : 'uid',
             'email'=>isset($args['LDAP_EMAIL_FIELD']) ? $args['LDAP_EMAIL_FIELD'] : 'mail',
             'fullname'=>isset($args['LDAP_FULLNAME_FIELD']) ? $args['LDAP_FULLNAME_FIELD'] : '',
             'firstname'=>isset($args['LDAP_FIRSTNAME_FIELD']) ? $args['LDAP_FIRSTNAME_FIELD'] : 'givenname',
             'lastname'=>isset($args['LDAP_LASTNAME_FIELD']) ? $args['LDAP_LASTNAME_FIELD'] : 'sn',
+            'photodata'=>isset($args['LDAP_PHOTODATA_FIELD']) ? $args['LDAP_PHOTODATA_FIELD'] : 'jpegphoto',
             'phone'=>isset($args['LDAP_PHONE_FIELD']) ? $args['LDAP_PHONE_FIELD'] : 'telephonenumber'
         );
         $this->setContext('fieldMap', $this->fieldMap);
@@ -339,8 +368,8 @@ class LDAPFilter
 */
 class LDAPCompoundFilter extends LDAPFilter
 {
-    const JOIN_TYPE_AND='&';
-    const JOIN_TYPE_OR='|';
+    const JOIN_TYPE_AND = '&';
+    const JOIN_TYPE_OR = '|';
     protected $joinType;
     protected $filters=array();
     
@@ -356,7 +385,7 @@ class LDAPCompoundFilter extends LDAPFilter
                 throw new KurogoConfigurationException("Invalid join type $joinType");                
         }
     
-        for ($i=1; $i < func_num_args(); $i++) {
+        for ($i = 1; $i < func_num_args(); $i++) {
             $filter = func_get_arg($i);
             if ($filter instanceOF LDAPFilter) { 
                 $this->filters[] = $filter;
@@ -376,6 +405,10 @@ class LDAPCompoundFilter extends LDAPFilter
             throw new KurogoConfigurationException(sprintf("Only %d filters found (2 minimum)", count($filters)));
         }
     
+    }
+    
+    public function addFilter(LDAPFilter $filter) {
+        $this->filters[] = $filter;
     }
     
     function __toString() {
@@ -402,13 +435,11 @@ class LDAPPeopleParser extends PeopleDataParser
         }
         
         $results = array();
-        $person = new $this->personClass($ds, $entry);
-        $person->setFieldMap($fieldMap);
+        $person = new $this->personClass($ds, $entry, $fieldMap);
         $results[] = $person;
 
         while ($entry = ldap_next_entry($ds, $entry)) {
-			$person = new $this->personClass($ds, $entry);
-			$person->setFieldMap($fieldMap);
+			$person = new $this->personClass($ds, $entry, $fieldMap);
 			$results[] = $person;
         }
 
@@ -448,7 +479,7 @@ class LDAPPeopleParser extends PeopleDataParser
         $fieldMap = $response->getContext('fieldMap');
         
         $parsedData = $this->parseSearch($data, $ds, $fieldMap);
-        if ($this->getOption('action')=='user') {
+        if ($this->getOption('action') == 'user') {
             $parsedData = isset($parsedData[0]) ? $parsedData[0] : false;
             $this->setTotalItems($parsedData ? 1 : 0);
         } else {
@@ -470,15 +501,12 @@ class LDAPPerson extends Person {
     
     protected $dn;
     protected $fieldMap=array();
+    protected $photoMIMEType = 'image/jpeg';
     
     public function getDn() {
         return $this->dn;
     }
 
-    public function setFieldMap(array $fieldMap) {
-        $this->fieldMap = $fieldMap;
-    }
-    
     public function getName() {
         if ($this->fieldMap['fullname']) {
             return $this->getFieldSingle($this->fieldMap['fullname']);
@@ -502,19 +530,35 @@ class LDAPPerson extends Person {
         return NULL;
     }
     
-    public function __construct($ldap, $entry) {
+    public function getPhotoMIMEType() {
+        return $this->photoMIMEType;
+    }
+    
+    public function getPhotoData() {
+        return $this->getFieldSingle($this->fieldMap['photodata']);
+    }
+
+    public function __construct($ldap, $entry, array $fieldMap) {
         $ldapEntry = ldap_get_attributes($ldap, $entry);
         $this->dn = ldap_get_dn($ldap, $entry);
+        $this->fieldMap = $fieldMap;
         $this->attributes = array();
     
-        for ($i=0; $i<$ldapEntry['count']; $i++) {
+        for ($i = 0; $i < $ldapEntry['count']; $i++) {
             $attribute = $ldapEntry[$i];
             $attrib = strtolower($attribute);
             $count = $ldapEntry[$attribute]['count'];
-            $this->attributes[$attrib] = array();
-            for ($j=0; $j<$count; $j++) {
-                if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attrib])) {
-                    $this->attributes[$attrib][] = str_replace('$', "\n", $ldapEntry[$attribute][$j]);
+            
+            if ($attrib == $this->fieldMap['photodata']) {
+                if ($data = @ldap_get_values_len($ldap, $entry, $attribute)) {
+                    $this->attributes[$attrib] = $data; // Get binary photo data
+                }
+            } else {
+                $this->attributes[$attrib] = array();
+                for ($j = 0; $j < $count; $j++) {
+                    if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attrib])) {
+                        $this->attributes[$attrib][] = str_replace('$', "\n", $ldapEntry[$attribute][$j]);
+                    }
                 }
             }
         }

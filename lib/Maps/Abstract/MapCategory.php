@@ -42,6 +42,7 @@ class MapCategory implements MapFolder, MapListElement
         $currentFolder = $this;
         while (($parent = $currentFolder->getParent())) {
             array_unshift($categoryIds, $parent->getId());
+            $currentFolder = $parent;
         }
         foreach ($categoryIds as $id) {
             $placemark->addCategoryId($id);

@@ -55,8 +55,9 @@ class ICSDataParser extends DataParser
             $contentline['value'] = trim(ICalendar::ical_unescape_text($parts[2]));
             $contentline['params'] = array();
             foreach ($params as $param) {
-                preg_match("/(.*?)=(.*)/", $param, $param_bits);
-                $contentline['params'][$param_bits[1]] = str_replace("\"", "", $param_bits[2]);
+                if (preg_match("/(.*?)=(.*)/", $param, $param_bits)) {
+                    $contentline['params'][$param_bits[1]] = str_replace("\"", "", $param_bits[2]);
+                }
             }
         } else {
             Kurogo::log(LOG_WARNING, "Found an invalid ICS line: $line", 'data');

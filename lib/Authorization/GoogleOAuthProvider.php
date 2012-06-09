@@ -49,8 +49,7 @@ class GoogleOAuthProvider extends OAuthProvider
         
             //redirect to auth page
             $url = $this->getAuthURL($options);
-            header("Location: " . $url);
-            exit();
+            Kurogo::redirectToURL($url);
         }
     }
 

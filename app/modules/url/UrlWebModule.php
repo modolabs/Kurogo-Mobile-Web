@@ -9,8 +9,7 @@ class UrlWebModule extends WebModule {
   protected function initializeForPage() {
      if ($url = $this->getModuleVar('url')) {
          $this->logView();
-         header("Location: $url");
-         die();
+         Kurogo::redirectToURL($url);
      } else {
         throw new KurogoConfigurationException("URL not specified");
      }

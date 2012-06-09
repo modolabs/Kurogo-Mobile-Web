@@ -8,6 +8,7 @@ class AthleticsAPIModule extends APIModule
     protected $id = 'athletics';
     protected $vmin = 1;
     protected $vmax = 1;
+    protected $imageExt = ".png";
 
     protected static $defaultEventModel = 'AthleticEventsDataModel';
     protected static $defaultNewsModel = 'NewsDataModel';
@@ -32,7 +33,10 @@ class AthleticsAPIModule extends APIModule
                 
                 $sports = array();
                 foreach ($sportsConfig as $key => $sportData) {
-                    $sports[] = array('key'=>$key, 'title' => $sportData['TITLE']);
+                    $image = FULL_URL_BASE . "modules/{$this->configModule}/images/" .
+                        (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])) .
+                        $this->imageExt;
+                    $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'icon' => $image);
                 }
                 
                 $response = array(

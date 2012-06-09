@@ -143,6 +143,23 @@ class KurogoReader {
     }
 
     /**
+     * parseHTTPHeader 
+     * parses the HTTP headers from fetchContent
+     * 
+     * @param string $header
+     * @access private
+     * @return array
+     */
+    protected function parseHTTPHeader($header) {
+        if (preg_match("/(.*?):\s*(.*)/", $header, $bits)) {
+            return array(
+                trim($bits[1]),
+                trim($bits[2])
+            );
+        }
+    }
+
+    /**
      * fetchContent 
      * fetch content from specified url and convert source encoding if possible
      * 
@@ -152,6 +169,16 @@ class KurogoReader {
      */
     private function fetchContent($url) {
         $content = file_get_contents($url);
+        
+        //KGO-770 -  rewrite baseURL if there is a redirect
+        foreach ($http_response_header as $http_header) {
+            list($header, $value) = $this->parseHTTPHeader($http_header);
+            if ($header=='Location') {
+                $urlArray = parse_url($value);
+                $this->baseUrl = $urlArray['scheme'] . "://" . $urlArray['host'];
+            }
+        }
+
         /**
          * if there is tidy support, then detect target source code from meta content
          */

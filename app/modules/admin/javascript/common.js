@@ -156,6 +156,7 @@ function appendFormField(parent, key, fieldData) {
     var section = typeof fieldData.section == 'undefined' ? null : fieldData.section;
     var inputClass = typeof fieldData['class'] == 'undefined' ? '' : fieldData['class'];
     var id = typeof fieldData.id == 'undefined' ? null : fieldData.id;
+    var disabled = typeof fieldData.enabled == 'undefined' ? '' : (fieldData.enabled ? '' : 'disabled');
     var re;
     
     switch (fieldData.type) {
@@ -166,11 +167,11 @@ function appendFormField(parent, key, fieldData) {
                 prefixKey = re[1] + '[' + re[2] + '_prefix]';
             }
         
-            parent.append(createSelectBox(fileListTypes(), fieldData.constant).addClass('filePrefix').attr('name', prefixKey).attr('section',section));
-            parent.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).addClass('fileData').addClass(inputClass).attr('id',id));
+            parent.append(createSelectBox(fileListTypes(), fieldData.constant).addClass('filePrefix').attr('name', prefixKey).attr('section',section).attr('disabled',disabled));
+            parent.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).addClass('fileData').addClass(inputClass).attr('id',id).attr('disabled',disabled));
             break;
         case 'number':
-            var input = $('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).addClass(inputClass).attr('id',id);
+            var input = $('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).addClass(inputClass).attr('id',id).attr('disabled',disabled);
             if ('placeholder' in fieldData) {
                 input.attr('placeholder', fieldData.placeholder)
             }
@@ -178,7 +179,7 @@ function appendFormField(parent, key, fieldData) {
             break;
         case 'password':
         case 'text':
-            var input = $('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', fieldData.value).addClass(inputClass).attr('id',id);
+            var input = $('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', fieldData.value).addClass(inputClass).attr('id',id).attr('disabled',disabled);
             if ('placeholder' in fieldData) {
                 input.attr('placeholder', fieldData.placeholder)
             }
@@ -186,7 +187,7 @@ function appendFormField(parent, key, fieldData) {
             break;
         case 'inversecheckbox':
             parent.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('value', '1'));
-            parent.append($('<input/>').attr('type','checkbox').attr('name', key).attr('section', section).attr('value', '0').addClass('changeElement').addClass(inputClass).attr('checked', !parseInt(fieldData.value) ? 'checked':'').attr('id',id));
+            parent.append($('<input/>').attr('type','checkbox').attr('name', key).attr('section', section).attr('value', '0').addClass('changeElement').addClass(inputClass).attr('checked', !parseInt(fieldData.value) ? 'checked':'').attr('id',id).attr('disabled',disabled));
             break;
         case 'checkbox':
             if (fieldData.value.length==0 && fieldData.placeholder) {
@@ -194,11 +195,11 @@ function appendFormField(parent, key, fieldData) {
             }
 
             parent.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('value', '0'));
-            parent.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', '1').addClass('changeElement').addClass(inputClass).attr('checked', parseInt(fieldData.value) ? 'checked':'').attr('id',id));
+            parent.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', '1').addClass('changeElement').addClass(inputClass).attr('checked', parseInt(fieldData.value) ? 'checked':'').attr('id',id).attr('disabled',disabled));
             break;
         case 'radio':
             $.each(fieldData.options, function(value,label) {
-                parent.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', value).addClass(inputClass).addClass('changeElement').attr('checked', fieldData.value==value));
+                parent.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', value).addClass(inputClass).addClass('changeElement').attr('checked', fieldData.value==value).attr('disabled',disabled));
                 parent.append(label);
             });
             break;
@@ -207,7 +208,7 @@ function appendFormField(parent, key, fieldData) {
             if (!fieldData.value && 'placeholder' in fieldData) {
                 fieldData.value = fieldData.placeholder;
             }
-            parent.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).addClass('changeElement').addClass(inputClass).attr('id',id));
+            parent.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).addClass('changeElement').addClass(inputClass).attr('id',id).attr('disabled',disabled));
             break;
         case 'paragraph':
         case 'textarea':
@@ -216,10 +217,10 @@ function appendFormField(parent, key, fieldData) {
             } else {
                 var rows = fieldData.type == 'textarea' ? 4: 8;
             }
-            parent.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows',rows).attr('section', section).addClass(inputClass).attr('id',id));
+            parent.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows',rows).attr('section', section).addClass(inputClass).attr('id',id).attr('disabled',disabled));
             break;
         case 'label':
-            parent.append('<span class="labeltext">'+fieldData.value+'</span>');
+            parent.append('<span class="labeltext">'+fieldData.value+'</span>').attr('disabled',disabled);
             break;
         case 'link':
             if (fieldData.value) {
@@ -247,7 +248,7 @@ function appendFormField(parent, key, fieldData) {
                 }
             }
         
-            parent.append($('<a class="formbutton"">').append($('<div>').html(fieldData.value)).click(function() {
+            parent.append($('<a class="formbutton"">').append($('<div>').html(fieldData.value).attr('disabled',disabled)).click(function() {
                 showMessage(fieldData.runningMessage ? fieldData.runningMessage : getLocalizedString('ACTION_RUNNING'), false, true);
                 makeAPICall('GET','admin',fieldData.action, fieldData.params, function() { 
                     showMessage(fieldData.message ? fieldData.message : getLocalizedString('ACTION_SUCCESSFUL'));
@@ -255,7 +256,7 @@ function appendFormField(parent, key, fieldData) {
             }));
             break;
         case 'upload':
-            var input = $('<input/>').attr('type','file').attr('name', key).attr('section', section).addClass(inputClass).attr('id',id);
+            var input = $('<input/>').attr('type','file').attr('name', key).attr('section', section).addClass(inputClass).attr('id',id).attr('disabled',disabled);
             parent.append(input);
             break;
         default:
