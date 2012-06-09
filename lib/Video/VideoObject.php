@@ -155,4 +155,9 @@ class VideoObject implements KurogoObject
     public function canPlay(DeviceClassifier $deviceClassifier) {
         return true;
     }
+    
+    /* subclasses should return play url based on pagetype, platform */ 
+    public function getPlayerURL() {
+        return '';
+    }
 }

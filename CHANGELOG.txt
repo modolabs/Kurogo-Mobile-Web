@@ -1,3 +1,18 @@
+1.4.1 (Apr 27, 2012)
+* Fixed issues with Drupal Contacts
+* Many fixes for maps module
+* More flexibility for propertly handling HTML tags in RSS feeds
+* Fixed several issues with custom LDAP searching
+* Responses that contain errors will no longer be cached
+* Clean whitespace from calendar feeds
+* Some non-standard time zones are now recognized
+* Initialization arguments are now passed to the DataResponse object
+* Add previous/next buttons when browsing Photos
+* Fixes for searching phone numbers in people module
+* Fixes for athletics icons
+* Fixed links found when FETCH_CONTENT is used if the url is redirected
+* Redirects are now given SEO friendly HTTP status codes
+
 1.4 (Mar 4, 2012)
 * NEW MODULE: Photos. Show photos from Flickr or Picassa
 * NEW MODULE: Athletics. Show news and score information

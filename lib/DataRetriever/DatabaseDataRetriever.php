@@ -52,11 +52,13 @@ class DatabaseDataRetriever extends DataRetriever
 
         $this->initRequestIfNeeded();
         $response = $this->initResponse();
+        $response->setStartTime(microtime(true));
 
         if ($sql = $this->sql()) {
             $result = $this->connection->query($sql, $this->parameters());
             $response->setResponse($result);
         }        
+        $response->setEndTime(microtime(true));
 
         return $response;
     }

@@ -441,25 +441,27 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'pane':
-        $start = new DateTime(date('Y-m-d H:i:s', time()), $this->timezone);
-        $start->setTime(0,0,0);
-        $end = clone $start;
-        $end->setTime(23,59,59);
-
-        $type     = $this->getArg('type', 'static');
-        $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-        $feed = $this->getFeed($calendar, $type);
-        $feed->setStartDate($start);
-        $feed->setEndDate($end);
-        
-        $iCalEvents = $feed->items();
-        $options['noBreadcrumbs'] = true;
-        $events = array();
-        foreach($iCalEvents as $iCalEvent) {
-          $events[] = $this->linkforItem($iCalEvent, $options, false);
+        if ($this->ajaxContentLoad) {
+          $start = new DateTime(date('Y-m-d H:i:s', time()), $this->timezone);
+          $start->setTime(0,0,0);
+          $end = clone $start;
+          $end->setTime(23,59,59);
+  
+          $type     = $this->getArg('type', 'static');
+          $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+          $feed = $this->getFeed($calendar, $type);
+          $feed->setStartDate($start);
+          $feed->setEndDate($end);
+          
+          $iCalEvents = $feed->items();
+          $options['noBreadcrumbs'] = true;
+          $events = array();
+          foreach($iCalEvents as $iCalEvent) {
+            $events[] = $this->linkforItem($iCalEvent, $options, false);
+          }
+          
+          $this->assign('events', $events);
         }
-        
-        $this->assign('events', $events);
         break;
       
       case 'resources':
@@ -647,13 +649,13 @@ class CalendarWebModule extends WebModule {
         $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
         $type     = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-        $limit    = $this->getArg('limit', 20);
         $feed     = $this->getFeed($calendar, $type);
         $title    = $this->getFeedTitle($calendar, $type);
         $this->setLogData($type . ':' . $calendar, $title);
-        $this->setPageTitle($title);
-        $this->setBreadcrumbTitle('List');
-        $this->setBreadcrumbLongTitle($title);
+
+        //paging settings
+        $startEvent = $this->getArg('start', 0);
+        $limit    = $this->getArg('limit', 20);
         
         $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $start->setTime(0,0,0);
@@ -661,12 +663,32 @@ class CalendarWebModule extends WebModule {
         $feed->setStartDate($start);
         
         if ($this->legacyController) {
-            $iCalEvents = $feed->items(0, $limit);
+            $iCalEvents = $feed->items($startEvent, $limit);
         } else {
+        	$feed->setStart($startEvent);
             $feed->setLimit($limit);
             $iCalEvents = $feed->items();
         } 
-                        
+
+        $totalItems = $feed->getTotalItems();
+        $previousEventsURL = null;
+        $nextEventsURL = null;
+        if ($totalItems > $limit) {
+          $args = $this->args;
+          if ($startEvent > 0) {
+            $args['start'] = $startEvent - $limit;
+            $previousEventsURL = $this->buildBreadcrumbURL($this->page, $args, false);
+          }
+          
+          if (($totalItems - $startEvent) > $limit) {
+            $args['start'] = $startEvent + $limit;
+            $nextEventsURL = $this->buildBreadcrumbURL($this->page, $args, false);
+          }
+        }
+        $this->assign('maxPerPage',     $limit);
+        $this->assign('previousEventsURL',    $previousEventsURL);
+        $this->assign('nextEventsURL',        $nextEventsURL);
+        
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
         
@@ -753,12 +775,15 @@ class CalendarWebModule extends WebModule {
         }
 
         $this->setLogData($event->get_uid(), $event->get_summary());
-            
-        // build the list of attributes
-        $allKeys = array_keys($calendarFields);
-
+        
+        $headerFields = array('summary', 'datetime'); // referenced separately
+        $title = $event->get_attribute('summary');
+        $date = $this->valueForType('datetime', $event->get_attribute('datetime'));
+        
         $fields = array();
         foreach ($calendarFields as $key => $info) {
+          if (in_array($key, $headerFields)) { continue; } // legacy configs may have these
+          
           $field = array();
           
           $value = $event->get_attribute($key);
@@ -810,8 +835,10 @@ class CalendarWebModule extends WebModule {
           }
           
           $fields[] = $field;
-        }        
+        }
 
+        $this->assign('title', $title);
+        $this->assign('date', $date);
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
         break;

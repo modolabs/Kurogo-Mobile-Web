@@ -41,6 +41,7 @@ class AdminAPIModule extends APIModule
         if (!isset($configData[$type])) {
             $files = array(
                 APP_DIR . "/common/config/admin-{$type}.json",
+                SHARED_APP_DIR . "/common/config/admin-{$type}.json",
                 SITE_APP_DIR . "/common/config/admin-{$type}.json"
             );
             $data = array();
@@ -205,6 +206,15 @@ class AdminAPIModule extends APIModule
                                 $field['constant'] = $constant;
                             }
                         }
+                    }
+                    
+                    if (isset($field['enabledMethod'])) {
+                        if (is_array($field['enabledMethod'])) {
+                            $field['enabled'] = call_user_func($field['enabledMethod']);
+                        } else {
+                            $field['enabled'] = $module->$field['enabledMethod']();
+                        }
+                        unset($field['enabledMethod']);
                     }
                 }
                 break;
@@ -898,7 +908,7 @@ class AdminAPIModule extends APIModule
                 
                 Kurogo::log(LOG_NOTICE, "Updating module layout", 'admin');
                 $data = $this->getArg('data', array());
-                $config = ModuleConfigFile::factory('home', 'module');
+                $config = ModuleConfigFile::factory($this->getHomeModuleID(), 'module');
                 if (!isset($data['primary_modules'])) {
                     $data['primary_modules'] = array();
                 }

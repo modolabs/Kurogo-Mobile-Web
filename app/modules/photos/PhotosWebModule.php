@@ -131,7 +131,9 @@ class PhotosWebModule extends WebModule {
             	}
             	$controller = $this->getFeed($album);
                 $id = base64_decode($this->getArg('id'));
-                $photo = $controller->getPhoto($id);
+                if (empty($id) || !$photo = $controller->getPhoto($id)) {
+                    throw new KurogoUserException($this->getLocalizedString('PHOTO_NOT_FOUND'));
+                }
                 $preAndNextId = $controller->getPrevAndNextID($id);
                 
                 if($preAndNextId['prev']){
