@@ -2,8 +2,8 @@
 
 <div class="focal">
   <p>{$message}</p>
-  
-  {if isset($url)}
+
+  {if isset($url) && !$ajaxContentLoad}
     <p>
       <a href="{$url|sanitize_url|escape}">{$linkText}</a>
     </p>

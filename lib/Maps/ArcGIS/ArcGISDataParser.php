@@ -72,17 +72,25 @@ class ArcGISDataParser extends DataParser implements MapDataParser
     public function getFieldKeys() {
         return $this->currentFolder->getFieldKeys();
     }
+    
+    public function getDisplayFieldForFolder($folderId) {
+        $displayField = null;
+        if (isset($this->folders[$folderId])) {
+            $displayField = $this->folders[$folderId]->getDisplayField();
+        }
+        return $displayField;
+    }
 
     public function parseData($content) {
         $data = json_decode($content, true);
         if (isset($data['error'])) {
             $error = $data['error'];
             $details = isset($error['details']) ? json_encode($error['details']) : '';
-            Kurogo::log(LOG_WARNING, "Error response from ArcGIS server:\n"
+            Kurogo::log(LOG_ERR, "Error response from ArcGIS server:\n"
                 ."Code: {$error['code']}\n"
                 ."Message: {$error['message']}\n"
                 ."Details: $details\n", 'maps');
-            throw new KurogoDataServerException("Map server returned error: \"{$error['message']}\"");
+            //throw new KurogoDataServerException("Map server returned error: \"{$error['message']}\"");
         }
 
         if (isset($data['serviceDescription'])) {
@@ -134,6 +142,11 @@ class ArcGISDataParser extends DataParser implements MapDataParser
                 foreach ($data['fields'] as $fieldInfo) {
                     if ($fieldInfo['type'] == 'esriFieldTypeOID') {
                         $this->currentFolder->setIdField($fieldInfo['name']);
+                        continue;
+                    } else if (strtolower($fieldInfo['name']) == 'shape'
+                            || strtolower($fieldInfo['name']) == 'shape_length'
+                            || strtolower($fieldInfo['name']) == 'shape_area')
+                    {
                         continue;
                     } else if ($fieldInfo['type'] == 'esriFieldTypeGeometry') {
                         $this->currentFolder->setGeometryField($fieldInfo['name']);
@@ -248,6 +261,7 @@ class ArcGISDataParser extends DataParser implements MapDataParser
             return $this->currentFolder->placemarks();
         }
 
+        return null;
     }
 
     protected function projectGeometry(MapGeometry $geometry) {
