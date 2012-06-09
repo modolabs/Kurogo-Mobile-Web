@@ -1,4 +1,4 @@
-{include file="findInclude:common/templates/header.tpl"}
+{include file="findInclude:modules/login/templates/header.tpl"}
 <p class="nonfocal">
 {$authorityTitle} should have provided you with a code to enter to verify your authorization. Please enter it below
 </p>
@@ -19,4 +19,4 @@
 If you do not have a verify code, you need to <a href="login?authority={$authority}&amp;startOver=1">start over</a>
 </p>
 
-{include file="findInclude:common/templates/footer.tpl"}
+{include file="findInclude:modules/login/templates/footer.tpl"}

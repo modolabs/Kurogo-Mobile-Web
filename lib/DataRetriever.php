@@ -115,21 +115,29 @@ abstract class DataRetriever {
     }
     
     public function getResponse() {
+        $this->lastResponse = null;
         $cacheKey = $this->shouldCacheRequest() ? $this->cacheKey() : null;
         $cacheGroup = $this->cacheGroup();
         
         if (!$response = $this->getCachedResponse($cacheKey, $cacheGroup)) {
 
+            $startTime = microtime(true);
             $response = $this->retrieveResponse();
+            $endTime = microtime(true);
             if (!$response instanceOf DataResponse) {
                 throw new KurogoDataException("Response must be instance of DataResponse");
             }
-            $response->setRetriever($this);
+            // if the retriever did not set the start/end time, set it here. it will include some overhead
+            if (!$response->getEndTime()) {
+                $response->setStartTime($startTime);
+                $response->setEndTime($endTime);
+            }
             if (!$response->getResponseError()) {
                 $this->cacheResponse($cacheKey, $cacheGroup, $response);
             }
         }
         
+        $response->setRetriever($this);
         $this->lastResponse = $response;
         return $response;
     }
@@ -219,6 +227,10 @@ abstract class DataRetriever {
                 $args['PARSER_CLASS'] = 'PassthroughDataParser';
             }            
         }
+
+        if (!isset($args['CACHE_LIFETIME'])) {
+            $args['CACHE_LIFETIME'] = $this->DEFAULT_CACHE_LIFETIME;
+        }
         
         // instantiate the parser class
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
@@ -226,7 +238,6 @@ abstract class DataRetriever {
                 
         $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
         $this->cache = DataCache::factory($cacheClass, $args);
-        $this->cache->setCacheLifetime($this->DEFAULT_CACHE_LIFETIME);
     }
     
     public function clearInternalCache() {
@@ -238,6 +249,11 @@ abstract class DataRetriever {
     
     public static function factory($retrieverClass, $args) {
         Kurogo::log(LOG_DEBUG, "Initializing DataRetriever $retrieverClass", "data");
+        
+        if (isset($args['PACKAGE'])) {
+            Kurogo::includePackage($args['PACKAGE']);
+        }
+                
         if (!class_exists($retrieverClass)) {
             throw new KurogoConfigurationException("Retriever class $retrieverClass not defined");
         }

@@ -123,7 +123,7 @@ class DataCache
     
     public function getFullPath($key) {
 
-        $return = $this->getCacheFolder($this->cacheGroup) . DIRECTORY_SEPARATOR . $key;
+        $return = $this->getCacheFolder($this->cacheGroup) . DIRECTORY_SEPARATOR . Watchdog::safeFilename($key);
         return $return;
     }
 

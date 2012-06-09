@@ -5,7 +5,8 @@
  */
 
 class StatsWebModule extends WebModule {
-	protected $id = 'stats';
+	  protected $id = 'stats';
+    protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
 
     protected function getServiceTypes() {
         return array(

@@ -2,6 +2,7 @@
 
 $lines = array(
     'User-agent: *',
+    'Allow: '.URL_BASE,
     'Disallow: '.URL_BASE.'rest/',
 );
 

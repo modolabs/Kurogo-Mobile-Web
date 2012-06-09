@@ -1,0 +1,47 @@
+div#nonfooternav div#navbar {
+    margin-bottom: 0px;
+}
+
+ul.results {
+    margin-top: 0;
+}
+
+ul.results li.icon {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    }
+
+ul.results li.icon a {
+    padding-top: 0;
+    line-height: 1.2em;
+    color: #403f3d;
+    padding-bottom: 0;
+}
+
+ul.results li.icon a div.smallprint {
+    padding-top: 10px;
+}
+
+div.focal.author {
+    min-height: 45px;
+}
+
+div.focal.author img {
+    float: left;
+    position: absolute;
+
+}
+
+.featured h3 {
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.featured a div.smallprint {
+    padding-top: 10px;
+    
+}
+
+.byline {
+	border-bottom: none;
+}

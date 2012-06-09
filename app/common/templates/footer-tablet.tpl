@@ -8,7 +8,7 @@
 {/block}
 
 {block name="footer"}
-  {if $moduleID != $homeModuleID}
+  {if $configModule != $homeModuleID}
     <div id="footer">
       {$footerHTML}
     </div>

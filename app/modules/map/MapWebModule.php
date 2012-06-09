@@ -329,6 +329,9 @@ class MapWebModule extends WebModule {
             if (isset($args['listview'])) {
                 unset($args['listview']);
             }
+            if (isset($args['ajax'])) {
+                unset($args['ajax']);
+            }
             $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
         }
         return $this->buildBreadcrumbURL($topPage, $args, $addBreadcrumb);
@@ -1065,8 +1068,10 @@ class MapWebModule extends WebModule {
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
         $this->configureUserLocation();
-        $this->addOnLoad('addClass(document.body, "fullscreen")');
-        $this->addOnOrientationChange('updateContainerDimensions()');
+        if ($this->page != 'pane') {
+            $this->addOnLoad('addClass(document.body, "fullscreen");');
+        }
+        $this->addOnOrientationChange('updateContainerDimensions();');
 
         // show button on search bar
         $this->generateBookmarkLink();

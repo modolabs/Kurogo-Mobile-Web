@@ -35,7 +35,7 @@ abstract class AuthenticationAuthority
     protected $AuthorityImage; 
 
     /** 
-      * User Login type. One of 3 values: FORM, LINK or NONE
+      * User Login type. One of 3 values: FORM, LINK, AUTO or NONE
       * @var string
       */
     protected $userLogin;
@@ -173,12 +173,12 @@ abstract class AuthenticationAuthority
       */
     protected function validUserLogins()
     {
-        return array('FORM', 'LINK', 'NONE');
+        return array('FORM', 'LINK', 'AUTO', 'NONE');
     }
     
     /**
       * Sets the user login type
-      * @param string userLogin a valid userLogin type (FORM, LINK, NONE)
+      * @param string userLogin a valid userLogin type (FORM, LINK, AUTO, NONE)
       * @return boolean true if it was successful or false if it was not
       */
     public function setUserLogin($userLogin)
