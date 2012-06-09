@@ -3,13 +3,15 @@
 includePackage('DataModel');
 class ContentWebModule extends WebModule {
     protected $id = 'content';
+    protected $pageId;
+    protected $group;
 	protected $contentGroups;
 	protected $feedGroups = null;
 	protected static $defaultModel = 'ContentDataModel';
 
    protected function getContent($feedData) {
    
-        $content_type = isset($feedData['CONTENT_TYPE']) ? $feedData['CONTENT_TYPE'] : '';
+        $content_type = isset($feedData['CONTENT_TYPE']) ? $feedData['CONTENT_TYPE'] : 'html_url';
         $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
         
         switch ($content_type)
@@ -42,6 +44,7 @@ class ContentWebModule extends WebModule {
                     $content = $controller->getContent();
                 }
                 
+                $content = $this->filterContentByPage($content, $this->pageId, $this->group);
                 return $content;
                 break;
             case 'rss':
@@ -49,7 +52,7 @@ class ContentWebModule extends WebModule {
                     $feedData['PARSER_CLASS'] = 'RSSDataParser';
                 }
 
-                $controller = ContentDataModel::factory($controllerClass, $feedData);
+                $controller = ContentDataModel::factory($modelClass, $feedData);
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
                 }
@@ -60,6 +63,10 @@ class ContentWebModule extends WebModule {
                 throw new KurogoConfigurationException("Invalid content type $content_type");
         }
         
+    }
+
+    protected function filterContentByPage($content, $page, $group) {
+        return $content;
     }
     
     public static function getContentTypes() {
@@ -155,41 +162,39 @@ class ContentWebModule extends WebModule {
 				
 				break;
 			case 'page':
-				$pageId = $this->getArg('page');
-				$group = $this->getArg('group', false);
-				$items = ($group === false) ? $this->loadFeedData() : $this->loadFeedData($group);
+				$this->pageId = $this->getArg('page');
+				$this->group = $this->getArg('group', false);
+				$items = ($this->group === false) ? $this->loadFeedData() : $this->loadFeedData($this->group);
 
-				if (!isset($items[$pageId])){
+				if (!isset($items[$this->pageId])){
 					$this->redirectTo('index');
 				}
 				
-				$feedData = $items[$pageId];
+				$feedData = $items[$this->pageId];
 				
 				$showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
 				if ($showTitle) {
 					$this->assign('contentTitle', $feedData['TITLE']);
 				}
 				
-				$this->setTemplatePage('content');
 				$this->setPageTitle($feedData['TITLE']);
 				$this->assign('contentBody', $this->getContent($feedData));
 				
 				break;
 			case 'group':
-				$group = $this->getArg('group');
-				$groupData = $this->getDataForGroup($group);
+				$this->group = $this->getArg('group');
+				$groupData = $this->getDataForGroup($this->group);
 				
                 if (isset($groupData['TITLE'])) {
                     $this->setPageTitles($groupData['TITLE']);
                 }
 				
-				$feedData = $this->loadFeedData($group);
+				$feedData = $this->loadFeedData($this->group);
 				if(count($feedData)==1){
 					reset($feedData);
-					$this->redirectTo('page', array('group' => $group, 'page' => key($feedData)));
+					$this->redirectTo('page', array('group' => $this->group, 'page' => key($feedData)));
 				}
 				
-				$this->setTemplatePage('index');
                 $this->assign('contentPages', $feedData);
                 $this->assign('description', $groupData['DESCRIPTION']);
 

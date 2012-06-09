@@ -7,3 +7,23 @@
   background-position: left 50%;
   background-repeat: no-repeat;
 }
+.banner-notice {
+  background-color: #fff;
+  border-bottom: solid 1px #ccc;
+  font-size: 88.23%;
+  background-image: url('/common/images/alert.png');
+  background-repeat: no-repeat;
+  background-position: 5px center;
+  background-size: 28px 28px;
+}
+.banner-notice .banner-message, .banner-notice a.banner-message { 
+  display: block;
+  background-image: url('/common/images/action-arrow.png');
+  background-repeat: no-repeat;
+  background-position: right;
+  padding: 10px 24px 10px 36px;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -6,7 +6,7 @@ The Kurogo Framework supports both simple and deep visual customization to refle
 
 Beyond straightforward visual branding, Kurogo theming can also extend deeper into application-level styling, templates, and images. Just about anything your users can see or interact with can be customized, depending on your institution's needs and your development team's technical abilities. This document covers the basics of visual theming; functional customization through module extensions and template overrides is covered in :doc:`moduleextend`.
 
-Visual theming requires a working understanding of CSS, and skill with an image editor such as Photoshop or GIMP.
+Visual theming requires a working knowledge of CSS, and skill with an image editor such as Photoshop or GIMP.
 
 
 
@@ -14,13 +14,13 @@ Visual theming requires a working understanding of CSS, and skill with an image 
 Theming Overview
 ****************
 
-The Kurogo Framework has a theming layer which allows sites to make most stylistic changes to the web application without modifying the core libraries.  The advantage of using the theming layer is that site changes are isolated from the framework sources and can be more easily moved to a new version of the framework.
+The Kurogo Framework has a theming layer which allows sites to make most stylistic changes to the web application without modifying the core libraries.  The advantage of using the theming layer is that changes to your site's specific theme are isolated from the underlying framework and can be more easily moved to a new version of the framework.
 
-The core visual interface of Kurogo lives in *app/*.  It is made up of HTML templates, CSS and Javascript files, and a core set of application images.  All HTML, CSS and Javascript in the core interface can be overridden by a theme. While it's possible to directly edit the files in *app/*, doing so will increase the probability that future upgrades to Kurogo will break your site. As with everything else you build with Kurogo, it is highly recommended that you **not** directly edit any contents of this directory. If there are CSS rules or image files you wish to replace in your theme, it is recommended that you create new versions of those rules and images in your theme directory.
+The core visual interface of Kurogo lives in *app/*.  It is made up of HTML templates, CSS and Javascript files, and a core set of application images.  All HTML, CSS and Javascript in the core interface can be overridden by a theme. While it's possible to directly edit the files in *app/*, doing so will make it likely that future upgrades to Kurogo will break your site. As with everything else you build with Kurogo, it is highly recommended that you **not** directly edit any contents of this directory. If there are CSS rules or image files you wish to replace in your theme, it is recommended that you create new versions of those rules and images in your theme directory.
 
 Each theme is contained within a directory inside the *SITE_DIR/themes* folder. By convention the default theme is named *default*. Each site can have multiple themes, but only one theme can be active at any time. You can easily switch between active themes from the *Site Configuration > Theme* screen in the Kurogo administration console.
 
-Themes have the same directory structure as the core visual interface directory (app/). This allows paths in the CSS and HTML to be the same for the core interface and the theme interface.
+Themes have the same directory structure as the core visual interface directory (*app/*). This allows paths in the CSS and HTML to be the same for the core interface and the theme interface.
 
 
 
@@ -43,11 +43,11 @@ In your site's Kurogo administration console, go to the *Site Configuration > Th
 
 In a modern web browser (e.g., Chrome, Firefox 4+, Safari 4+), open a few test views of your site for different device classes:
 
-* *http://[SITE_PATH]/device/compliant/home/*
-* *http://[SITE_PATH]/device/compliant-bbplus/home/*
-* *http://[SITE_PATH]/device/touch/home/*
-* *http://[SITE_PATH]/device/basic/home/*
-* *http://[SITE_PATH]/device/tablet/home/*
+* *http://[SITE_PATH]/device/compliant/[HOME_MODULE]/*
+* *http://[SITE_PATH]/device/compliant-bbplus/[HOME_MODULE]/*
+* *http://[SITE_PATH]/device/touch/[HOME_MODULE]/*
+* *http://[SITE_PATH]/device/basic/[HOME_MODULE]/*
+* *http://[SITE_PATH]/device/tablet/[HOME_MODULE]/*
 
 As you make the changes detailed below, come back to your browser and refresh the relevant test views to make sure that the changes have the intended effect.
 
@@ -88,6 +88,8 @@ In *THEME_DIR/config.ini*, the global theme style constants are in lines 14-39. 
 
 In addition to modifying these theme configuration values, you can always modify or override individual rules in specific theme CSS files. However, simply changing these theme configuration values will take care of most, if not all, of the theming that previously required editing actual CSS.
 
+You can also extend the use of these global theme values by adding your own constants to your *THEME_DIR/config.ini*. Any value that can be expressed as a text string can be defined in the theme config file and used in any of your theme CSS files, whether at the common level or at the level of individual modules.
+
 
 ------------------------------------------
 3. Add your logo or other branding artwork
@@ -98,8 +100,8 @@ Homepage
 ~~~~~~~~
 You'll need to create a version of the logo to appear on the homepage: [#f1]_ [#f2]_
 
-* Basic and Touch device classes: *THEME_DIR/modules/home/images/logo-home.gif* must be a GIF image [#f3]_. This image will be centered horizontally within the screen. The default size is 208x35px, cropped tight to the actual artwork.
-* Compliant device class: *THEME_DIR/modules/home/images/logo-home.png* must be a PNG image [#f3]_. The default size is 280x60px, cropped tight the actual artwork. The Compliant home logo/banner image is one that benefits noticeably from :ref:`hdpi`. 
+* Basic and Touch device classes: *THEME_DIR/modules/[HOME_MODULE]/images/logo-home.gif* must be a GIF image [#f3]_. This image will be centered horizontally within the screen. The default size is 208x35px.
+* Compliant device class: *THEME_DIR/modules/[HOME_MODULE]/images/logo-home.png* must be a PNG image [#f3]_. The default size is 280x60px. The Compliant home logo/banner image is one that benefits noticeably from :ref:`hdpi`. 
 	
 
 Header logos
@@ -130,8 +132,8 @@ Homepage module icons
 ~~~~~~~~~~~~~~~~~~~~~
 These appear on the homepage, as well as the Customize Homescreen module and the desktop-oriented Info module. 
 
-* Compliant device class: The module icons in *THEME_DIR/modules/home/images/complaint/[MODULE_ID].png* must be PNG images [#f3]_. They should be the same size as the springboard images for modern BlackBerry devices (as set in *THEME_DIR/common/css/compliant-bbplus.css*, lines 26-27, and *THEME_DIR/common/css/compliant-blackberry.css*, lines 17-18). By default this is 64x64px, which is slightly larger than the default size for other Compliant devices. The file names must be exactly in the format *[MODULE_ID].png* (e.g., calendar.png, map.png, news.png, etc.)[#f4]_. For Compliant devices, the homepage icons may notably benefit from :ref:`hdpi`.
-* Touch device class: The module icons in *THEME_DIR/modules/home/images/touch/[MODULE_ID].gif* must be GIF images [#f3]_. The default size is 44x44px. The file names must be exactly *[MODULE_ID].gif* (e.g., calendar.gif, map.gif, news.gif, etc.) [#f4]_
+* Compliant device class: The module icons in *THEME_DIR/modules/[HOME_MODULE]/images/complaint/[MODULE_ID].png* must be PNG images [#f3]_. They should be the same size as the springboard images for modern BlackBerry devices (as set in *THEME_DIR/common/css/compliant-bbplus.css*, lines 26-27, and *THEME_DIR/common/css/compliant-blackberry.css*, lines 17-18). By default this is 64x64px, which is slightly larger than the default size for other Compliant devices. The file names must be exactly in the format *[MODULE_ID].png* (e.g., calendar.png, map.png, news.png, etc.)[#f4]_. For Compliant devices, the homepage icons may notably benefit from :ref:`hdpi`.
+* Touch device class: The module icons in *THEME_DIR/modules/[HOME_MODULE]/images/touch/[MODULE_ID].gif* must be GIF images [#f3]_. The default size is 44x44px. The file names must be exactly *[MODULE_ID].gif* (e.g., calendar.gif, map.gif, news.gif, etc.) [#f4]_
 
 
 
@@ -148,7 +150,7 @@ These appear in the header/navigation bar at the top of every module page in all
 
 Tablet tab-bar module icons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Tablet device class uses a site-wide tab bar at the bottom of the screen to provide quick navigation between modules. Though not technically part of the Tablet homepage, these images are in the *THEME_DIR/modules/home/images/tablet/* directory, to keep them grouped with the other module icons of similar size and format. The Tablet's tab bar uses two variations of the module icons. Both variations must be transparent PNGs [#f3]_ at 45x45px. Larger sizes will work fine, but with no visible benefit..
+The Tablet device class uses a site-wide tab bar at the bottom of the screen to provide quick navigation between modules. Though not technically part of the Tablet homepage, these images are in the *THEME_DIR/modules/[HOME_MODULE]/images/tablet/* directory, to keep them grouped with the other module icons of similar size and format. The Tablet's tab bar uses two variations of the module icons. Both variations must be transparent PNGs [#f3]_ at 45x45px. Larger sizes will work fine, but with no visible benefit..
 
 * Normal/unselected: Should be colored and styled for good contrast and legibility against the background for the Tablet tab bar. This background is specified in the *#footernav* rule in *THEME_DIR/common/css/tablet.css*. The file names must be exactly *[MODULE_ID].png* (e.g., calendar.png, map.png, news.png, etc.) [#f4]_
 
@@ -203,9 +205,9 @@ Optimizing for High-Density Displays
 ************************************
 All modern smartphones have displays with a pixel density (number of pixels per physical inch) higher than a typical desktop or laptop computer. For example, the first three generations of iPhones and iPod Touches, and the first generation of Android and webOS devices, all had displays with 150-170 pixels per inch (ppi).
 
-A growing number of high-end devices have significantly higher-density displays, to further improve clarity and legibility. iOS devices with Retina Displays (iPhone 4, iPod Touch 4) have twice the pixel density of older iOS devices. Android devices with HDPI displays (e.g., with the common 480x800px or 480x854px screens), Windows Phone 7 devices, and some recent webOS devices have 1.5 times (or more) the pixel density of earlier/lower-end smartphones. Because these devices have more physical screen pixels in the same space, text and images can look sharper and more legible, especially for small text and detailed graphics. 
+A growing number of high-end devices have significantly higher-density displays, to further improve clarity and legibility. iOS devices with Retina Displays (iPhone 4 and 4S, iPod Touch 4) have twice the pixel density of older iOS devices. Android devices with HDPI displays (e.g., with the common 480x800px or 480x854px screens) and XHDPI displays (e.g., the 720p displays on the latest flagship Android phones), Windows Phone 7 devices, and some recent webOS devices have 1.5 times (or more) the pixel density of earlier/lower-end smartphones. Because these devices have more physical screen pixels in the same space, text and images can look sharper and more legible, especially for small text and detailed graphics. 
 
-On such devices, web pages that provide a higher-resolution image while retaining the display size (through HTML attributes or CSS) can yield images that are visibly sharper and more legible on-screen. For instance, substituting a pixel-doubled homescreen logo (*THEME_DIR/modules/home/images/logo-home.png*) at 560x120px (twice the default 280x60px size) while retaining the *width=280, height=60* attributes in HTML will make that image have maximum possible visual quality on high-density displays. However, this comes at the cost of larger file size. You need to evaluate whether the increased visual quality and legibility are worth the tradeoff. In many cases, 1.5x assets (e.g., 420x90px version of *THEME_DIR/modules/home/images/logo-home.png*) will offer a good tradeoff between increased visual quality and file-size. You may want to experiment with different multipliers, viewing the results on different devices, to find the best tradeoff on an image-by-image basis. 
+On such devices, web pages that provide a higher-resolution image while retaining the display size (through HTML attributes or CSS) can yield images that are visibly sharper and more legible on-screen. For instance, substituting a pixel-doubled homescreen logo (*THEME_DIR/modules/[HOME_MODULE]/images/logo-home.png*) at 560x120px (twice the default 280x60px size) while retaining the *width=280, height=60* attributes in HTML will make that image have maximum possible visual quality on high-density displays. However, this comes at the cost of larger file size. You need to evaluate whether the increased visual quality and legibility are worth the tradeoff. In many cases, 1.5x assets (e.g., 420x90px version of *THEME_DIR/modules/[HOME_MODULE]/images/logo-home.png*) will offer a good tradeoff between increased visual quality and file-size. You may want to experiment with different multipliers, viewing the results on different devices, to find the best tradeoff on an image-by-image basis. 
 
 Generally, logos, highly detailed images, and images incorporating text will benefit most from using high-density versions. Note that BlackBerry devices running any OS prior to 6.0 do not scale images well, so it's best to use images sized exactly for them. Currently there are no tablet devices that take advantage of high-density images.
 
@@ -216,7 +218,7 @@ The following items will benefit the most from using higher-resolution images. T
 ----------------
 Home-screen logo
 ----------------
-Assuming you've created your standard-resolution *THEME_DIR/modules/home/images/logo-home.png* image, make duplicates of it into *THEME_DIR/modules/home/images/compliant-bbplus* and *THEME_DIR/modules/home/images/compliant-blackberry* directories. Then replace *THEME_DIR/modules/home/images/logo-home.png* with a higher-resolution version.
+Assuming you've created your standard-resolution *THEME_DIR/modules/[HOME_MODULE]/images/logo-home.png* image, make duplicates of it into *THEME_DIR/modules/[HOME_MODULE]/images/compliant-bbplus* and *THEME_DIR/modules/[HOME_MODULE]/images/compliant-blackberry* directories. Then replace *THEME_DIR/modules/[HOME_MODULE]/images/logo-home.png* with a higher-resolution version.
 
 ------------------
 Header logo images
@@ -226,7 +228,7 @@ Assuming you've created your standard-resolution *THEME_DIR/common/images/compli
 ---------------------
 Homepage module icons
 ---------------------
-Assuming you've created your standard-resolution module icons at *THEME_DIR/modules/home/images/compliant/[MODULE_ID].png*, make duplicates of all of them into *THEME_DIR/modules/home/images/compliant-bbplus* and *THEME_DIR/modules/home/images/compliant-blackberry* directories. Then replace the module icons in *THEME_DIR/modules/home/images/compliant* with higher-resolution versions, being sure to name them exactly *[MODULE_ID].png* [#f4]_. **Caution:** This can quickly make the total filesize of your homepage quite large, especially if you have a lot of modules. Try 1.5x versions of these images first, rather than 2x (Retina Display) versions.
+Assuming you've created your standard-resolution module icons at *THEME_DIR/modules/[HOME_MODULE]/images/compliant/[MODULE_ID].png*, make duplicates of all of them into *THEME_DIR/modules/[HOME_MODULE]/images/compliant-bbplus* and *THEME_DIR/modules/[HOME_MODULE]/images/compliant-blackberry* directories. Then replace the module icons in *THEME_DIR/modules/[HOME_MODULE]/images/compliant* with higher-resolution versions, being sure to name them exactly *[MODULE_ID].png* [#f4]_. **Caution:** This can quickly make the total filesize of your homepage quite large, especially if you have a lot of modules. Try 1.5x versions of these images first, rather than 2x (Retina Display) versions.
 
 -----------------------
 Breadcrumb module icons

@@ -10,7 +10,34 @@ class DataResponse
     protected $responseCode;
     protected $responseStatus;
     protected $responseError;
+    protected $responseStartTime;
+    protected $responseEndTime;
+    protected $responseTimeElapsed;
+    // target encoding
+    protected $sourceEncoding;
     protected $context=array(); // response defined.
+    
+    public function setStartTime($time) {
+        $this->responseStartTime = $time;
+        $this->responseTimeElapsed = $this->responseEndTime - $this->responseStartTime;
+    }
+
+    public function setEndTime($time) {
+        $this->responseEndTime = $time;
+        $this->responseTimeElapsed = $this->responseEndTime - $this->responseStartTime;
+    }
+    
+    public function getStartTime() {
+        return $this->responseStartTime;
+    }
+
+    public function getEndTime() {
+        return $this->responseEndTime;
+    }
+
+    public function getTimeElapsed() {
+        return $this->responseTimeElapsed;
+    }
 
     public function getResponseFile() {
         throw new KurogoDataException("getResponseFile() does not yet work with " . get_Class($this));
@@ -44,6 +71,9 @@ class DataResponse
     }
     
     public function init($args) {
+        if(isset($args['SOURCE_ENCODING']) && strlen($args['SOURCE_ENCODING']) > 0) {
+            $this->sourceEncoding = $args['SOURCE_ENCODING'];
+        }
     }
     
     public function getResponse() {
@@ -64,6 +94,10 @@ class DataResponse
     
     public function setResponse($response) {
         $this->responseTimestamp = time();
+        // only string can be converted to specified encoding
+        if($this->sourceEncoding && is_string($response)) {
+            $response = mb_convert_encoding($response, "UTF-8", $this->sourceEncoding);
+        }
         $this->response = $response;
     }    
 

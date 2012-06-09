@@ -1,7 +1,7 @@
 {extends file="findExtends:common/templates/footer.tpl"}
 
 {block name="footerNavLinks"}
-  {if $moduleID != 'home'}
+  {if $configModule != $homeModuleID}
     <div id="footerlinks">
       <a href="#top">{$footerBackToTop}</a> 
       {if $hasHelp} | <a href="{$helpLink}">{$helpLinkText}</a>{/if}

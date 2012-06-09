@@ -112,8 +112,7 @@ abstract class APIModule extends Module
     }
     
     //error_log('Redirecting to: '.$url);
-    header("Location: $url");
-    exit;
+    Kurogo::redirectToURL($url);
   }
    /**
      * Factory method
@@ -143,6 +142,16 @@ abstract class APIModule extends Module
     protected function getAPIConfigData($name) {
         $config = $this->getAPIConfig($name);
         return $config->getSectionVars(Config::EXPAND_VALUE);
+    }
+
+    protected function getModuleNavigationData() {
+        $moduleNavConfig = $this->getModuleNavigationConfig();
+        $modules = array(
+            'primary'  => $moduleNavConfig->getOptionalSection('primary_modules'),
+            'secondary'=> $moduleNavConfig->getOptionalSection('secondary_modules')
+        );
+
+        return $modules;
     }
 
     protected function getModuleNavigationIDs() {

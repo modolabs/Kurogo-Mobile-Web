@@ -26,14 +26,15 @@ class RSSDataParser extends XMLDataParser
     protected $imageEnclosureClass='RSSImageEnclosure';
     protected $removeDuplicates = false;
     protected $htmlEscapedCDATA = false;
+    protected $useDescriptionForContent = false;
     protected $items=array();
     protected $guids=array();
 
     protected static $startElements=array(
         'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY',
-        'ENCLOSURE', 'MEDIA:THUMBNAIL','MEDIA:CONTENT', 'IMAGE');
+        'ENCLOSURE', 'MEDIA:THUMBNAIL','MEDIA:CONTENT', 'IMAGE', 'LINK');
     protected static $endElements=array(
-        'CHANNEL', 'FEED', 'ITEM', 'ENTRY');
+        'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'DESCRIPTION');
     
     public function items()
     {
@@ -75,6 +76,14 @@ class RSSDataParser extends XMLDataParser
         if (isset($args['HTML_ESCAPED_CDATA'])) {
             $this->htmlEscapedCDATA = $args['HTML_ESCAPED_CDATA'];
         }
+        
+        if (isset($args['USE_DESCRIPTION_FOR_CONTENT'])) {
+            $this->setUseDescriptionForContent($args['USE_DESCRIPTION_FOR_CONTENT']);
+        }
+    }
+    
+    public function setUseDescriptionForContent($bool) {
+    	$this->useDescriptionForContent = $bool ? true : false;
     }
 
     protected function shouldHandleStartElement($name)
@@ -110,6 +119,21 @@ class RSSDataParser extends XMLDataParser
                 $element->init($this->initArgs);
                 $this->elementStack[] = $element;
                 break;
+            case 'LINK':
+                if (isset($attribs['REL'], $attribs['HREF']) && $attribs['REL'] == 'enclosure') {
+                    $attribs['URL'] = $attribs['HREF'];
+                    if ($this->enclosureIsImage($name, $attribs)) {
+                        $element = new $this->imageEnclosureClass($attribs);
+                    } else {
+                        $element = new $this->enclosureClass($attribs);
+                    }
+                    $element->init($this->initArgs);
+                    $element->setName('enclosure');
+                } else {
+                    $element = new XMLElement($name, $attribs, $this->getEncoding());
+                }
+                $this->elementStack[] = $element;
+                break;
             case 'IMAGE':
                 $this->elementStack[] = new $this->imageClass($attribs);
                 break;
@@ -134,6 +158,17 @@ class RSSDataParser extends XMLDataParser
                 if (!$this->removeDuplicates || !in_array($element->getGUID(), $this->guids)) {
                     $this->guids[] = $element->getGUID();
                     $this->items[] = $element;
+                }
+                break;
+            case 'DESCRIPTION':
+                $parent->addElement($element); // add description as description
+                
+                if ($this->useDescriptionForContent) {
+                    // add description element again as content
+                    $element->setName('CONTENT');
+                    $element->shouldStripTags($this->shouldStripTags($element));
+                    $element->shouldHTMLDecodeCDATA($this->shouldHTMLDecodeCDATA($element));
+                    $parent->addElement($element);
                 }
                 break;
         }

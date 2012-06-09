@@ -7,7 +7,7 @@
     </p>
   {/if}
   
-  {if $moduleID != 'home' || $page != 'index'}
+  {if $configModule != $homeModuleID || $page != 'index'}
     {html_access_key_reset index=0 force=true}
     <p class="bottomnav">
       <a href="#top">{$footerBackToTop}</a>
@@ -15,7 +15,7 @@
       {html_access_key_link href="{$homeLink}"}{$homeLinkText}{/html_access_key_link}
       {if !$isModuleHome}
         {foreach $breadcrumbs as $breadcrumb}
-          {if $moduleID != 'home' || !$breadcrumb@first}
+          {if $configModule != $homeModuleID || !$breadcrumb@first}
             <br/>
             {html_access_key_link href=$breadcrumb['url']}
               {if $breadcrumb@first}
@@ -37,7 +37,7 @@
 {/block}
 
   {block name="loginHTML"}
-    {if $session && $moduleID == 'home'}
+    {if $session && $configModule == $homeModuleID}
 	<div class="loginstatus">
 		<p{if $footerLoginClass} class="{$footerLoginClass}"{/if}><a href="{$footerLoginLink}">{$footerLoginText}</a></p>
 	</div>

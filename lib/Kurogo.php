@@ -1,7 +1,7 @@
 <?php
 
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
-define('KUROGO_VERSION', '1.4 RC2');
+define('KUROGO_VERSION', '1.4.1');
 
 //
 // And a double quote define for ini files (php 5.1 can't escape them)
@@ -24,7 +24,12 @@ class Kurogo
     protected $languages=array();
     protected $cacher;
     protected $module;
+    protected $moduleID;
     protected $request;
+
+    const REDIRECT_PERMANENT = 301;
+    const REDIRECT_TEMPORARY = 302;
+    const REDIRECT_SEE_OTHER = 303;
 
     private function __construct() {
         $this->startTime = microtime(true);
@@ -36,6 +41,7 @@ class Kurogo
     
     public function setCurrentModule(Module $module) {
         $this->module = $module;
+        $this->moduleID = $module->getID();
     }
     
     public function setRequest($id, $page, $args) {
@@ -44,6 +50,8 @@ class Kurogo
             'page'=>$page,
             'args'=>$args
         );
+        //moduleID is used by the autoloader
+        $this->moduleID = $id;
     }
 
     public function getCurrentModule() {
@@ -101,6 +109,19 @@ class Kurogo
         return Kurogo::getOptionalSiteVar('TMP_DIR', sys_get_temp_dir());
     }
     
+    public static function tempFile($prefix='kgo') {
+        $tempDir = self::tempDirectory();
+        if (!is_writable($tempDir)) {
+            throw new KurogoConfigurationException("Temporary directory $tempDir not available");
+        }
+        
+        $umask = umask(0177);
+        $tempFile = tempnam($tempDir, $prefix);
+        umask($umask);
+        
+        return $tempFile;
+    }
+    
     public static function moduleLinkForItem($moduleID, $object, $options=null) {
         $module = WebModule::factory($moduleID);
         return $module->linkForItem($object, $options);
@@ -122,6 +143,12 @@ class Kurogo
     }
     
     public function addPackage($packageName, $subpackageName=null) {
+        // allow Package/Subpackage string
+        if (preg_match("#([a-zA-Z0-9]+)/([a-zA-Z0-9]+)#", $packageName, $bits)) {
+            $packageName = $bits[1];
+            $subpackageName = $bits[2];
+        }
+        
         if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
             throw new KurogoConfigurationException("Invalid Package name $packageName");
         }
@@ -135,6 +162,9 @@ class Kurogo
         $found = false;
         
         $dirs = array(LIB_DIR . "/$packageName");
+        if (defined('SHARED_LIB_DIR')) {
+            $dirs[] = SHARED_LIB_DIR . "/$packageName";
+        }
         if (defined('SITE_LIB_DIR')) {  
             $dirs[] = SITE_LIB_DIR . "/$packageName";
         }
@@ -166,8 +196,9 @@ class Kurogo
      * file has not been loaded. Files MUST be named with the same name as its class
      * currently it will search:
      * 1. If the className has Module in it, it will search the MODULES_DIR
-     * 2. The SITE_LIB_DIR  (keep in mind that some files may manually include the LIB_DIR class
-     * 3. The LIB_DIR 
+     * 2. The SITE_LIB_DIR   (keep in mind that some files may manually include the LIB_DIR class)
+     * 3. The SHARED_LIB_DIR (keep in mind that some files may manually include the LIB_DIR class)
+     * 4. The LIB_DIR 
      * 
      */
      
@@ -179,8 +210,23 @@ class Kurogo
         $paths = $this->libDirs;
         
         // If the className has Module in it then use the modules dir
-        if (defined('MODULES_DIR') && preg_match("/(.*)(Web|API)Module/", $className, $bits)) {
+        if (defined('MODULES_DIR') && preg_match("/(.+)(Web|API)Module$/", $className, $bits)) {
             $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
+        }
+        
+        if ($this->moduleID) {
+            if (defined('MODULES_DIR')) {
+                $paths[] = implode('/', array(MODULES_DIR, $this->moduleID, 'lib'));
+            }
+            
+            if (defined('SITE_MODULES_DIR')) {
+                $paths[] = implode('/', array(SITE_MODULES_DIR, $this->moduleID, 'lib'));
+            }
+        }
+        
+        // use the shared lib dir if it's been defined
+        if (defined('SHARED_LIB_DIR')) {
+            $paths[] = SHARED_LIB_DIR;
         }
         
         // use the site lib dir if it's been defined
@@ -458,11 +504,15 @@ class Kurogo
         // Constants which cannot be set by config file
         //
         
-        define('WEBROOT_DIR',       ROOT_DIR . DIRECTORY_SEPARATOR . 'www'); 
-        define('LIB_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'lib');
-        define('MASTER_CONFIG_DIR', ROOT_DIR . DIRECTORY_SEPARATOR . 'config');
-        define('APP_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'app');
-        define('MODULES_DIR',       APP_DIR  . DIRECTORY_SEPARATOR . 'modules');
+        define('WEBROOT_DIR',        ROOT_DIR  . DIRECTORY_SEPARATOR . 'www'); 
+        define('LIB_DIR',            ROOT_DIR  . DIRECTORY_SEPARATOR . 'lib');
+        define('MASTER_CONFIG_DIR',  ROOT_DIR  . DIRECTORY_SEPARATOR . 'config');
+        define('APP_DIR',            ROOT_DIR  . DIRECTORY_SEPARATOR . 'app');
+        define('MODULES_DIR',        APP_DIR   . DIRECTORY_SEPARATOR . 'modules');
+        define('SHARED_DIR',         ROOT_DIR  . DIRECTORY_SEPARATOR . 'site' . DIRECTORY_SEPARATOR . 'shared');
+        define('SHARED_LIB_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'lib');
+        define('SHARED_APP_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'app');
+        define('SHARED_MODULES_DIR', SHARED_APP_DIR . DIRECTORY_SEPARATOR . 'modules');
         define('MIN_FILE_PREFIX',  'file-');
         define('API_URL_PREFIX',   'rest');
         
@@ -543,8 +593,7 @@ class Kurogo
         if ($host != strtolower($host)) {
             $url = 'http'.(IS_SECURE ? 's' : '').'://' . strtolower($host) . $path;
             self::log(LOG_INFO, "Redirecting to lowercase url $url", 'kurogo');
-            header("Location: $url");
-            exit();
+            Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
           }
                   
         //
@@ -644,8 +693,7 @@ class Kurogo
                     $site = $siteConfig->getVar('DEFAULT_SITE');
                     array_splice($paths, 1, 1, array($site, $paths[1]));
                     $url = implode("/", $paths);
-                    header("Location: $url");
-                    die();
+                    Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
                 }
             }
 
@@ -972,6 +1020,7 @@ class Kurogo
     private function getStringsForLanguage($lang) {
         $stringFiles = array(
             APP_DIR . "/common/strings/".$lang . '.ini',
+            SHARED_APP_DIR . "/common/strings/".$lang . '.ini',
             SITE_APP_DIR . "/common/strings/".$lang . '.ini'
         );
         
@@ -1056,15 +1105,19 @@ class Kurogo
     }
     
     public static function defaultModule() {
-      $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
-      $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
-
-      if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
-        if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
-            $module = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
+        $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
+        $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
+        $browser  = strtoupper(Kurogo::deviceClassifier()->getBrowser());
+  
+        if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}-{$browser}",'','urls')) {
+            if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
+                if (!$module = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
+                    $homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
+                    $module = Kurogo::getOptionalSiteVar("DEFAULT", $homeModuleID, 'urls');
+                }
+            }
         }
-      }
-      
+        
         return $module; 
     }
     
@@ -1097,6 +1150,14 @@ class Kurogo
         includePackage('Cache');
         return KurogoMemoryCache::getCacheClasses();
         
+    }
+    
+    // REDIRECT_PERMANENT (301): Use this when you want search engines to see the redirect.
+    // REDIRECT_SEE_OTHER (303): Use when redirecting from forms (POST -> GET).
+    // REDIRECT_TEMPORARY (302): Use in all other situations (default).
+    public static function redirectToURL($url, $code=self::REDIRECT_TEMPORARY) {
+        header("Location: $url", true, $code);
+        exit();
     }
 }
 

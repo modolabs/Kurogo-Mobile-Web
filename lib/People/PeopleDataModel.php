@@ -80,7 +80,16 @@ abstract class Person implements KurogoObject
     public function getTitle() {
         return $this->getName();
     }
-        
+    
+    // Some feeds can return images as data (e.g. LDAP)
+    // If your subclass does, implement these
+    public function getPhotoMIMEType() {
+        return '';
+    }
+    public function getPhotoData() {
+        return null;
+    }
+    
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
             switch ($filter)
@@ -104,6 +113,7 @@ abstract class Person implements KurogoObject
 
 interface PeopleRetriever extends SearchDataRetriever
 {
+    const MIN_PHONE_SEARCH = 3;
     public function getUser($id);
     public function setAttributes($attributes);
 }

@@ -50,14 +50,17 @@ function _outputTypeFile($matches) {
 
   $platform = Kurogo::deviceClassifier()->getPlatform();
   $pagetype = Kurogo::deviceClassifier()->getPagetype();
+  $browser  = Kurogo::deviceClassifier()->getBrowser();
   
   $testDirs = array(
     THEME_DIR.'/'.$matches[1].$matches[2],
     SITE_APP_DIR.'/'.$matches[1].$matches[2],
+    SHARED_APP_DIR.'/'.$matches[1].$matches[2],
     APP_DIR.'/'.$matches[1].$matches[2],
   );
   
   $testFiles = array(
+    "$pagetype-$platform-$browser/$file",
     "$pagetype-$platform/$file",
     "$pagetype/$file",
     "$file",
@@ -141,6 +144,11 @@ function CacheHeaders($file)
 
 $url_patterns = array(
   array(
+    'pattern' => ';^.*robots.txt$;', 
+    'func'    => '_phpFile',
+    'params'  => array(LIB_DIR.'/robots.php'),
+  ),
+  array(
     'pattern' => ';^.*favicon.ico$;', 
     'func'    => '_outputFile',
     'params'  => array(THEME_DIR.'/common/images/favicon.ico'),
@@ -198,14 +206,18 @@ if (!strlen($path) || $path == '/') {
     $url = URL_PREFIX . $url . "/";
   }
   
-  header("Location: $url");
-  exit;
+  Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
 } 
 
 $parts = explode('/', ltrim($path, '/'), 2);
 
 if ($parts[0]==API_URL_PREFIX) {
-    set_exception_handler("exceptionHandlerForAPI");
+    if (Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+        set_exception_handler("exceptionHandlerForProductionAPI");
+    } else {
+        set_exception_handler("exceptionHandlerForAPI");
+    }
+
     $parts = explode('/', ltrim($path, '/'));
 
     switch (count($parts))
@@ -262,8 +274,7 @@ if ($parts[0]==API_URL_PREFIX) {
           }
         }
         Kurogo::log(LOG_NOTICE, "Redirecting to $url", 'kurogo');
-        header("Location: " . $url);
-        exit;
+        Kurogo::redirectToURL($url, Kurogo::REDIRECT_PERMANENT);
       }
     }
     
@@ -275,8 +286,7 @@ if ($parts[0]==API_URL_PREFIX) {
       
     } else {
       // redirect with trailing slash for completeness
-      header("Location: ./$id/");
-      exit;
+      Kurogo::redirectToURL("./$id/", Kurogo::REDIRECT_PERMANENT);
     }
 
     $Kurogo->setRequest($id, $page, $args);

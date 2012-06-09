@@ -27,12 +27,14 @@ abstract class DataRetriever {
     protected $cacheRequest = true;
     protected $cacheLifetime = null; //if null it will use cache default.
     protected $requestInit = false; //whether initRequest has been called or not
+    protected $lastResponse;
     protected $parser;
 
     abstract protected function retrieveResponse();
     
     public function setCacheLifeTime($cacheLifetime) {
         $this->cacheLifetime = $cacheLifetime;
+        $this->cache->setCacheLifetime($cacheLifetime);
     }
 
     protected function setCacheKey($cacheKey) {
@@ -81,6 +83,13 @@ abstract class DataRetriever {
         return null;
     }
     
+    protected function clearResponseCache($cacheKey, $cacheGroup) {
+        if ($cacheKey) {
+            $this->cache->setCacheGroup($cacheGroup);
+            return $this->cache->delete($cacheKey);
+        }
+    }
+    
     protected function cacheResponse($cacheKey, $cacheGroup, DataResponse $response) {
         if ($cacheKey) {
             $this->cache->setCacheGroup($cacheGroup);
@@ -106,26 +115,35 @@ abstract class DataRetriever {
     }
     
     public function getResponse() {
+        $this->lastResponse = null;
         $cacheKey = $this->shouldCacheRequest() ? $this->cacheKey() : null;
         $cacheGroup = $this->cacheGroup();
         
         if (!$response = $this->getCachedResponse($cacheKey, $cacheGroup)) {
 
+            $startTime = microtime(true);
             $response = $this->retrieveResponse();
+            $endTime = microtime(true);
             if (!$response instanceOf DataResponse) {
                 throw new KurogoDataException("Response must be instance of DataResponse");
             }
-            $response->setRetriever($this);
+            // if the retriever did not set the start/end time, set it here. it will include some overhead
+            if (!$response->getEndTime()) {
+                $response->setStartTime($startTime);
+                $response->setEndTime($endTime);
+            }
             if (!$response->getResponseError()) {
                 $this->cacheResponse($cacheKey, $cacheGroup, $response);
             }
         }
         
+        $response->setRetriever($this);
+        $this->lastResponse = $response;
         return $response;
     }
     
     protected function initResponse() {
-        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, array());
+        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, $this->initArgs);
         foreach ($this->context as $var=>$value) {
             $response->setContext($var, $value);
         }
@@ -209,6 +227,10 @@ abstract class DataRetriever {
                 $args['PARSER_CLASS'] = 'PassthroughDataParser';
             }            
         }
+
+        if (!isset($args['CACHE_LIFETIME'])) {
+            $args['CACHE_LIFETIME'] = $this->DEFAULT_CACHE_LIFETIME;
+        }
         
         // instantiate the parser class
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
@@ -220,12 +242,18 @@ abstract class DataRetriever {
     
     public function clearInternalCache() {
         $this->options = array();
+        $this->context = array();
         $this->requestInit = false;
         $this->parser()->clearInternalCache();
     }
     
     public static function factory($retrieverClass, $args) {
         Kurogo::log(LOG_DEBUG, "Initializing DataRetriever $retrieverClass", "data");
+        
+        if (isset($args['PACKAGE'])) {
+            Kurogo::includePackage($args['PACKAGE']);
+        }
+                
         if (!class_exists($retrieverClass)) {
             throw new KurogoConfigurationException("Retriever class $retrieverClass not defined");
         }
@@ -298,12 +326,20 @@ abstract class DataRetriever {
     }
 
     public function getResponseError() {
+        if ($this->lastResponse) {
+            return $this->lastResponse->getResponseError();
+        }
+        
         if ($response = $this->getResponse()) {
             return $response->getResponseError();
         }
     }
 
     public function getResponseCode() {
+        if ($this->lastResponse) {
+            return $this->lastResponse->getCode();
+        }
+
         if ($response = $this->getResponse()) {
             return $response->getCode();
         }
@@ -331,6 +367,11 @@ abstract class DataRetriever {
 
            case DataParser::PARSE_MODE_RESPONSE:
                 $data = $this->parseResponse($response, $parser);
+                if ($response->getResponseError()) {
+                    $cacheKey = $this->shouldCacheRequest() ? $this->cacheKey() : null;
+                    $cacheGroup = $this->cacheGroup();
+                    $this->clearResponseCache($cacheKey, $cacheGroup);
+                }
                 break;
             default:
                 throw new KurogoConfigurationException("Unknown parse mode");

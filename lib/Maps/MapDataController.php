@@ -476,11 +476,7 @@ class MapDataController extends DataController implements MapFolder
             if (!class_exists('ZipArchive')) {
                 throw new KurogoException("class ZipArchive (php-zip) not available");
             }
-            $tmpDir = Kurogo::tempDirectory();
-            if (!is_writable($tmpDir)) {
-                throw new KurogoConfigurationException("Temporary directory $tmpDir not available");
-            }
-            $tmpFile = $tmpDir.'/tmp.kmz';
+            $tmpFile = Kurogo::tempFile();
 
             copy($url, $tmpFile);
             $zip = new ZipArchive();
