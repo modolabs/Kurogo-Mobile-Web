@@ -87,6 +87,18 @@ class PeopleWebModule extends WebModule {
                 $detail['class'] = 'phone';
                 break;
  
+            case 'imgdata':
+                $detail['title'] = "";
+                $detail['class'] = 'img';
+                $detail['img'] = $this->buildURL('photo', array('uid'=>$person->getID()));
+                break;
+
+            case 'imgurl':
+                $detail['title'] = "";
+                $detail['class'] = 'img';
+                $detail['img'] = $value;
+                break;
+
             // compatibility
             case 'map':
                 $info['module'] = 'map';
@@ -219,6 +231,12 @@ class PeopleWebModule extends WebModule {
         );
     }
 
+    public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null) {
+        return array_merge(
+            parent::linkForValue($value, $callingModule, $otherValue), 
+            array('class' => 'action people'));
+    }
+    
     protected function getContactGroup($group) {
         if (!$this->contactGroups) {
             $this->contactGroups = $this->getModuleSections('contacts-groups');
@@ -276,7 +294,6 @@ class PeopleWebModule extends WebModule {
                     $person = $PeopleController->getUser($uid);
           
                     if ($person) {
-                    
                         $this->setLogData($uid, $person->getName());
                         $personDetails =  $this->formatPersonDetails($person);
                         // Bookmark
@@ -289,6 +306,16 @@ class PeopleWebModule extends WebModule {
                             $cookieID = http_build_query($cookieParams);
                             $this->generateBookmarkOptions($cookieID);
                         }
+                        
+                        $headerSectionKeys = array('HEADER_THUMBNAIL', 'HEADER_TITLE', 'HEADER_SUBTITLE');
+                        $headerSections = array();
+                        foreach ($headerSectionKeys as $section) {
+                            if (isset($personDetails[$section])) {
+                                $headerSections[$section] = $personDetails[$section];
+                                unset($personDetails[$section]);
+                            }
+                        }
+                        $this->assign('headerSections', $headerSections);
                         $this->assign('personDetails', $personDetails);
                         break;
                     } else {
@@ -297,6 +324,21 @@ class PeopleWebModule extends WebModule {
                 } else {
                     $this->assign('searchError', 'No username specified');
                 }
+                break;
+                
+            case 'photo':
+                if ($uid = $this->getArg('uid')) {
+                    if ($person = $PeopleController->getUser($uid)) {
+                        if ($data = $person->getPhotoData()) {
+                            header("Content-type: ".$person->getPhotoMIMEType());
+                            echo $data;
+                            exit(0);
+                        }
+                    }
+                }
+                
+                header("HTTP/1.1 404 Not Found");
+                exit(0);
                 break;
         
             case 'search':

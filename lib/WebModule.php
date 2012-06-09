@@ -7,6 +7,9 @@
   * Breadcrumb Parameter
   */
 define('MODULE_BREADCRUMB_PARAM', '_b');
+define('MODULE_AJAX_BREADCRUMB_TITLE', '_abt');
+define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_ablt');
+define('MODULE_AJAX_CONTAINER_PAGE', '_acp');
 define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
@@ -32,6 +35,7 @@ abstract class WebModule extends Module {
   protected $browser = 'unknown';
 
   protected $ajaxContentLoad = false;
+  protected $ajaxContainerPage = '';
   
   protected $imageExt = '.png';
   
@@ -105,7 +109,7 @@ abstract class WebModule extends Module {
       $tabArgs = $this->args;
       $tabArgs['tab'] = $tabKey;
       $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
-      
+      $tabs[$tabKey]['id'] = "{$tabKey}-".md5($tabs[$tabKey]['url']);
       $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
     }
     
@@ -125,7 +129,7 @@ abstract class WebModule extends Module {
     );
 
     $currentJS = $tabs[$currentTab]['javascript'];
-    $this->addInlineJavascriptFooter("showTab('{$currentTab}Tab');{$currentJS}");
+    $this->addInlineJavascriptFooter("(function(){ var tabKey = '{$currentTab}';var tabId = '{$tabs[$currentTab]['id']}';showTab(tabId);{$currentJS} })();");
   }
   
   //
@@ -333,6 +337,18 @@ abstract class WebModule extends Module {
     return "/$id/$page".(strlen($argString) ? "?$argString" : "");
   }
 
+  protected function buildAjaxURL($page, $args=array()) {
+      return self::buildAjaxURLForModule($this->configModule, $page, $args);
+  }
+
+  public static function buildAjaxURLForModule($id, $page, $args=array()) {
+      $argString = '';
+      if (isset($args) && count($args)) {
+          $argString = http_build_query($args);
+      }
+      return FULL_URL_PREFIX."$id/$page".(strlen($argString) ? "?$argString" : '');
+  }
+  
   protected function buildExternalURL($url) {
     return $url;
   }
@@ -507,6 +523,7 @@ abstract class WebModule extends Module {
         }
 
         $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
+        $this->ajaxContainerPage = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->page);
         
         if ($page) {
             // Pull in fontsize
@@ -1138,8 +1155,10 @@ abstract class WebModule extends Module {
       if (!is_array($breadcrumbs)) { $breadcrumbs = array(); }
     }
 
-    if ($this->page != 'index') {
+    if ($this->page != 'index' && $this->ajaxContainerPage != 'index') {
       // Make sure a module homepage is first in the breadcrumb list
+      // Unless this page is being ajaxed in... then the original 
+      // parent page might be the index page.
       $addModuleHome = false;
       if (!count($breadcrumbs)) {
         $addModuleHome = true; // no breadrumbs
@@ -1201,11 +1220,14 @@ abstract class WebModule extends Module {
     if ($addBreadcrumb) {
       $args = $this->args;
       unset($args[MODULE_BREADCRUMB_PARAM]);
+      unset($args[MODULE_AJAX_BREADCRUMB_TITLE]);
+      unset($args[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
+      unset($args[MODULE_AJAX_CONTAINER_PAGE]);
       
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
         'lt' => $this->breadcrumbLongTitle,
-        'p'  => $this->page,
+        'p'  => $this->ajaxContentLoad ? $this->ajaxContainerPage : $this->page,
         'a'  => http_build_query($args),
       );
     }
@@ -1226,6 +1248,34 @@ abstract class WebModule extends Module {
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
     return "/$id/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+  }
+  
+  protected function buildAjaxBreadcrumbURL($page, $args, $addBreadcrumb=true) {
+      return $this->buildAjaxBreadcrumbURLForModule($this->configModule, $page, $args, $addBreadcrumb);
+  }
+  
+  protected function buildAjaxBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
+      if ($this->pagetype == 'basic' || $this->pagetype == 'touch') {
+          // behavior for touch and basic where no ajax is used
+          return $this->buildBreadcrumbURLForModule($this->configModule, $page, $args, true);
+          
+      } else {
+          // forward breadcrumb title
+          $args[MODULE_AJAX_BREADCRUMB_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_TITLE, $this->breadcrumbTitle);
+          
+          // forward breadcrumb title
+          $args[MODULE_AJAX_BREADCRUMB_LONG_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_LONG_TITLE, $this->breadcrumbLongTitle);
+          
+          // forward parent page id
+          $args[MODULE_AJAX_CONTAINER_PAGE] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->ajaxContainerPage);
+          
+          // forward current breadcrumb arg rather than adding
+          if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
+              $args[MODULE_BREADCRUMB_PARAM] = $this->args[MODULE_BREADCRUMB_PARAM];
+          }
+          
+          return $this->buildAjaxURLForModule($id, $page, $args);
+      }
   }
   
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
@@ -1268,6 +1318,16 @@ abstract class WebModule extends Module {
       } else {
         $this->pageConfig = array();
       }
+    }
+    
+    // Ajax overrides for breadcrumb title and long title
+    if (isset($this->args[MODULE_AJAX_BREADCRUMB_TITLE])) {
+      $this->breadcrumbTitle = $this->args[MODULE_AJAX_BREADCRUMB_TITLE];
+      $this->breadcrumbLongTitle = $this->breadcrumbTitle;
+    }
+    
+    if (isset($this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE])) {
+      $this->breadcrumbLongTitle = $this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE];
     }
   }
   

@@ -55,7 +55,7 @@ paneStories.prototype = {
     options: {
     },
 	
-	  resizeHandler: function () {
+	resizeHandler: function () {
         // set the size on the stories
         if (this.stories.length) {
             var storyClipHeight = getCSSHeight(this.element)

@@ -85,7 +85,7 @@ strong {
 /* Major layout blocks */
 
 #container {
-	min-height: 320px;
+	min-height: 100%;
 }
 
 #containerinset {
@@ -909,19 +909,18 @@ a.sidenav-next {
 }
 
 .label {
-    display: block;
-    width: 6em;
-    position: relative;
-    font-size: 76.471%;
-    line-height: 1.3em;
-    font-weight: bold;
-    text-align: right;
+  display: block;
+  font-size: 76.471%;
+  line-height: 1.3em;
+  font-weight: bold;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .value {
     display: block;
-    margin-top: -1.2em;
-    margin-left: 5em;
     font-size: 100%;
     min-height: 1.3em;
     line-height: 1.3em;

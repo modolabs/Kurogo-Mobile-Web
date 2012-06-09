@@ -4,46 +4,61 @@
   <div class="nonfocal">{$searchError}</div>
 {else}
 
-<div class="peoplebuttons">
-{include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
-</div>
-
-{block name="detailsStart"}
-{/block}
-  {foreach $personDetails as $sectionName=>$section}
-    {block name="sectionStart"}
-      <ul class="nav section_{$sectionName}">
-    {/block}        
-        {foreach $section as $key=>$item}
-          {block name="detail"}
-            <li class="detail_{$key}{if !$item['label']} nolabel{/if}">
-              {if $item['url']}
-                <a href="{$item['url']}" class="{$item['class']}">
-              {/if}
-                  {if $item['label']}<div class="label">{$item['label']}</div>{/if}
-                  {if $item['title']}<div class="value">{$item['title']}</div>{/if}
-              {if $item['url']}
-                </a>
-              {/if}
-              
-              
-              {if $item['img']}
-			      <img src="{$item['img']}" class="image" alt="{$item['title']}"{if $item['imgWidth']}
-			        width="{$item['imgWidth']}"{/if}{if $item['imgHeight']}
-			        height="{$item['imgHeight']}"{/if}{if $item['imgAlt']}
-			        alt="{$item['imgAlt']}"{/if} />
-    		  {/if}
-              
-              
-            </li>
+{if $headerSections}
+  <div class="{block name="headerClass"}nonfocal header{/block}">
+    {if isset($headerSections['HEADER_THUMBNAIL'])}
+      {$item = reset($headerSections['HEADER_THUMBNAIL'])}
+      {block name="headerPhoto"}
+        {if $item['img']}
+          <img src="{$item['img']}" class="photo" alt="{$item['title']}"{if $item['imgWidth']}
+            width="{$item['imgWidth']}"{/if}{if $item['imgHeight']}
+            height="{$item['imgHeight']}"{/if}{if $item['imgAlt']}
+            alt="{$item['imgAlt']}"{/if} />
+        {/if}
+      {/block}
+    {/if}
+    <div class="header-text">
+      {$item = reset($headerSections['HEADER_TITLE'])}
+      {block name="headerTitle"}
+        {if $item['url']}<a href="{$item['url']}" class="{$item['class']}">{/if}
+          <h2>{$item['title']}</h2>
+        {if $item['url']}</a>{/if}
+      {/block}
+      {if isset($headerSections['HEADER_SUBTITLE'])}
+        {foreach $headerSections['HEADER_SUBTITLE'] as $item}
+          {block name="headerSubtitles"}
+            {if $item['url']}<a href="{$item['url']}" class="{$item['class']}">{/if}
+              <div class="smallprint">{$item['title']}</div>
+            {if $item['url']}</a>{/if}
           {/block}
-        {/foreach}    
-    {block name="sectionEnd"}
-      </ul>
-    {/block} 
+        {/foreach}
+      {/if}
+    </div>
+  </div>
+  <div class="{block name="bookmarksClass"}nonfocal{/block}">
+    {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+  </div>
+{/if}
+
+{foreach $personDetails as $sectionName => $section}
+  {foreach $section as $key => $item}
+    {if $item['label']}
+      {capture name="label" assign="label"}
+        {block name="itemLabel"}
+          <div class="label">{$item['label']}</div>
+        {/block}
+      {/capture}
+      {$section[$key]['label'] = $label}
+    {/if}
+    {capture name="title" assign="title"}
+      {block name="itemTitle"}
+        <div class="value">{$item['title']}</div>
+      {/block}
+    {/capture}
+    {$section[$key]['title'] = $title}
   {/foreach}
-{block name="detailsEnd"}
-{/block}
+  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$section accessKey=false labelColon=false}
+{/foreach}
 
 {/if}
 
