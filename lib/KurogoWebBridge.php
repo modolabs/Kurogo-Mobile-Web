@@ -249,7 +249,7 @@ class KurogoWebBridge
         // rewrite form action urls, removing php extension
         $contents = preg_replace(
             array(
-              '@(<form\s+[^>]*action=")('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')([^"\.]+)(.php|([^"]*))(")@',
+              '@(<form\s+[^>]*action=")('.preg_quote(URL_PREFIX).')([^"\.]+)(.php|([^"]*))(")@',
               '@(<form\s+[^>]*action=")([^"\.]+)(.php|([^"]*))(")@',
             ),
             array(
@@ -265,7 +265,7 @@ class KurogoWebBridge
         self::$currentInstance = $this;
         $contents = preg_replace_callback(
             ';(href\s*=\s*"|href\s*=\s*\'|src\s*=\s*"|src\s*=\s*\'|url\(")'.
-                '('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')([^>\'\"\\\)]+)'.
+                '('.preg_quote(URL_PREFIX).')([^>\'\"\\\)]+)'.
             '("\)|"|\');', 
             array(get_class(), $callback), 
             $contents
