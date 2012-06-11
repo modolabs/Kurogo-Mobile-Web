@@ -500,6 +500,10 @@ class KurogoWebBridge
     }
     
     public static function redirectTo($url) {
+        if (!self::hasNativePlatform()) {
+            // web debugging mode:
+            $url = URL_PREFIX.ltrim($url, '/');
+        }
         echo '<script type="text/javascript">window.location = "'.$url.'";</script>';
         exit;
     }
