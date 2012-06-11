@@ -410,12 +410,13 @@ abstract class WebModule extends Module {
   }
 
   public function redirectToModule($id, $page, $args=array(), $type=Kurogo::REDIRECT_TEMPORARY) {
-    $url = URL_PREFIX . ltrim(self::buildURLForModule($id, $page, $args), '/');
+    $url = self::buildURLForModule($id, $page, $args);
     
     //error_log('Redirecting to: '.$url);
     if (KurogoWebBridge::shouldRewriteRedirects()) {
       KurogoWebBridge::redirectTo($url);
     } else {
+      $url = URL_PREFIX . ltrim($url, '/');
       Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url", 'module');
       Kurogo::redirectToURL($url, $type);
     }
@@ -430,12 +431,12 @@ abstract class WebModule extends Module {
     } else {
       $url = $this->buildURL($page, $args);
     }
-    $url = URL_PREFIX . ltrim($url, '/');
     
     //error_log('Redirecting to: '.$url);
     if (KurogoWebBridge::shouldRewriteRedirects()) {
       KurogoWebBridge::redirectTo($url);
     } else {
+      $url = URL_PREFIX . ltrim($url, '/');
       Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url", 'module');
       Kurogo::redirectToURL($url, $type);
     }
