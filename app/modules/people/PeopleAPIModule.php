@@ -56,7 +56,9 @@ class PeopleAPIModule extends APIModule
                 $attribute = $fieldOptions['attributes'][$i];
                 $values = $person->getField($attribute);
                 if ($values) {
-                    if (is_array($values)) {
+                    if (self::argVal($fieldOptions, 'type') == 'imgdata') {
+                        $attributes[$label] = FULL_URL_PREFIX.$this->configModule.'/photo?'.http_build_query(array('uid'=>$person->getID()));
+                    } else if (is_array($values)) {
                         $delimiter = isset($fieldOptions['delimiter']) ? $fieldOptions['delimiter'] : ' ';
                         $attributes[$label] = implode($delimiter, $values);
                     } else {
