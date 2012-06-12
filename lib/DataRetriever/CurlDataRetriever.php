@@ -11,53 +11,48 @@
  
 class CurlDataRetriever extends URLDataRetriever {
 	protected $curl;
-	protected $returnHeader = false;
-	protected $postFields = array();
+	protected $responseHeaders = array();
 	
     public function __wakeup() {
+        parent::__wakeup();
         $this->initCurl($this->initArgs);
     }
     
     protected function initCurl($args) {
         $this->curl = curl_init();
         
-        curl_setopt($this->curl, CURLOPT_USERAGENT, Kurogo::KurogoUserAgent());
-        //if CURLOPT_RETURNTRANSFER is not set false in feed file, it will be set to true by default
-        if(!array_key_exists('CURLOPT_RETURNTRANSFER', $args)) {
-        	curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
-        }
+        $this->setCurlOption(CURLOPT_USERAGENT, Kurogo::KurogoUserAgent());
+        $this->setCurlOption(CURLOPT_RETURNTRANSFER, true);
+        $this->setCurlOption(CURLOPT_HEADERFUNCTION, array($this, 'processHeader'));
         
         //setup the option which configured in feed file
         foreach($args as $key=>$value) {
-        	if(preg_match("/CURLOPT_/", $key)) {
-        		curl_setopt($this->curl, constant($key), $value);
-        		//if CURLOPT_HEADER is set in feed, the headers will return in data returns
-        		if($key == 'CURLOPT_HEADER' && $value == 1) {
-        			$this->returnHeader = true;
-        		}
-        	}elseif(preg_match("/POST_(.*)/", $key, $postFieldName)) {
-        		$this->postFields[strtolower($postFieldName[1])] = $value;
+        	if (preg_match("/CURLOPT_/", $key)) {
+        	    $this->setCurlOption(constant($key), $value);
         	}
         }
+    }
+    
+    protected function processHeader($curl, $header) {
+        $this->responseHeaders[] = trim($header);
+        return strlen($header);
     }
     
     protected function setCurlOption($key, $value) {
         curl_setopt($this->curl, $key, $value);
     }
 	
-    protected function setPostFields() {
-        $this->setCurlOption(CURLOPT_POSTFIELDS, $this->postFields);
-    }
-    
     protected function setCurlMethod() {
         $method = $this->method();
         switch($method) {
             case "POST":
                 $this->setCurlOption(CURLOPT_POST, 1);
-                $this->setPostFields();
+                break;
+            case "GET":
+                $this->setCurlOption(CURLOPT_HTTPGET, 1);
                 break;
             default:
-                $this->setCurlOption(CURLOPT_HTTPGET, 1);
+                $this->setCurlOption(CURLOPT_CUSTOMREQUEST, $method);
                 break;
         }
         return $method;
@@ -70,6 +65,13 @@ class CurlDataRetriever extends URLDataRetriever {
         }
         $this->setCurlOption(CURLOPT_HTTPHEADER, $headers);
         return $headers;
+    }
+
+    protected function setCurlData() {
+        if ($data = $this->data()) {
+            $this->setCurlOption(CURLOPT_POSTFIELDS, $data);
+        }
+        return $data;
     }
     
     protected function init($args) {
@@ -84,6 +86,7 @@ class CurlDataRetriever extends URLDataRetriever {
     protected function retrieveResponse() {
     
         $this->initRequestIfNeeded();
+        $this->responseHeaders = array();
         if (!$this->requestURL = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }
@@ -95,7 +98,7 @@ class CurlDataRetriever extends URLDataRetriever {
         $this->requestParameters = $this->parameters();
         $this->requestMethod = $this->setCurlMethod();
         $this->requestHeaders = $this->setCurlHeaders();
-        $this->requestData = $this->data();
+        $this->requestData = $this->setCurlData();
         
         Kurogo::log(LOG_INFO, "Retrieving $this->requestURL", 'curl_retriever');
 
@@ -103,29 +106,27 @@ class CurlDataRetriever extends URLDataRetriever {
 
         if (!isset($url_parts['scheme'])) {
              return parent::retrieveResponse();
+        } else {
+             $this->DEFAULT_RESPONSE_CLASS="HTTPDataResponse";
         }
         
+        $this->setCurlOption(CURLOPT_URL, $this->requestURL);
         $response = $this->initResponse();
+        $response->setStartTime(microtime(true));
 
         if ($file = $this->saveToFile()) {
             $data = $this->cache->getFullPath($file);
-        	$this->setCurlOption(CURLOPT_URL, $this->requestURL);
-            $result = file_put_contents($data, curl_exec($this->curl));
+        	$this->setCurlOption(CURLOPT_FILE, $data);
+            $result = curl_exec($this->curl);
         } else {
-        	$this->setCurlOption(CURLOPT_URL, $this->requestURL);
         	$data = curl_exec($this->curl);
-        	//if returned header, explode it into header and data.
-        	if($this->returnHeader) {
-		        list($header,$data) = explode("\r\n\r\n", $data, 2);
-		        $http_response_header = array();
-		        $http_response_header = explode("\r\n", $header);
-        	}
+        	$response->setResponseError(curl_error($this->curl));
         }
+        $response->setEndTime(microtime(true));
 
         if ($response instanceOf HTTPDataResponse) {
-            $http_response_header = isset($http_response_header) ? $http_response_header : array();
             $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders, $this->requestData);
-            $response->setResponseHeaders($http_response_header);
+            $response->setResponseHeaders($this->responseHeaders);
             Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'curl_retriever');
         } elseif ($response instanceOf FileDataResponse) {
             $response->setRequest($this->requestURL);
