@@ -39,9 +39,13 @@
   {/block}
 
   {block name="footer"}
-    <div id="footer">
-      {$footerHTML}
-    </div>
+    {if isset($customFooter)}
+      {$customFooter|default:''}
+    {else}
+      <div id="footer">
+        {$footerHTML}
+      </div>
+    {/if}
   {/block}
 
   {block name="deviceDetection"}
