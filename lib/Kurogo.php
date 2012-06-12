@@ -24,6 +24,7 @@ class Kurogo
     protected $languages=array();
     protected $cacher;
     protected $module;
+    protected $moduleID;
     protected $request;
 
     const REDIRECT_PERMANENT = 301;
@@ -40,6 +41,7 @@ class Kurogo
     
     public function setCurrentModule(Module $module) {
         $this->module = $module;
+        $this->moduleID = $module->getID();
     }
     
     public function setRequest($id, $page, $args) {
@@ -48,6 +50,8 @@ class Kurogo
             'page'=>$page,
             'args'=>$args
         );
+        //moduleID is used by the autoloader
+        $this->moduleID = $id;
     }
 
     public function getCurrentModule() {
@@ -206,8 +210,18 @@ class Kurogo
         $paths = $this->libDirs;
         
         // If the className has Module in it then use the modules dir
-        if (defined('MODULES_DIR') && preg_match("/(.*)(Web|API)Module/", $className, $bits)) {
+        if (defined('MODULES_DIR') && preg_match("/(.+)(Web|API)Module$/", $className, $bits)) {
             $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
+        }
+        
+        if ($this->moduleID) {
+            if (defined('MODULES_DIR')) {
+                $paths[] = implode('/', array(MODULES_DIR, $this->moduleID, 'lib'));
+            }
+            
+            if (defined('SITE_MODULES_DIR')) {
+                $paths[] = implode('/', array(SITE_MODULES_DIR, $this->moduleID, 'lib'));
+            }
         }
         
         // use the shared lib dir if it's been defined
