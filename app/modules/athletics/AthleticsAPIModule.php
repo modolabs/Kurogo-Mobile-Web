@@ -299,8 +299,10 @@ class AthleticsAPIModule extends APIModule
     protected function getNewsFeed($sport, $gender=null) {
         if ($sport=='topnews') {
             $feedData = $this->getNavData('topnews');
+        } elseif (isset($this->feeds[$sport])) {
+            $feedData = $this->feeds[$sport];
         } else {
-            $feedData = $this->getOptionalModuleSection($sport, 'feeds');
+            throw new KurogoDataException($this->getLocalizedString('ERROR_INVALID_SPORT', $sport));
         }
         
         if (isset($feedData['DATA_RETRIEVER']) || isset($feedData['BASE_URL'])) {
