@@ -13,7 +13,7 @@ to grab a list of items, manage things like paging and limiting options,
 search, and single item retrieval. It is designed to be used with data that presents a collection
 of items and allows the user to view a detail of an individual item. 
 
-Developers should need to write any subclass of a Data Model for included modules. If you want
+Developers should not need to write any subclass of a Data Model for included modules. If you want
 to connect to one of your services, then you will either set the appropriate configuration, or
 write a DataRetriever to connect to this service. 
 
