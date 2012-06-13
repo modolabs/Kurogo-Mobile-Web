@@ -159,6 +159,21 @@ class KitchensinkWebModule extends WebModule {
                 
                 $this->assign('buttons', $buttons);
                 break;
+                
+            case 'truncate':
+                $this->assign('action', $this->buildBreadcrumbURL('truncated', array()));
+                break;
+                
+            case 'truncated':
+                $length = $this->getArg('length', 0);
+                $margin = $this->getArg('margin', 0);
+                $minLineLength = $this->getArg('minLineLength', 40);
+                $html = $this->getArg('html', '');
+                if ($length && $margin && $html) {
+                    $html = Sanitizer::sanitizeAndTruncateHTML($html, $length, $margin, $minLineLength);
+                }
+                $this->assign('html', $html);
+                break;
         }
     }
 }
