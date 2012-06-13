@@ -64,9 +64,10 @@ class Sanitizer
     // $margin is the amount greater than $length which the text must be before it truncates
     // $charset is the meta tag charset encoding
     //
-    public static function sanitizeAndTruncateHTML($string, $length, $margin, $minLineLength=40, $allowedTags='editor', $encoding='utf-8') {
+    public static function sanitizeAndTruncateHTML($string, &$truncated, $length, $margin, $minLineLength=40, $allowedTags='editor', $encoding='utf-8') {
         $sanitized = self::sanitizeHTML($string, $allowedTags);
         
+        $truncated = false;
         $dom = new DOMDocument();
         @$dom->loadHTML('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset='.$encoding.'"/></head><body>'.$sanitized.'</body></html>');
         $dom->normalizeDocument();
@@ -75,14 +76,15 @@ class Sanitizer
         if ($bodies->length) {
             $count = self::walkForTruncation($dom, $bodies->item(0), $length, $margin, $minLineLength, $encoding, $lastTextNode);
             
+            // use truncated version if we have exceeded the margin:
             if ($count >= $length + $margin) {
                 if ($lastTextNode) {
                     self::appendTruncationSuffix($dom, $lastTextNode);
                 }
-                // use truncated version if we have exceeded the margin:
                 $parts = preg_split(';</?body[^>]*>;', $dom->saveHTML());
                 if (count($parts) > 1) { // should be 3
                     $sanitized = $parts[1];
+                    $truncated = true;
                 }
             }
         }
@@ -172,21 +174,15 @@ class Sanitizer
     }
     
     private static function appendTruncationSuffix(&$dom, &$node, $replacementText=null) {
-        static $truncationSuffix = null;
-        
-        if (!isset($truncationSuffix)) {
-            $truncationSuffix = $dom->createElement('span');
-            $truncationSuffix->appendChild($dom->createTextNode(
-                Kurogo::getLocalizedString('SANITIZER_HTML_TRUNCATION_SUFFIX')));
-            $truncationSuffix->setAttribute('class', 'trunctation-suffix');
-        }
         
         $text = isset($replacementText) ? $replacementText : $node->wholeText;
         $clipped = preg_replace('/[.\s]*$/', '', $text);
         if (trim($clipped)) {
             $node->replaceData(0, $node->length, $clipped);
             
-            $suffix = $truncationSuffix->cloneNode(true);
+            $suffix = $dom->createElement('span');
+            $suffix->appendChild($dom->createTextNode(Kurogo::getLocalizedString('SANITIZER_HTML_TRUNCATION_SUFFIX')));
+            $suffix->setAttribute('class', 'trunctation-suffix');
             if ($node->nextSibling) {
                 $node->parentNode->insertBefore($suffix, $node->nextSibling);
             } else {
