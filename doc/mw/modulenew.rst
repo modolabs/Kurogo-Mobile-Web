@@ -18,7 +18,7 @@ you will want to create your files in the *SITE_DIR/app/modules/* folder.
 Inside this folder is the module class file as well as a folders for templates, css and javascript.
 Each template file is placed in the *templates* named according to which *page* you are on, 
 with the default page named *index*. The class file follows the format (ModuleID)WebModule.php. 
-This file should be a sublcass of the *WebModule* class and at very least must contain
+This file should be a subclass of the *WebModule* class and at very least must contain
 a property named *id* that indicates the module id and a implementation of *initializeForPage()*
 
 -----
@@ -131,11 +131,11 @@ Now that we have a retriever, we can utilize it in our module. Here is an update
     
     class TwitterWebModule extends WebModule
     {
-      protected $id='twitter'
+      protected $id='twitter';
       protected function initializeForPage() {
 
         //instantiate controller
-        $controller = DataRetriever::factory('TwitterDataRetriever', array());
+        $this->$controller = DataRetriever::factory('TwitterDataRetriever', array());
 
         switch ($this->page)
         {
