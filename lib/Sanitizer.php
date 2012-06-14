@@ -69,7 +69,7 @@ class Sanitizer
         
         $truncated = false;
         $dom = new DOMDocument();
-        @$dom->loadHTML('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset='.$encoding.'"/></head><body>'.$sanitized.'</body></html>');
+        @$dom->loadHTML('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset='.$encoding.'"/></head><body>'.$sanitized.'</body></html>');
         $dom->normalizeDocument();
         
         $bodies = $dom->getElementsByTagName('body');
