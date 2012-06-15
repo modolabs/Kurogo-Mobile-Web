@@ -78,6 +78,13 @@ class PeopleAPIModule extends APIModule
                 } else {
                     $value = $attributes[0];
                 }
+                $url = NULL;
+                if (self::argVal($fieldOptions, 'type') == 'map') {
+                     $link = Kurogo::moduleLinkForValue('map', $value, $this, $person);
+                     if (isset($link, $link['url'])) {
+                         $url = $link['url'];
+                     }
+                }
                 if (isset($fieldOptions['section'])) {
                     $section = $fieldOptions['section'];
                     if (!isset($result[$section])) {
@@ -88,6 +95,9 @@ class PeopleAPIModule extends APIModule
                         'type' => $fieldOptions['type'],
                         'value' => $value,
                         );
+                    if (isset($url)) {
+                        $valueArray['url'] = $url;
+                    }
                     $result[$section][] = $valueArray;
                 } else {
                     $result[$fieldOptions['label']] = $value;
