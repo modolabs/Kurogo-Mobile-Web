@@ -426,6 +426,7 @@ function ajaxContentIntoContainer(options) {
         url: null, 
         container: null, 
         timeout: 60, 
+        addAjaxParameter: true,
         loadMessage: true,
         errorMessage: true,
         success: function () {},
@@ -437,6 +438,10 @@ function ajaxContentIntoContainer(options) {
         }
     }
     if (!options.url || !options.container) { return; } // safety
+    
+    if (options.addAjaxParameter && options.url.search(/[\?\&]ajax=/) < 0) {
+        options.url += (options.url.search(/\?/) < 0 ? "?" : "&")+"ajax=1";
+    }
     
     _removeRequestsForContainer(options.container);
     
@@ -528,10 +533,3 @@ function getCSSHeight(element) {
         - parseFloat(getCSSValue(element, 'padding-top'))
         - parseFloat(getCSSValue(element, 'padding-bottom'));
 }
-
-
-
-
-
-
-
