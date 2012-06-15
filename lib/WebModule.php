@@ -12,6 +12,7 @@ define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_ablt');
 define('MODULE_AJAX_CONTAINER_PAGE', '_acp');
 define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
+define('MODULE_TAB_COOKIE_PREFIX', 'moduletab_');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
 if (!function_exists('gzdeflate')) {
@@ -85,6 +86,16 @@ abstract class WebModule extends Module {
   // Tabbed View support
   //
   
+  protected function tabCookieForPage() {
+    $cookieArgs = $this->args;
+    unset($cookieArgs[MODULE_BREADCRUMB_PARAM]);
+    unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
+    unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
+    unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
+    
+    return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
+  }
+  
   protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
     // prefill from config to get order
     $tabs = array();
@@ -116,11 +127,16 @@ abstract class WebModule extends Module {
     }
     
     // Figure which tab should be selected
+    $tabCookie = self::tabCookieForPage();
+    
     $currentTab = array_keys($tabs);
     $currentTab = reset($currentTab);    
     if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
       $currentTab = $this->args['tab'];
       
+    } else if (isset($_COOKIE[$tabCookie]) && in_array($_COOKIE[$tabCookie], $tabKeys)) {
+      $currentTab = $_COOKIE[$tabCookie];
+    
     } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
       $currentTab = $defaultTab;
     }
@@ -128,10 +144,11 @@ abstract class WebModule extends Module {
     $this->tabbedView = array(
       'tabs'       => $tabs,
       'current'    => $currentTab,
+      'tabCookie'  => $tabCookie,
     );
 
     $currentJS = $tabs[$currentTab]['javascript'];
-    $this->addInlineJavascriptFooter("(function(){ var tabKey = '{$currentTab}';var tabId = '{$tabs[$currentTab]['id']}';showTab(tabId);{$currentJS} })();");
+    $this->addInlineJavascriptFooter("(function(){ var tabKey = '{$currentTab}';var tabId = '{$tabs[$currentTab]['id']}';var tabCookie = '{$tabCookie}';showTab(tabId);{$currentJS} })();");
   }
   
   //
