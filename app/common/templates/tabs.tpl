@@ -14,7 +14,7 @@
               {$gaLabel = http_build_query($gaArgs, '', '&')}
             {/if}
             <li id="{$tabInfo['id']}-tab" {if $tabKey == $tabbedView['current']} class="active"{/if}>
-              <a href="{block name='tabLink'}#top{/block}" onclick="(function(){ var tabKey = '{$tabKey}';var tabId = '{$tabInfo['id']}';{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', '{$tabKey} tab', '{$gaLabel}']);{/if}showTab(tabId);{$tabInfo['javascript']} })();">{$tabInfo['title']}</a>
+              <a href="{block name='tabLink'}#top{/block}" onclick="(function(){ var tabKey = '{$tabKey}';var tabId = '{$tabInfo['id']}';var tabCookie = '{$tabbedView['tabCookie']}';{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', '{$tabKey} tab', '{$gaLabel}']);{/if}showTab(tabId);setCookie(tabCookie, tabKey, 0, '{$smarty.const.COOKIE_PATH}');{$tabInfo['javascript']} })();">{$tabInfo['title']}</a>
             </li>
           {/block}
           
