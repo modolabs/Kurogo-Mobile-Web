@@ -6,8 +6,6 @@ body.fullscreen #navbar {
 	  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.2)), to(rgba(0,0,0,0.1)));
 }
 
-#footerlinks, #footer {display: none;}
-
 #bookmarkContainer {
 	margin-top: -2px;
 	margin-right: -6px;

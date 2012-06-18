@@ -45,6 +45,12 @@
   </select>
 {/capture}
 
+{if count($categories)}
+{block name="categoryList"}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories navListHeading=$categoryHeading}
+{/block}
+{/if}
+
 {include file="findInclude:common/templates/search.tpl" additionalInputs=$selectSection}
 
 {include file="findInclude:common/templates/footer.tpl"}

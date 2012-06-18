@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+{if !$ajaxContentLoad}<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
@@ -18,10 +18,26 @@
     <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
   {/foreach}
   
+  {capture name="ajaxContentLoadingHTML" assign="ajaxContentLoadingHTML"}{strip}
+    {block name="ajaxContentLoadingHTML"}
+      <div class="loading"><div><img src="/common/images/loading.gif" width="27" height="21" alt="Loading" align="absmiddle" />{"AJAX_CONTENT_LOADING"|getLocalizedString}</div></div>
+    {/block}
+  {/strip}{/capture}
+  
+  {capture name="ajaxContentErrorHTML" assign="ajaxContentErrorHTML"}{strip}
+    {block name="ajaxContentErrorHTML"}
+      <div class="nonfocal">{"AJAX_CONTENT_LOAD_FAILED"|getLocalizedString}</div>
+    {/block}
+  {/strip}{/capture}
+  
   {block name="javascript"}
       <script type="text/javascript">
         var URL_BASE='{$smarty.const.URL_BASE}';
         var API_URL_PREFIX='{$smarty.const.API_URL_PREFIX}';
+      </script>
+      <script type="text/javascript">
+        var AJAX_CONTENT_LOADING_HTML = '{$ajaxContentLoadingHTML|escape:"quotes"}';
+        var AJAX_CONTENT_ERROR_HTML = '{$ajaxContentErrorHTML|escape:"quotes"}';
       </script>
     {if strlen($GOOGLE_ANALYTICS_ID)}
       <script type="text/javascript">
@@ -37,47 +53,24 @@
         <script src="{$PERCENT_MOBILE_URL}" type="text/javascript" charset="utf-8"></script>
     {/if}
     
-    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
-      <script type="text/javascript">{$inlineJavascriptBlock}</script>
-    {/foreach}
-    
     {foreach $javascriptURLs as $url}
       <script src="{$url|escape}" type="text/javascript"></script>
     {/foreach}
     
     <script src="{$minify['js']|escape}" type="text/javascript"></script>
+    
+    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
+      <script type="text/javascript">{$inlineJavascriptBlock}</script>
+    {/foreach}
 
     <script type="text/javascript">
-      function onOrientationChange() {ldelim}
-        {* the galaxy tab sends orientation change events constantly *}
-        if (typeof onOrientationChange.lastOrientation == 'undefined') {ldelim}
-          onOrientationChange.lastOrientation = null;
-        {rdelim}
-        var newOrientation = getOrientation();
-        if (newOrientation != onOrientationChange.lastOrientation) {ldelim}
-          rotateScreen();
-          {foreach $onOrientationChangeBlocks as $script}
-            {$script}
-          {/foreach}
-        {rdelim}
-        onOrientationChange.lastOrientation = newOrientation;
-      {rdelim}
-      if (window.addEventListener) {ldelim}
-        window.addEventListener("orientationchange", onOrientationChange, false);
-      {rdelim} else if (window.attachEvent) {ldelim}
-        window.attachEvent("onorientationchange", onOrientationChange);
-      {rdelim}
+      setupOrientationChangeHandlers();
       {if count($onOrientationChangeBlocks)}
-        function onResize() {ldelim}
+        addOnOrientationChangeCallback(function () {ldelim}
           {foreach $onOrientationChangeBlocks as $script}
             {$script}
           {/foreach}
-        {rdelim}
-        if (window.addEventListener) {ldelim}
-          window.addEventListener("resize", onResize, false);
-        {rdelim} else if (window.attachEvent) {ldelim}
-          window.attachEvent("onresize", onResize);
-        {rdelim}
+        {rdelim});
       {/if}
     </script>
     
@@ -131,7 +124,7 @@
           {/if}
           
         {/if}
-        {if $moduleID != 'home' || !$breadcrumb@first}
+        {if $configModule != $homeModuleID || !$breadcrumb@first}
           <a href="{$breadcrumb['url']|sanitize_url}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
             {if $breadcrumb@first}
               <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="{$module_nav_image_width|default:28}" height="{$module_nav_image_height|default:28}" alt="" />
@@ -182,3 +175,18 @@
     {block name="containerStart"}
       <div id="container">
     {/block}
+{else}
+  {block name="ajaxContentHeader"}
+    {foreach $inlineCSSBlocks as $css}
+      <style type="text/css" media="screen">
+        {$css}
+      </style>
+    {/foreach}
+
+    <script type="text/javascript">
+      {foreach $inlineJavascriptBlocks as $script}
+        {$script}
+      {/foreach}
+    </script>
+  {/block}
+{/if}

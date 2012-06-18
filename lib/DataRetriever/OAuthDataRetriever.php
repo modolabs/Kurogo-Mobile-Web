@@ -315,6 +315,7 @@ class OAuthDataRetriever extends URLDataRetriever
             return $response;
         }
 
+        $startTime = microtime(true);
         $headers = $this->headers(true);
         $response = parent::retrieveResponse();
         
@@ -342,6 +343,9 @@ class OAuthDataRetriever extends URLDataRetriever
             Kurogo::log(LOG_DEBUG, "Redirecting to $this->baseURL", 'oauth');
             $response =  $this->retrieveResponse();
         }
+        
+        //reset the start time to include the whole process
+        $response->setStartTime($startTime);
         
         return $response;
     }

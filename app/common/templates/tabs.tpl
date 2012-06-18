@@ -2,11 +2,9 @@
   {block name="tabsStart"}
     <ul id="tabs"{if $smallTabs} class="smalltabs"{/if}>
   {/block}
-  
-      {foreach $tabBodies as $tabKey => $tabBody}
+      {foreach $tabbedView['tabs'] as $tabKey => $tabInfo}
         {if isset($tabbedView['tabs'][$tabKey])}
-          {$tabInfo = $tabbedView['tabs'][$tabKey]}
-          {$isLastTab = $tabBody@last}
+          {$isLastTab = $tabInfo@last}
           
           {block name="tab"}
             {if strlen($GOOGLE_ANALYTICS_ID)}
@@ -15,8 +13,8 @@
               {$gaArgs['_path'] = null}
               {$gaLabel = http_build_query($gaArgs, '', '&')}
             {/if}
-            <li{if $tabKey == $tabbedView['current']} class="active"{/if}>
-              <a href="{block name='tabLink'}#top{/block}" onclick="{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', '{$tabKey} tab', '{$gaLabel}']);{/if}showTab('{$tabKey}Tab', this);{$tabInfo['javascript']}">{$tabInfo['title']}</a>
+            <li id="{$tabInfo['id']}-tab" {if $tabKey == $tabbedView['current']} class="active"{/if}>
+              <a href="{block name='tabLink'}#top{/block}" onclick="(function(){ var tabKey = '{$tabKey}';var tabId = '{$tabInfo['id']}';var tabCookie = '{$tabbedView['tabCookie']}';{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', '{$tabKey} tab', '{$gaLabel}']);{/if}showTab(tabId);setCookie(tabCookie, tabKey, 0, '{$smarty.const.COOKIE_PATH}');{$tabInfo['javascript']} })();">{$tabInfo['title']}</a>
             </li>
           {/block}
           
@@ -30,10 +28,10 @@
 
 {block name="tabBodies"}
   <div id="tabbodies">
-    {foreach $tabBodies as $tabKey => $tabBody}
+    {foreach $tabbedView['tabs'] as $tabKey => $tabInfo}
       {if isset($tabbedView['tabs'][$tabKey])}
-        <div class="tabbody" id="{$tabKey}Tab" {if count($tabBodies) > 1}style="display:none"{/if}>
-          {$tabBody}
+        <div class="tabbody" id="{$tabInfo['id']}-tabbody" {if count($tabBodies) > 1}style="display:none"{/if}>
+          {$tabBodies[$tabKey]}
         </div>
       {/if}
     {/foreach}

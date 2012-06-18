@@ -113,6 +113,7 @@ The following options appear by default in *SITE_DIR/config/map/module.ini*: ::
     MAP_SHOWS_USER_LOCATION    = 1
     SHOW_DISTANCES             = 1
     DISTANCE_MEASUREMENT_UNITS = "Imperial"
+    SHOW_LISTVIEW_BY_DEFAULT   = 0
 
 * *BOOKMARKS_ENABLED* - whether or not the user can bookmark locations.
 * *MAP_SHOWS_USER_LOCATION* - whether or not the user can display the location
@@ -120,6 +121,12 @@ The following options appear by default in *SITE_DIR/config/map/module.ini*: ::
 * *SHOW_DISTANCES* - whether or not the list of nearby places displays
   distance from the searched location.
 * *DISTANCE_MEASUREMENT_UNITS* - either "Metric" or "Imperial".
+* *SHOW_LISTVIEW_BY_DEFAULT* - if there is only one campus, the index page of
+  the map module will show a full screen map view on compliant devices. If this
+  value is set to 1, the index page of the map module shows a list view. If
+  there are multiple campuses, the index page is a list view regardless of this
+  parameter.
+  multip
 
 =======================
 Advanced Configuration

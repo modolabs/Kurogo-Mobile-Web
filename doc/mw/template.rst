@@ -13,7 +13,7 @@ used in the framework are explained below. For a quick reference see the
 
 As part of the display process, the template engine is initialized, and a template file is displayed 
 based on the current page. The engine will search the module folder for a template file with
-the name name as the current page based on the rules of :ref:`pageandplatform`.
+the same name as the current page based on the rules of :ref:`pageandplatform`.
 
 =======================
 Variables and Modifiers
@@ -72,7 +72,7 @@ Consider a base template template.tpl::
 Notice that the {block} tag has an opening and closing part. We can use the {extends} tag on the 
 specific types. For a template that extends another, you simply provide alternate content for whatever
 blocks you wish to replace. If you wish to eliminate a block, simply include a blank block pair. If
-you do not specific a block, it will be included as is.
+you do not specify a block, it will be included as is.
 
 An example for template-compliant.tpl::
 

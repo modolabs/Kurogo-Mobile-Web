@@ -28,6 +28,7 @@ class NewsWebModule extends WebModule {
   protected $showPubDate = false;
   protected $showAuthor = false;
   protected $showLink = false;
+  protected $showBodyThumbnail = true;
   protected $legacyController = false;
   
   public static function validateFeed($section, $feedData) {
@@ -202,6 +203,7 @@ class NewsWebModule extends WebModule {
         $this->showPubDate = isset($feedData['SHOW_PUBDATE']) ? $feedData['SHOW_PUBDATE'] : false;
         $this->showAuthor = isset($feedData['SHOW_AUTHOR']) ? $feedData['SHOW_AUTHOR'] : false;
         $this->showLink = isset($feedData['SHOW_LINK']) ? $feedData['SHOW_LINK'] : false;
+        $this->showBodyThumbnail = isset($feedData['SHOW_BODY_THUMBNAIL']) ? $feedData['SHOW_BODY_THUMBNAIL'] : true;
     }    
     
     protected function htmlEncodeFeedString($string) {
@@ -232,8 +234,7 @@ class NewsWebModule extends WebModule {
         
         if (!$content = $this->cleanContent($story->getContent())) {
           if ($url = $story->getLink()) {
-              header("Location: $url");
-              exit();
+              Kurogo::redirectToURL($url);
           } 
           
           // no content or link. Attempt to get description
@@ -266,6 +267,7 @@ class NewsWebModule extends WebModule {
         $this->assign('link',          $story->getLink());
         $this->assign('ajax',          $this->getArg('ajax'));
         $this->assign('showLink',      $this->showLink);
+        $this->assign('showBodyThumbnail', $this->showBodyThumbnail);
         break;
         
       case 'search':
@@ -331,30 +333,34 @@ class NewsWebModule extends WebModule {
         break;
         
       case 'pane':
-        $start = 0;
-        if ($this->legacyController) {
-            $items = $this->feed->items($start, $this->maxPerPane);
-        } else {
-            $this->feed->setStart(0);
-            $this->feed->setLimit($this->maxPerPane);
-            $items = $this->feed->items();
+        if ($this->ajaxContentLoad) {
+            $start = 0;
+            if ($this->legacyController) {
+                $items = $this->feed->items($start, $this->maxPerPane);
+            } else {
+                $this->feed->setStart(0);
+                $this->feed->setLimit($this->maxPerPane);
+                $items = $this->feed->items();
+            }
+            $stories = array();
+            $options = array(
+                'noBreadcrumbs'=>true,
+                'section' => $this->feedIndex
+            );
+    
+            foreach ($items as $story) {
+                $stories[] = $this->linkForItem($story, $options);
+            }
+            
+            foreach ($stories as $i => $story) {
+                $stories[$i]['url'] = $this->buildURL('index').
+                    '#'.urlencode(FULL_URL_PREFIX.ltrim($story['url'], '/'));
+            }
+            
+            $this->assign('stories', $stories);
         }
-        $stories = array();
-        $options = array(
-            'noBreadcrumbs'=>true,
-            'section' => $this->feedIndex
-        );
-
-        foreach ($items as $story) {
-            $stories[] = $this->linkForItem($story, $options);
-        }
-        
-        foreach ($stories as $i => $story) {
-            $stories[$i]['url'] = $this->buildURL('index').
-                '#'.urlencode(FULL_URL_PREFIX.ltrim($story['url'], '/'));
-        }
-        
-        $this->assign('stories', $stories);
+        $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+        $this->addInternalJavascript('/common/javascript/lib/paneStories.js');
         break;
       
       case 'index':

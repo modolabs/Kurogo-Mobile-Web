@@ -1,25 +1,9 @@
-Kurogo Mobile Web is open source software, created, maintained, and shared under
-the MIT license by Modo Labs, Inc. The project originally derived from the MIT 
-Mobile Framework. It includes components from other open source projects which
-remain under their existing licenses, detailed in their respective source files.
+Copyright © 2011 - 2012 Modo Labs Inc.  All rights reserved.
+Commercial Usage
+Only licensees holding valid commercial licenses from Modo Labs Inc. may use 
+this software in accordance with the terms contained in the Master Subscription 
+Agreement between licensee and Modo Labs (or such other agreement executed by 
+the parties to cover the license).
 
-Copyright (c) 2010 Massachusetts Institute of Technology
-Copyright (c) 2012 Modo Labs, Inc
- 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+If you are unsure of the terms of the license, please contact the sales department 
+at sales@modolabs.com or the official point of contact for your site.

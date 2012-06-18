@@ -14,6 +14,7 @@ abstract class Module
     protected $id='none';
     protected $configModule;
     protected $moduleName = '';
+    protected $homeModuleID;
     protected $args = array();
     protected $configs = array();
     protected $logView = true;
@@ -643,11 +644,13 @@ abstract class Module
             $files = array(
                 'common'=>sprintf("%s/common/config/admin-module.json", APP_DIR),
                 'module'=>sprintf("%s/%s/config/admin-module.json", MODULES_DIR, $this->id),
+                'sharedcommon'=>sprintf("%s/common/config/admin-module.json", SHARED_APP_DIR),
+                'sharedmodule'=>sprintf("%s/%s/config/admin-module.json", SHARED_MODULES_DIR, $this->id),
                 'sitecommon'=>sprintf("%s/common/config/admin-module.json", SITE_APP_DIR),
                 'sitemodule'=>sprintf("%s/%s/config/admin-module.json", SITE_MODULES_DIR, $this->id)
             );
 
-            foreach ($files as $type=>$file) {                
+            foreach ($files as $type=>$file) {
                 if (is_file($file)) {
                     if (!$data = json_decode(file_get_contents($file),true)) {
                         throw new KurogoDataException($this->getLocalizedString('ERROR_PARSING_FILE', $file));
@@ -668,8 +671,10 @@ abstract class Module
     private function getStringsForLanguage($lang) {
         $stringFiles = array(
             APP_DIR . "/common/strings/".$lang . '.ini',
+            SHARED_APP_DIR . "/common/strings/".$lang . '.ini',
             SITE_APP_DIR . "/common/strings/".$lang . '.ini',
             MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini',
+            SHARED_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini',
             SITE_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini'
         );
         
@@ -743,12 +748,19 @@ abstract class Module
     protected function getModuleNavigationConfig() {
         static $moduleNavConfig;
         if (!$moduleNavConfig) {
-            $moduleNavConfig = ModuleConfigFile::factory('home', 'module');
+            $moduleNavConfig = ModuleConfigFile::factory($this->getHomeModuleID(), 'module');
         }
         
         return $moduleNavConfig;
     }
- 
+    
+    protected function getHomeModuleID() {
+        if (!$this->homeModuleID) {
+            $this->homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
+        }
+        
+        return $this->homeModuleID;
+    }
 
     /**
       * Action to take when the module is disabled

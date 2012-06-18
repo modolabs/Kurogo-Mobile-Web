@@ -181,8 +181,7 @@ class FacebookAuthentication extends AuthenticationAuthority
                 'display'=>$display
             ));
             
-            header("Location: $url");
-            exit();
+            Kurogo::redirectToURL($url);
         }
     }
     

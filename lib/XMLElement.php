@@ -53,15 +53,8 @@ class XMLElement
     
     public function setValue($value, $strip_tags=false /* compat arg */)
     {
-        if ($this->strip_tags || $strip_tags) {
-            // Remove all HTML tags (will also convert all HTML entities to feed encoding below)
-            $value = trim(strip_tags($value));
-        }
-        
-        if ($this->html_decode || $this->strip_tags || $strip_tags) {
-            // convert all HTML entities to the feed encoding
-            $encoding = ($this->encoding !== null) ? $this->encoding : 'UTF-8';
-            $value = html_entity_decode($value, ENT_COMPAT, $encoding);
+        if ($strip_tags) {
+            $this->strip_tags = true;
         }
         
         $this->value = $value;
@@ -84,7 +77,20 @@ class XMLElement
 
     public function value()
     {
-        return $this->value;
+        $value = $this->value;
+        
+        if ($this->strip_tags) {
+            // Remove all HTML tags (will also convert all HTML entities to feed encoding below)
+            $value = trim(strip_tags($value));
+        }
+        
+        if ($this->html_decode || $this->strip_tags) {
+            // convert all HTML entities to the feed encoding
+            $encoding = ($this->encoding !== null) ? $this->encoding : 'UTF-8';
+            $value = html_entity_decode($value, ENT_COMPAT, $encoding);
+        }
+        
+        return $value;
     }
     
     protected function elementMap()

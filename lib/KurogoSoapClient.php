@@ -40,7 +40,7 @@ class KurogoSoapClient extends SoapClient
             $wsdl_cache = 86400; // one day
         }
 
-        $cache = new Diskcache($cacheFolder, $wsdl_cache, true);
+        $cache = new DiskCache($cacheFolder, $wsdl_cache, true);
         $cache->preserveFormat(); //make sure we save the raw data
 
         if ($cache->isFresh($cacheFile)) {

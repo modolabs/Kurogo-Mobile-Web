@@ -1,0 +1,14 @@
+div.nonfocal.feedlinks {
+    margin-bottom: 10px;
+}
+
+div.nonfocal.feedlinks span {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+a.facebook, a.youtube, a.twitter {
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
