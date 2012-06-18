@@ -7,8 +7,12 @@
   * Breadcrumb Parameter
   */
 define('MODULE_BREADCRUMB_PARAM', '_b');
+define('MODULE_AJAX_BREADCRUMB_TITLE', '_abt');
+define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_ablt');
+define('MODULE_AJAX_CONTAINER_PAGE', '_acp');
 define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
+define('MODULE_TAB_COOKIE_PREFIX', 'moduletab_');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
 if (!function_exists('gzdeflate')) {
@@ -29,8 +33,10 @@ abstract class WebModule extends Module {
 
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
+  protected $browser = 'unknown';
 
   protected $ajaxContentLoad = false;
+  protected $ajaxContainerPage = '';
   
   protected $imageExt = '.png';
   
@@ -78,6 +84,16 @@ abstract class WebModule extends Module {
   // Tabbed View support
   //
   
+  protected function tabCookieForPage() {
+    $cookieArgs = $this->args;
+    unset($cookieArgs[MODULE_BREADCRUMB_PARAM]);
+    unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
+    unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
+    unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
+    
+    return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
+  }
+  
   protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
     // prefill from config to get order
     $tabs = array();
@@ -104,16 +120,21 @@ abstract class WebModule extends Module {
       $tabArgs = $this->args;
       $tabArgs['tab'] = $tabKey;
       $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
-      
+      $tabs[$tabKey]['id'] = "{$tabKey}-".md5($tabs[$tabKey]['url']);
       $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
     }
     
     // Figure which tab should be selected
+    $tabCookie = self::tabCookieForPage();
+    
     $currentTab = array_keys($tabs);
     $currentTab = reset($currentTab);    
     if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
       $currentTab = $this->args['tab'];
       
+    } else if (isset($_COOKIE[$tabCookie]) && in_array($_COOKIE[$tabCookie], $tabKeys)) {
+      $currentTab = $_COOKIE[$tabCookie];
+    
     } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
       $currentTab = $defaultTab;
     }
@@ -121,10 +142,11 @@ abstract class WebModule extends Module {
     $this->tabbedView = array(
       'tabs'       => $tabs,
       'current'    => $currentTab,
+      'tabCookie'  => $tabCookie,
     );
 
     $currentJS = $tabs[$currentTab]['javascript'];
-    $this->addInlineJavascriptFooter("showTab('{$currentTab}Tab');{$currentJS}");
+    $this->addInlineJavascriptFooter("(function(){ var tabKey = '{$currentTab}';var tabId = '{$tabs[$currentTab]['id']}';var tabCookie = '{$tabCookie}';showTab(tabId);{$currentJS} })();");
   }
   
   //
@@ -223,7 +245,7 @@ abstract class WebModule extends Module {
   
   private function getMinifyUrls($pageOnly=false) {
     $page = preg_replace('/[\s-]+/', '+', $this->page);
-    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(THEME_DIR);
+    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-{$this->browser}-".md5(THEME_DIR);
     
     return array(
       'css' => "/min/g=css-$minKey".$this->getMinifyArgString($pageOnly),
@@ -332,6 +354,18 @@ abstract class WebModule extends Module {
     return "/$id/$page".(strlen($argString) ? "?$argString" : "");
   }
 
+  protected function buildAjaxURL($page, $args=array()) {
+      return self::buildAjaxURLForModule($this->configModule, $page, $args);
+  }
+
+  public static function buildAjaxURLForModule($id, $page, $args=array()) {
+      $argString = '';
+      if (isset($args) && count($args)) {
+          $argString = http_build_query($args);
+      }
+      return FULL_URL_PREFIX."$id/$page".(strlen($argString) ? "?$argString" : '');
+  }
+  
   protected function buildExternalURL($url) {
     return $url;
   }
@@ -469,7 +503,12 @@ abstract class WebModule extends Module {
         $this->loadDeviceClassifierIfNeeded();
         return $this->deviceClassifier->getPlatform();
     }
-    
+
+    protected function getBrowser() {
+        $this->loadDeviceClassifierIfNeeded();
+        return $this->deviceClassifier->getBrowser();
+    }
+
     protected function loadDeviceClassifierIfNeeded() {
         $this->deviceClassifier = Kurogo::deviceClassifier();
     }
@@ -487,6 +526,7 @@ abstract class WebModule extends Module {
 
         $this->pagetype = $this->getPagetype();
         $this->platform = $this->getPlatform();
+        $this->browser  = $this->getBrowser();
 
         switch ($this->getPagetype()) {
             case 'compliant':
@@ -500,6 +540,7 @@ abstract class WebModule extends Module {
         }
 
         $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
+        $this->ajaxContainerPage = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->page);
         
         if ($page) {
             // Pull in fontsize
@@ -944,7 +985,7 @@ abstract class WebModule extends Module {
       $data = $cache->read($cacheName);
       
     } else {
-      $memberArrays = array(
+      $properties = array(
         'inlineCSSBlocks',
         'cssURLs',
         'inlineJavascriptBlocks',
@@ -953,9 +994,13 @@ abstract class WebModule extends Module {
         'onLoadBlocks',
         'javascriptURLs',
       );
-      $data = array();
-      foreach ($memberArrays as $memberName) {
-        $data[$memberName] = $this->$memberName;
+      $data = array(
+          'properties' => array(),
+          'minifyCSS'  => '',
+          'minifyJS'   => '',
+      );
+      foreach ($properties as $property) {
+        $data['properties'][$property] = $this->$property;
       }
   
       // Add page Javascript and CSS if any
@@ -967,12 +1012,12 @@ abstract class WebModule extends Module {
       
       $javascript = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['js'], '/'), false, $context);
       if ($javascript) {
-        array_unshift($data['inlineJavascriptBlocks'], $javascript);
+        $data['minifyJS'] = $javascript;
       }
   
       $css = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['css'], '/'), false, $context);
       if ($css) {
-        array_unshift($data['inlineCSSBlocks'], $css);
+        $data['minifyCSS'] = $css;
       }
       
       $cache->write($data, $cacheName);
@@ -981,8 +1026,16 @@ abstract class WebModule extends Module {
     return $data;
   }
   protected function importCSSAndJavascript($data) {
-    foreach ($data as $memberName => $arrays) {
+    foreach ($data['properties'] as $memberName => $arrays) {
       $this->$memberName = array_unique(array_merge($this->$memberName, $arrays));
+    }
+    
+    if ($data['minifyCSS']) {
+      array_unshift($this->inlineCSSBlocks, $data['minifyCSS']);
+    }
+    
+    if ($data['minifyJS']) {
+      array_unshift($this->inlineJavascriptBlocks, $data['minifyJS']);
     }
   }
   protected function addJQuery($version='1.5.1') {
@@ -1119,8 +1172,10 @@ abstract class WebModule extends Module {
       if (!is_array($breadcrumbs)) { $breadcrumbs = array(); }
     }
 
-    if ($this->page != 'index') {
+    if ($this->page != 'index' && $this->ajaxContainerPage != 'index') {
       // Make sure a module homepage is first in the breadcrumb list
+      // Unless this page is being ajaxed in... then the original 
+      // parent page might be the index page.
       $addModuleHome = false;
       if (!count($breadcrumbs)) {
         $addModuleHome = true; // no breadrumbs
@@ -1182,11 +1237,14 @@ abstract class WebModule extends Module {
     if ($addBreadcrumb) {
       $args = $this->args;
       unset($args[MODULE_BREADCRUMB_PARAM]);
+      unset($args[MODULE_AJAX_BREADCRUMB_TITLE]);
+      unset($args[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
+      unset($args[MODULE_AJAX_CONTAINER_PAGE]);
       
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
         'lt' => $this->breadcrumbLongTitle,
-        'p'  => $this->page,
+        'p'  => $this->ajaxContentLoad ? $this->ajaxContainerPage : $this->page,
         'a'  => http_build_query($args),
       );
     }
@@ -1207,6 +1265,34 @@ abstract class WebModule extends Module {
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
     return "/$id/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+  }
+  
+  protected function buildAjaxBreadcrumbURL($page, $args, $addBreadcrumb=true) {
+      return $this->buildAjaxBreadcrumbURLForModule($this->configModule, $page, $args, $addBreadcrumb);
+  }
+  
+  protected function buildAjaxBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
+      if ($this->pagetype == 'basic' || $this->pagetype == 'touch') {
+          // behavior for touch and basic where no ajax is used
+          return $this->buildBreadcrumbURLForModule($this->configModule, $page, $args, true);
+          
+      } else {
+          // forward breadcrumb title
+          $args[MODULE_AJAX_BREADCRUMB_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_TITLE, $this->breadcrumbTitle);
+          
+          // forward breadcrumb title
+          $args[MODULE_AJAX_BREADCRUMB_LONG_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_LONG_TITLE, $this->breadcrumbLongTitle);
+          
+          // forward parent page id
+          $args[MODULE_AJAX_CONTAINER_PAGE] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->ajaxContainerPage);
+          
+          // forward current breadcrumb arg rather than adding
+          if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
+              $args[MODULE_BREADCRUMB_PARAM] = $this->args[MODULE_BREADCRUMB_PARAM];
+          }
+          
+          return $this->buildAjaxURLForModule($id, $page, $args);
+      }
   }
   
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
@@ -1249,6 +1335,16 @@ abstract class WebModule extends Module {
       } else {
         $this->pageConfig = array();
       }
+    }
+    
+    // Ajax overrides for breadcrumb title and long title
+    if (isset($this->args[MODULE_AJAX_BREADCRUMB_TITLE])) {
+      $this->breadcrumbTitle = $this->args[MODULE_AJAX_BREADCRUMB_TITLE];
+      $this->breadcrumbLongTitle = $this->breadcrumbTitle;
+    }
+    
+    if (isset($this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE])) {
+      $this->breadcrumbLongTitle = $this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE];
     }
   }
   

@@ -70,6 +70,11 @@ abstract class DataParser
     public static function factory($parserClass, $args)
     {
         Kurogo::log(LOG_DEBUG, "Initializing DataParser $parserClass", "data");
+
+        if (isset($args['PACKAGE'])) {
+            Kurogo::includePackage($args['PACKAGE']);
+        }
+
         if (!class_exists($parserClass)) {
             throw new KurogoConfigurationException("Parser class $parserClass not defined");
         } 

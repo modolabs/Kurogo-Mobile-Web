@@ -10,7 +10,7 @@ Static Class Methods
 ********************
 
 * *Kurogo::sharedInstance()* - Returns the shared Kurogo singleton object. This is typically not 
-  necessary to use since all publically documented methods are static methods on the Kurogo class.
+  necessary to use since all publicly documented methods are static methods on the Kurogo class.
 * *Kurogo::tempDirectory()* - Returns the configured temporary directory
 * *Kurogo::siteTimezone()* - Returns a DateTimeZone object set to the site's configured time zone
 * *Kurogo::includePackage($packageName)* - Adds a library package to the autoloading path. See :ref:`autoloader`
@@ -23,7 +23,7 @@ Static Class Methods
 * *Kurogo::getCache($key)* - Retrieves a value from the memory cache - See :ref:`caching`
 * *Kurogo::setCache($key, $value, $ttl = null)* - Sets a value to the memory cache - See :ref:`caching`
 * *Kurogo::deleteCache($key)* -Removes a value from the memory cache - See :ref:`caching`
-* *Kurogo::log($priority, $message, $area)* - Logs a value to the kurogo log - See :doc:`logging`
+* *Kurogo::log($priority, $message, $area)* - Logs a value to the Kurogo log - See :doc:`logging`
 * *Kurogo::encrypt($value, key)* - Encrypts a value (requires the mcrypt extension). See :ref:`encryption`
 * *Kurogo::decrypt($value, key)* - Decrypts a value (requires the mcrypt extension). See :ref:`encryption`
 
@@ -113,7 +113,7 @@ used by all caching types:
 
 * *CACHE_CLASS* - The type of caching system to use. Current options include *APCCache* and *MemcacheCache*
 * *CACHE_TTL* - The default time-to-live (in seconds) for cache values. This will keep the values
-  in the cache for the specified time. A time of 10-15 mintes (600-900) is usually adequate for
+  in the cache for the specified time. A time of 10-15 minutes (600-900) is usually adequate for
   most sites
 
 --------

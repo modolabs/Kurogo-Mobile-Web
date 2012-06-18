@@ -15,11 +15,11 @@
     <div class="block {$blockName} {$blockConfig['id']}">
       <div class="blockborder">
         <a href="{$blockConfig['url']}" class="blockheader">
-          <div class="icon"></div>
+          <div class="icon" style="background-image: url(/common/images/title-{$blockConfig['id']}.png);"></div>
           {$blockConfig['title']}
           <div class="nextlink"></div>
         </a>
-        <div class="blockcontent">{$blockConfig['content']}</div>
+        <div id="{$blockConfig['elementId']}" class="blockcontent"><div class="loading"></div></div>
       </div>
     </div> 
   {/foreach}

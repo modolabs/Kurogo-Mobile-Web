@@ -18,10 +18,26 @@
     <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
   {/foreach}
   
+  {capture name="ajaxContentLoadingHTML" assign="ajaxContentLoadingHTML"}{strip}
+    {block name="ajaxContentLoadingHTML"}
+      <div class="loading"><div><img src="/common/images/loading.gif" width="27" height="21" alt="Loading" align="absmiddle" />{"AJAX_CONTENT_LOADING"|getLocalizedString}</div></div>
+    {/block}
+  {/strip}{/capture}
+  
+  {capture name="ajaxContentErrorHTML" assign="ajaxContentErrorHTML"}{strip}
+    {block name="ajaxContentErrorHTML"}
+      <div class="nonfocal">{"AJAX_CONTENT_LOAD_FAILED"|getLocalizedString}</div>
+    {/block}
+  {/strip}{/capture}
+  
   {block name="javascript"}
       <script type="text/javascript">
         var URL_BASE='{$smarty.const.URL_BASE}';
         var API_URL_PREFIX='{$smarty.const.API_URL_PREFIX}';
+      </script>
+      <script type="text/javascript">
+        var AJAX_CONTENT_LOADING_HTML = '{$ajaxContentLoadingHTML|escape:"quotes"}';
+        var AJAX_CONTENT_ERROR_HTML = '{$ajaxContentErrorHTML|escape:"quotes"}';
       </script>
     {if strlen($GOOGLE_ANALYTICS_ID)}
       <script type="text/javascript">
@@ -48,36 +64,13 @@
     {/foreach}
 
     <script type="text/javascript">
-      function onOrientationChange() {ldelim}
-        {* the galaxy tab sends orientation change events constantly *}
-        if (typeof onOrientationChange.lastOrientation == 'undefined') {ldelim}
-          onOrientationChange.lastOrientation = null;
-        {rdelim}
-        var newOrientation = getOrientation();
-        if (newOrientation != onOrientationChange.lastOrientation) {ldelim}
-          rotateScreen();
-          {foreach $onOrientationChangeBlocks as $script}
-            {$script}
-          {/foreach}
-        {rdelim}
-        onOrientationChange.lastOrientation = newOrientation;
-      {rdelim}
-      if (window.addEventListener) {ldelim}
-        window.addEventListener("orientationchange", onOrientationChange, false);
-      {rdelim} else if (window.attachEvent) {ldelim}
-        window.attachEvent("onorientationchange", onOrientationChange);
-      {rdelim}
+      setupOrientationChangeHandlers();
       {if count($onOrientationChangeBlocks)}
-        function onResize() {ldelim}
+        addOnOrientationChangeCallback(function () {ldelim}
           {foreach $onOrientationChangeBlocks as $script}
             {$script}
           {/foreach}
-        {rdelim}
-        if (window.addEventListener) {ldelim}
-          window.addEventListener("resize", onResize, false);
-        {rdelim} else if (window.attachEvent) {ldelim}
-          window.attachEvent("onresize", onResize);
-        {rdelim}
+        {rdelim});
       {/if}
     </script>
     
@@ -183,5 +176,17 @@
       <div id="container">
     {/block}
 {else}
-  {block name="ajaxContentHeader"}{/block}
+  {block name="ajaxContentHeader"}
+    {foreach $inlineCSSBlocks as $css}
+      <style type="text/css" media="screen">
+        {$css}
+      </style>
+    {/foreach}
+
+    <script type="text/javascript">
+      {foreach $inlineJavascriptBlocks as $script}
+        {$script}
+      {/foreach}
+    </script>
+  {/block}
 {/if}

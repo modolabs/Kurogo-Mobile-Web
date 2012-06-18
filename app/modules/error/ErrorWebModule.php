@@ -16,7 +16,7 @@ class ErrorWebModule extends WebModule {
   protected $canBeRemoved = false;
   protected $canBeDisabled = false;
   protected $canAllowRobots = false;
-  
+
     protected function getError($code) {
         static $errors = array(
             'server' => array(
@@ -48,7 +48,7 @@ class ErrorWebModule extends WebModule {
               'status'  => '500 Internal Server Error',
             )
           );
-        
+
         $code =   isset($errors[$code]) ? $code : 'default';
         $error = $errors[$code];
         $error['message'] = $this->getLocalizedString(strtoupper('ERROR_' . $code));
@@ -61,6 +61,7 @@ class ErrorWebModule extends WebModule {
       }
       $this->pagetype = Kurogo::deviceClassifier()->getPagetype();
       $this->platform = Kurogo::deviceClassifier()->getPlatform();
+      $this->browser  = Kurogo::deviceClassifier()->getBrowser();
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);
       $this->args = $args;
@@ -77,18 +78,20 @@ class ErrorWebModule extends WebModule {
   }
 
   protected function initializeForPage() {
+    $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
+    $this->assign('ajaxContentLoad', $this->ajaxContentLoad);
     $code = $this->getArg('code', 'default');
     $url = $this->buildURLFromArray($this->args);
-    
+
     $error = $this->getError($code);
-    
+
     if (isset($error['status'])) {
       header('Status: '.$error['status']);
     }
 
     $linkText = isset($error['linkText']) ? $error['linkText'] : $this->getLocalizedString('DEFAULT_LINK_TEXT');
     $this->assign('linkText', $linkText);
-    
+
     if($this->devError() === false){
       $this->assign('message', $error['message']);
     } else {
@@ -96,14 +99,14 @@ class ErrorWebModule extends WebModule {
     }
     $this->assign('url', $url);
   }
-  
+
   protected function devError() {
-    
+
     // production
     if(Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
       return false;
     }
-      
+
     // check for development errors
     if(isset($_GET['error'])){
       $path = explode('/', $_GET['error']);
@@ -115,8 +118,8 @@ class ErrorWebModule extends WebModule {
         return $msg;
       }
     }
-    
+
     return false;
   }
-  
+
 }

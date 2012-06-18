@@ -39,9 +39,13 @@
   {/block}
 
   {block name="footer"}
-    <div id="footer">
-      {$footerHTML}
-    </div>
+    {if isset($customFooter)}
+      {$customFooter|default:''}
+    {else}
+      <div id="footer">
+        {$footerHTML}
+      </div>
+    {/if}
   {/block}
 
   {block name="deviceDetection"}
@@ -49,6 +53,7 @@
       <table class="devicedetection">
         <tr><th>Pagetype:</th><td>{$pagetype}</td></tr>
         <tr><th>Platform:</th><td>{$platform}</td></tr>
+        <tr><th>Platform:</th><td>{$browser}</td></tr>
         <tr><th>User Agent:</th><td>{$smarty.server.HTTP_USER_AGENT}</td></tr>
       </table>
     {/if}
@@ -87,4 +92,26 @@
 {/block}
 </body>
 </html>
+{else}
+  {block name="ajaxContentFooter"}
+    <script type="text/javascript">
+      {foreach $inlineJavascriptFooterBlocks as $script}
+        {$script}
+      {/foreach}
+      
+      {foreach $onLoadBlocks as $script}
+        {$script}
+      {/foreach}
+    
+      {if count($onOrientationChangeBlocks)}
+        addOnOrientationChangeCallback(function () {ldelim}
+          {foreach $onOrientationChangeBlocks as $script}
+            {$script}
+          {/foreach}
+        {rdelim});
+      {/if}
+      
+      onOrientationChange();
+    </script>
+  {/block}
 {/if}

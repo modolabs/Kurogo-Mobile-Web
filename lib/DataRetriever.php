@@ -132,12 +132,12 @@ abstract class DataRetriever {
                 $response->setStartTime($startTime);
                 $response->setEndTime($endTime);
             }
-            $response->setRetriever($this);
             if (!$response->getResponseError()) {
                 $this->cacheResponse($cacheKey, $cacheGroup, $response);
             }
         }
         
+        $response->setRetriever($this);
         $this->lastResponse = $response;
         return $response;
     }
@@ -227,6 +227,10 @@ abstract class DataRetriever {
                 $args['PARSER_CLASS'] = 'PassthroughDataParser';
             }            
         }
+
+        if (!isset($args['CACHE_LIFETIME'])) {
+            $args['CACHE_LIFETIME'] = $this->DEFAULT_CACHE_LIFETIME;
+        }
         
         // instantiate the parser class
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
@@ -234,7 +238,6 @@ abstract class DataRetriever {
                 
         $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
         $this->cache = DataCache::factory($cacheClass, $args);
-        $this->cache->setCacheLifetime($this->DEFAULT_CACHE_LIFETIME);
     }
     
     public function clearInternalCache() {
@@ -246,6 +249,11 @@ abstract class DataRetriever {
     
     public static function factory($retrieverClass, $args) {
         Kurogo::log(LOG_DEBUG, "Initializing DataRetriever $retrieverClass", "data");
+        
+        if (isset($args['PACKAGE'])) {
+            Kurogo::includePackage($args['PACKAGE']);
+        }
+                
         if (!class_exists($retrieverClass)) {
             throw new KurogoConfigurationException("Retriever class $retrieverClass not defined");
         }
