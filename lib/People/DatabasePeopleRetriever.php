@@ -13,6 +13,7 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
     protected $personClass = 'DatabasePerson';
     protected $sortFields=array('lastname','firstname');
     protected $attributes = array();
+    protected $searchFields = array();
 
     public function debugInfo() {
         return sprintf("Using Database");
@@ -22,13 +23,29 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
         return false;
     }
     
+    protected function getSearchFields() {
+        if ($this->searchFields) {
+            $defaultFields = array(
+                $this->getField('firstname'),
+                $this->getField('lastname'),
+                $this->getField('email')
+            );
+            
+            if ($searchFields = array_diff($this->searchFields, $defaultFields)) {
+                return array_unique($searchFields);
+            }
+        }
+        
+        return null;
+    }
+    
     protected function buildSearchQuery($searchString) {
         $sql = "";
         $parameters = array();
 
         if (empty($searchString)) {
             $this->errorMsg = "Query was blank";
-            return;
+            return;  
         } elseif (Validator::isValidEmail($searchString)) {
             $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('email'));
             $parameters = array('%'.$searchString.'%');
@@ -84,9 +101,19 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
 
                     $where = implode(" OR ", $where);
             }
-
-            $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
             
+            //build search for additional fields
+            if ($searchField = $this->getSearchFields()) {
+                $fieldWhere = array();
+                foreach ($searchField as $field) {
+                    $fieldWhere[] = sprintf("%s LIKE ?", $field);
+                    $parameters[] = "%" . $searchString . "%";
+                }
+                
+                $where .= ' OR ' . implode(" OR ", $fieldWhere);
+            }
+            
+            $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
 
         } else {
             $this->errorMsg = "Invalid query";
@@ -97,7 +124,6 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
     }
     
     public function search($searchString, &$response=null) {
-
         $this->setQuery($this->buildSearchQuery($searchString));
         $this->setOption('action', 'search');
         $this->setContext('value', $searchString);
@@ -151,6 +177,10 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
             'lastname'=>isset($args['DB_LASTNAME_FIELD']) ? $args['DB_LASTNAME_FIELD'] : 'lastname',
             'phone'=>isset($args['DB_PHONE_FIELD']) ? $args['DB_PHONE_FIELD'] : ''
         );
+        
+        if (isset($args['SEARCH_FIELDS'])) {
+            $this->searchFields = $args['SEARCH_FIELDS'];
+        }
         
         $this->setContext('fieldMap',$this->fieldMap);
     }

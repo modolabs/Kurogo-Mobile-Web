@@ -37,6 +37,7 @@ class VideoAPIModule extends APIModule {
         
         if ($this->requestedVersion >= 2) {
             $videoArray['published']['timestamp'] = $video->getPublished()->format('U');
+            $videoArray['playerURL'] = $video->getPlayerURL();
         }
         
         return $videoArray;

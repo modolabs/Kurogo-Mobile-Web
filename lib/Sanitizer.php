@@ -8,17 +8,27 @@
   */
 class Sanitizer
 {
-    static protected $tagTypes = array(
+    static private $tagTypes = array(
         // Groups of tags by type which can be combined by separating with '|' (eg: 'inline|block')
-        'inline' => array('<b>', '<em>', '<strong>', '<span>', '<code>'),
+        'inline' => array('<b>', '<strong>', '<i>', '<em>', '<span>', '<code>'),
         'block'  => array('<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>'),
         'link'   => array('<a>'),
-        'media'  => array('<img>', '<video>', '<audio>'),
-        'list'   => array('<ol>', '<ul>', '<li>'),
+        'media'  => array('<img>', '<video>', '<audio>', '<iframe>'),
+        'list'   => array('<ol>', '<ul>', '<li>', '<dl>', '<dd>', '<dt>'),
         'table'  => array('<table>', '<thead>', '<tbody>', '<tr>', '<th>', '<td>'),
         
         // Groups of tags by use case
-        'editor' => array('<b>', '<em>', '<strong>', '<span>', '<div>', '<blockquote>', '<p>', '<hr>', '<a>', '<img>', '<video>', '<audio>', '<ol>', '<ul>', '<li>', '<table>', '<thead>', '<tbody>', '<tr>', '<th>', '<td>'),
+        'editor' => array(
+            '<b>', '<strong>', '<i>', '<em>', '<span>', '<code>', 
+            '<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', 
+            '<a>', 
+            '<img>', '<video>', '<audio>', '<iframe>', 
+            '<ol>', '<ul>', '<li>', '<dl>', '<dd>', '<dt>', 
+            '<table>', '<thead>', '<tbody>', '<tr>', '<th>', '<td>'),
+    );
+    
+    static private $blockNodeNames = array(
+        'div', 'blockquote', 'p', 'pre', 'ul', 'dl', 'table'
     );
     
     //
@@ -48,6 +58,144 @@ class Sanitizer
         return preg_replace_callback('/<(.*?)>/i', array(get_class(), 'tagPregReplaceCallback'), $strippedString);
     }
 
+    //
+    // HTML-safe sanitization and truncation
+    // $length is length to truncate at.
+    // $margin is the amount greater than $length which the text must be before it truncates
+    // $charset is the meta tag charset encoding
+    //
+    public static function sanitizeAndTruncateHTML($string, &$truncated, $length, $margin, $minLineLength=40, $allowedTags='editor', $encoding='utf-8') {
+        $sanitized = self::sanitizeHTML($string, $allowedTags);
+        
+        $truncated = false;
+        $dom = new DOMDocument();
+        @$dom->loadHTML('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset='.$encoding.'"/></head><body>'.$sanitized.'</body></html>');
+        $dom->normalizeDocument();
+        
+        $bodies = $dom->getElementsByTagName('body');
+        if ($bodies->length) {
+            $count = self::walkForTruncation($dom, $bodies->item(0), $length, $margin, $minLineLength, $encoding, $lastTextNode);
+            
+            // use truncated version if we have exceeded the margin:
+            if ($count >= $length + $margin) {
+                if ($lastTextNode) {
+                    self::appendTruncationSuffix($dom, $lastTextNode);
+                }
+                $parts = preg_split(';</?body[^>]*>;', $dom->saveHTML());
+                if (count($parts) > 1) { // should be 3
+                    $sanitized = $parts[1];
+                    $truncated = true;
+                }
+            }
+        }
+        
+        return $sanitized;
+    }
+    
+    private static function walkForTruncation($dom, $node, $length, $margin, $minLineLength, $encoding, 
+                                              &$lastTextNode, $count=0, &$currentBlock=null, &$currentBlockCount=0) {
+        // We only truncate once the margin is exceeded.  This avoids the problem where
+        // the truncated version is only a couple words less than the full version.
+        // If we have exceeded the margin, we can stop counting and just delete nodes.
+        // Otherwise we keep counting and truncate as needed.
+        if ($count > ($length + $margin)) {
+            if ($node->parentNode) {
+                $node->parentNode->removeChild($node);
+            }
+            
+        } else if ($node->nodeType != XML_TEXT_NODE) {
+            // only remove after counting text for margins
+            if ($node->hasChildNodes()) {
+                if (self::nodeIsBlock($node)) {
+                    // new block started causing a newline, reset
+                    $currentBlockCount = 0;
+                    $currentBlock = $node;
+                }
+                
+                // walk the children
+                // because this function can change node's child count, figure out
+                // which nodes we need to look at before calling ourselves recursively
+                $childNodes = array();
+                $nodeCount = $node->childNodes->length;
+                for ($i = 0; $i < $nodeCount; $i++) {
+                    $childNodes[] = $node->childNodes->item($i);
+                }
+                
+                foreach ($childNodes as $childNode) {
+                    $count = self::walkForTruncation($dom, $childNode, $length, $margin, $minLineLength, 
+                        $encoding, $lastTextNode, $count, &$currentBlock, &$currentBlockCount);
+                }
+                
+                if (self::nodeIsBlock($node)) {
+                    // block ended causing another newline, reset
+                    $currentBlockCount = 0;
+                    $currentBlock = null;
+                }
+            }
+            
+        } else {
+            // Text node!
+            //
+            // remove newlines and replace runs of whitespace with single space
+            $text = preg_replace('/\s+/', ' ', str_replace("\n", '', $node->wholeText)); 
+            $textLength = mb_strlen($text, $encoding);
+            $remaining = $length - $count;
+            if ($remaining > 0 && $currentBlockCount < $minLineLength) {
+                $remaining = max($remaining, $minLineLength - $currentBlockCount);
+            }
+            
+            if ($remaining > 0) {
+                if (mb_strlen(trim($text), $encoding) > 0) {
+                    // text node contains non-whitespace so can take ellipsis
+                    $lastTextNode = $node;
+                }
+                
+                if ($textLength > $remaining) {
+                    // need to clip text node
+                    $basicClipped = mb_substr($text, 0, $remaining + 1, $encoding);
+                    
+                    // truncate text node at a word nearest to $length
+                    $clipped = preg_replace('/\s+?(\S+)?$/', '', $basicClipped);
+                    $node->replaceData(0, $node->length, $clipped);
+                    
+                } else if (isset($currentBlock)) {
+                    $currentBlockCount += $textLength;
+                }
+            } else {
+                // past length, remove node but keep counting
+                // since we haven't hit the limit
+                $node->parentNode->removeChild($node);
+            }
+            
+            $count += $textLength;
+        }
+        
+        return $count;
+    }
+    
+    private static function appendTruncationSuffix(&$dom, &$node, $replacementText=null) {
+        
+        $text = isset($replacementText) ? $replacementText : $node->wholeText;
+        $clipped = preg_replace('/[.\s]*$/', '', $text);
+        if (trim($clipped)) {
+            $node->replaceData(0, $node->length, $clipped);
+            
+            $suffix = $dom->createElement('span');
+            $suffix->appendChild($dom->createTextNode(Kurogo::getLocalizedString('SANITIZER_HTML_TRUNCATION_SUFFIX')));
+            $suffix->setAttribute('class', 'trunctation-suffix');
+            if ($node->nextSibling) {
+                $node->parentNode->insertBefore($suffix, $node->nextSibling);
+            } else {
+                $node->parentNode->appendChild($suffix);
+            }
+        }
+    }
+    
+    private static function nodeIsBlock($node) {
+        return $node->nodeType == XML_ELEMENT_NODE && 
+               in_array(strtolower($node->nodeName), self::$blockNodeNames);
+    }
+    
     protected static function tagPregReplaceCallback($matches) {
         // From http://us3.php.net/manual/en/function.strip-tags.php
         static $regexps = array();

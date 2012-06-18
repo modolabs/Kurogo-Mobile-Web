@@ -112,8 +112,7 @@ abstract class APIModule extends Module
     }
     
     //error_log('Redirecting to: '.$url);
-    header("Location: $url");
-    exit;
+    Kurogo::redirectToURL($url);
   }
    /**
      * Factory method

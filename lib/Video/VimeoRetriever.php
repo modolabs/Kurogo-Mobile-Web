@@ -104,4 +104,8 @@ class VimeoVideoObject extends VideoObject
 
         return true;
     }
+    
+    public function getPlayerURL() {
+        return sprintf("http://player.vimeo.com/video/%s", $this->getID());
+    }
 }

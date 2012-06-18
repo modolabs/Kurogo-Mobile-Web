@@ -10,14 +10,16 @@ function onDOMChange() {
 
 // Update the nav slide indicators
 function updateNavSlider() {
-  var current = Math.abs(navScroller.x);
-  var max = Math.abs(navScroller.maxScrollX);
+  if (navScroller) {
+    var current = Math.abs(navScroller.x);
+    var max = Math.abs(navScroller.maxScrollX);
 
-  var canScrollLeft = (current > 0);
-  var canScrollRight = (current < max-1);
+    var canScrollLeft = (current > 0);
+    var canScrollRight = (current < max-1);
   
-  document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
-  document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
+    document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
+    document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
+  }
 }
 
 function navSliderScrollLeft() {
@@ -34,18 +36,14 @@ function navSliderScrollRight() {
 
 // Change wrapper height based on device orientation.
 function setContainerWrapperHeight() {
-  document.getElementById('container').style.height = 'auto';
-
+  var footerNav = document.getElementById('footernav');
+  
 	var navbarHeight = document.getElementById('navbar').offsetHeight;
-  var footerNavHeight = document.getElementById('footernav').offsetHeight;
+  var footerNavHeight = footerNav ? footerNav.offsetHeight : 0;
 	var wrapperHeight = window.innerHeight - navbarHeight - footerNavHeight;
 	var containerHeight = document.getElementById('container').offsetHeight;
 	
 	document.getElementById('wrapper').style.height = wrapperHeight + 'px';
-	
-	if (containerHeight < wrapperHeight) {
-	  document.getElementById('container').style.height = wrapperHeight + 'px';
-	}
 	
 	// when this exists, make it fill the screen
 	var fillscreen = document.getElementById('fillscreen');
@@ -79,49 +77,57 @@ function handleWindowResize(e) {
     }
 } 
 
+var moduleProvidesScrollers = false;
+
 function tabletInit() {
-   setOrientation(getOrientation());
-    if(!document.getElementById('navbar')) {
+    setOrientation(getOrientation());
+    if (!document.getElementById('navbar')) {
         // page has no footer so do not attempt
         // to use fancy tablet container
         return;
     }
 
-  setContainerWrapperHeight();
-  
-  // Adjust wrapper height on orientation change or resize
-  var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
-  window.addEventListener(resizeEvent, function() {setTimeout(handleWindowResize,0)}, false);
-
-  document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
-  
-  containerScroller = new iScroll('wrapper', { 
-    checkDOMChanges: false, 
-    hScrollbar: false,
-    desktopCompatibility: true,
-    bounce: false,
-    bounceLock: true
-  });
-
-
-  navScroller = new iScroll('navsliderwrapper', { 
-    checkDOMChanges: false, 
-    hScrollbar: false,
-    vScrollbar: false,
-    desktopCompatibility: true,
-    bounce: false,
-    bounceLock: true,
-    onScrollStart: updateNavSlider,
-    onScrollEnd: updateNavSlider
-  });
-
-    handleWindowResize();
+    setContainerWrapperHeight();
+    
+    // Adjust wrapper height on orientation change or resize
+    var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+    window.addEventListener(resizeEvent, function() { setTimeout(handleWindowResize, 0) }, false);
+    
+    document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
+    
+    if (document.getElementById('navsliderwrapper')) {
+        navScroller = new iScroll('navsliderwrapper', { 
+            checkDOMChanges: false, 
+            hScrollbar: false,
+            vScrollbar: false,
+            desktopCompatibility: true,
+            bounce: false,
+            bounceLock: true,
+            onScrollStart: updateNavSlider,
+            onScrollEnd: updateNavSlider
+        });
+    }
+    
     updateNavSlider();
-
-  //run module init if present
-  if (typeof moduleInit != 'undefined') {
-    moduleInit();
-  }
+    
+    // run module init if present
+    // module init can change value of moduleProvidesScrollers to
+    // disable container scroller if it provides its own for a splitview
+    if (typeof moduleInit != 'undefined') {
+        moduleInit();
+    }
+  
+    if (!moduleProvidesScrollers) {
+        containerScroller = new iScroll('wrapper', { 
+            checkDOMChanges: false, 
+            hScrollbar: false,
+            desktopCompatibility: true,
+            bounce: false,
+            bounceLock: true
+        });
+    }
+    
+    handleWindowResize();
 }
 
 function scrollToTop() {
@@ -236,29 +242,50 @@ function scrollToTop() {
             }
             addClass(link,'listSelected');
             this.detailScroller.scrollTo(0,0);
-            var httpRequest = new XMLHttpRequest();
-            httpRequest.open("GET", link.href+'&ajax=1', true);
-            httpRequest.onreadystatechange = function() {
-                if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-                    self.content.innerHTML = httpRequest.responseText;
-                    
+            
+            ajaxContentIntoContainer({
+                url: link.href+'&ajax=1', 
+                container: self.content, 
+                timeout: 60, 
+                success: function () {
                     var hash = '#'+encodeURIComponent(removeBreadcrumbParameter(link.href));
                     if (window.history && window.history.pushState && window.history.replaceState && // Regexs from history js plugin
                       !((/ Mobile\/([1-7][a-z]|(8([abcde]|f(1[0-8]))))/i).test(navigator.userAgent) || // disable for versions of iOS < 4.3 (8F190)
-                         (/AppleWebKit\/5([0-2]|3[0-2])/i).test(navigator.userAgent))) { // disable for the mercury iOS browser and older webkit
-                      history.pushState({}, document.title, hash);
+                         (/AppleWebKit\/5([0-2]|3[0-3])/i).test(navigator.userAgent))) { // disable for the mercury iOS browser and older webkit/uiwebview
+                      window.history.pushState({}, document.title, hash);
                     } else {
                       location.hash = hash;
                     }
                     
-                    self.detailScroller.refresh();
                     if (typeof moduleHandleWindowResize != 'undefined') {
                         moduleHandleWindowResize(e);
                     }
+                    
+                    var refreshOnLoad = function () {
+                        setTimeout(function () {
+                            self.detailScroller.refresh();
+                        }, 0);
+                    };
+                    
+                    // As images load the height of the detail view will change so
+                    // refresh the scroller when each image loads:
+                    var images = self.content.getElementsByTagName("img");
+                    for (var i = 0; i < images.length; i++) {
+                        // ignore images with a height attribute since the DOM already knows their height
+                        if (images[i].getAttribute("height")) { continue; }
+                        
+                        if (images[i].addEventListener) {
+                            images[i].addEventListener("load", refreshOnLoad, false);
+                        } else if (images[i].attachEvent) {
+                            images[i].attachEvent("onload", refreshOnLoad);
+                        }
+                    }
+                    refreshOnLoad();
+                },
+                error: function (code) {
                 }
-            }
-            showLoadingMsg(this.options.content);
-            httpRequest.send(null);
+            });
+            
             e && e.preventDefault();
             return false;
         },
@@ -384,8 +411,8 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
         }
     }
     
-    containerScroller.destroy();
-    containerScroller = null;
+    moduleProvidesScrollers = true;
+    document.getElementById('container').style.height = "100%";
     
     moduleHandleWindowResize();
 

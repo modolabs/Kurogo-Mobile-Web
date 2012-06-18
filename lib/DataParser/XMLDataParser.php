@@ -28,6 +28,10 @@ abstract class XMLDataParser extends DataParser
 
     protected function startElement($xml_parser, $name, $attribs)
     {
+        if (!is_null($this->data) && $this->data !== '' && count($this->elementStack) > 0) {
+            $parent = end($this->elementStack);
+            $parent->setValue($parent->value().$this->data);
+        }
         $this->data = '';
         if ($this->shouldHandleStartElement($name)) {
             $this->handleStartElement($name, $attribs);
@@ -49,7 +53,7 @@ abstract class XMLDataParser extends DataParser
                 }
                 $element->shouldStripTags($this->shouldStripTags($element));
                 $element->shouldHTMLDecodeCDATA($this->shouldHTMLDecodeCDATA($element));
-                $element->setValue($this->data);
+                $element->setValue($element->value().$this->data);
                 $this->data = '';
             }
             $parent = end($this->elementStack);

@@ -1,0 +1,9 @@
+.banner-notice {
+  background-image: url('/common/images/alert.gif');
+  background-position: 5px center;
+  border: 1px solid #ccc;
+}
+.banner-notice .banner-message, .banner-notice a.banner-message { 
+  background-image: none;
+  padding: 8px 8px 8px 36px;
+}

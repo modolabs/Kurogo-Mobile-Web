@@ -387,8 +387,7 @@ class AthleticsWebModule extends WebModule {
         
                 if (!$content = $this->cleanContent($story->getContent())) {
                   if ($url = $story->getLink()) {
-                      header("Location: $url");
-                      exit();
+                      Kurogo::redirectToURL($url);
                   } else {
                       throw new KurogoDataException($this->getLocalizedString('ERROR_CONTENT_NOT_FOUND', $storyID));
                   }
@@ -718,7 +717,27 @@ class AthleticsWebModule extends WebModule {
                 $this->assign('bookmarks', $bookmarks);
                 $this->assign('tabs', $tabs);
                 $this->enableTabs($tabs);
+                break;
                 
+            case 'pane':
+                if ($this->ajaxContentLoad) {
+                    $section = 'topnews';
+                    
+                    $newsFeed = $this->getNewsFeed($section);
+                    $newsFeed->setStart(0);
+                    $newsFeed->setLimit($this->maxPerPage);
+                    
+                    $items = $newsFeed->items();
+                    $this->setLogData($section, $newsFeed->getTitle());
+                    
+                    $stories = array();
+                    foreach ($items as $item) {
+                        $stories[] = $this->linkForNewsItem($item, array('section' => $section));
+                    }
+                    $this->assign('stories', $stories);
+                }
+                $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                $this->addInternalJavascript('/common/javascript/lib/paneStories.js');
                 break;
         }
     }

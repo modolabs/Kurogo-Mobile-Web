@@ -22,7 +22,7 @@ abstract class JavascriptMapImageController extends MapImageController
         if ($this->webModule && method_exists($this->webModule, 'linkForItem')) {
             $link = $this->webModule->linkForItem($placemark);
             if ($link && isset($link['url'])) {
-                $url = FULL_URL_PREFIX.$link['url'];
+                $url = FULL_URL_PREFIX.ltrim($link['url'], '/');
             }
         }
         return $url;

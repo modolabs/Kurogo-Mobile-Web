@@ -6,4 +6,4 @@
 <div id="mapimage"></div>
 
 
-{include file="findInclude:common/templates/footer.tpl"}
+{include file="findInclude:modules/map/templates/fullscreenfooter.tpl" hideFooterLinks=true}
