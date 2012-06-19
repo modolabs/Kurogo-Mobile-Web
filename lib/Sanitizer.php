@@ -123,7 +123,7 @@ class Sanitizer
                 
                 foreach ($childNodes as $childNode) {
                     $count = self::walkForTruncation($dom, $childNode, $length, $margin, $minLineLength, 
-                        $encoding, $lastTextNode, $count, &$currentBlock, &$currentBlockCount);
+                        $encoding, $lastTextNode, $count, $currentBlock, $currentBlockCount);
                 }
                 
                 if (self::nodeIsBlock($node)) {
