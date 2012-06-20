@@ -354,35 +354,46 @@ class KurogoWebBridge
     //
 
     public static function getServerConfig($id, $page, $args) {
-        // config values for debugging web mode on browser:
-        $jsHeader = '';
-        $base     = URL_BASE;
-        $url      = rtrim(FULL_URL_PREFIX, '/');
-        $ajaxArgs = self::AJAX_PARAMETER."=1";
-        $pageArgs = http_build_query($args);
+        $isNative = self::hasNativePlatform();
         
-        // config values for web bridge mode on device:
-        if (self::hasNativePlatform()) {
-            $jsHeader = '__KUROGO_JAVASCRIPT_HEADER__';
-            $base     = '';
-            $url      = '__KUROGO_SERVER_URL__';
-            $pageArgs = '__KUROGO_MODULE_EXTRA_ARGS__';
-        }
+        $staticConfig = array(
+            'pagePath'   => "/{$id}/{$page}",
+            'ajaxArgs'   => self::AJAX_PARAMETER."=1",
+            'timeout'    => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 60),
+            'cookiePath' => COOKIE_PATH,
+            'events'     => $isNative,
+        );
         if (self::forceNativePlatform($pagetype, $platform, $browser)) {
-            $ajaxArgs .= '&'.http_build_query(self::pagetypeAndPlatformToParams($pagetype, $platform, $browser));
+            $staticConfig['ajaxArgs'] .= '&'.http_build_query(
+                self::pagetypeAndPlatformToParams($pagetype, $platform, $browser));
+        }
+        
+        // configMappings are so that keys used by native side are
+        // independent of the config keys in the kgoBridge class
+        $configMappings = json_encode(array(
+            'KGO_WEB_BRIDGE_CONFIG_URL' => 'url',
+            'KGO_WEB_BRIDGE_PAGE_ARGS'  => 'pageArgs',
+            'KGO_WEB_BRIDGE_COOKIES'    => 'cookies',
+        ));
+        
+        // native bridge variables
+        $jsInit = '__KGO_WEB_BRIDGE_JAVASCRIPT_INIT__';
+        $bridgeConfig = '__KGO_WEB_BRIDGE_CONFIG_JSON__';
+        
+        if (!$isNative) {
+            // emulate what native bridge would replace variables with
+            $jsInit = '';
+            $bridgeConfig = json_encode(array(
+                'KGO_WEB_BRIDGE_CONFIG_URL' => rtrim(FULL_URL_PREFIX, '/'),
+                'KGO_WEB_BRIDGE_PAGE_ARGS' => http_build_query($args),
+            ));
         }
         
         return array(
-            'jsHeader' => $jsHeader,
-            'jsConfig' => json_encode(array(
-                'events'   => self::hasNativePlatform(),
-                'base'     => $base,
-                'url'      => $url,
-                'ajaxArgs' => $ajaxArgs,
-                'pagePath' => "/{$id}/{$page}",
-                'pageArgs' => $pageArgs,
-                'timeout'  => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 60),
-            )),
+            'jsInit'         => $jsInit,
+            'configMappings' => $configMappings,
+            'staticConfig'   => json_encode($staticConfig),
+            'bridgeConfig'   => $bridgeConfig,
         );
     }
 

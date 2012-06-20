@@ -31,15 +31,27 @@
 
 {block name="javascript"}
   <script type="text/javascript">
-      // Native apps replace this with js which fixes per-OS/version issues
-      // must be first inline js on page!
-      {$webBridgeConfig['jsHeader']}
+    // Native apps replace this with js which initializes per-OS/version functionality
+    {$webBridgeConfig['jsInit']}
   </script>
   {$smarty.block.parent}
   <script type="text/javascript">
-      var kgoBridgeConfig = {$webBridgeConfig['jsConfig']};
-      {if $webBridgeJSLocalizedStrings}kgoBridgeConfig['localizedStrings'] = {$webBridgeJSLocalizedStrings};{/if} 
-      var kgoBridge = new kgoBridgeHandler(kgoBridgeConfig);
+      var kgoWebBridgeConfig = {$webBridgeConfig['staticConfig']};
+      {if $webBridgeJSLocalizedStrings}kgoWebBridgeConfig['localizedStrings'] = {$webBridgeJSLocalizedStrings};{/if} 
+      
+      // overrides are used so native app variable declarations only exist in one
+      // place in the server code and other js variables can be changed.
+      // This is done as a dictionary because older versions of apps may not set newer values.
+      var configMappings = {$webBridgeConfig['configMappings']};
+      
+      var bridgeConfig = {$webBridgeConfig['bridgeConfig']};
+      for (var key in configMappings) {
+          if (key in bridgeConfig) {
+              kgoWebBridgeConfig[configMappings[key]] = bridgeConfig[key];
+          }
+      }
+
+      var kgoBridge = new kgoBridgeHandler(kgoWebBridgeConfig);
   </script>
 {/block}
 

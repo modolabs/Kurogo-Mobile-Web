@@ -2,6 +2,14 @@ function scrollToTop() {
 	scrollTo(0,0); 
 }
 
+function getCookie(name) {
+    return kgoBridge.getCookie(name);
+}
+
+function setCookie(name, value, expireseconds) {
+    kgoBridge.setCookie(name, value, expireseconds);
+}
+
 (function (window) {
     function kgoBridgeHandler(config) {
         if (typeof config == 'object') {
@@ -9,18 +17,32 @@ function scrollToTop() {
                 this.config[i] = config[i];
             }
         }
+        
+        if (!this.config.events) {
+            // desktop emulation mode does not provide cookies
+            var pairs = document.cookie.split(";");
+            this.config.cookies = {};
+            for (var i = 0; i < pairs.length; i++) {
+                var pair = pairs[i].split("=");
+                if (pair.length == 2) {
+                    var name = pair[0].replace(/^\s+|\s+$/g, "");
+                    var value = pair[1].replace(/^\s+|\s+$/g, "");
+                    this.config.cookies[name] = value;
+                }
+            }
+        }
     }
     
     kgoBridgeHandler.prototype = {
         config: {
             events: false,  // desktop browser simulation mode
-            base: "",
             url: "",
             ajaxArgs: "",
-            pagePage: "",
+            pagePath: "",
             pageArgs: "",
-            serverURL: "",
             timeout: 60,
+            cookiePath: "",
+            cookies: {},
             localizedStrings: {}
         },
         callbacks : {},
@@ -242,6 +264,52 @@ function scrollToTop() {
                 "repeating" : true,
                 "remove"    : true
             }]);
+        },
+        
+        //
+        // Cookies
+        //
+        
+        getCookie: function (name) {
+            return (name in this.config.cookies) ? this.config.cookies[name] : "";
+        },
+        
+        setCookie: function (name, value, expireseconds) {
+            var params = {
+                "name"     : name,
+                "value"    : value,
+                "duration" : expireseconds,
+                "path"     : this.config.cookiePath
+            };
+            
+            // set in cookies array so getCookie is consistent
+            var oldCookieValue = (name in this.config.cookies) ? this.config.cookies[name] : null;
+            this.config.cookies[name] = value;
+
+            if (this.config.events) {
+                // tell native side to set the cookie for us
+                var that = this;
+                this.nativeAPI("cookie", "set", params, function (error, params) {
+                    if (error !== null) {
+                        // reset to old value on error:
+                        if (oldCookieValue !== null) {
+                            that.config.cookies[name] = oldCookieValue;
+                        } else {
+                            delete that.config.cookies[name];
+                        }
+                    }
+                });
+            } else {
+                // emulation mode, set cookie in js and remember in cookie object
+                var expires = new Date();
+                expires.setTime(expires.getTime() + (expireseconds * 1000));
+
+                var cookie = name + "=" + escape(value) + 
+                    (expireseconds == 0 ? "" : "; expires=" + expires.toGMTString()) + 
+                    "; path=" + this.config.cookiePath;
+                document.cookie = cookie;
+                this.log("kgoBridge would have set cookie: '"+cookie+"'");
+            }
         },
         
         // ====================================================================
