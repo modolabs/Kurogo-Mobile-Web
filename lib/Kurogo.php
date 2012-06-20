@@ -1091,7 +1091,7 @@ class Kurogo
     }
 
     # Implmentation taken from https://gist.github.com/1407308
-    public static function rmdir($$path) {
+    public static function rmdir($path) {
         if(is_dir($path)){
             foreach (scandir($path) as $name){
                 if (in_array($name, array('.', '..'))){
