@@ -20,6 +20,7 @@ class SOAPDataRetriever extends DataRetriever {
     protected $location;
     protected $uri;
     protected $action;
+    protected $saveToFile = false;
     
     protected $soapHeaders = array();
     
@@ -149,6 +150,14 @@ class SOAPDataRetriever extends DataRetriever {
         return 'soap_' . md5($location) . '-' . md5($method) . '-' . md5(serialize($parameters));
     }
 
+    protected function setSaveToFile($saveToFile) {
+        $this->saveToFile = $saveToFile;
+    }
+    
+    protected function saveToFile() {
+        return $this->saveToFile;
+    }
+
     protected function retrieveResponse() {
     
         $this->initRequestIfNeeded();
@@ -186,6 +195,14 @@ class SOAPDataRetriever extends DataRetriever {
             $lastResponseHeaders = array();
         }
         
+        $response = $this->initResponse();
+
+        if ($file = $this->saveToFile()) {
+            $filePath = $this->cache->getFullPath($file);
+            file_put_contents($filePath, $data);
+            $data = $filePath;
+        }
+
         if ($this->authority) {
             $response->setContext('authority', $this->authority);
         }

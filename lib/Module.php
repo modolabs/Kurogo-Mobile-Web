@@ -115,7 +115,8 @@ abstract class Module
         // when run without a type it will find either
         $classNames = array(
             'web'=>ucfirst($id).'WebModule',
-            'api'=>ucfirst($id).'APIModule'
+            'api'=>ucfirst($id).'APIModule',
+            'shell'=>ucfirst($id).'ShellModule'
         );
         
         // if we specified a type, include only that type in the array

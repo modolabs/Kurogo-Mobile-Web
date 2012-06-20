@@ -34,7 +34,6 @@ class  AthleticCalendar implements CalendarInterface {
     public function getEventsInRange(TimeRange $range=null, $limit=null, $filters=null) {
         
         $events = array();
-        foreach ($this->events as $event) {
         $filters = is_array($filters) ? $filters : array();
 
         foreach ($this->events as $event) {
@@ -48,8 +47,6 @@ class  AthleticCalendar implements CalendarInterface {
         
         // in some case, it doesn't work properly if we just sort $this->eventStartTimes
         return $events;
-        
-        }
     }
 
     private function sort_events(AthleticEvent $a, AthleticEvent $b) {
