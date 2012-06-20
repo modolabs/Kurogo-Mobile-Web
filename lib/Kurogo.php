@@ -1102,7 +1102,9 @@ class Kurogo
             }
             rmdir($path);
         }else{
-            unlink($path);
+            if(file_exists($path)){
+                unlink($path);
+            }
         }
     }
 
