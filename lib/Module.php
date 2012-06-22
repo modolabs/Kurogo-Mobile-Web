@@ -105,6 +105,7 @@ abstract class Module
             if ($config) {
                 $module->setConfig('module', $config);
             }
+            Kurogo::addModuleLib($id);
             return $module;
         }
         
@@ -159,6 +160,7 @@ abstract class Module
                 
                         // cache the location of the class (which also includes the classname)
                         Kurogo::setCache(self::cacheKey($id, $type), $moduleFile);
+                        Kurogo::addModuleLib($id);
                         return $module;
                     }
                     Kurogo::log(LOG_NOTICE, "$class found at $moduleFile is abstract and cannot be used for $id", 'module');
