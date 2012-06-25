@@ -1187,7 +1187,7 @@ h2.icon {
 #tabs li a {
 	display: block;
 	text-decoration: none;
-	min-width: 30px;
+	min-width: 25px;
 	padding: 8px 10px 10px 10px;
 }
 
