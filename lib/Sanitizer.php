@@ -10,34 +10,54 @@ class Sanitizer
 {
     static private $tagTypes = array(
         // Groups of tags by type which can be combined by separating with '|' (eg: 'inline|block')
-        'inline' => array('<b>', '<strong>', '<i>', '<em>', '<span>', '<code>'),
-        'block'  => array('<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>'),
+        'inline' => array('<strong>', '<em>', '<code>', '<dfn>', '<samp>', '<var>', '<cite>', '<span>', 
+                          '<del>', '<ins>', '<b>', '<i>', '<tt>', '<big>', '<small>', '<sup>', '<sub>', '<bdo>'),
+        'header' => array('<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>'),
+        'block'  => array('<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', 'legend', '<fieldset>'),
         'link'   => array('<a>'),
         'media'  => array('<img>', '<video>', '<audio>', '<iframe>'),
         'list'   => array('<ol>', '<ul>', '<li>', '<dl>', '<dd>', '<dt>'),
-        'table'  => array('<table>', '<thead>', '<tbody>', '<tr>', '<th>', '<td>'),
+        'table'  => array('<table>', '<thead>', '<tbody>', '<tfoot>', '<tr>', '<th>', '<td>', '<col>', '<colgroup>', '<caption>'),
+        
+        'plugin' => array('<object>', '<param>'),
+        'form'   => array('<form>', 'label', '<input>', '<textarea>', '<select>', '<option>', '<optgroup>', '<button>'),
+        'style'  => array('<style>'),
+        'imgmap' => array('<map>', '<area>'),
         
         // Groups of tags by use case
         'editor' => array(
-            '<b>', '<strong>', '<i>', '<em>', '<span>', '<code>', 
-            '<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', 
+            '<strong>', '<em>', '<code>', '<dfn>', '<samp>', '<var>', '<cite>', '<span>', 
+                '<del>', '<ins>', '<b>', '<i>', '<tt>', '<big>', '<small>', '<sup>', '<sub>', '<bdo>', 
+            '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>',
+            '<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', 'legend', '<fieldset>', 
             '<a>', 
-            '<img>', '<video>', '<audio>', '<iframe>', 
+            '<img>', '<video>', '<audio>', '<source>', '<iframe>', 
             '<ol>', '<ul>', '<li>', '<dl>', '<dd>', '<dt>', 
-            '<table>', '<thead>', '<tbody>', '<tr>', '<th>', '<td>'),
+            '<table>', '<thead>', '<tbody>', '<tfoot>', '<tr>', '<th>', '<td>', '<col>', '<colgroup>', '<caption>'),
     );
     
     static private $blockNodeNames = array(
-        'div', 'blockquote', 'p', 'pre', 'ul', 'dl', 'table'
+        'div', 'blockquote', 'p', 'pre', 'ul', 'dl', 'table', 'legend', 'fieldset'
+    );
+    
+    // <script> is always removed
+    // These tags have content which is only useful if the tag is there:
+    static private $hideEntireBlockTags = array(
+        'head',
+        'style',
+        'form',
+        'map',
     );
     
     //
-    // Filter to attempt to remove XSS injection attacks without removing HTML
+    // Filter to remove XSS injection attacks and unwanted tags from HTML
+    // Note: always removes all javascript from HTML even if $allowedTags contains <script>
     //
     public static function sanitizeHTML($string, $allowedTags='editor') {
         $useTagWhitelist = true;
         $tagWhitelist = array();
         
+        // figure out what tags are okay
         if (is_array($allowedTags)) {
           $tagWhitelist = $allowedTags;
           
@@ -53,9 +73,31 @@ class Sanitizer
                 }
             }
         }
-        $strippedString = $useTagWhitelist ? strip_tags($string, implode('', array_unique($tagWhitelist))) : $string;
+        if ($useTagWhitelist) {
+            $tagWhitelist = array_map('strtolower', array_unique($tagWhitelist));
+        }
         
-        return preg_replace_callback('/<(.*?)>/i', array(get_class(), 'tagPregReplaceCallback'), $strippedString);
+        // The content of these tags is only useful if the tag exists.  Remove the entire block 
+        // unless the caller has explicitly asked for it to be included.  
+        // Otherwise the content would show up unexpectedly.
+        $removeBlockTags = array('script'); // always remove script tags and their content
+        foreach (self::$hideEntireBlockTags as $tag) {
+            if ($useTagWhitelist && !in_array('<'.strtolower($tag).'>', $tagWhitelist)) {
+                $removeBlockTags[] = $tag;
+            }
+        }
+        foreach ($removeBlockTags as $tag) {
+            $string = preg_replace(';<\s*'.$tag.'(?:\s+[^>]*|\s*)>.*<\s*/\s*'.$tag.'\s*>;i', '', $string);
+        }
+        
+        if ($useTagWhitelist) {
+            $string = strip_tags($string, implode('', $tagWhitelist));
+        }
+        
+        // remove attribute-based injection attacks:
+        $string = preg_replace_callback('/<(.*?)>/i', array(get_class(), 'tagPregReplaceCallback'), $string);
+        
+        return $string;
     }
 
     //
