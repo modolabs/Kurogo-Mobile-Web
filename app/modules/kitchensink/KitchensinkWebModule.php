@@ -170,7 +170,7 @@ class KitchensinkWebModule extends WebModule {
                 $minLineLength = $this->getArg('minLineLength', 40);
                 $html = $this->getArg('html', '');
                 if ($length && $margin && $html) {
-                    $html = Sanitizer::sanitizeAndTruncateHTML($html, $length, $margin, $minLineLength);
+                    $html = Sanitizer::sanitizeAndTruncateHTML($html, $truncated, $length, $margin, $minLineLength);
                 }
                 $this->assign('html', $html);
                 break;
