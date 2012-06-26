@@ -357,7 +357,8 @@ class KurogoWebBridge
         $isNative = self::hasNativePlatform();
         
         $staticConfig = array(
-            'pagePath'   => "/{$id}/{$page}",
+            'module'     => $id,
+            'page'       => $page,
             'ajaxArgs'   => self::AJAX_PARAMETER."=1",
             'timeout'    => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 60),
             'cookiePath' => COOKIE_PATH,
@@ -371,7 +372,7 @@ class KurogoWebBridge
         // configMappings are so that keys used by native side are
         // independent of the config keys in the kgoBridge class
         $configMappings = json_encode(array(
-            'KGO_WEB_BRIDGE_CONFIG_URL' => 'url',
+            'KGO_WEB_BRIDGE_CONFIG_URL' => 'urlPrefix',
             'KGO_WEB_BRIDGE_PAGE_ARGS'  => 'pageArgs',
             'KGO_WEB_BRIDGE_COOKIES'    => 'cookies',
         ));
@@ -510,7 +511,7 @@ class KurogoWebBridge
         return $url;
     }
     
-    public static function redirectTo($url) {
+    public static function redirectToURL($url) {
         if (!self::hasNativePlatform()) {
             // web debugging mode:
             $url = URL_PREFIX.ltrim($url, '/');

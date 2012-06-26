@@ -533,3 +533,24 @@ function getCSSHeight(element) {
         - parseFloat(getCSSValue(element, 'padding-top'))
         - parseFloat(getCSSValue(element, 'padding-bottom'));
 }
+
+function _getStringForArgs(args) {
+    var argString = "";
+    if (typeof args == "string" && args.length) {
+        argString = "?" + args;
+    } else if (typeof args == "object") {
+        for (var param in args) {
+            argString += (argString.length ? "&" : "?") + 
+                param + "=" + encodeURIComponent(args[param]);
+        }
+    }
+    return argString;    
+}
+
+function redirectTo(page, args) {
+    window.location = "./" + page + _getStringForArgs(args);
+}
+
+function redirectToModule(module, page, args) {
+    window.location = "../" + module + "/" + page + _getStringForArgs(args);
+}

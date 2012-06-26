@@ -10,6 +10,15 @@ function setCookie(name, value, expireseconds) {
     kgoBridge.setCookie(name, value, expireseconds);
 }
 
+function redirectTo(page, args) {
+    kgoBridge.redirectTo(page, args);
+}
+
+function redirectToModule(module, page, args) {
+    kgoBridge.redirectToModule(module, page, args);
+}
+
+
 (function (window) {
     function kgoBridgeHandler(config) {
         if (typeof config == 'object') {
@@ -36,9 +45,10 @@ function setCookie(name, value, expireseconds) {
     kgoBridgeHandler.prototype = {
         config: {
             events: false,  // desktop browser simulation mode
-            url: "",
+            urlPrefix: "",
             ajaxArgs: "",
-            pagePath: "",
+            module: "",
+            page: "",
             pageArgs: "",
             timeout: 60,
             cookiePath: "",
@@ -54,6 +64,9 @@ function setCookie(name, value, expireseconds) {
             KGOBridgeErrorAPINotSupported : 1,
             KGOBridgeErrorJSONConvertFailed : 2
         },
+        
+        BRIDGE_LINK_PREFIX_INTERNAL : "kgobridge://link/",
+        BRIDGE_LINK_PREFIX_EXTERNAL : "kgobridge://external/link?url=",
         
         // ====================================================================
         // Bridge API
@@ -425,7 +438,7 @@ function setCookie(name, value, expireseconds) {
             var lcURL = url.toLowerCase();
             if (lcURL.indexOf("http://") == 0 || lcURL.indexOf("https://") == 0) {
                 // wrap external URLs so that we don't get confused by other iframes
-                url = "kgobridge://external/link?url="+encodeURIComponent(url);
+                url = this.BRIDGE_LINK_PREFIX_EXTERNAL+encodeURIComponent(url);
             }
             
             if (this.config.events) {
@@ -448,7 +461,7 @@ function setCookie(name, value, expireseconds) {
         },
         
         ajaxLoad: function () {
-            var pageURL = this.config.url+this.config.pagePath+"?"+this.config.ajaxArgs;
+            var pageURL = this.config.urlPrefix + "/" + this.config.module + "/" + this.config.page + "?" + this.config.ajaxArgs;
             if (this.config.pageArgs.length) {
                 pageURL += "&"+this.config.pageArgs;
             }
@@ -463,10 +476,9 @@ function setCookie(name, value, expireseconds) {
         
         bridgeToAjaxLink: function (href) {
             // must be able to pass through non-kgobridge links
-            var bridgePrefix = "kgobridge://link/";
             var oldhref= href;
-            if (href.indexOf(bridgePrefix) == 0) {
-                href = this.config.url+"/"+href.substr(bridgePrefix.length);
+            if (href.indexOf(this.BRIDGE_LINK_PREFIX_INTERNAL) === 0) {
+                href = this.config.urlPrefix + "/" + href.substr(this.BRIDGE_LINK_PREFIX_INTERNAL.length);
                 
                 var anchor = '';
                 var anchorPos = href.indexOf("#");
@@ -477,6 +489,19 @@ function setCookie(name, value, expireseconds) {
                 href = href+(href.indexOf("?") > 0 ? "&" : "?")+this.config.ajaxArgs+anchor;
             }
             return href;
+        },
+        
+        redirectTo: function (page, args) {
+            this.redirectToModule(this.config.module, page, args);
+        },
+        
+        redirectToModule: function (module, page, args) {
+            var url = module + "/" + page + _getStringForArgs(args);
+            this.loadURL(this.BRIDGE_LINK_PREFIX_INTERNAL + url);
+            
+            if (!this.config.events) {
+                window.location = "../" + url; // use traditional redirect in emulation mode
+            }
         },
         
         log: function (message) {

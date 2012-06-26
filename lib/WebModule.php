@@ -431,7 +431,7 @@ abstract class WebModule extends Module {
     
     //error_log('Redirecting to: '.$url);
     if (KurogoWebBridge::shouldRewriteRedirects()) {
-      KurogoWebBridge::redirectTo($url);
+      KurogoWebBridge::redirectToURL($url);
     } else {
       $url = URL_PREFIX . ltrim($url, '/');
       Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url", 'module');
@@ -451,7 +451,7 @@ abstract class WebModule extends Module {
     
     //error_log('Redirecting to: '.$url);
     if (KurogoWebBridge::shouldRewriteRedirects()) {
-      KurogoWebBridge::redirectTo($url);
+      KurogoWebBridge::redirectToURL($url);
     } else {
       $url = URL_PREFIX . ltrim($url, '/');
       Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url", 'module');
