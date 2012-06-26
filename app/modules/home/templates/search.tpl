@@ -3,7 +3,7 @@
 {if $showFederatedSearch}
 {include file="findInclude:common/templates/search.tpl" emphasized=false}
 {else}
-<h3 class="nonfocal">{"DISABLE_FEDERATED_SEARCH"|getLocalizedString}</h3>
+<div class="focal">{"FEDERATED_SEARCH_DISABLED"|getLocalizedString}</div>
 {/if}
 
 {foreach $federatedSearchModules as $federatedSearchModule}
