@@ -170,24 +170,47 @@ class Kurogo
         }
 
         foreach ($dirs as $dir) {
-            if (in_array($dir, $this->libDirs)) {
-                $found = true;
-                continue;
-            }
-
             if (is_dir($dir)) {
                 self::log(LOG_INFO, "Adding package $packageName", "autoLoader");
                 $found = true;
-                $this->libDirs[] = $dir;
-
-                if (is_file("$dir.php")) {
-                    include_once("$dir.php");
+                if ($this->addLibDir($dir)) {
+                    //load Package.php if the package hasn't already been loaded
+                    if (is_file("$dir.php")) {
+                        include_once("$dir.php");
+                    }
                 }
             }
         }
 
         if (!$found) {
             throw new KurogoConfigurationException("Unable to load package $packageName");
+        }
+    }
+    
+    protected function getLibDirs() {
+        return $this->libDirs;
+    }
+    
+    public function addLibDir($dir) {
+        if (!in_array($dir, $this->libDirs) && is_dir($dir)) {
+            self::log(LOG_INFO, "Adding lib dir $dir", "autoLoader");
+            $this->libDirs[] = $dir;
+            return true;
+        }
+        
+        //it's already there
+        return false;
+    }
+    
+    public static function addModuleLib($id) {
+        if (defined('MODULES_DIR')) {
+            $dir = implode('/', array(MODULES_DIR, $id, 'lib'));
+            self::sharedInstance()->addLibDir($dir);
+        }
+
+        if (defined('SITE_MODULES_DIR')) {
+            $dir = implode('/', array(SITE_MODULES_DIR, $id, 'lib'));
+            self::sharedInstance()->addLibDir($dir);
         }
     }
 
@@ -207,21 +230,11 @@ class Kurogo
             include($classPath);
             return ;
         }
-        $paths = $this->libDirs;
+        $paths = $this->getLibDirs();
 
         // If the className has Module in it then use the modules dir
         if (defined('MODULES_DIR') && preg_match("/(.+)(Web|API)Module$/", $className, $bits)) {
             $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
-        }
-
-        if ($this->moduleID) {
-            if (defined('MODULES_DIR')) {
-                $paths[] = implode('/', array(MODULES_DIR, $this->moduleID, 'lib'));
-            }
-
-            if (defined('SITE_MODULES_DIR')) {
-                $paths[] = implode('/', array(SITE_MODULES_DIR, $this->moduleID, 'lib'));
-            }
         }
 
         // use the shared lib dir if it's been defined

@@ -1017,7 +1017,9 @@ class MapWebModule extends WebModule {
             $this->assignGroups('navItems');
 
             $this->addInlineJavascriptFooter("var CONFIG_MODULE = '{$this->configModule}';");
-            $this->addOnLoad('sortGroupsByDistance();');
+            if ($this->getOptionalModuleVar('SORT_GROUPS_BY_DISTANCE', true)) {
+				$this->addOnLoad('sortGroupsByDistance();');
+			}
         }
 
         if ($this->mapURL === null) {
