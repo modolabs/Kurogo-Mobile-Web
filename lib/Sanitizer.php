@@ -49,6 +49,8 @@ class Sanitizer
         'map',
     );
     
+    static private $reOpts = "ims";
+    
     //
     // Filter to remove XSS injection attacks and unwanted tags from HTML
     // Note: always removes all javascript from HTML even if $allowedTags contains <script>
@@ -77,6 +79,9 @@ class Sanitizer
             $tagWhitelist = array_map('strtolower', array_unique($tagWhitelist));
         }
         
+        // Remove all newlines to make regular expression mapping
+        //$string = str_replace("\n", " ", $string);
+        
         // The content of these tags is only useful if the tag exists.  Remove the entire block 
         // unless the caller has explicitly asked for it to be included.  
         // Otherwise the content would show up unexpectedly.
@@ -87,7 +92,7 @@ class Sanitizer
             }
         }
         foreach ($removeBlockTags as $tag) {
-            $string = preg_replace(';<\s*'.$tag.'(?:\s+[^>]*|\s*)>.*<\s*/\s*'.$tag.'\s*>;i', '', $string);
+            $string = preg_replace(';<\s*'.$tag.'(?:\s+[^>]*|\s*)>.*<\s*/\s*'.$tag.'\s*>;'.self::$reOpts, '', $string);
         }
         
         if ($useTagWhitelist) {
@@ -95,7 +100,7 @@ class Sanitizer
         }
         
         // remove attribute-based injection attacks:
-        $string = preg_replace_callback('/<(.*?)>/i', array(get_class(), 'tagPregReplaceCallback'), $string);
+        $string = preg_replace_callback('/<(.*?)>/'.self::$reOpts, array(get_class(), 'tagPregReplaceCallback'), $string);
         
         return $string;
     }
@@ -123,7 +128,7 @@ class Sanitizer
                 if ($lastTextNode) {
                     self::appendTruncationSuffix($dom, $lastTextNode);
                 }
-                $parts = preg_split(';</?body[^>]*>;', $dom->saveHTML());
+                $parts = preg_split(';</?body[^>]*>;'.self::$reOpts, $dom->saveHTML());
                 if (count($parts) > 1) { // should be 3
                     $sanitized = $parts[1];
                     $truncated = true;
@@ -249,10 +254,10 @@ class Sanitizer
             $anyJSAttr = implode('|', $jsAttributes);
             
             $regexps = array(
-                '/=\s*"\s*javascript:[^"]*"/i',                           // double-quoted attr with value containing js
-                '/=\s*\'\s*javascript:[^\']*\'/i',                        // single-quoted attr with value containing js
-                '/=\s*javascript:[^\s]*/i',                               // quoteless attr with value containing js
-                '/('.$anyJSAttr.')\s*=\s*(["][^"]*["]|[\'][^\']*[\'])/i', // attr that triggers js
+                '/=\s*"\s*javascript:[^"]*"/'.self::$reOpts,                           // double-quoted attr with value containing js
+                '/=\s*\'\s*javascript:[^\']*\'/'.self::$reOpts,                        // single-quoted attr with value containing js
+                '/=\s*javascript:[^\s]*/'.self::$reOpts,                               // quoteless attr with value containing js
+                '/('.$anyJSAttr.')\s*=\s*(["][^"]*["]|[\'][^\']*[\'])/'.self::$reOpts, // attr that triggers js
             );
             $replacements = array(
                 '=""', // remove js in attr value
@@ -270,6 +275,6 @@ class Sanitizer
     // Assumes URL is dumped into href or src attr as-is
     //
     public static function sanitizeURL($string) {
-        return preg_replace('/javascript:.*/i', '', strip_tags($string));
+        return preg_replace('/javascript:.*/'.self::$reOpts, '', strip_tags($string));
     }
 }
