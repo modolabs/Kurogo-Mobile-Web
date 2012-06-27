@@ -50,7 +50,7 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
         switch ($this->getOption('action'))
         {
             case 'posts':
-                $this->setBaseURL(sprintf('https://graph.facebook.com/%s/feed', $this->user));
+                $this->setBaseURL(sprintf('https://graph.facebook.com/%s/posts', $this->user));
                 if ($limit = $this->getOption('limit')) {
                     $this->addParameter('limit',$limit);
                 }
