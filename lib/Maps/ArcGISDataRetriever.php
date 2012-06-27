@@ -50,14 +50,14 @@ class ArcGISDataRetriever extends URLDataRetriever
                     $displayField = $this->parser->getDisplayFieldForFolder($this->selectedLayer);
                 }
                 if ($displayField) {
-                    $searchText = strtoupper($this->searchFilters['text']);
+                    $searchText = strtoupper(str_replace("'","''",$this->searchFilters['text']));
                     return array(
                         'where' => "UPPER($displayField) LIKE '%$searchText%'",
                         'f'    => 'json',
                     );
                 } else {
                     return array(
-                        'text' => $this->searchFilters['text'],
+                        'text' => str_replace("'","''",$this->searchFilters['text']),
                         'f'    => 'json',
                         );
                 }

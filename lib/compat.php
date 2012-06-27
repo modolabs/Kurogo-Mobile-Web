@@ -64,6 +64,7 @@ function mime_type($filename) {
     'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'ppt' => 'application/vnd.ms-powerpoint',
     'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'pptm' => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
     
     // open office
     'odt' => 'application/vnd.oasis.opendocument.text',

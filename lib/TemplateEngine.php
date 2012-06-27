@@ -255,12 +255,7 @@ class TemplateEngine extends Smarty {
                 ';(<[^>]+)(url\("?\'?|href\s*=\s*"|src\s*=\s*")('.FULL_URL_PREFIX.'|'.FULL_URL_BASE.');', '\1\2'.FULL_URL_PREFIX, $source);
         }
         
-        // Most of the following code comes from the stripwhitespace filter:
-        
-        // Pull out the style blocks
-        preg_match_all("!<style[^>]*?>.*?</style>!is", $source, $match);
-        $styleBlocks = $match[0];
-        $source = preg_replace("!<style[^>]*?>.*?</style>!is", '@@@SMARTY:TRIM:STYLE@@@', $source);
+        // Most of the following code comes from the trimwhitespace filter:
         
         // Pull out the script blocks
         preg_match_all("!<script[^>]*?>.*?</script>!is", $source, $match);
@@ -283,18 +278,17 @@ class TemplateEngine extends Smarty {
         
         // remove all newlines before and after tags.
         $source = preg_replace('/\n*(<[^>]+>)\n*/m', '\1', $source);
+        
+        // collapse whitespace before and after tags.
+        $source = preg_replace(array('/\s+(<)/m', '/(>)\s+/s'), array(' \1', '\1 '), $source);
 
         // strip spaces around non-breaking spaces
         $source = preg_replace('/\s*&nbsp;\s*/m', '&nbsp;', $source);
-        
-        // replace runs of spaces with a single space.
-        $source = preg_replace('/\s+/m', ' ', $source);
 
         // restore textarea, pre, script and style blocks
         $this->stripWhitespaceReplace("@@@SMARTY:TRIM:TEXTAREA@@@", $textareaBlocks, $source);
         $this->stripWhitespaceReplace("@@@SMARTY:TRIM:PRE@@@", $preBlocks, $source);
         $this->stripWhitespaceReplace("@@@SMARTY:TRIM:SCRIPT@@@", $scriptBlocks, $source);
-        $this->stripWhitespaceReplace("@@@SMARTY:TRIM:STYLE@@@", $styleBlocks, $source);
     
         if (KurogoWebBridge::shouldRewriteAssetPaths()) {
             // Need to rewrite Kurogo assets to use filenames used in native templates
