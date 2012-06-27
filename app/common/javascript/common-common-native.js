@@ -40,6 +40,9 @@ function redirectToModule(module, page, args) {
                 }
             }
         }
+        for (var name in this.config.cookies) {
+            this.config.cookies[name] = unescape(this.config.cookies[name]);
+        }
     }
     
     kgoBridgeHandler.prototype = {
@@ -290,7 +293,7 @@ function redirectToModule(module, page, args) {
         setCookie: function (name, value, expireseconds) {
             var params = {
                 "name"     : name,
-                "value"    : value,
+                "value"    : escape(value),
                 "duration" : expireseconds,
                 "path"     : this.config.cookiePath
             };
