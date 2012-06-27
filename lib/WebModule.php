@@ -10,6 +10,7 @@ define('MODULE_BREADCRUMB_PARAM', '_b');
 define('MODULE_AJAX_BREADCRUMB_TITLE', '_abt');
 define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_ablt');
 define('MODULE_AJAX_CONTAINER_PAGE', '_acp');
+define('MODULE_AJAX_CONTAINER_PAGE_ARGS', '_acpa');
 define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
 define('MODULE_TAB_COOKIE_PREFIX', 'moduletab_');
@@ -37,6 +38,7 @@ abstract class WebModule extends Module {
 
   protected $ajaxContentLoad = false;
   protected $ajaxContainerPage = '';
+  protected $ajaxContainerPageArgs = '';
   
   protected $imageExt = '.png';
   
@@ -90,6 +92,7 @@ abstract class WebModule extends Module {
     unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
     unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
     unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
+    unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
     
     return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
   }
@@ -541,6 +544,7 @@ abstract class WebModule extends Module {
 
         $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
         $this->ajaxContainerPage = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->page);
+        $this->ajaxContainerPageArgs = $this->getArg(MODULE_AJAX_CONTAINER_PAGE_ARGS, http_build_query($this->args));
         
         if ($page) {
             // Pull in fontsize
@@ -1249,12 +1253,13 @@ abstract class WebModule extends Module {
       unset($args[MODULE_AJAX_BREADCRUMB_TITLE]);
       unset($args[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
       unset($args[MODULE_AJAX_CONTAINER_PAGE]);
+      unset($args[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
       
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
         'lt' => $this->breadcrumbLongTitle,
         'p'  => $this->ajaxContentLoad ? $this->ajaxContainerPage : $this->page,
-        'a'  => http_build_query($args),
+        'a'  => $this->ajaxContentLoad ? $this->ajaxContainerPageArgs : http_build_query($args),
       );
     }
     
@@ -1294,6 +1299,9 @@ abstract class WebModule extends Module {
           
           // forward parent page id
           $args[MODULE_AJAX_CONTAINER_PAGE] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->ajaxContainerPage);
+          
+          // forward parent page args
+          $args[MODULE_AJAX_CONTAINER_PAGE_ARGS] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE_ARGS, $this->ajaxContainerPageArgs);
           
           // forward current breadcrumb arg rather than adding
           if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
