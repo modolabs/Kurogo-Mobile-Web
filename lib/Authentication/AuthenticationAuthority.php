@@ -96,6 +96,14 @@ abstract class AuthenticationAuthority
         $session = Kurogo::getSession();
         return $session->isLoggedIn($this);
     }
+    
+    /**
+     * Sets the user class used to create users
+     * @param string $class the class name of the user class. Should be a subclass of User
+     */
+    protected function setUserClass($class) {
+    	$this->userClass = $class;
+    }
 
     /**
      * Retrieves a group object from this authority. Authorities which do not provide group information
@@ -163,6 +171,10 @@ abstract class AuthenticationAuthority
         
         if (isset($args['LOGGEDIN_IMAGE_URL']) && strlen($args['LOGGEDIN_IMAGE_URL'])) {
             $this->setAuthorityImage($args['LOGGEDIN_IMAGE_URL']);
+        }
+
+        if (isset($args['USER_CLASS']) && strlen($args['USER_CLASS'])) {
+            $this->setUserClass($args['USER_CLASS']);
         }
     }
     

@@ -73,5 +73,6 @@
   {if strlen($pmImageURL)}
     <img src="{$pmImageURL}" width="2" height="2" alt="" />
   {/if}
-
 {/block}
+
+{block name="ajaxContentFooter"}{/block}
