@@ -82,75 +82,95 @@ abstract class WebModule extends Module {
   protected $defaultAllowRobots = true;
   protected $hideFooterLinks = false;
   
-  //
-  // Tabbed View support
-  //
-  
-  protected function tabCookieForPage() {
-    $cookieArgs = $this->args;
-    unset($cookieArgs[MODULE_BREADCRUMB_PARAM]);
-    unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
-    unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
-    unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
-    unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
+    //
+    // Tabbed View support
+    //
     
-    return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
-  }
+    protected function tabCookieForPage() {
+        $cookieArgs = $this->args;
+        unset($cookieArgs[MODULE_BREADCRUMB_PARAM]);
+        unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
+        unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
+        unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
+        unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
+        
+        return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
+    }
   
-  protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
-    // prefill from config to get order
-    $tabs = array();
-    foreach ($this->pageConfig as $key => $value) {
-      if (strpos($key, 'tab_') === 0) {
-        $tabKey = substr($key, 4);
-        if (in_array($tabKey, $tabKeys)) {
-          $tabs[$tabKey] = array(
-            'title' => $value,
-          );
+    protected function getCurrentTab($tabKeys) {
+        $currentTab = null;
+        
+        $tabCookie = $this->tabCookieForPage();
+        
+        if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
+            $currentTab = $this->args['tab']; // argument set
+        
+        } else if (isset($_COOKIE[$tabCookie]) && in_array($_COOKIE[$tabCookie], $tabKeys)) {
+            $currentTab = $_COOKIE[$tabCookie]; // cookie set
+        
+        } else {
+            foreach ($this->pageConfig as $key => $value) {
+                if (strpos($key, 'tab_') === 0) {
+                    $tabKey = substr($key, 4);
+                    if (in_array($tabKey, $tabKeys)) {
+                        $currentTab = $tabKey; // page config tab order set
+                        break;
+                    }
+                }
+            }
+        
+            if (!isset($currentTab)) {
+                // still haven't found it, fall back on tabKey order
+                $currentTab = reset($tabKeys);
+            }
         }
-      }
+        
+        return $currentTab;
     }
-    
-    // Fill out rest of tabs
-    foreach ($tabKeys as $tabKey) {
-      // Fill out default titles for tabs not in config:
-      if (!isset($tabs[$tabKey]) || !is_array($tabs[$tabKey])) {
-        $tabs[$tabKey] = array(
-          'title' => ucwords($tabKey),
+  
+    protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array(), $classes=array()) {
+        // prefill from config to get order
+        $tabs = array();
+        foreach ($this->pageConfig as $key => $value) {
+            if (strpos($key, 'tab_') === 0) {
+                $tabKey = substr($key, 4);
+                if (in_array($tabKey, $tabKeys)) {
+                    $tabs[$tabKey] = array(
+                        'title' => $value,
+                    );
+                }
+            }
+        }
+        
+        // Fill out rest of tabs
+        foreach ($tabKeys as $tabKey) {
+            // Fill out default titles for tabs not in config:
+            if (!isset($tabs[$tabKey]) || !is_array($tabs[$tabKey])) {
+                $tabs[$tabKey] = array(
+                    'title' => ucwords($tabKey),
+                );
+            }
+        
+            $tabArgs = $this->args;
+            $tabArgs['tab'] = $tabKey;
+            $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
+            $tabs[$tabKey]['id'] = "{$tabKey}-".md5($tabs[$tabKey]['url']);
+            $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
+            $tabs[$tabKey]['class'] = isset($classes[$tabKey]) ? $classes[$tabKey] : '';
+        }
+        
+        $currentTab = $this->getCurrentTab($tabKeys);
+        $tabCookie = $this->tabCookieForPage();
+        
+        $this->tabbedView = array(
+            'tabs'       => $tabs,
+            'current'    => $currentTab,
+            'tabCookie'  => $tabCookie,
         );
-      }
-      
-      $tabArgs = $this->args;
-      $tabArgs['tab'] = $tabKey;
-      $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
-      $tabs[$tabKey]['id'] = "{$tabKey}-".md5($tabs[$tabKey]['url']);
-      $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
+        
+        $currentJS = $tabs[$currentTab]['javascript'];
+        $this->addInlineJavascriptFooter("(function(){ var tabKey = '{$currentTab}';var tabId = '{$tabs[$currentTab]['id']}';var tabCookie = '{$tabCookie}';showTab(tabId);{$currentJS} })();");
     }
-    
-    // Figure which tab should be selected
-    $tabCookie = self::tabCookieForPage();
-    
-    $currentTab = array_keys($tabs);
-    $currentTab = reset($currentTab);    
-    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
-      $currentTab = $this->args['tab'];
-      
-    } else if (isset($_COOKIE[$tabCookie]) && in_array($_COOKIE[$tabCookie], $tabKeys)) {
-      $currentTab = $_COOKIE[$tabCookie];
-    
-    } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
-      $currentTab = $defaultTab;
-    }
-    
-    $this->tabbedView = array(
-      'tabs'       => $tabs,
-      'current'    => $currentTab,
-      'tabCookie'  => $tabCookie,
-    );
-
-    $currentJS = $tabs[$currentTab]['javascript'];
-    $this->addInlineJavascriptFooter("(function(){ var tabKey = '{$currentTab}';var tabId = '{$tabs[$currentTab]['id']}';var tabCookie = '{$tabCookie}';showTab(tabId);{$currentJS} })();");
-  }
   
   //
   // Pager support
