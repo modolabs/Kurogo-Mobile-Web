@@ -466,19 +466,27 @@ function ajaxContentIntoContainer(options) {
         if (httpRequest.status == 200) { // Success
             options.container.innerHTML = "";
             
+            // innerHTML outside of DOM hierarchy to avoid drawing issues
             var div = document.createElement("div");
             div.innerHTML = httpRequest.responseText;
             
-            // Manually appendChild elements so scripts get evaluated
+            // copy elements so we can remove without changing list
+            // don't clone because then some browsers execute onload on images twice
+            var children = [];
             for (var i = 0; i < div.childNodes.length; i++) {
-                var node = div.childNodes[i].cloneNode(true);
+                children.push(div.childNodes[i]);
+            }
+            
+            // Manually appendChild elements so scripts get evaluated
+            for (var i = 0; i < children.length; i++) {
+                div.removeChild(children[i]);
                 
-                if (node.nodeName == "SCRIPT") {
-                    document.body.appendChild(node);
-                } else if (node.nodeName == "STYLE") {
-                    document.getElementsByTagName("head")[0].appendChild(node);
+                if (children[i].nodeName == "SCRIPT") {
+                    document.body.appendChild(children[i]);
+                } else if (children[i].nodeName == "STYLE") {
+                    document.getElementsByTagName("head")[0].appendChild(children[i]);
                 } else {
-                    options.container.appendChild(node);
+                    options.container.appendChild(children[i]);
                 }
             }
             
