@@ -109,7 +109,7 @@ class HomeWebModule extends WebModule {
                     $this->addOnOrientationChange('moduleHandleWindowResize();');
               
                 } else {
-                    $this->assign('modules', $this->getModuleNavlist());
+                    $this->assign('modules', $this->getAllModuleNavigationData(self::EXCLUDE_DISABLED_MODULES));
                     $this->assign('hideImages', $this->getOptionalModuleVar('HIDE_IMAGES', false));
                     
                     if ($this->getOptionalModuleVar('BANNER_ALERT', false, 'notice')) {
