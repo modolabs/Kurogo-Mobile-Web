@@ -26,6 +26,7 @@ class Kurogo
     protected $module;
     protected $moduleID;
     protected $request;
+    protected $error_reporting = array();
 
     const REDIRECT_PERMANENT = 301;
     const REDIRECT_TEMPORARY = 302;
@@ -1174,7 +1175,22 @@ class Kurogo
     public static function getCacheClasses() {
         includePackage('Cache');
         return KurogoMemoryCache::getCacheClasses();
+    }
+    
+    public static function pushErrorReporting($error_level) {
+        return Kurogo::sharedInstance()->_pushErrorReporting($error_level);
+    }
+        
+    private function _pushErrorReporting($error_level) {
+    	$this->error_reporting[] = error_reporting($error_level);
+    }
 
+    public static function popErrorReporting() {
+        return Kurogo::sharedInstance()->_popErrorReporting();
+    }
+
+    private function _popErrorReporting() {
+    	error_reporting(array_pop($this->error_reporting));
     }
 
     // REDIRECT_PERMANENT (301): Use this when you want search engines to see the redirect.
