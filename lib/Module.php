@@ -727,13 +727,19 @@ abstract class Module
           }else{
             $value = $key;
           }
+        } catch (KurogoInvalidKeyException $e){
+          if($default !== NULL){
+            $value = $default;
+          }else{
+            $value = $key;
+          }
         }
         return $value;
     }
     
     public function getLocalizedString($key) {
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
-            throw new KurogoConfigurationException("Invalid string key $key");
+            throw new KurogoInvalidKeyException("Invalid string key $key");
         }
 
         Kurogo::log(LOG_DEBUG, "Retrieving localized string for $key", 'module');
