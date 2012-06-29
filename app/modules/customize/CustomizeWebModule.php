@@ -85,8 +85,8 @@ class CustomizeWebModule extends WebModule {
          $this->addInlineJavascript(
           'var modules = '.json_encode($moduleIDs).';'.
           'var disabledModules = '.json_encode($disabledModuleIDs).';'.
-          'var MODULE_ORDER_COOKIE = "'.MODULE_ORDER_COOKIE.'";'.
-          'var DISABLED_MODULES_COOKIE = "'.DISABLED_MODULES_COOKIE.'";'.
+          'var MODULE_ORDER_COOKIE = "'.self::MODULE_ORDER_COOKIE.'";'.
+          'var DISABLED_MODULES_COOKIE = "'.self::DISABLED_MODULES_COOKIE.'";'.
           'var MODULE_ORDER_COOKIE_LIFESPAN = '.Kurogo::getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN').';'.
           'var COOKIE_PATH = "'.COOKIE_PATH.'";'
         );

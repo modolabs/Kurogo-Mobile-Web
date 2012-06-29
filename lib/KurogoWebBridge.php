@@ -17,10 +17,6 @@ class KurogoWebBridge
     const PLATFORM_PARAMETER    = 'webBridgePlatform';
     const BROWSER_PARAMETER     = 'webBridgeBrowser';
     const ASSET_CHECK_PARAMETER = 'webBridgeAssetCheck';
-
-    // use same ajax param used by web modules so that module ajax calls
-    // also disable web bridge ajax loader (otherwise we would get double-loads)
-    const AJAX_PARAMETER        = 'ajax';
     
     const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
     const BRIDGE_URL_DOWNLOAD_LINK = 'kgobridge://download/';
@@ -307,7 +303,7 @@ class KurogoWebBridge
             
             // Also check for inline content
             $contents = $this->getAsset("{$this->module}/{$this->page}?".
-                self::AJAX_PARAMETER."=1&".self::ASSET_CHECK_PARAMETER.'=1');
+                WebModule::AJAX_PARAMETER."=1&".self::ASSET_CHECK_PARAMETER.'=1');
             
             if ($contents) {
                 self::$currentInstance = $this;
@@ -359,7 +355,7 @@ class KurogoWebBridge
         $staticConfig = array(
             'module'     => $id,
             'page'       => $page,
-            'ajaxArgs'   => self::AJAX_PARAMETER."=1",
+            'ajaxArgs'   => WebModule::AJAX_PARAMETER."=1",
             'timeout'    => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 60),
             'cookiePath' => COOKIE_PATH,
             'events'     => $isNative,
@@ -429,7 +425,7 @@ class KurogoWebBridge
     }
 
     public static function isAjaxContentLoad() {
-        return isset($_GET[self::AJAX_PARAMETER]) && $_GET[self::AJAX_PARAMETER];
+        return isset($_GET[WebModule::AJAX_PARAMETER]) && $_GET[WebModule::AJAX_PARAMETER];
     }
 
     private static function isAssetCheck() {
@@ -484,7 +480,7 @@ class KurogoWebBridge
     
     public static function removeAddedParameters(&$args) {
         if (is_array($args)) {
-            unset($args[self::AJAX_PARAMETER]);
+            unset($args[WebModule::AJAX_PARAMETER]);
         }
     }
     

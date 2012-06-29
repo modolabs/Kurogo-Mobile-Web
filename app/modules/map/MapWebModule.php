@@ -329,8 +329,8 @@ class MapWebModule extends WebModule {
             if (isset($args['listview'])) {
                 unset($args['listview']);
             }
-            if (isset($args['ajax'])) {
-                unset($args['ajax']);
+            if (isset($args[self::AJAX_PARAMETER])) {
+                unset($args[self::AJAX_PARAMETER]);
             }
             $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
         }

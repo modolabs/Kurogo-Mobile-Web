@@ -6,15 +6,6 @@
 /**
   * Breadcrumb Parameter
   */
-define('MODULE_BREADCRUMB_PARAM', '_b');
-define('MODULE_AJAX_BREADCRUMB_TITLE', '_abt');
-define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_ablt');
-define('MODULE_AJAX_CONTAINER_PAGE', '_acp');
-define('MODULE_AJAX_CONTAINER_PAGE_ARGS', '_acpa');
-define('DISABLED_MODULES_COOKIE', 'disabledmodules');
-define('MODULE_ORDER_COOKIE', 'moduleorder');
-define('MODULE_TAB_COOKIE_PREFIX', 'moduletab_');
-define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
 if (!function_exists('gzdeflate')) {
     die("Kurogo requires the zlib PHP extension.");
@@ -24,6 +15,19 @@ abstract class WebModule extends Module {
 
     const INCLUDE_DISABLED_MODULES=true;
     const EXCLUDE_DISABLED_MODULES=false;
+    
+    const AJAX_PARAMETER = 'ajax';
+    
+    const BREADCRUMB_PARAM = '_b';
+    const AJAX_BREADCRUMB_TITLE = '_abt';
+    const AJAX_BREADCRUMB_LONG_TITLE = '_ablt';
+    const AJAX_BREADCRUMB_CONTAINER_PAGE = '_acp';
+    const AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS = '_acpa';
+
+    const DISABLED_MODULES_COOKIE = 'disabledmodules';
+    const MODULE_ORDER_COOKIE = 'moduleorder';
+    const TAB_COOKIE_PREFIX = 'moduletab_';
+    const BOOKMARK_COOKIE_DELIMITER = '@@';
       
   protected $page = 'index';
 
@@ -90,13 +94,13 @@ abstract class WebModule extends Module {
     
     protected function tabCookieForPage() {
         $cookieArgs = $this->args;
-        unset($cookieArgs[MODULE_BREADCRUMB_PARAM]);
-        unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
-        unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
-        unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
-        unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
+        unset($cookieArgs[self::BREADCRUMB_PARAM]);
+        unset($cookieArgs[self::AJAX_BREADCRUMB_TITLE]);
+        unset($cookieArgs[self::AJAX_BREADCRUMB_LONG_TITLE]);
+        unset($cookieArgs[self::AJAX_BREADCRUMB_CONTAINER_PAGE]);
+        unset($cookieArgs[self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS]);
         
-        return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
+        return self::TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
     }
   
     protected function getCurrentTab($tabKeys) {
@@ -595,9 +599,9 @@ abstract class WebModule extends Module {
                 break;
         }
         
-        $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
-        $this->ajaxContainerPage = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->page);
-        $this->ajaxContainerPageArgs = $this->getArg(MODULE_AJAX_CONTAINER_PAGE_ARGS, http_build_query($this->args));
+        $this->ajaxContentLoad = $this->getArg(self::AJAX_PARAMETER) ? true : false;
+        $this->ajaxContainerPage = $this->getArg(self::AJAX_BREADCRUMB_CONTAINER_PAGE, $this->page);
+        $this->ajaxContainerPageArgs = $this->getArg(self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS, http_build_query($this->args));
         
         if ($page) {
             // Pull in fontsize
@@ -859,8 +863,8 @@ abstract class WebModule extends Module {
     protected function getUserDisabledModuleIDs() {
     
         $disabledIDs = array();
-        if (isset($_COOKIE[DISABLED_MODULES_COOKIE]) && $_COOKIE[DISABLED_MODULES_COOKIE] != "NONE") {
-            $disabledIDs = explode(",", $_COOKIE[DISABLED_MODULES_COOKIE]);
+        if (isset($_COOKIE[self::DISABLED_MODULES_COOKIE]) && $_COOKIE[self::DISABLED_MODULES_COOKIE] != "NONE") {
+            $disabledIDs = explode(",", $_COOKIE[self::DISABLED_MODULES_COOKIE]);
         }
         
         return $disabledIDs;
@@ -957,8 +961,8 @@ abstract class WebModule extends Module {
   
   protected function getUserSortedModules($modules) {
     // sort primary modules if sort cookie is set
-    if (isset($_COOKIE[MODULE_ORDER_COOKIE])) {
-      $sortedIDs = array_merge(array($this->getHomeModuleID()), explode(",", $_COOKIE[MODULE_ORDER_COOKIE]));
+    if (isset($_COOKIE[self::MODULE_ORDER_COOKIE])) {
+      $sortedIDs = array_merge(array($this->getHomeModuleID()), explode(",", $_COOKIE[self::MODULE_ORDER_COOKIE]));
       $unsortedIDs = array_diff(array_keys($modules['primary']), $sortedIDs);
             
       $sortedModules = array();
@@ -977,8 +981,8 @@ abstract class WebModule extends Module {
     $lifespan = Kurogo::getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = implode(",", $moduleIDs);
     
-    setcookie(MODULE_ORDER_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE[MODULE_ORDER_COOKIE] = $value;
+    setcookie(self::MODULE_ORDER_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE[self::MODULE_ORDER_COOKIE] = $value;
     //error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
   
@@ -986,8 +990,8 @@ abstract class WebModule extends Module {
     $lifespan = Kurogo::getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
     
-    setcookie(DISABLED_MODULES_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE[DISABLED_MODULES_COOKIE] = $value;
+    setcookie(self::DISABLED_MODULES_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE[self::DISABLED_MODULES_COOKIE] = $value;
     //error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
   
@@ -1140,7 +1144,7 @@ abstract class WebModule extends Module {
     }
 
     protected function setBookmarks($bookmarks) {
-        $values = implode(BOOKMARK_COOKIE_DELIMITER, $bookmarks);
+        $values = implode(self::BOOKMARK_COOKIE_DELIMITER, $bookmarks);
         $expireTime = time() + $this->getBookmarkLifespan();
         setcookie($this->getBookmarkCookie(), $values, $expireTime, COOKIE_PATH);
     }
@@ -1202,7 +1206,7 @@ abstract class WebModule extends Module {
         $bookmarks = array();
         $bookmarkCookie = $this->getBookmarkCookie();
         if (isset($_COOKIE[$bookmarkCookie]) && strlen($_COOKIE[$bookmarkCookie])) {
-            $bookmarks = explode(BOOKMARK_COOKIE_DELIMITER, $_COOKIE[$bookmarkCookie]);
+            $bookmarks = explode(self::BOOKMARK_COOKIE_DELIMITER, $_COOKIE[$bookmarkCookie]);
         }
         return $bookmarks;
     }
@@ -1233,7 +1237,7 @@ abstract class WebModule extends Module {
   private function loadBreadcrumbs() {
     $breadcrumbs = array();
   
-    if ($breadcrumbArg = $this->getArg(MODULE_BREADCRUMB_PARAM)) {
+    if ($breadcrumbArg = $this->getArg(self::BREADCRUMB_PARAM)) {
       $breadcrumbs = $this->decodeBreadcrumbParam($breadcrumbArg);
       if (!is_array($breadcrumbs)) { $breadcrumbs = array(); }
     }
@@ -1275,7 +1279,7 @@ abstract class WebModule extends Module {
         $this->cleanBreadcrumbs($linkCrumbs);
         
         $crumbParam = http_build_query(array(
-          MODULE_BREADCRUMB_PARAM => $this->encodeBreadcrumbParam($linkCrumbs),
+          self::BREADCRUMB_PARAM => $this->encodeBreadcrumbParam($linkCrumbs),
         ));
         if (strlen($crumbParam)) {
           $breadcrumbs[$i]['url'] .= (strlen($b['a']) ? '&' : '?').$crumbParam;
@@ -1306,11 +1310,11 @@ abstract class WebModule extends Module {
     
     if ($addBreadcrumb) {
       $args = $this->args;
-      unset($args[MODULE_BREADCRUMB_PARAM]);
-      unset($args[MODULE_AJAX_BREADCRUMB_TITLE]);
-      unset($args[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
-      unset($args[MODULE_AJAX_CONTAINER_PAGE]);
-      unset($args[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
+      unset($args[self::BREADCRUMB_PARAM]);
+      unset($args[self::AJAX_BREADCRUMB_TITLE]);
+      unset($args[self::AJAX_BREADCRUMB_LONG_TITLE]);
+      unset($args[self::AJAX_BREADCRUMB_CONTAINER_PAGE]);
+      unset($args[self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS]);
       
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
@@ -1326,7 +1330,7 @@ abstract class WebModule extends Module {
   
   private function getBreadcrumbArgs($addBreadcrumb=true) {
     return array(
-      MODULE_BREADCRUMB_PARAM => $this->getBreadcrumbString($addBreadcrumb),
+      self::BREADCRUMB_PARAM => $this->getBreadcrumbString($addBreadcrumb),
     );
   }
 
@@ -1359,20 +1363,20 @@ abstract class WebModule extends Module {
           
       } else {
           // forward breadcrumb title
-          $args[MODULE_AJAX_BREADCRUMB_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_TITLE, $this->breadcrumbTitle);
+          $args[self::AJAX_BREADCRUMB_TITLE] = $this->getArg(self::AJAX_BREADCRUMB_TITLE, $this->breadcrumbTitle);
           
           // forward breadcrumb title
-          $args[MODULE_AJAX_BREADCRUMB_LONG_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_LONG_TITLE, $this->breadcrumbLongTitle);
+          $args[self::AJAX_BREADCRUMB_LONG_TITLE] = $this->getArg(self::AJAX_BREADCRUMB_LONG_TITLE, $this->breadcrumbLongTitle);
           
           // forward parent page id
-          $args[MODULE_AJAX_CONTAINER_PAGE] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->ajaxContainerPage);
+          $args[self::AJAX_BREADCRUMB_CONTAINER_PAGE] = $this->getArg(self::AJAX_BREADCRUMB_CONTAINER_PAGE, $this->ajaxContainerPage);
           
           // forward parent page args
-          $args[MODULE_AJAX_CONTAINER_PAGE_ARGS] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE_ARGS, $this->ajaxContainerPageArgs);
+          $args[self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS] = $this->getArg(self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS, $this->ajaxContainerPageArgs);
           
           // forward current breadcrumb arg rather than adding
-          if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
-              $args[MODULE_BREADCRUMB_PARAM] = $this->args[MODULE_BREADCRUMB_PARAM];
+          if (isset($this->args[self::BREADCRUMB_PARAM])) {
+              $args[self::BREADCRUMB_PARAM] = $this->args[self::BREADCRUMB_PARAM];
           }
           
           return $this->buildAjaxURLForModule($id, $page, $args);
@@ -1432,13 +1436,13 @@ abstract class WebModule extends Module {
     }
     
     // Ajax overrides for breadcrumb title and long title
-    if (isset($this->args[MODULE_AJAX_BREADCRUMB_TITLE])) {
-      $this->breadcrumbTitle = $this->args[MODULE_AJAX_BREADCRUMB_TITLE];
+    if (isset($this->args[self::AJAX_BREADCRUMB_TITLE])) {
+      $this->breadcrumbTitle = $this->args[self::AJAX_BREADCRUMB_TITLE];
       $this->breadcrumbLongTitle = $this->breadcrumbTitle;
     }
     
-    if (isset($this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE])) {
-      $this->breadcrumbLongTitle = $this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE];
+    if (isset($this->args[self::AJAX_BREADCRUMB_LONG_TITLE])) {
+      $this->breadcrumbLongTitle = $this->args[self::AJAX_BREADCRUMB_LONG_TITLE];
     }
   }
   
