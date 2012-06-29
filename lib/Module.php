@@ -710,10 +710,36 @@ abstract class Module
         
         return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
     }
+
+    public function getOptionalLocalizedString($key, $default = null){
+        $args = func_get_args();
+        // Remove default
+        if (isset($args[1])) {
+          unset($args[1]);
+          $args = array_values($args);
+        }
+
+        try {
+          $value = call_user_func_array(array($this, 'getLocalizedString'), $args);
+        } catch (KurogoKeyNotFoundException $e) {
+          if($default !== NULL){
+            $value = $default;
+          }else{
+            $value = $key;
+          }
+        } catch (KurogoInvalidKeyException $e){
+          if($default !== NULL){
+            $value = $default;
+          }else{
+            $value = $key;
+          }
+        }
+        return $value;
+    }
     
     public function getLocalizedString($key) {
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
-            throw new KurogoConfigurationException("Invalid string key $key");
+            throw new KurogoInvalidKeyException("Invalid string key $key");
         }
 
         Kurogo::log(LOG_DEBUG, "Retrieving localized string for $key", 'module');
@@ -733,7 +759,7 @@ abstract class Module
             }
         }
         
-        throw new KurogoConfigurationException("Unable to find string $key for Module $this->id");
+        throw new KurogoKeyNotFoundException("Unable to find string $key for Module $this->id");
     }
     
     /**
