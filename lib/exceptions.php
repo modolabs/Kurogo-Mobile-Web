@@ -34,6 +34,9 @@ class KurogoConfigurationException extends KurogoException {
     protected $code = 'config';
 }
 
+class KurogoKeyNotFoundException extends KurogoConfigurationException {
+}
+
 class KurogoUserException extends KurogoException {
     protected $code = 'user';
 }
