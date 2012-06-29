@@ -30,25 +30,17 @@
 {/if}
 
 {if $displayType == 'springboard'}
-  {include file="findInclude:common/templates/springboard.tpl" springboardItems=$modules springboardID="homegrid"}
+  {block name="homeSpringboard"}
+    {include file="findInclude:common/templates/springboard.tpl" springboardItems=$modules['primary'] springboardID="homegrid"}
+    {if count($modules['secondary'])}
+      {include file="findInclude:common/templates/springboard.tpl" springboardItems=$modules['secondary'] springboardID="homegridSecondary"}
+    {/if}
+  {/block}
   
 {elseif $displayType == 'list'}
-  {$primaryModules = array()}
-  {$secondaryModules = array()}
-  {$foundSeparator = false}
-  {foreach $modules as $module}
-    {if $module['separator']}
-      {$foundSeparator = true}
-    {elseif $foundSeparator}
-      {$secondaryModules[] = $module}
-    {else}
-      {$primaryModules[] = $module}
-    {/if}
-  {/foreach}
-
-  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$primaryModules}
-  {if $secondaryModules}
-  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$secondaryModules accessKeyLink=false}
+  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$modules['primary']}
+  {if count($modules['secondary'])}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$modules['secondary'] accessKeyLink=false}
   {/if}
 {/if}
 

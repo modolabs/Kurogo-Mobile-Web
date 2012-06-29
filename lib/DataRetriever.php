@@ -28,6 +28,7 @@ abstract class DataRetriever {
     protected $cacheLifetime = null; //if null it will use cache default.
     protected $requestInit = false; //whether initRequest has been called or not
     protected $lastResponse;
+    protected $showWarnings = true; // if false then data retrievers should properly suppress error messages
     protected $parser;
 
     abstract protected function retrieveResponse();
@@ -231,7 +232,11 @@ abstract class DataRetriever {
         if (!isset($args['CACHE_LIFETIME'])) {
             $args['CACHE_LIFETIME'] = $this->DEFAULT_CACHE_LIFETIME;
         }
-        
+
+        if (isset($args['SHOW_WARNINGS'])) {
+           $this->showWarnings = (bool) $args['SHOW_WARNINGS'];
+        }
+
         // instantiate the parser class
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
         $this->setParser($parser);

@@ -7,6 +7,7 @@ class APIResponse
     public $command;
     public $version;
     public $error;
+    public $warnings;
     public $response;
     public $context;
     
@@ -44,6 +45,13 @@ class APIResponse
     
     public function setError(KurogoError $error) {
         $this->error = $error;
+    }
+    
+    public function addWarning(KurogoWarning $warning) {
+        if (!isset($this->warnings)) {
+            $this->warnings = array();
+        }
+        $this->warnings[] = $warning;
     }
     
     public function setResponse($response) {
