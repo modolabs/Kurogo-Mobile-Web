@@ -1138,6 +1138,14 @@ class Kurogo
         return $module;
     }
 
+    public static function arrayVal($args, $key, $default=null){
+        if(isset($args[$key])){
+            return $args[$key];
+        }else{
+            return $default;
+        }
+    }
+
     public function clearCaches($type=null) {
 
         self::log(LOG_NOTICE, "Clearing site caches", "kurogo");
