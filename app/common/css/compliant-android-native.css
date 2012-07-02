@@ -1,0 +1,30 @@
+body {
+    font-family: Roboto, "Droid Sans", sans-serif;
+}
+
+/* Android native controls do not, in general, use rounded corners */
+
+.inputcombo .forminput, .emphasized .forminput, input.formbutton, .nav, .nav li, .nav span.nolink, .nav a, .focal .nav, .tabbody .nav, .tabbody .results, .results a, .secondary, .secondary a, .focal, #tabs li, .tabstrip, .tabstrip li a, .tabstrip li:first-child a, .tabstrip li:last-child a, #sharedialog, .staticContentBody  {
+    -webkit-border-radius: 1px;
+    -webkit-border-bottom-left-radius: 1px;
+    -webkit-border-bottom-right-radius: 1px;
+    -webkit-border-top-left-radius: 1px;
+    -webkit-border-top-right-radius: 1px;
+    border-radius: 1px;
+    border-bottom-left-radius: 1px;
+    border-bottom-right-radius: 1px;
+    border-top-left-radius: 1px;
+    border-top-right-radius: 1px;
+}
+
+.nav {
+    margin-left: 0;
+    margin-right: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.nav li a, .results li a {
+    padding-right: 10px;
+    background-image: none;
+}
