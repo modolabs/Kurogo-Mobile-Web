@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('xml_parser_create')) {
-    die('XML Parser commands not available.');
+    throw new KurogoException('XML Parser PHP extension is not installed. http://www.php.net/manual/en/intro.xml.php');
 }
 
 abstract class XMLDataParser extends DataParser
