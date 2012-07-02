@@ -10,6 +10,6 @@
       'facebook': '{$facebookURL|escape:'javascript'}',
       'twitter': '{$twitterURL|escape:'javascript'}'
     {/if}
-  {rdelim});{/strip}"><img src="/common/images/share.png" /></a>
+  {rdelim});{/strip}"><img src="/common/images/share.png" width="44" height="38" /></a>
 </div>
 {/if}
