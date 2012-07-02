@@ -181,6 +181,23 @@ abstract class ShellModule extends Module {
      * All modules must implement this method to handle the logic of each shell command.
      */
     abstract protected function initializeForCommand();
+    
+    protected function preFetachData() {
+        if ($this->getOptionalModuleVar('PREFETCH_DATA', false)) {
+			$feeds = $this->loadFeedData();
+			foreach ($feeds as $index => $feedData) {
+				$preFetchLimit = isset($feedData['PREFETCH_LIMIT']) ? intval($feedData['PREFETCH_LIMIT']) : 0;
+
+				if ($feed = $this->getFeed($index)) {
+				    if ($preFetchLimit) {
+				        $feed->setLimit($preFetchLimit);
+				    }
+				    
+					$feed->items();
+				}
+			}
+		}
+    }
 }
 
 

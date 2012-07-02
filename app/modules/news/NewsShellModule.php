@@ -11,7 +11,6 @@ class NewsShellModule extends ShellModule {
     public function getFeed($index) {
         $feeds = $this->loadFeedData();
         if (isset($feeds[$index])) {
-            
             $feedData = $feeds[$index];
             try {
                 if (isset($feedData['CONTROLLER_CLASS'])) {
@@ -32,26 +31,12 @@ class NewsShellModule extends ShellModule {
     }
     
     protected function initializeForCommand() {
-
         switch($this->command) {
-            case 'stories':
-                $categoryID = $this->getArg('id', 0);
-                $start = $this->getArg('start');
-                $limit = $this->getArg('limit');
-                $mode = $this->getArg('mode');
-
-                $feed = $this->getFeed($categoryID);
-                
-                $maxResults = $this->getOptionalModuleVar('MAX_RESULTS', 5);
-                
+            case 'fetchAllData':
+                $this->preFetachData();
                 return 0;
-                break;
-                
-            case 'test':
-                $this->setResponseVersion(1);
                 
                 break;
-                
             default:
                  $this->invalidCommand();
                  break;
