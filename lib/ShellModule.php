@@ -214,7 +214,11 @@ abstract class ShellModule extends Module {
 				}
 			}
         } else {
-            $controller->items();
+            if ($retriever = $controller->getRetriever()) {
+                $retriever->getData($response);
+            } else {
+                $controller->items();
+            }
         }
         
         return true;
