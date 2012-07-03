@@ -6,7 +6,7 @@ class SimpleXMLDataParser extends DataParser {
         return $this->toArray($xml);
     }
 
-    protected function toArray(SimpleXMLElement $xml) {
+    protected function toArray($xml) {
         $array = json_decode(json_encode($xml), TRUE);
         
         foreach ( array_slice($array, 0) as $key => $value ) {
