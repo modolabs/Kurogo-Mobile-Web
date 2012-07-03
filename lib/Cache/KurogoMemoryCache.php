@@ -20,7 +20,6 @@ abstract class KurogoMemoryCache {
 		$args = is_array($args) ? $args : array();
 
         if (!class_exists($cacheType)) {
-            die("Cache class $cacheType not defined");
             throw new KurogoConfigurationException("Cache class $cacheType not defined");
         }
 
