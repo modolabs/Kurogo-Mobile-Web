@@ -33,13 +33,14 @@ class NewsShellModule extends ShellModule {
     protected function initializeForCommand() {
         switch($this->command) {
             case 'fetchAllData':
-                $this->preFetachData();
+                $this->preFetchAllData();
                 return 0;
                 
                 break;
             default:
-                 $this->invalidCommand();
-                 break;
+                $this->invalidCommand();
+                
+                break;
         }
     }
 }

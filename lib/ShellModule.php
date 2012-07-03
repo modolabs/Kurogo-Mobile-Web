@@ -182,21 +182,57 @@ abstract class ShellModule extends Module {
      */
     abstract protected function initializeForCommand();
     
-    protected function preFetachData() {
-        if ($this->getOptionalModuleVar('PREFETCH_DATA', false)) {
-			$feeds = $this->loadFeedData();
-			foreach ($feeds as $index => $feedData) {
-				$preFetchLimit = isset($feedData['PREFETCH_LIMIT']) ? intval($feedData['PREFETCH_LIMIT']) : 0;
-
-				if ($feed = $this->getFeed($index)) {
-				    if ($preFetchLimit) {
-				        $feed->setLimit($preFetchLimit);
+    public function isPreFetchData() {
+        return $this->getOptionalModuleVar('PREFETCH_DATA', false);
+    }
+    
+    protected function preFetchData(DataModel $controller, $start=0, $limit=null, $preFetchTotalItems=0) {
+        if (!is_null($limit)) {
+            $controller->clearInternalCache();
+            $controller->setStart($start);
+            $controller->setLimit($limit);
+            
+            if ($retriever = $controller->getRetriever()) {
+				$items = $retriever->getData($response);
+				$totalItems = $response->getContext('totalItems');
+				
+				// the result has not been limited
+				if (count($items) != $totalItems) {
+				    unset($items);
+				    unset($response);
+				    if ($preFetchTotalItems && (($start + $limit) > $preFetchTotalItems)) {
+				        return true;
 				    }
-				    
-					$feed->items();
+				    if (($totalItems - $start) > $limit) {
+				        $start = $start + $limit;
+				        $this->preFetchData($controller, $start, $limit, $preFetchTotalItems);
+				    }
 				}
 			}
-		}
+        } else {
+            $controller->items();
+        }
+        
+        return true;
+    }
+    
+    protected function preFetchAllData() {
+        if ($this->isPreFetchData()) {
+            $feeds = $this->loadFeedData();
+            $this->out('-----start '.$this->getConfigModule() . ' module to fetch data-----');
+            foreach ($feeds as $index => $feedData) {
+                if ($controller = $this->getFeed($index)) {
+                    $this->out('fetch ' . $feedData['TITLE'] . ' feed data');
+                    $preFetchLimit = isset($feedData['PREFETCH_LIMIT']) ? intval($feedData['PREFETCH_LIMIT']) : 0;
+                    $preFetchTotalItems = isset($feedData['PREFETCH_TOTALITEMS']) ? intval($feedData['PREFETCH_TOTALITEMS']) : 0;
+                    $this->preFetchData($controller, 0, $preFetchLimit, $preFetchTotalItems);
+                }
+            }
+            $this->out('-----end '.$this->getConfigModule() . ' module to fetch data-----');
+            return true;
+        }
+        
+        return false;
     }
 }
 
