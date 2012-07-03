@@ -845,7 +845,10 @@ class MapWebModule extends WebModule {
             case 'category':
                 
                 $isMapView = $this->getArg('mapview');
-                $feedId = $this->getArg('feed');
+                $feedId = $this->getArg('feed',null);
+                if (is_null($feedId)) {
+                    throw new KurogoUserException('Feed ID not specified');
+                }
                 $this->assign('feedId', $feedId);
                 $this->assignItemsFromFeed($feedId, $searchTerms, $isMapView);
 
