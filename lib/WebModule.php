@@ -8,7 +8,7 @@
   */
 
 if (!function_exists('gzdeflate')) {
-    die("Kurogo requires the zlib PHP extension.");
+    die("Kurogo requires the zlib PHP extension. http://www.php.net/manual/en/book.zlib.php");
 }
 
 abstract class WebModule extends Module {

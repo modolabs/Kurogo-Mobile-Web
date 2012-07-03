@@ -4,10 +4,6 @@
   * @subpackage RSS
   */
 
-if (!function_exists('xml_parser_create')) {
-    die('XML Parser commands not available.');
-}
-
 /**
   */
 includePackage('RSS');

@@ -1,6 +1,8 @@
 <?php
 
-require_once realpath(LIB_DIR.'/XMLElement.php');
+if (!function_exists('xml_parser_create')) {
+    throw new KurogoException('XML Parser PHP extension is not installed. http://www.php.net/manual/en/intro.xml.php');
+}
 
 class WMSLayer extends XMLElement
 {
