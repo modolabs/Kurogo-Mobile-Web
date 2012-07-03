@@ -186,11 +186,15 @@ abstract class ShellModule extends Module {
         return $this->getOptionalModuleVar('PREFETCH_DATA', false);
     }
     
-    protected function preFetchData(DataModel $controller, $start=0, $limit=null, $preFetchTotalItems=0) {
-        if (!is_null($limit)) {
+    protected function preFetchData(DataModel $controller, $start=0) {
+        
+        $preFetchLimit = $controller->getInitArg('PREFETCH_LIMIT') ? intval($controller->getInitArg('PREFETCH_LIMIT')) : null;
+        $preFetchTotalItems = $controller->getInitArg('PREFETCH_TOTALITEMS') ? intval($controller->getInitArg('PREFETCH_TOTALITEMS')) : null;      
+
+        if (!is_null($preFetchLimit)) {
             $controller->clearInternalCache();
             $controller->setStart($start);
-            $controller->setLimit($limit);
+            $controller->setLimit($preFetchLimit);
             
             if ($retriever = $controller->getRetriever()) {
 				$items = $retriever->getData($response);
@@ -200,12 +204,12 @@ abstract class ShellModule extends Module {
 				if (count($items) != $totalItems) {
 				    unset($items);
 				    unset($response);
-				    if ($preFetchTotalItems && (($start + $limit) > $preFetchTotalItems)) {
+				    if ($preFetchTotalItems && (($start + $preFetchLimit) > $preFetchTotalItems)) {
 				        return true;
 				    }
-				    if (($totalItems - $start) > $limit) {
-				        $start = $start + $limit;
-				        $this->preFetchData($controller, $start, $limit, $preFetchTotalItems);
+				    if (($totalItems - $start) > $preFetchLimit) {
+				        $start = $start + $preFetchLimit;
+				        $this->preFetchData($controller, $start);
 				    }
 				}
 			}
@@ -216,16 +220,28 @@ abstract class ShellModule extends Module {
         return true;
     }
     
+    /* subclasses can override this method to return all controllers list */
+    protected function getAllControllers() {
+        $controllers = array();
+        
+        if ($feeds = $this->loadFeedData()) {
+            foreach ($feeds as $index => $feesData) {
+                if ($feed = $this->getFeed($index)) {
+                    $controllers[] = $feed;
+                }
+            }
+        }
+        
+        return $controllers;
+    }
+    
     protected function preFetchAllData() {
         if ($this->isPreFetchData()) {
-            $feeds = $this->loadFeedData();
             $this->out('-----start '.$this->getConfigModule() . ' module to fetch data-----');
-            foreach ($feeds as $index => $feedData) {
-                if ($controller = $this->getFeed($index)) {
-                    $this->out('fetch ' . $feedData['TITLE'] . ' feed data');
-                    $preFetchLimit = isset($feedData['PREFETCH_LIMIT']) ? intval($feedData['PREFETCH_LIMIT']) : 0;
-                    $preFetchTotalItems = isset($feedData['PREFETCH_TOTALITEMS']) ? intval($feedData['PREFETCH_TOTALITEMS']) : 0;
-                    $this->preFetchData($controller, 0, $preFetchLimit, $preFetchTotalItems);
+            if ($allControllers = $this->getAllControllers()) {
+                foreach ($allControllers as $controller) {
+                    $this->out('fetch ' . $controller->getTitle() . ' feed data');
+                    $this->preFetchData($controller);
                 }
             }
             $this->out('-----end '.$this->getConfigModule() . ' module to fetch data-----');
