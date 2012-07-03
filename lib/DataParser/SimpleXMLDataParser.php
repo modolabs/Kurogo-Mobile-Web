@@ -2,7 +2,7 @@
 
 class SimpleXMLDataParser extends DataParser {
     public function parseData($data) {
-        $xml = new SimpleXMLElement($data);
+        $xml = new SimpleXMLElement($data, LIBXML_NOCDATA);
         return $this->toArray($xml);
     }
 
