@@ -925,16 +925,19 @@ class MapWebModule extends WebModule {
         if ($this->getArg('worldmap')) {
             $placemarks = array();
             foreach ($this->feedGroups as $id => $groupData) {
-                $point = filterLatLon($groupData['center']);
-                $placemark = new BasePlacemark(
-                    new MapBasePoint(array(
-                        'lat' => $point['lat'],
-                        'lon' => $point['lon'],
-                        )));
-                $placemark->setId($id);
-                $placemark->setTitle($groupData['title']);
-                $placemark->setURL($this->groupURL($id));
-                $placemarks[] = $placemark;
+            	$showOnWorldMap = self::argVal($groupData, 'SHOW_ON_WORLDMAP', 1);
+            	if ($showOnWorldMap) {
+					$point = filterLatLon($groupData['center']);
+					$placemark = new BasePlacemark(
+						new MapBasePoint(array(
+							'lat' => $point['lat'],
+							'lon' => $point['lon'],
+							)));
+					$placemark->setId($id);
+					$placemark->setTitle($groupData['title']);
+					$placemark->setURL($this->groupURL($id));
+					$placemarks[] = $placemark;
+				}
             }
             return $placemarks;
         }
