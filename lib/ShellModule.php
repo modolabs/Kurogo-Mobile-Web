@@ -17,6 +17,7 @@ abstract class ShellModule extends Module {
     }
 
     protected function Dispatcher() {
+        
         return $this->dispatcher;
     }
 
@@ -122,7 +123,7 @@ abstract class ShellModule extends Module {
 
     protected function out($string, $newLine = true) {
         $string = is_array($string) ? implode(PHP_EOL, $string) : $string;
-        return $this->Dispatcher()->stdout($string, $newLine);
+        $this->Dispatcher()->stdout($string, $newLine);
     }
 
     protected function error($string) {
@@ -186,6 +187,12 @@ abstract class ShellModule extends Module {
         return $this->getOptionalModuleVar('PREFETCH_DATA', false);
     }
     
+    protected function fetchDebugInfo($info) {
+        if (Kurogo::getOptionalSiteVar('PREFETCH_DEBUG', false)) {
+            $this->out($info);
+        }
+    }
+    
     protected function preFetchData(DataModel $controller, $start=0) {
         
         $preFetchLimit = $controller->getInitArg('PREFETCH_LIMIT') ? intval($controller->getInitArg('PREFETCH_LIMIT')) : null;
@@ -241,14 +248,16 @@ abstract class ShellModule extends Module {
     
     protected function preFetchAllData() {
         if ($this->isPreFetchData()) {
-            $this->out('-----start '.$this->getConfigModule() . ' module to fetch data-----');
+            $this->fetchDebugInfo('-----start '.$this->getConfigModule() . ' module to fetch data-----');
+
             if ($allControllers = $this->getAllControllers()) {
                 foreach ($allControllers as $controller) {
-                    $this->out('fetch ' . $controller->getTitle() . ' feed data');
+                    $this->fetchDebugInfo('fetch ' . $controller->getTitle() . ' feed data');
                     $this->preFetchData($controller);
                 }
             }
-            $this->out('-----end '.$this->getConfigModule() . ' module to fetch data-----');
+            
+            $this->fetchDebugInfo('-----end '.$this->getConfigModule() . ' module to fetch data-----');
             return true;
         }
         
