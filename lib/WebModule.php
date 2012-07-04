@@ -10,13 +10,14 @@ define('MODULE_BREADCRUMB_PARAM', '_b');
 define('MODULE_AJAX_BREADCRUMB_TITLE', '_abt');
 define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_ablt');
 define('MODULE_AJAX_CONTAINER_PAGE', '_acp');
+define('MODULE_AJAX_CONTAINER_PAGE_ARGS', '_acpa');
 define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
 define('MODULE_TAB_COOKIE_PREFIX', 'moduletab_');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
 if (!function_exists('gzdeflate')) {
-    die("Kurogo requires the zlib PHP extension.");
+    die("Kurogo requires the zlib PHP extension. http://www.php.net/manual/en/book.zlib.php");
 }
 
 abstract class WebModule extends Module {
@@ -37,6 +38,7 @@ abstract class WebModule extends Module {
 
   protected $ajaxContentLoad = false;
   protected $ajaxContainerPage = '';
+  protected $ajaxContainerPageArgs = '';
   
   protected $imageExt = '.png';
   
@@ -80,74 +82,95 @@ abstract class WebModule extends Module {
   protected $defaultAllowRobots = true;
   protected $hideFooterLinks = false;
   
-  //
-  // Tabbed View support
-  //
-  
-  protected function tabCookieForPage() {
-    $cookieArgs = $this->args;
-    unset($cookieArgs[MODULE_BREADCRUMB_PARAM]);
-    unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
-    unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
-    unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
+    //
+    // Tabbed View support
+    //
     
-    return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
-  }
+    protected function tabCookieForPage() {
+        $cookieArgs = $this->args;
+        unset($cookieArgs[MODULE_BREADCRUMB_PARAM]);
+        unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
+        unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
+        unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
+        unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
+        
+        return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
+    }
   
-  protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
-    // prefill from config to get order
-    $tabs = array();
-    foreach ($this->pageConfig as $key => $value) {
-      if (strpos($key, 'tab_') === 0) {
-        $tabKey = substr($key, 4);
-        if (in_array($tabKey, $tabKeys)) {
-          $tabs[$tabKey] = array(
-            'title' => $value,
-          );
+    protected function getCurrentTab($tabKeys) {
+        $currentTab = null;
+        
+        $tabCookie = $this->tabCookieForPage();
+        
+        if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
+            $currentTab = $this->args['tab']; // argument set
+        
+        } else if (isset($_COOKIE[$tabCookie]) && in_array($_COOKIE[$tabCookie], $tabKeys)) {
+            $currentTab = $_COOKIE[$tabCookie]; // cookie set
+        
+        } else {
+            foreach ($this->pageConfig as $key => $value) {
+                if (strpos($key, 'tab_') === 0) {
+                    $tabKey = substr($key, 4);
+                    if (in_array($tabKey, $tabKeys)) {
+                        $currentTab = $tabKey; // page config tab order set
+                        break;
+                    }
+                }
+            }
+        
+            if (!isset($currentTab)) {
+                // still haven't found it, fall back on tabKey order
+                $currentTab = reset($tabKeys);
+            }
         }
-      }
+        
+        return $currentTab;
     }
-    
-    // Fill out rest of tabs
-    foreach ($tabKeys as $tabKey) {
-      // Fill out default titles for tabs not in config:
-      if (!isset($tabs[$tabKey]) || !is_array($tabs[$tabKey])) {
-        $tabs[$tabKey] = array(
-          'title' => ucwords($tabKey),
+  
+    protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array(), $classes=array()) {
+        // prefill from config to get order
+        $tabs = array();
+        foreach ($this->pageConfig as $key => $value) {
+            if (strpos($key, 'tab_') === 0) {
+                $tabKey = substr($key, 4);
+                if (in_array($tabKey, $tabKeys)) {
+                    $tabs[$tabKey] = array(
+                        'title' => $value,
+                    );
+                }
+            }
+        }
+        
+        // Fill out rest of tabs
+        foreach ($tabKeys as $tabKey) {
+            // Fill out default titles for tabs not in config:
+            if (!isset($tabs[$tabKey]) || !is_array($tabs[$tabKey])) {
+                $tabs[$tabKey] = array(
+                    'title' => ucwords($tabKey),
+                );
+            }
+        
+            $tabArgs = $this->args;
+            $tabArgs['tab'] = $tabKey;
+            $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
+            $tabs[$tabKey]['id'] = "{$tabKey}-".md5($tabs[$tabKey]['url']);
+            $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
+            $tabs[$tabKey]['class'] = isset($classes[$tabKey]) ? $classes[$tabKey] : '';
+        }
+        
+        $currentTab = $this->getCurrentTab($tabKeys);
+        $tabCookie = $this->tabCookieForPage();
+        
+        $this->tabbedView = array(
+            'tabs'       => $tabs,
+            'current'    => $currentTab,
+            'tabCookie'  => $tabCookie,
         );
-      }
-      
-      $tabArgs = $this->args;
-      $tabArgs['tab'] = $tabKey;
-      $tabs[$tabKey]['url'] = $this->buildBreadcrumbURL($this->page, $tabArgs, false);
-      $tabs[$tabKey]['id'] = "{$tabKey}-".md5($tabs[$tabKey]['url']);
-      $tabs[$tabKey]['javascript'] = isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '';
+        
+        $currentJS = $tabs[$currentTab]['javascript'];
+        $this->addInlineJavascriptFooter("(function(){ var tabKey = '{$currentTab}';var tabId = '{$tabs[$currentTab]['id']}';var tabCookie = '{$tabCookie}';showTab(tabId);{$currentJS} })();");
     }
-    
-    // Figure which tab should be selected
-    $tabCookie = self::tabCookieForPage();
-    
-    $currentTab = array_keys($tabs);
-    $currentTab = reset($currentTab);    
-    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
-      $currentTab = $this->args['tab'];
-      
-    } else if (isset($_COOKIE[$tabCookie]) && in_array($_COOKIE[$tabCookie], $tabKeys)) {
-      $currentTab = $_COOKIE[$tabCookie];
-    
-    } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
-      $currentTab = $defaultTab;
-    }
-    
-    $this->tabbedView = array(
-      'tabs'       => $tabs,
-      'current'    => $currentTab,
-      'tabCookie'  => $tabCookie,
-    );
-
-    $currentJS = $tabs[$currentTab]['javascript'];
-    $this->addInlineJavascriptFooter("(function(){ var tabKey = '{$currentTab}';var tabId = '{$tabs[$currentTab]['id']}';var tabCookie = '{$tabCookie}';showTab(tabId);{$currentJS} })();");
-  }
   
   //
   // Pager support
@@ -541,6 +564,7 @@ abstract class WebModule extends Module {
 
         $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
         $this->ajaxContainerPage = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->page);
+        $this->ajaxContainerPageArgs = $this->getArg(MODULE_AJAX_CONTAINER_PAGE_ARGS, http_build_query($this->args));
         
         if ($page) {
             // Pull in fontsize
@@ -702,27 +726,36 @@ abstract class WebModule extends Module {
     return $modules;        
   }
 
-    protected function elapsedTime($timestamp, $date_format='%b %e, %Y @ %l:%M %p') {
+    protected function elapsedTime($timestamp) {
         $now = time();
         $diff = $now - $timestamp;
         $today = mktime(0,0,0);
         $today_timestamp = mktime(0, 0, 0, date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp));
-    
+        $date = new DateTime("@" . $timestamp);
+        Kurogo::includePackage('DateTime');
         if ($diff > 0) {
-            if ($today - $today_timestamp > 86400) {
+            // more than 6 days
+            if ($today - $today_timestamp > 518400) {
+                return DateFormatter::formatDate($date, DateFormatter::MEDIUM_STYLE, DateFormatter::NO_STYLE);
+            } elseif ($today - $today_timestamp > 86400) { // up to 6 days
+                // @TODO localize
                 return sprintf("%d days ago", $diff/86400);
-            } elseif ($today - $today_timestamp > 0) {
+            } elseif ($today - $today_timestamp > 0) { // yesterday
+                // @TODO localize
                 return strftime('Yesterday @ %l:%M %p', $timestamp);
-            } elseif ($diff > 3600) {
+            } elseif ($diff > 3600) { 
+                // @TODO localize
                 return sprintf("%d hour%s ago", $diff/3600, intval($diff/3600)>1?'s':'');
             } elseif ($diff > 60) {
+                // @TODO localize
                 return sprintf("%d minute%s ago", $diff/60, intval($diff/60)>1?'s':'');
             } else {
+                // @TODO localize
                 return sprintf("%d second%s ago", $diff, $diff>1 ?'s':'');
             }
         
         } else {
-            return strftime($date_format, $timestamp);
+            return DateFormatter::formatDate($date, DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE);
         }    
     }
 
@@ -1240,12 +1273,13 @@ abstract class WebModule extends Module {
       unset($args[MODULE_AJAX_BREADCRUMB_TITLE]);
       unset($args[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
       unset($args[MODULE_AJAX_CONTAINER_PAGE]);
+      unset($args[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
       
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
         'lt' => $this->breadcrumbLongTitle,
         'p'  => $this->ajaxContentLoad ? $this->ajaxContainerPage : $this->page,
-        'a'  => http_build_query($args),
+        'a'  => $this->ajaxContentLoad ? $this->ajaxContainerPageArgs : http_build_query($args),
       );
     }
     
@@ -1285,6 +1319,9 @@ abstract class WebModule extends Module {
           
           // forward parent page id
           $args[MODULE_AJAX_CONTAINER_PAGE] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->ajaxContainerPage);
+          
+          // forward parent page args
+          $args[MODULE_AJAX_CONTAINER_PAGE_ARGS] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE_ARGS, $this->ajaxContainerPageArgs);
           
           // forward current breadcrumb arg rather than adding
           if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {

@@ -175,7 +175,7 @@ class CalendarAPIModule extends APIModule
         }
     }
 
-    protected function apiArrayFromEvent(ICalEvent $event, $version) {
+    protected function apiArrayFromEvent(CalendarEvent $event, $version) {
         $standardAttributes = array(
           'datetime', 'start', 'end', 'uid', 'summary', 'description', 'location', 'geo');
         

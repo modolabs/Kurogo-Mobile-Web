@@ -24,11 +24,15 @@ class MapAPIModule extends APIModule
         $urlArgs = $placemark->getURLParams();
 
         // mimic getMergedConfigData in MapWebModule
-        $categoryArg = isset($urlArgs['category']) ? $urlArgs['category'] : null;
-        $categories = explode(MAP_CATEGORY_DELIMITER, $categoryArg);
-        $category = current($categories);
-        if ($category) {
-            $urlArgs['feed'] = $category;
+        if (isset($urlArgs['feed'])) {
+            $category = $urlArgs['feed'];
+        } else {
+            $categoryArg = isset($urlArgs['category']) ? $urlArgs['category'] : null;
+			$categories = explode(MAP_CATEGORY_DELIMITER, $categoryArg);
+			$category = current($categories);
+			if ($category) {
+				$urlArgs['feed'] = $category;
+			}
         }
 
         $configData = $this->getDataForGroup($this->feedGroup);

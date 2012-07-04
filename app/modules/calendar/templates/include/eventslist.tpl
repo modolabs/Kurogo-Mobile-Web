@@ -28,7 +28,7 @@
 {/capture}
 
 {capture name="fullTitle" assign="fullTitle"}
-  {$title}{if $date || $isToday}: 
+  {$title|escape}{if $date || $isToday}: 
     {block name="date"}
       {if $isToday}
         Today

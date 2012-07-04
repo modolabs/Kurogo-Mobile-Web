@@ -4,14 +4,14 @@ abstract class ShellModule extends Module {
 
     protected $dispatcher = null;
     protected $command = '';
-    
+
     const SHELL_COMMAND_EMPTY=1;
     const SHELL_MODULE_DISABLED=2;
     const SHELL_UNAUTHORIZED=3;
     const SHELL_INVALID_COMMAND=4;
     const SHELL_NOT_FOUND_MODULE=5;
     const SHELL_LOAD_KUROGO_ERROR=6;
-    
+
     protected function setDispatcher(&$dispatcher) {
         $this->dispatcher = $dispatcher;
     }
@@ -19,17 +19,17 @@ abstract class ShellModule extends Module {
     protected function Dispatcher() {
         return $this->dispatcher;
     }
-    
+
     /**
      * Set the command
      * @param string the command
-     */  
+     */
     protected function setCommand($command) {
         $this->command = $command;
     }
-    
+
     /**
-     * The module is disabled. 
+     * The module is disabled.
      */
     protected function moduleDisabled() {
         //$error = new KurogoError(2, 'Module Disabled', 'This module has been disabled');
@@ -61,9 +61,9 @@ abstract class ShellModule extends Module {
         //$this->throwError($error);
         $this->stop(self::SHELL_INVALID_COMMAND);
     }
- 
+
     /**
-     * Throw a fatal error in the shell. Used for user created errors like invalid parameters. Stops 
+     * Throw a fatal error in the shell. Used for user created errors like invalid parameters. Stops
      * execution and displays the error
      */
     protected function throwError($error) {
@@ -97,7 +97,7 @@ abstract class ShellModule extends Module {
     public static function getAllModules() {
         $configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
         $modules = array();
-    
+
         foreach ($configFiles as $file) {
             if (preg_match("#" . preg_quote(SITE_CONFIG_DIR,"#") . "/([^/]+)/module.ini$#", $file, $bits)) {
                 $id = $bits[1];
@@ -109,27 +109,27 @@ abstract class ShellModule extends Module {
                 }
             }
         }
-        ksort($modules);    
-        return $modules;        
+        ksort($modules);
+        return $modules;
     }
-      
+
     /**
      * Prompts the user for input, and returns it.
      */
     protected function in($prompt, $options = null, $default = null) {
-        return $this->Dispatcher()->getInput($prompt, $options = null, $default = null);
+        return $this->Dispatcher()->getInput($prompt, $options, $default);
     }
-    
+
     protected function out($string, $newLine = true) {
         $string = is_array($string) ? implode(PHP_EOL, $string) : $string;
-        return $this->Dispatcher()->stdout($string, $newLine = true);
+        return $this->Dispatcher()->stdout($string, $newLine);
     }
-    
+
     protected function error($string) {
         $string = is_array($string) ? implode(PHP_EOL, $string) : $string;
         $this->Dispatcher()->stderr($string);
     }
-    
+
     protected function stop($status = 0) {
         $this->Dispatcher()->stop($status);
     }
@@ -141,7 +141,7 @@ abstract class ShellModule extends Module {
      * @param KurogoShellDispatcher $dispatcher an object of KurogoShellDispatcher
      * @return ShellModule
      */
-     
+
     public static function factory($id, $command='', $args=array(), $dispatcher = null) {
         if (!$module = parent::factory($id, 'shell')) {
             return false;
@@ -153,7 +153,7 @@ abstract class ShellModule extends Module {
 
         return $module;
     }
-    
+
     /**
      * Initialize the request
      */
@@ -162,7 +162,7 @@ abstract class ShellModule extends Module {
         $this->setArgs($args);
         $this->setCommand($command);
     }
-    
+
     /**
      * Execute the command. Will call initializeForCommand() which should set the version, error and response
      * values appropriately
@@ -176,7 +176,7 @@ abstract class ShellModule extends Module {
         $this->loadSiteConfigFile('strings');
         return $this->initializeForCommand();
     }
-    
+
     /**
      * All modules must implement this method to handle the logic of each shell command.
      */

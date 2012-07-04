@@ -1,10 +1,8 @@
 {include file="findInclude:common/templates/header.tpl"}
 
 {block name="title"}
-<div class="nonfocal">
-  <h1>{$title}</h1>
-  <p class="smallprint">{$date}</p>
-</div>
+<h1 class="nonfocal">{$title}</h1>
+<p class="smallprint nonfocal">{$date}</p>
 {/block}
   
 {block name="fields"}

@@ -286,11 +286,17 @@ class URLDataRetriever extends DataRetriever {
         
         $response = $this->initResponse();
         $response->setStartTime(microtime(true));
+        if (!$this->showWarnings) {
+        	Kurogo::pushErrorReporting(E_ERROR);
+        }
         if ($file = $this->saveToFile()) {
             $data = $this->cache->getFullPath($file);
             $result = file_put_contents($data, file_get_contents($this->requestURL, false, $this->streamContext));
         } else {
             $data = file_get_contents($this->requestURL, false, $this->streamContext);
+        }
+        if (!$this->showWarnings) {
+        	Kurogo::popErrorReporting();
         }
         $response->setEndTime(microtime(true));
         

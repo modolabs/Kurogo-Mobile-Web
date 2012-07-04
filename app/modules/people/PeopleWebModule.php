@@ -6,7 +6,7 @@
 Kurogo::includePackage('People');
 
 if (!function_exists('mb_convert_encoding')) {
-    die('Multibyte String Functions not available (mbstring)');
+    throw new KurogoException('Multibyte String PHP extension is not installed. http://www.php.net/manual/en/book.mbstring.php');
 }
 
 /**

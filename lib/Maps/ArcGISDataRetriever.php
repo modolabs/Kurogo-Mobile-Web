@@ -50,14 +50,14 @@ class ArcGISDataRetriever extends URLDataRetriever
                     $displayField = $this->parser->getDisplayFieldForFolder($this->selectedLayer);
                 }
                 if ($displayField) {
-                    $searchText = strtoupper($this->searchFilters['text']);
+                    $searchText = strtoupper(str_replace("'","''",$this->searchFilters['text']));
                     return array(
                         'where' => "UPPER($displayField) LIKE '%$searchText%'",
                         'f'    => 'json',
                     );
                 } else {
                     return array(
-                        'text' => $this->searchFilters['text'],
+                        'text' => str_replace("'","''",$this->searchFilters['text']),
                         'f'    => 'json',
                         );
                 }
@@ -107,7 +107,8 @@ class ArcGISDataRetriever extends URLDataRetriever
     // intercept this since we sometimes have to parse two calls to get everything
     public function getData(&$response=null) {
         // this happens when we start out at the top level of a service instance
-        if (!$this->selectedLayer && $this->action == self::ACTION_PLACEMARKS) {
+        // Use strlen to protect against a layer id of 0
+        if (strlen($this->selectedLayer)==0 && $this->action == self::ACTION_PLACEMARKS) {
             return array();
         }
 

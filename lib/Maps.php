@@ -121,7 +121,7 @@ function mapModelFromFeedData($feedData) {
 }
 
 function mapIdForFeedData(Array $feedData) {
-    $identifier = $feedData['TITLE'];
+    $identifier = Kurogo::arrayVal($feedData, 'TITLE', '');
     if (isset($feedData['BASE_URL'])) {
         $identifier .= $feedData['BASE_URL'];
     } else {

@@ -37,7 +37,7 @@
 {/block}
 
   {block name="loginHTML"}
-    {if $session && $configModule == $homeModuleID}
+    {if $showLogin}
 	<div class="loginstatus">
 		<p{if $footerLoginClass} class="{$footerLoginClass}"{/if}><a href="{$footerLoginLink}">{$footerLoginText}</a></p>
 	</div>
@@ -73,5 +73,6 @@
   {if strlen($pmImageURL)}
     <img src="{$pmImageURL}" width="2" height="2" alt="" />
   {/if}
-
 {/block}
+
+{block name="ajaxContentFooter"}{/block}

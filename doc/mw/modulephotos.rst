@@ -36,7 +36,7 @@ Within each feed you use the following options:
 * *RETRIEVER_CLASS* - The :doc:`Data Retriever <dataretriever>` to use. Currently supported retrievers include:
   
   * *FlickrFeedRetriever* - Retrieves photos using the flickr Feed service
-  * *FlickrApIRetriever* - Retrieves photos using the flickr API service. This requires an API key from flickr
+  * *FlickrAPIRetriever* - Retrieves photos using the flickr API service. This requires an API key from flickr
   * *PicasaRetriever* - Retrieves photos from the Picassa service.
   
 * *TITLE* - The textual label used when showing the album list
@@ -54,7 +54,7 @@ the  FlickrAPIRetriever with an API key. Use the following options to configure 
 * *GROUP* - The group ID of the group photos to retrieve. This id can typically be found in the URL address bar when viewing the group.
 
 ----------------------
-FlickrApIRetriever
+FlickrAPIRetriever
 ----------------------
 
 The flickr API retriever can retrieve public user photosets and group photos. It has the same options as the FlickrFeedRetriever,

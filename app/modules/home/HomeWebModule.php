@@ -109,7 +109,7 @@ class HomeWebModule extends WebModule {
                     $this->addOnOrientationChange('moduleHandleWindowResize();');
               
                 } else {
-                    $this->assign('modules', $this->getModuleNavlist());
+                    $this->assign('modules', $this->getAllModuleNavigationData(self::EXCLUDE_DISABLED_MODULES));
                     $this->assign('hideImages', $this->getOptionalModuleVar('HIDE_IMAGES', false));
                     
                     if ($this->getOptionalModuleVar('BANNER_ALERT', false, 'notice')) {
@@ -172,37 +172,40 @@ class HomeWebModule extends WebModule {
                 
                 $searchModules = array();
                 
-                foreach ($this->getAllModuleNavigationData(self::EXCLUDE_DISABLED_MODULES) as $type=>$modules) {
-                
-                    foreach ($modules as $id => $info) {
-                        $module = self::factory($id);
-                        
-                        if ($module->getModuleVar('search')) {
-                            $searchModule = array(
-                                'id'        => $id,
-                                'elementId' => 'federatedSearchModule_'.$id,
-                                'title'     => $info['title'],
-                            );
-            
-                            if ($useAjax) {
-                                $searchModule['ajaxURL'] = FULL_URL_PREFIX.ltrim($this->buildURL('searchResult', array(
-                                    'id'     => $id,
-                                    'filter' => $searchTerms,
-                                )), '/');
-                                
-                            } else {
-                                $searchModule['results'] = $this->runFederatedSearchForModule($module, $searchTerms);
-                            }
-                            $searchModules[] = $searchModule;
-                        }
-                    }
+                if ($this->getOptionalModuleVar('SHOW_FEDERATED_SEARCH', true)) {
+                    $this->assign('showFederatedSearch', true);
+					foreach ($this->getAllModuleNavigationData(self::EXCLUDE_DISABLED_MODULES) as $type=>$modules) {
+					
+						foreach ($modules as $id => $info) {
+							$module = self::factory($id);
+							
+							if ($module->getModuleVar('search')) {
+								$searchModule = array(
+									'id'        => $id,
+									'elementId' => 'federatedSearchModule_'.$id,
+									'title'     => $info['title'],
+								);
+				
+								if ($useAjax) {
+									$searchModule['ajaxURL'] = FULL_URL_PREFIX.ltrim($this->buildURL('searchResult', array(
+										'id'     => $id,
+										'filter' => $searchTerms,
+									)), '/');
+									
+								} else {
+									$searchModule['results'] = $this->runFederatedSearchForModule($module, $searchTerms);
+								}
+								$searchModules[] = $searchModule;
+							}
+						}
+					}
+					
+					if ($useAjax) {
+						$this->addInlineJavascript('var federatedSearchModules = '.json_encode($searchModules).";\n");
+						$this->addOnLoad('runFederatedSearch(federatedSearchModules);');
+					}
                 }
                 
-                if ($useAjax) {
-                    $this->addInlineJavascript('var federatedSearchModules = '.json_encode($searchModules).";\n");
-                    $this->addOnLoad('runFederatedSearch(federatedSearchModules);');
-                }
-            
                 $this->assign('federatedSearchModules', $searchModules);
                 $this->assign('searchTerms',            $searchTerms);
                 $this->setLogData($searchTerms);
