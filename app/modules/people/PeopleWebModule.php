@@ -348,7 +348,7 @@ class PeopleWebModule extends WebModule {
                     $this->assign('searchTerms', $searchTerms);
           
                     $startIndex = $this->getArg('start', 0);
-                    $limit = $this->getOptionalModuleVar('SHOW_PEOPLE_PER_PAGE', 20);
+                    $limit = $this->getOptionalModuleVar('MAX_PER_PAGE', 20);
                     $PeopleController->setStart($startIndex);
                     $PeopleController->setLimit($limit);
           
