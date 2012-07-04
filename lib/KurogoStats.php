@@ -479,11 +479,17 @@ class KurogoStats {
         
         //if the database has the summary data, it should do update
         if ($result) {
-            $elapsedAvg = ($statsValue['elapsed'] / $statsValue['summaryTimes'] + $result['elapsedAvg']) / 2;
+            $summaryElapsedTime = $result['elapsedAvg'] * $result['viewCount'];
+            $newElapsedTime = $statsValue['elapsed'];
+            $totalElapsedTime = $summaryElapsedTime + $newElapsedTime;
+            $totalViewCount = $statsValue['viewCount'] + $result['viewCount'];
+            // If for some strange reason the total view count is 0, use the old elapsed average.
+            $newAverageElapsedTime =  $totalViewCount ? ($totalElapsedTime/$totalViewCount) : $result['elapsedAvg'];
+
             $updateData = array(
                 $result['viewCount'] + $statsValue['viewCount'],
                 $result['sizeCount'] + $statsValue['sizeCount'],
-                $elapsedAvg,
+                $newAverageElapsedTime,
                 $result['id']
             );
             
