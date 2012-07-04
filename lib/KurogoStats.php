@@ -236,7 +236,7 @@ class KurogoStats {
                                     platform varchar(16),
                                     viewCount int(11),
                                     sizeCount int(11),
-                                    elapsedAvg int(11),
+                                    elapsedAvg int(11)
                                 )";
                 $createSQL[] = "CREATE INDEX key_service ON $table (service)";
                 $createSQL[] = "CREATE INDEX key_moduleID ON $table (moduleID)";
