@@ -181,7 +181,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
         } elseif (strlen(trim($searchString)) < self::MIN_NAME_SEARCH) {
             $firstFilter = new LDAPFilter($this->getField('firstname'), $searchString);
-            $lastFilter = new LDAPFilter($this->getField('lastName'), $searchString);
+            $lastFilter = new LDAPFilter($this->getField('lastname'), $searchString);
             $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $firstFilter, $lastFilter);
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
             $names = preg_split("/\s+/", $searchString);
