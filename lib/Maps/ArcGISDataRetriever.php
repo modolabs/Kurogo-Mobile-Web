@@ -11,6 +11,7 @@ class ArcGISDataRetriever extends URLDataRetriever
     protected $action;
 
     protected $selectedLayer;
+    protected $orderByFields;
     //protected $layerTypes = array();
     protected $searchFilters = array();
 
@@ -19,6 +20,9 @@ class ArcGISDataRetriever extends URLDataRetriever
         if (isset($args['ARCGIS_LAYER_ID'])) {
             $this->selectedLayer = $args['ARCGIS_LAYER_ID'];
             $this->parser->createFolder($this->selectedLayer, $args['TITLE']);
+        }
+        if (isset($args['SORT_FIELD'])) {
+            $this->orderByFields = $args['SORT_FIELD'];
         }
         $this->filters = array('f' => 'json');
     }
@@ -31,7 +35,7 @@ class ArcGISDataRetriever extends URLDataRetriever
 
                 $bbox = $extent['xmin'].','.$extent['ymin'].','.$extent['xmax'].','.$extent['ymax'];
                 
-                return array(
+                $params = array(
                     'text'           => '',
                     'geometry'       => $bbox,
                     'geometryType'   => 'esriGeometryEnvelope',
@@ -42,7 +46,13 @@ class ArcGISDataRetriever extends URLDataRetriever
                     'outSR'          => '',
                     'outFields'      => implode(',', $fields),
                     'f'              => 'json',
-                    );
+				);
+                
+                if ($this->orderByFields) {
+                    $params['where']          = 'OBJECTID>0';
+                	$params['orderByFields']  = $this->orderByFields;
+                }
+                return $params;
 
             case self::ACTION_SEARCH:
                 $displayField = null;
