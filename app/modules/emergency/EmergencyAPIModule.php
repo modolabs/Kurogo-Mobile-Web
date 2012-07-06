@@ -1,7 +1,5 @@
 <?php
 
-Kurogo::includePackage('Emergency');
-
 class EmergencyAPIModule extends APIModule {
 
     protected $id = 'emergency';

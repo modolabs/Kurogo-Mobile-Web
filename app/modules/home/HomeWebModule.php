@@ -9,8 +9,6 @@
   * @subpackage Home
   */
 
-Kurogo::includePackage('Emergency');
-
 class HomeWebModule extends WebModule {
     protected $id = 'home';
     protected $canBeAddedToHomeScreen = false;

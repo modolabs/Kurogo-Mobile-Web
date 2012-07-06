@@ -1,7 +1,5 @@
 <?php
 
-Kurogo::includePackage('Emergency');
-
 class EmergencyWebModule extends WebModule implements HomeAlertInterface
 {
     protected $id='emergency';
