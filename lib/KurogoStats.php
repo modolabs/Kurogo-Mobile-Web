@@ -213,8 +213,9 @@ class KurogoStats {
                                     pagetype varchar(16),
                                     platform varchar(16),
                                     viewCount int(11),
+                                    visitCount int(11),
                                     sizeCount int(11),
-                                    elapsedAvg int(11),
+                                    elapsedAvg float(12,6),
                                     PRIMARY KEY (`id`),
                                     KEY `service` (`service`),
                                     KEY `moduleID` (`moduleID`),
@@ -235,8 +236,9 @@ class KurogoStats {
                                     pagetype varchar(16),
                                     platform varchar(16),
                                     viewCount int(11),
+                                    visitCount int(11),
                                     sizeCount int(11),
-                                    elapsedAvg int(11)
+                                    elapsedAvg float
                                 )";
                 $createSQL[] = "CREATE INDEX key_service ON $table (service)";
                 $createSQL[] = "CREATE INDEX key_moduleID ON $table (moduleID)";
@@ -344,13 +346,16 @@ class KurogoStats {
                 'sizeCount' => $data['size'],
                 'elapsed'   => $data['elapsed'],
                 'summaryTimes' => 1,
+                'visitCount' => array($data['visitID']=>$data['visitID']),
             );
         } else {
             $statsData[$statsKey]['viewCount'] +=  1;
             $statsData[$statsKey]['sizeCount'] += $data['size'];
             $statsData[$statsKey]['elapsed'] += $data['elapsed'];
             $statsData[$statsKey]['summaryTimes'] += 1;
+            $statsData[$statsKey]['visitCount'][$data['visitID']] = $data['visitID'];
         }
+        
     }
     
     /**
@@ -488,17 +493,19 @@ class KurogoStats {
 
             $updateData = array(
                 $result['viewCount'] + $statsValue['viewCount'],
+                $result['visitCount'] + count($statsValue['visitCount']),
                 $result['sizeCount'] + $statsValue['sizeCount'],
                 $newAverageElapsedTime,
                 $result['id']
             );
             
-            $updateSql = "UPDATE $summaryTable SET viewCount = ?, sizeCount = ?, elapsedAvg = ? WHERE id = ?";
+            $updateSql = "UPDATE $summaryTable SET viewCount = ?, visitCount = ?, sizeCount = ?, elapsedAvg = ? WHERE id = ?";
             return $conn->query($updateSql, $updateData);
         //if the database don't have the summary data, it should do insert
         } else {
             $insertValue = array(
                 'viewCount'  => $statsValue['viewCount'],
+                'visitCount' => count($statsValue['visitCount']),
                 'sizeCount'  => $statsValue['sizeCount'],
                 'elapsedAvg' => $statsValue['elapsed'] / $statsValue['summaryTimes'],
             );
@@ -601,7 +608,7 @@ class KurogoStats {
                 data varchar(256),
                 dataLabel varchar(256),
                 size int(11),
-                elapsed int(11),
+                elapsed float(12,6),
                 PRIMARY KEY (`id`),
                 KEY `service` (`service`),
                 KEY `moduleID` (`moduleID`),
@@ -609,7 +616,7 @@ class KurogoStats {
                 KEY `platform` (`platform`),
                 KEY `visitID` (`visitID`),
                 KEY `timestamp` (`timestamp`)
-            )";
+            ) ENGINE=MyISAM";
         return array($createSQL);
     }
     
@@ -724,6 +731,7 @@ class KurogoStats {
             'pagetype',
             'platform',
             'viewCount',
+            'visitCount',
             'sizeCount',
             'elapsedAvg'
         );
@@ -917,6 +925,80 @@ class KurogoStats {
         
         return isset($moduleData[$moduleID]) ? true : false;
     }
+
+    public static function getStartTimestamp($day){
+        return strtotime($day);
+    }
+
+    public static function getEndTimestamp($day){
+        return strtotime("+1 day", strtotime($day)) - 1;
+    }
+
+    public static function getTotalRowsPerDay($table, $startTimestamp, $endTimestamp){
+        $conn = self::connection();
+        $sql = "SELECT count(*) AS count FROM $table WHERE `timestamp` >= $startTimestamp AND `timestamp` <= $endTimestamp";
+        $data = $conn->query($sql);
+        if($result = $data->fetch()){
+            return $result['count'];
+        }
+        return false;
+    }
+
+    public static function migrateData($table, $day, $limit = 50000){
+        $startTimestamp = self::getStartTimestamp($day);
+        $endTimestamp = self::getEndTimestamp($day);
+
+        if($totalRows = self::getTotalRowsPerDay($table, $startTimestamp, $endTimestamp)){
+            $conn = self::connection();
+            $statsData = array();
+            $fields = self::validFields();
+            $currentRowsProcessed = 0;
+            while ($currentRowsProcessed < $totalRows) {
+                $sql = "SELECT * FROM $table WHERE `timestamp` >= $startTimestamp AND `timestamp` <= $endTimestamp ORDER BY `timestamp` ASC LIMIT $currentRowsProcessed, $limit";
+
+                $data = $conn->query($sql);
+                while ($row = $data->fetch()) {
+                    $logData = array_combine($fields, $row);
+                    // Insert log data into sharded table.
+                    #self::insertStatsToMainTable($logData);
+                
+                    // Build the summary data structure.
+                    #self::summaryStatsData($statsData, $logData);
+                    $currentRowsProcessed++;
+                }
+                // Unset resource to avoid memory problems.
+                unset($data);
+            }
+
+            if ($statsData) {
+                foreach ($statsData as $statsKey => $statsValue) {
+                    self::updateStatsToSummaryTable($statsKey, $statsValue);
+                }
+            }
+            return $currentRowsProcessed;
+        }
+        return 0;
+    }
+
+    public static function getStartDate($table){
+        $conn = self::connection();
+        $sql = "SELECT date(`date`) AS date FROM `$table` GROUP BY 1 ORDER BY 1 ASC LIMIT 1";
+        $data = $conn->query($sql);
+        if(!$result = $data->fetch()){
+            throw new Exception("Could not get start date");
+        }
+        return $result['date'];
+    }
+
+    public static function getLastTimestamp($table){
+        $conn = self::connection();
+        $sql = "SELECT date(`date`) AS date FROM `$table` GROUP BY 1 ORDER BY 1 DESC LIMIT 1";
+        $data = $conn->query($sql);
+        if(!$result = $data->fetch()){
+            throw new Exception("Could not get end date");
+        }
+        return $result['date'];
+    }
     
     public static function migratingData($table, $start = 0, $limit = 0) {
     
@@ -931,8 +1013,6 @@ class KurogoStats {
         while ($row = $data->fetch()) {
             $isHaveData = true;
             if ($row['timestamp'] > 0) {
-                $newTable = self::getStatsTable($row['timestamp']);
-                
                 $logData = array_combine($fields, $row);
                 //if (isset($logData['moduleID']) && $logData['moduleID'] && isset($logData['service']) && $logData['service']) {
                     //if (self::isValidModuleID($logData['service'], $logData['moduleID'])) {
