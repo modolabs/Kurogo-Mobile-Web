@@ -175,14 +175,14 @@ class CalendarAPIModule extends APIModule
         }
     }
 
-    protected function apiArrayFromEvent(ICalEvent $event, $version) {
+    protected function apiArrayFromEvent(CalendarEvent $event, $version) {
         $standardAttributes = array(
           'datetime', 'start', 'end', 'uid', 'summary', 'description', 'location', 'geo');
         
         $result = array(
             'id'            => $event->get_uid(),
             'title'         => $event->get_summary(),
-            'description'   => $event->get_description(),
+            'description'   => nl2br($event->get_description()),
             'start'         => $event->get_start(),
             'end'           => $event->get_end(),
             'allday'        => ($event->isAllDay()),
@@ -468,15 +468,19 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'categories':
-                $type     = $this->getArg('type', 'static');
-                $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-                $limit    = $this->getArg('limit', null);
+                $categories = array();
 
-                $feed = $this->getFeed($calendar, $type);
+                if ($this->getOptionalModuleVar('SHOW_CATEGORIES', false, 'categories')) {
+                    $type     = $this->getArg('type', 'static');
+                    $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+                    $limit    = $this->getArg('limit', $this->getOptionalModuleVar('SHOW_POPULAR_CATEGORIES',null,'categories'));
+    
+                    $feed = $this->getFeed($calendar, $type);
+                    
+                    $categories = $feed->getEventCategories($limit);
+                }
                 
-                $categories = $feed->getEventCategories($limit);
                 $response = $this->apiArrayFromCategories($categories);
-                
                 $this->setResponse($response);
                 $this->setResponseVersion($responseVersion);
                 break;

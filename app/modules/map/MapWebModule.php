@@ -47,7 +47,7 @@ class MapWebModule extends WebModule {
                 $groupData = array();
                 foreach ($this->getModuleSections($configName) as $id => $feedData) {
                     $feedId = mapIdForFeedData($feedData);
-                    $feedData['group'] = $id;
+                    $feedData['group'] = $groupID;
                     $groupData[$feedId] = $feedData;
                     if ($requestedFeedId == $feedId) {
                         $this->feedGroup = $groupID;
@@ -329,6 +329,9 @@ class MapWebModule extends WebModule {
             if (isset($args['listview'])) {
                 unset($args['listview']);
             }
+            if (isset($args['ajax'])) {
+                unset($args['ajax']);
+            }
             $topPage = ($this->numGroups > 1) ? 'campus' : 'index';
         }
         return $this->buildBreadcrumbURL($topPage, $args, $addBreadcrumb);
@@ -449,8 +452,7 @@ class MapWebModule extends WebModule {
 
         if (count($listItems) == 1 && !$this->getArg('listview')) {
             $link = $this->linkForItem(current($listItems), $linkOptions);
-            header("Location: " .  rtrim(URL_BASE, '/') . $link['url']);
-            return;
+            Kurogo::redirectToURL(rtrim(URL_BASE, '/') . $link['url']);
         }
 
         $this->selectedPlacemarks = array();
@@ -479,6 +481,15 @@ class MapWebModule extends WebModule {
             $this->setTemplatePage('fullscreen');
             $this->initializeDynamicMap();
         } else {
+            if (isset($this->feedGroups[$this->feedGroup])) {
+                $feedData = $this->getCurrentFeed($feedId);
+                $showCampusTitle = isset($feedData['SHOW_CAMPUS_TITLE']) ? $feedData['SHOW_CAMPUS_TITLE'] : false;
+                if ($showCampusTitle) {
+                    $title = $this->feedGroups[$this->feedGroup]['title'] . " " . $title;
+                }
+            }
+
+
             $this->assign('title',  $title);
             $this->assign('navItems', $results);
             if ($this->numGroups > 1) {
@@ -685,10 +696,14 @@ class MapWebModule extends WebModule {
                     'url'   => 'http://maps.google.com?q=loc:'.$centerText,
                     'class' => 'external',
                     );
+
+                $directionsURL = $this->getMapDevice()->pageSupportsDynamicMap()
+                    ? 'http://maps.google.com?daddr='.$centerText
+                    : 'http://maps.google.com/m/directions?daddr='.$centerText;
                 
                 $externalLinks[] = array(
                     'title' => $this->getLocalizedString('GET_DIRECTIONS_FROM_GOOGLE'),
-                    'url'   => 'http://maps.google.com?daddr='.$centerText,
+                    'url'   => $directionsURL,
                     'urlID' => 'directionsLink',
                     'class' => 'external',
                     );
@@ -781,6 +796,7 @@ class MapWebModule extends WebModule {
                     }
                 }
 
+                $this->assign('showAllCampuses', $this->getOptionalModuleVar('SHOW_ALL_CAMPUSES_LINK', true));
                 break;
             
             case 'bookmarks':
@@ -829,7 +845,10 @@ class MapWebModule extends WebModule {
             case 'category':
                 
                 $isMapView = $this->getArg('mapview');
-                $feedId = $this->getArg('feed');
+                $feedId = $this->getArg('feed',null);
+                if (is_null($feedId)) {
+                    throw new KurogoUserException('Feed ID not specified');
+                }
                 $this->assign('feedId', $feedId);
                 $this->assignItemsFromFeed($feedId, $searchTerms, $isMapView);
 
@@ -906,15 +925,19 @@ class MapWebModule extends WebModule {
         if ($this->getArg('worldmap')) {
             $placemarks = array();
             foreach ($this->feedGroups as $id => $groupData) {
-                $point = filterLatLon($groupData['center']);
-                $placemark = new BasePlacemark(
-                    new MapBasePoint(array(
-                        'lat' => $point['lat'],
-                        'lon' => $point['lon'],
-                        )));
-                $placemark->setTitle($groupData['title']);
-                $placemark->setURL($this->groupURL($id));
-                $placemarks[] = $placemark;
+            	$showOnWorldMap = self::argVal($groupData, 'SHOW_ON_WORLDMAP', 1);
+            	if ($showOnWorldMap) {
+					$point = filterLatLon($groupData['center']);
+					$placemark = new BasePlacemark(
+						new MapBasePoint(array(
+							'lat' => $point['lat'],
+							'lon' => $point['lon'],
+							)));
+					$placemark->setId($id);
+					$placemark->setTitle($groupData['title']);
+					$placemark->setURL($this->groupURL($id));
+					$placemarks[] = $placemark;
+				}
             }
             return $placemarks;
         }
@@ -1000,7 +1023,9 @@ class MapWebModule extends WebModule {
             $this->assignGroups('navItems');
 
             $this->addInlineJavascriptFooter("var CONFIG_MODULE = '{$this->configModule}';");
-            $this->addOnLoad('sortGroupsByDistance();');
+            if ($this->getOptionalModuleVar('SORT_GROUPS_BY_DISTANCE', true)) {
+				$this->addOnLoad('sortGroupsByDistance();');
+			}
         }
 
         if ($this->mapURL === null) {
@@ -1051,8 +1076,10 @@ class MapWebModule extends WebModule {
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
         $this->configureUserLocation();
-        $this->addOnLoad('addClass(document.body, "fullscreen")');
-        $this->addOnOrientationChange('updateContainerDimensions()');
+        if ($this->page != 'pane') {
+            $this->addOnLoad('addClass(document.body, "fullscreen");');
+        }
+        $this->addOnOrientationChange('updateContainerDimensions();');
 
         // show button on search bar
         $this->generateBookmarkLink();

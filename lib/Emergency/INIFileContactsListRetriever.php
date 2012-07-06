@@ -8,6 +8,7 @@ class INIFileContactsListRetriever extends URLDataRetriever
 class INIFileContactsParser extends INIFileParser
 {
     protected function createContactsList($iniData) {
+    	$contactsList = array();
         if(isset($iniData['title'])) {
             foreach($iniData['title'] as $index => $title) {
                 $contactsList[] = new EmergencyContactsListItem(

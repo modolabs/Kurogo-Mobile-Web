@@ -8,6 +8,7 @@ class AthleticsAPIModule extends APIModule
     protected $id = 'athletics';
     protected $vmin = 1;
     protected $vmax = 1;
+    protected $imageExt = ".png";
 
     protected static $defaultEventModel = 'AthleticEventsDataModel';
     protected static $defaultNewsModel = 'NewsDataModel';
@@ -32,7 +33,10 @@ class AthleticsAPIModule extends APIModule
                 
                 $sports = array();
                 foreach ($sportsConfig as $key => $sportData) {
-                    $sports[] = array('key'=>$key, 'title' => $sportData['TITLE']);
+                    $image = FULL_URL_BASE . "modules/{$this->configModule}/images/" .
+                        (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])) .
+                        $this->imageExt;
+                    $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'icon' => $image);
                 }
                 
                 $response = array(
@@ -295,8 +299,10 @@ class AthleticsAPIModule extends APIModule
     protected function getNewsFeed($sport, $gender=null) {
         if ($sport=='topnews') {
             $feedData = $this->getNavData('topnews');
+        } elseif (isset($this->feeds[$sport])) {
+            $feedData = $this->feeds[$sport];
         } else {
-            $feedData = $this->getOptionalModuleSection($sport, 'feeds');
+            throw new KurogoDataException($this->getLocalizedString('ERROR_INVALID_SPORT', $sport));
         }
         
         if (isset($feedData['DATA_RETRIEVER']) || isset($feedData['BASE_URL'])) {

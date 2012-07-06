@@ -19,7 +19,7 @@ Cambridge, MA 02140<br />
     <li>Wesley Hirsch</li>
     <li>Sonya Huang (Lead Developer, iOS)</li>
     <li>Jim Kang</li>
-    <li>Edward Liu</li>
+    <li>KeFei Liu</li>
     <li>Newstar Liu</li>
     <li>Ebrahim Kobeissi</li>
     <li>David Ormsbee</li>

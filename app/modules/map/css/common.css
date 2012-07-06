@@ -1,9 +1,3 @@
-/* used in detail page and index when swapping to list view with search query */
-#tabscontainer {
-    position: relative;
-    padding: 0 12px;
-}
-
 /* used in map view - custom controls overlaying google maps, detail - controls below map image */
 
 #mapcontrols {

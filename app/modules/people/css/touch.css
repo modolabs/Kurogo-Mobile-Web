@@ -1,7 +1,8 @@
-.label {
-  width: 4em;
+.header {
+    overflow: hidden;
 }
 
-.value {
-  margin-left: 4em;
+.header .photo {
+    float: left;
+    margin-right: .5em;
 }

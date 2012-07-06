@@ -258,8 +258,8 @@ class MapProjection
             case 'cea': // 2 SRIDs; http://en.wikipedia.org/wiki/Cylindrical_equal-area_projection
             case 'nzmg': // 1
             case 'krovak': // 1
-            default:die();
-                //throw new KurogoConfigurationException("reverse projection not implemented for {$this->proj}");
+            default:
+                throw new KurogoConfigurationException("reverse projection not implemented for {$this->proj}");
                 break;
         }
     }

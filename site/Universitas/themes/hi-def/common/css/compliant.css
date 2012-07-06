@@ -1,13 +1,11 @@
-/* Springboards */
-
 /* Overall size of one cell in a springboard (grid of icons) */
 .springboard div {	
 	font-size: 76.5%;	/* Font size of text label below icon */
 	line-height: 1.1em;
-	/* width: 102px; */   	/* For springboard grid that is 3 icons wide */
+	/* width: 33%; */   	/* For springboard grid that is 3 icons wide */
 	/* height: 90px; */   	/* For springboard grid that is 3 icons wide */
-	width: 77px;	/* For springboard grid that is 4 icons wide */
-	height: 96px;	/* For springboard grid that is 4 icons wide */
+	width: 25%;	/* For springboard grid that is 4 icons wide */
+	height: 90px;	/* For springboard grid that is 4 icons wide */
 }
 
 .springboard a img {
@@ -24,9 +22,9 @@
 /* Overall size of one cell in the springboard's utility-type items */
 /* Utility-class modules are typically shown smaller and at the bottom of the springboard */
 .springboard div.utility {
-	/* width: 102px; */ /* For a 3-wide row of utility icons */
-	width: 76px; /* For a 4-wide row of utility icons */
-	/* width: 61px; */ /* For a 5-wide row of utility icons */
+	/* width: 33%; */ /* For a 3-wide row of utility icons */
+	width: 25%; /* For a 4-wide row of utility icons */
+	/* width: 20%; */ /* For a 5-wide row of utility icons */
 	height: 86px;
 	font-size: 70.6%;
 	line-height: 1.1em;
@@ -51,6 +49,48 @@
 	/* Adjust position to fit springboard icon size for utility-class module icons */
 	top: 26px;
 	right: 12px;
+}
+
+/* Responsive springboard spacing adjustments for larger screens */
+
+@media only screen and (min-width: 480px) {
+	.springboard div {	
+		/* width: 25%; */	/* For springboard grid that is 4 icons wide */
+		width: 20%;	/* For springboard grid that is 5 icons wide */
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	.springboard div {	
+		/* width: 20%; */	/* For springboard grid that is 5 icons wide */
+		width: 16.6%;	/* For springboard grid that is 6 icons wide */
+	}
+}
+
+/* On taller screens, increase vertical spacing */
+
+@media only screen and (min-height: 480px) {
+	.springboard div {	
+		min-height: 100px;
+	}
+}
+
+@media only screen and (min-height: 540px) {
+	#searchformcontainer {
+		margin: 20px 12px;
+	}
+	.springboard div {	
+		min-height: 110px;
+	}
+}
+
+@media only screen and (min-height: 600px) {
+	#searchformcontainer {
+		margin: 24px 12px;
+	}
+	.springboard div {	
+		min-height: 120px;
+	}
 }
 
 

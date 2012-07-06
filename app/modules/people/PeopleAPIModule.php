@@ -6,7 +6,7 @@ class PeopleAPIModule extends APIModule
 {
     protected $id = 'people';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
     protected static $defaultModel = 'PeopleDataModel';
     protected static $defaultController = 'LDAPPeopleController'; //legacy
     private $fieldConfig;
@@ -42,6 +42,8 @@ class PeopleAPIModule extends APIModule
     
     private function formatPerson($person) {
         $result = array();
+        $result['uid'] = $person->getId();
+
         foreach ($this->fieldConfig as $fieldID => $fieldOptions) {
             $attributes = array();
             for ($i = 0; $i < count($fieldOptions['attributes']); $i++) {
@@ -54,12 +56,25 @@ class PeopleAPIModule extends APIModule
                 $attribute = $fieldOptions['attributes'][$i];
                 $values = $person->getField($attribute);
                 if ($values) {
-                    if (is_array($values)) {
-                        $attributes[$label] = $values[0];
+                    if (self::argVal($fieldOptions, 'type') == 'imgdata') {
+                        $attributes[$label] = FULL_URL_PREFIX.$this->configModule.'/photo?'.http_build_query(array('uid'=>$person->getID()));
+                    } else if (is_array($values)) {
+                        $delimiter = isset($fieldOptions['delimiter']) ? $fieldOptions['delimiter'] : ' ';
+                        $attributes[$label] = implode($delimiter, $values);
                     } else {
                         $attributes[$label] = $values;
                     }
+                } elseif (isset($fieldOptions['format'])) {
+                	//always include attributes when using format
+                	$attributes[$label] = null;
                 }
+            }
+            
+            // if we use format and there are no fields then skip
+            if (isset($fieldOptions['format'])) {
+            	if (!array_filter($attributes)) {
+            		$attributes = array();
+            	}
             }
 
             if ($attributes) {
@@ -73,6 +88,13 @@ class PeopleAPIModule extends APIModule
                 } else {
                     $value = $attributes[0];
                 }
+                $url = NULL;
+                if (self::argVal($fieldOptions, 'type') == 'map') {
+                     $link = Kurogo::moduleLinkForValue('map', $value, $this, $person);
+                     if (isset($link, $link['url'])) {
+                         $url = $link['url'];
+                     }
+                }
                 if (isset($fieldOptions['section'])) {
                     $section = $fieldOptions['section'];
                     if (!isset($result[$section])) {
@@ -83,6 +105,9 @@ class PeopleAPIModule extends APIModule
                         'type' => $fieldOptions['type'],
                         'value' => $value,
                         );
+                    if (isset($url)) {
+                        $valueArray['url'] = $url;
+                    }
                     $result[$section][] = $valueArray;
                 } else {
                     $result[$fieldOptions['label']] = $value;
@@ -164,7 +189,7 @@ class PeopleAPIModule extends APIModule
                     }
                     
                     $this->setResponse($response);
-                    $this->setResponseVersion(1);
+                    $this->setResponseVersion(2);
                         
                 } else {
                     $this->invalidCommand();

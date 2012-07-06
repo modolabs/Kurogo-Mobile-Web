@@ -4,7 +4,7 @@
 {block name="onLoad"}{/block}
 
 {block name="breadcrumbs"}
-  {if !$isModuleHome && $configModule != 'home'}
+  {if !$isModuleHome && $configModule != $homeModuleID}
     <a href="./" class="moduleicon">
       <img src="/common/images/title-{$navImageID|default:$configModule}.gif" width="{$module_nav_image_width|default:28}" height="{$module_nav_image_height|default:28}" alt="" />
     </a>

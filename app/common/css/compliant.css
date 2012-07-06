@@ -911,19 +911,18 @@ a.sidenav-next {
 }
 
 .label {
-    display: block;
-    width: 6em;
-    position: relative;
-    font-size: 76.471%;
-    line-height: 1.3em;
-    font-weight: bold;
-    text-align: right;
+  display: block;
+  font-size: 76.471%;
+  line-height: 1.3em;
+  font-weight: bold;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .value {
     display: block;
-    margin-top: -1.2em;
-    margin-left: 5em;
     font-size: 100%;
     min-height: 1.3em;
     line-height: 1.3em;
@@ -1200,18 +1199,19 @@ h2.icon {
 }
 
 #tabs.smalltabs li a {
-	padding-right: 7px;
-	padding-left: 7px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+#tabscontainer {
+	padding: 0 12px;
 }
 
 #tabbodies {
 	margin: 0 -12px 0 -12px;
 	clear: both;
 	border-top: 1px solid #bbb;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
-	border-bottom-right-radius: 8px;	
-	border-bottom-left-radius: 8px;	
+	border-bottom: 1px solid #bbb;
 }
 
 .shaded #tabbodies {

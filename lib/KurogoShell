@@ -1,0 +1,34 @@
+#!/bin/bash
+
+LIB=${0/%KurogoShell/}
+APP=`pwd`
+phpPath=`which php`
+
+if [ -n "$phpPath" ]; then
+    ${phpPath} -q ${LIB}KurogoShellDispatcher.php -working "${APP}" "$@"
+    return=$?
+    if [ ${return} -gt 0 ]; then
+        echo "failed"
+        if [ ${return} -eq 1 ]; then
+            echo "Command not specified"
+        elif [ ${return} -eq 2 ]; then
+            echo "Module Disabled"
+        elif [ ${return} -eq 3 ]; then
+            echo "Unauthorized"
+        elif [ ${return} -eq 4 ]; then
+            echo "Invalid Command"
+        elif [ ${return} -eq 5 ]; then
+            echo "Not found the shell module"
+        elif [ ${return} -eq 6 ]; then
+            echo "Unable to load Kurogo class"
+        else
+            echo "Code:${return}"
+        fi
+    else
+        echo "Success"
+    fi
+else
+    echo "Not found PHP binary path"
+fi
+
+exit;

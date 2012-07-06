@@ -10,7 +10,7 @@
   */
 
 if (!function_exists('mb_convert_encoding')) {
-    die('Multibyte String Functions not available (mbstring)');
+    throw new KurogoException('Multibyte String PHP extension is not installed. http://www.php.net/manual/en/book.mbstring.php');
 }
 
 includePackage('News');
@@ -234,8 +234,7 @@ class NewsWebModule extends WebModule {
         
         if (!$content = $this->cleanContent($story->getContent())) {
           if ($url = $story->getLink()) {
-              header("Location: $url");
-              exit();
+              Kurogo::redirectToURL($url);
           } 
           
           // no content or link. Attempt to get description
@@ -334,30 +333,34 @@ class NewsWebModule extends WebModule {
         break;
         
       case 'pane':
-        $start = 0;
-        if ($this->legacyController) {
-            $items = $this->feed->items($start, $this->maxPerPane);
-        } else {
-            $this->feed->setStart(0);
-            $this->feed->setLimit($this->maxPerPane);
-            $items = $this->feed->items();
+        if ($this->ajaxContentLoad) {
+            $start = 0;
+            if ($this->legacyController) {
+                $items = $this->feed->items($start, $this->maxPerPane);
+            } else {
+                $this->feed->setStart(0);
+                $this->feed->setLimit($this->maxPerPane);
+                $items = $this->feed->items();
+            }
+            $stories = array();
+            $options = array(
+                'noBreadcrumbs'=>true,
+                'section' => $this->feedIndex
+            );
+    
+            foreach ($items as $story) {
+                $stories[] = $this->linkForItem($story, $options);
+            }
+            
+            foreach ($stories as $i => $story) {
+                $stories[$i]['url'] = $this->buildURL('index').
+                    '#'.urlencode(FULL_URL_PREFIX.ltrim($story['url'], '/'));
+            }
+            
+            $this->assign('stories', $stories);
         }
-        $stories = array();
-        $options = array(
-            'noBreadcrumbs'=>true,
-            'section' => $this->feedIndex
-        );
-
-        foreach ($items as $story) {
-            $stories[] = $this->linkForItem($story, $options);
-        }
-        
-        foreach ($stories as $i => $story) {
-            $stories[$i]['url'] = $this->buildURL('index').
-                '#'.urlencode(FULL_URL_PREFIX.ltrim($story['url'], '/'));
-        }
-        
-        $this->assign('stories', $stories);
+        $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+        $this->addInternalJavascript('/common/javascript/lib/paneStories.js');
         break;
       
       case 'index':

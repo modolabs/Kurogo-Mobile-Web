@@ -6,7 +6,7 @@
 Kurogo::includePackage('People');
 
 if (!function_exists('mb_convert_encoding')) {
-    die('Multibyte String Functions not available (mbstring)');
+    throw new KurogoException('Multibyte String PHP extension is not installed. http://www.php.net/manual/en/book.mbstring.php');
 }
 
 /**
@@ -24,6 +24,7 @@ class PeopleWebModule extends WebModule {
     protected $contactGroups = array();
     protected $controllers = array();
     protected $legacyController = true;
+    protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -59,7 +60,8 @@ class PeopleWebModule extends WebModule {
         if (isset($info['format'])) {
             $value = vsprintf($this->replaceFormat($info['format']), $values);
         } else {
-            $value = implode(' ', $values);
+            $delimiter = isset($info['delimiter']) ? $info['delimiter'] : ' ';
+            $value = implode($delimiter, $values);
         }
     
         $detail = array(
@@ -85,6 +87,18 @@ class PeopleWebModule extends WebModule {
                 $detail['class'] = 'phone';
                 break;
  
+            case 'imgdata':
+                $detail['title'] = "";
+                $detail['class'] = 'img';
+                $detail['img'] = $this->buildURL('photo', array('uid'=>$person->getID()));
+                break;
+
+            case 'imgurl':
+                $detail['title'] = "";
+                $detail['class'] = 'img';
+                $detail['img'] = $value;
+                break;
+
             // compatibility
             case 'map':
                 $info['module'] = 'map';
@@ -217,6 +231,12 @@ class PeopleWebModule extends WebModule {
         );
     }
 
+    public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null) {
+        return array_merge(
+            parent::linkForValue($value, $callingModule, $otherValue), 
+            array('class' => 'action people'));
+    }
+    
     protected function getContactGroup($group) {
         if (!$this->contactGroups) {
             $this->contactGroups = $this->getModuleSections('contacts-groups');
@@ -274,7 +294,6 @@ class PeopleWebModule extends WebModule {
                     $person = $PeopleController->getUser($uid);
           
                     if ($person) {
-                    
                         $this->setLogData($uid, $person->getName());
                         $personDetails =  $this->formatPersonDetails($person);
                         // Bookmark
@@ -287,6 +306,16 @@ class PeopleWebModule extends WebModule {
                             $cookieID = http_build_query($cookieParams);
                             $this->generateBookmarkOptions($cookieID);
                         }
+                        
+                        $headerSectionKeys = array('HEADER_THUMBNAIL', 'HEADER_TITLE', 'HEADER_SUBTITLE');
+                        $headerSections = array();
+                        foreach ($headerSectionKeys as $section) {
+                            if (isset($personDetails[$section])) {
+                                $headerSections[$section] = $personDetails[$section];
+                                unset($personDetails[$section]);
+                            }
+                        }
+                        $this->assign('headerSections', $headerSections);
                         $this->assign('personDetails', $personDetails);
                         break;
                     } else {
@@ -296,6 +325,21 @@ class PeopleWebModule extends WebModule {
                     $this->assign('searchError', 'No username specified');
                 }
                 break;
+                
+            case 'photo':
+                if ($uid = $this->getArg('uid')) {
+                    if ($person = $PeopleController->getUser($uid)) {
+                        if ($data = $person->getPhotoData()) {
+                            header("Content-type: ".$person->getPhotoMIMEType());
+                            echo $data;
+                            exit(0);
+                        }
+                    }
+                }
+                
+                header("HTTP/1.1 404 Not Found");
+                exit(0);
+                break;
         
             case 'search':
                 if ($filter = $this->getArg('filter')) {
@@ -303,20 +347,28 @@ class PeopleWebModule extends WebModule {
           
                     $this->assign('searchTerms', $searchTerms);
           
+                    $startIndex = $this->getArg('start', 0);
+                    $limit = $this->getOptionalModuleVar('MAX_PER_PAGE', 20);
+                    $PeopleController->setStart($startIndex);
+                    $PeopleController->setLimit($limit);
+          
                     $this->setLogData($searchTerms);
                     $people = $this->searchItems($searchTerms);
                     $this->assign('searchError', $PeopleController->getResponseError());
 
                     if ($people !== false) {
                         $resultCount = count($people);
-            
-                        switch ($resultCount) 
+                        $totalItems = $PeopleController->getTotalItems();
+
+                        switch ($totalItems) 
                         {
                             case 1:
                                 $person = $people[0];
                                 $this->logView();
                                 $this->redirectTo('detail', array(
-                                    'uid'=>$person->getId()
+                                    'uid'=>$person->getId(),
+                                    'total'=>1,
+                                    'filter'=>$this->getArg('filter')
                                     )
                                 );
                                 break;
@@ -328,7 +380,23 @@ class PeopleWebModule extends WebModule {
                                     $results[] = $this->linkforItem($person);
                                 }
                                 //error_log(print_r($results, true));
-                                $this->assign('resultCount', $resultCount);
+                                if($totalItems > $resultCount)
+                                {
+                                    if($startIndex + $limit <= $totalItems)
+                                    {
+                                        $nextLink = $this->buildURL('search', array('filter' => $searchTerms, 'start' => $startIndex + $limit));
+                                        $next = array('title' => $this->getLocalizedString("NEXT_PEOPLE_TEXT", $limit), 'url' => $nextLink, 'class' => 'pagerlink');
+                                        array_push($results, $next);
+                                    }
+                                    if($startIndex > 0)
+                                    {
+                                        $prevLink = $this->buildURL('search', array('filter' => $searchTerms, 'start' => $startIndex - $limit));
+                                        $prev = array('title' => $this->getLocalizedString("PREVIOUS_PEOPLE_TEXT", $limit), 'url' => $prevLink, 'class' => 'pagerlink');
+                                        array_unshift($results, $prev);
+                                    }
+                                }
+                                
+                                $this->assign('resultCount', $this->getFeed('people')->getTotalItems());
                                 $this->assign('results', $results);
                                 break;
                         }

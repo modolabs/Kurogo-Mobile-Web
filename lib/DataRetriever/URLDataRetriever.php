@@ -192,7 +192,7 @@ class URLDataRetriever extends DataRetriever {
         
         if (isset($args['HTTPS_PROXY_URL'])) {
             $streamContextOpts['https'] = array(
-                'proxy'          => $proxyConfigs['HTTPS_PROXY_URL'], 
+                'proxy'          => $args['HTTPS_PROXY_URL'], 
                 'request_fulluri'=> TRUE
             );
         }
@@ -280,16 +280,25 @@ class URLDataRetriever extends DataRetriever {
 
         if (!isset($url_parts['scheme'])) {
              $this->DEFAULT_RESPONSE_CLASS="FileDataResponse";
+        }else {
+             $this->DEFAULT_RESPONSE_CLASS="HTTPDataResponse";
         }
         
         $response = $this->initResponse();
-
+        $response->setStartTime(microtime(true));
+        if (!$this->showWarnings) {
+        	Kurogo::pushErrorReporting(E_ERROR);
+        }
         if ($file = $this->saveToFile()) {
             $data = $this->cache->getFullPath($file);
             $result = file_put_contents($data, file_get_contents($this->requestURL, false, $this->streamContext));
         } else {
             $data = file_get_contents($this->requestURL, false, $this->streamContext);
         }
+        if (!$this->showWarnings) {
+        	Kurogo::popErrorReporting();
+        }
+        $response->setEndTime(microtime(true));
         
         if ($response instanceOf HTTPDataResponse) {
             $http_response_header = isset($http_response_header) ? $http_response_header : array();

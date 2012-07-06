@@ -11,6 +11,7 @@ class ArcGISDataRetriever extends URLDataRetriever
     protected $action;
 
     protected $selectedLayer;
+    protected $orderByFields;
     //protected $layerTypes = array();
     protected $searchFilters = array();
 
@@ -19,6 +20,9 @@ class ArcGISDataRetriever extends URLDataRetriever
         if (isset($args['ARCGIS_LAYER_ID'])) {
             $this->selectedLayer = $args['ARCGIS_LAYER_ID'];
             $this->parser->createFolder($this->selectedLayer, $args['TITLE']);
+        }
+        if (isset($args['SORT_FIELD'])) {
+            $this->orderByFields = $args['SORT_FIELD'];
         }
         $this->filters = array('f' => 'json');
     }
@@ -31,7 +35,7 @@ class ArcGISDataRetriever extends URLDataRetriever
 
                 $bbox = $extent['xmin'].','.$extent['ymin'].','.$extent['xmax'].','.$extent['ymax'];
                 
-                return array(
+                $params = array(
                     'text'           => '',
                     'geometry'       => $bbox,
                     'geometryType'   => 'esriGeometryEnvelope',
@@ -42,13 +46,31 @@ class ArcGISDataRetriever extends URLDataRetriever
                     'outSR'          => '',
                     'outFields'      => implode(',', $fields),
                     'f'              => 'json',
-                    );
+				);
+                
+                if ($this->orderByFields) {
+                    $params['where']          = 'OBJECTID>0';
+                	$params['orderByFields']  = $this->orderByFields;
+                }
+                return $params;
 
             case self::ACTION_SEARCH:
-                return array(
-                    'text' => $this->searchFilters['text'],
-                    'f'    => 'json',
+                $displayField = null;
+                if (isset($this->selectedLayer)) {
+                    $displayField = $this->parser->getDisplayFieldForFolder($this->selectedLayer);
+                }
+                if ($displayField) {
+                    $searchText = strtoupper(str_replace("'","''",$this->searchFilters['text']));
+                    return array(
+                        'where' => "UPPER($displayField) LIKE '%$searchText%'",
+                        'f'    => 'json',
                     );
+                } else {
+                    return array(
+                        'text' => str_replace("'","''",$this->searchFilters['text']),
+                        'f'    => 'json',
+                        );
+                }
 
             case self::ACTION_SEARCH_NEARBY:
                 $bbox = normalizedBoundingBox(
@@ -63,7 +85,6 @@ class ArcGISDataRetriever extends URLDataRetriever
                     'f'            => 'json',
                     );
         }
-
         return parent::parameters();
     }
 
@@ -95,9 +116,15 @@ class ArcGISDataRetriever extends URLDataRetriever
 
     // intercept this since we sometimes have to parse two calls to get everything
     public function getData(&$response=null) {
+        // this happens when we start out at the top level of a service instance
+        // Use strlen to protect against a layer id of 0
+        if (strlen($this->selectedLayer)==0 && $this->action == self::ACTION_PLACEMARKS) {
+            return array();
+        }
+
         $data = parent::getData();
 
-        if ($data === null && $this->action == self::ACTION_CATEGORIES) {
+        if ($data === null) {
             $data = array();
         }
 

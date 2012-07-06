@@ -14,6 +14,7 @@ abstract class Module
     protected $id='none';
     protected $configModule;
     protected $moduleName = '';
+    protected $homeModuleID;
     protected $args = array();
     protected $configs = array();
     protected $logView = true;
@@ -104,6 +105,7 @@ abstract class Module
             if ($config) {
                 $module->setConfig('module', $config);
             }
+            Kurogo::addModuleLib($id);
             return $module;
         }
         
@@ -111,7 +113,8 @@ abstract class Module
         // when run without a type it will find either
         $classNames = array(
             'web'=>ucfirst($id).'WebModule',
-            'api'=>ucfirst($id).'APIModule'
+            'api'=>ucfirst($id).'APIModule',
+            'shell'=>ucfirst($id).'ShellModule'
         );
         
         // if we specified a type, include only that type in the array
@@ -157,6 +160,7 @@ abstract class Module
                 
                         // cache the location of the class (which also includes the classname)
                         Kurogo::setCache(self::cacheKey($id, $type), $moduleFile);
+                        Kurogo::addModuleLib($id);
                         return $module;
                     }
                     Kurogo::log(LOG_NOTICE, "$class found at $moduleFile is abstract and cannot be used for $id", 'module');
@@ -642,11 +646,13 @@ abstract class Module
             $files = array(
                 'common'=>sprintf("%s/common/config/admin-module.json", APP_DIR),
                 'module'=>sprintf("%s/%s/config/admin-module.json", MODULES_DIR, $this->id),
+                'sharedcommon'=>sprintf("%s/common/config/admin-module.json", SHARED_APP_DIR),
+                'sharedmodule'=>sprintf("%s/%s/config/admin-module.json", SHARED_MODULES_DIR, $this->id),
                 'sitecommon'=>sprintf("%s/common/config/admin-module.json", SITE_APP_DIR),
                 'sitemodule'=>sprintf("%s/%s/config/admin-module.json", SITE_MODULES_DIR, $this->id)
             );
 
-            foreach ($files as $type=>$file) {                
+            foreach ($files as $type=>$file) {
                 if (is_file($file)) {
                     if (!$data = json_decode(file_get_contents($file),true)) {
                         throw new KurogoDataException($this->getLocalizedString('ERROR_PARSING_FILE', $file));
@@ -667,8 +673,10 @@ abstract class Module
     private function getStringsForLanguage($lang) {
         $stringFiles = array(
             APP_DIR . "/common/strings/".$lang . '.ini',
+            SHARED_APP_DIR . "/common/strings/".$lang . '.ini',
             SITE_APP_DIR . "/common/strings/".$lang . '.ini',
             MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini',
+            SHARED_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini',
             SITE_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini'
         );
         
@@ -702,10 +710,36 @@ abstract class Module
         
         return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
     }
+
+    public function getOptionalLocalizedString($key, $default = null){
+        $args = func_get_args();
+        // Remove default
+        if (isset($args[1])) {
+          unset($args[1]);
+          $args = array_values($args);
+        }
+
+        try {
+          $value = call_user_func_array(array($this, 'getLocalizedString'), $args);
+        } catch (KurogoKeyNotFoundException $e) {
+          if($default !== NULL){
+            $value = $default;
+          }else{
+            $value = $key;
+          }
+        } catch (KurogoInvalidKeyException $e){
+          if($default !== NULL){
+            $value = $default;
+          }else{
+            $value = $key;
+          }
+        }
+        return $value;
+    }
     
     public function getLocalizedString($key) {
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
-            throw new KurogoConfigurationException("Invalid string key $key");
+            throw new KurogoInvalidKeyException("Invalid string key $key");
         }
 
         Kurogo::log(LOG_DEBUG, "Retrieving localized string for $key", 'module');
@@ -725,7 +759,7 @@ abstract class Module
             }
         }
         
-        throw new KurogoConfigurationException("Unable to find string $key for Module $this->id");
+        throw new KurogoKeyNotFoundException("Unable to find string $key for Module $this->id");
     }
     
     /**
@@ -742,12 +776,19 @@ abstract class Module
     protected function getModuleNavigationConfig() {
         static $moduleNavConfig;
         if (!$moduleNavConfig) {
-            $moduleNavConfig = ModuleConfigFile::factory('home', 'module');
+            $moduleNavConfig = ModuleConfigFile::factory($this->getHomeModuleID(), 'module');
         }
         
         return $moduleNavConfig;
     }
- 
+    
+    protected function getHomeModuleID() {
+        if (!$this->homeModuleID) {
+            $this->homeModuleID = Kurogo::getOptionalSiteVar('HOME_MODULE', 'home', 'modules');
+        }
+        
+        return $this->homeModuleID;
+    }
 
     /**
       * Action to take when the module is disabled

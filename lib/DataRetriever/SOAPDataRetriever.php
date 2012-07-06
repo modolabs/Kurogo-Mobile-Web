@@ -16,10 +16,11 @@ class SOAPDataRetriever extends DataRetriever {
     protected $soapClient;
     protected $soapOptions = array('trace' => 1); //use it and wsdl to instantiate SoapClient
     protected $method;
-    protected $parameters;
+    protected $parameters=array();
     protected $location;
     protected $uri;
     protected $action;
+    protected $saveToFile = false;
     
     protected $soapHeaders = array();
     
@@ -63,7 +64,6 @@ class SOAPDataRetriever extends DataRetriever {
         $args = array_merge(Kurogo::getOptionalSiteSection('soap'), $args);
         if (isset($args['WSDL']) && $args['WSDL']) {
             $this->setWSDL($args['WSDL']);
-            $this->location = $args['WSDL'];
         }
         
         if (isset($args['BASE_URL'])) {
@@ -150,6 +150,14 @@ class SOAPDataRetriever extends DataRetriever {
         return 'soap_' . md5($location) . '-' . md5($method) . '-' . md5(serialize($parameters));
     }
 
+    protected function setSaveToFile($saveToFile) {
+        $this->saveToFile = $saveToFile;
+    }
+    
+    protected function saveToFile() {
+        return $this->saveToFile;
+    }
+
     protected function retrieveResponse() {
     
         $this->initRequestIfNeeded();
@@ -173,17 +181,28 @@ class SOAPDataRetriever extends DataRetriever {
 
         Kurogo::log(LOG_DEBUG, sprintf("Calling SOAP Method %s", $method), 'soap');
 
+
+        $response = $this->initResponse();
+        $response->setStartTime(microtime(true));
         try {
             $data = $soapClient->__soapCall($method, $parameters, $options, $headers, $outputHeaders);
         } catch (SoapFault $fault) {
             throw new KurogoDataException($fault->getMessage(), $fault->getCode());
         }
+        $response->setEndTime(microtime(true));
 
         if (!$lastResponseHeaders = $soapClient->__getLastResponseHeaders()) {
             $lastResponseHeaders = array();
         }
         
         $response = $this->initResponse();
+
+        if ($file = $this->saveToFile()) {
+            $filePath = $this->cache->getFullPath($file);
+            file_put_contents($filePath, $data);
+            $data = $filePath;
+        }
+
         if ($this->authority) {
             $response->setContext('authority', $this->authority);
         }

@@ -20,6 +20,8 @@ class SessionDB extends Session
             array($this, 'sess_destroy'),
             array($this, 'sess_gc')
         );
+        // necessary http://www.php.net/manual/en/function.session-set-save-handler.php
+        register_shutdown_function('session_write_close');
     }    
     
     protected function saveLoginTokenData($new_login_token, $expires, $data) {

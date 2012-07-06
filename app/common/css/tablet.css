@@ -85,7 +85,7 @@ strong {
 /* Major layout blocks */
 
 #container {
-	min-height: 320px;
+	min-height: 100%;
 }
 
 #containerinset {
@@ -909,19 +909,18 @@ a.sidenav-next {
 }
 
 .label {
-    display: block;
-    width: 6em;
-    position: relative;
-    font-size: 76.471%;
-    line-height: 1.3em;
-    font-weight: bold;
-    text-align: right;
+  display: block;
+  font-size: 76.471%;
+  line-height: 1.3em;
+  font-weight: bold;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .value {
     display: block;
-    margin-top: -1.2em;
-    margin-left: 5em;
     font-size: 100%;
     min-height: 1.3em;
     line-height: 1.3em;
@@ -1188,7 +1187,7 @@ h2.icon {
 #tabs li a {
 	display: block;
 	text-decoration: none;
-	min-width: 30px;
+	min-width: 25px;
 	padding: 8px 10px 10px 10px;
 }
 
@@ -1200,6 +1199,10 @@ h2.icon {
 #tabs.smalltabs li a {
 	padding-right: 7px;
 	padding-left: 7px;
+}
+
+#tabscontainer {
+	padding: 0 12px;
 }
 
 #tabbodies {
@@ -1797,6 +1800,103 @@ table.section-search form {
 	font-size: 89%;
 }
 
+/* stories panes */
+
+.pane-stories-container,
+.pane-stories {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+.pane-stories > * {
+  margin: 12px;
+  display: none;
+  list-style-type: none;
+  overflow: hidden;
+}
+
+.pane-stories > a.current {
+  display: list-item;
+}
+
+.pane-stories a,
+.pane-stories a:visited {
+  color: #222;
+  text-decoration: none;
+}
+
+.pane-stories .thumbnail {
+  float: left;
+  margin: 0 12px 6px 0;
+  height: 6.5em;
+  width: 6.5em;
+  line-height: 6.5em;
+  line-height: 6.5em;
+  overflow: hidden;
+}
+.pane-stories .thumbnail img {
+  width: 100%;
+  vertical-align: middle;
+}
+
+.pane-stories .title {
+  font-size: 110%;
+  font-weight: bold;
+  padding-bottom: 6px;
+}
+
+.pane-stories-pager {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: right;
+  height: 45px;
+}
+
+.pane-stories-pager-dots {
+  display: block;
+  margin-right: 108px;
+  text-align: center;
+  overflow: hidden;
+  height: 38px;
+  white-space: nowrap;
+}
+
+.pane-stories-pager-dots > * {
+  display: inline-block;
+  height: 38px;
+  width: 12px;
+  margin: 0 0 0 12px;
+  background: transparent url(/common/images/page-dot.png) no-repeat left center;
+}
+.pane-stories-pager-dots > *:first-child {
+  margin-left: 0;
+}
+.pane-stories-pager-dots .current {
+  background-image: url(/common/images/page-dot-current.png);
+}
+
+.pane-stories-pager-prev,
+.pane-stories-pager-next {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 61px;
+  height: 38px;
+  width: 47px;
+  background: transparent url(/common/images/page-prev.png) no-repeat left top;
+}
+.pane-stories-pager-next {
+  background-image: url(/common/images/page-next.png);
+  right: 7px;
+}
+.pane-stories-pager-prev.disabled,
+.pane-stories-pager-next.disabled {
+  cursor: default;
+}
 
 
 

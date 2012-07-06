@@ -9,6 +9,7 @@ abstract class APIModule extends Module
     protected $vmax;
     protected $command = '';
     protected $response; //response object
+    protected $warnings = array();
   
     public function getVmin() {
         return $this->vmin;
@@ -102,6 +103,18 @@ abstract class APIModule extends Module
     $this->response->display();
     exit();
   }
+  
+  protected function warningHandler($errno, $str, $file, $line) {
+    if (!(error_reporting() & $errno)) {
+        // This error code is not included in error_reporting
+        return;
+    }
+    
+    $this->loadResponseIfNeeded();
+    $this->response->addWarning(new KurogoWarning($errno, $str, $file, $line));
+    
+    return true;
+  }
 
   protected function redirectTo($command, $args=array()) {
     
@@ -112,8 +125,7 @@ abstract class APIModule extends Module
     }
     
     //error_log('Redirecting to: '.$url);
-    header("Location: $url");
-    exit;
+    Kurogo::redirectToURL($url);
   }
    /**
      * Factory method
@@ -233,7 +245,9 @@ abstract class APIModule extends Module
  /**
    * Initialize the request
    */
-   protected function init($command='', $args=array()) {
+  protected function init($command='', $args=array()) {
+    set_error_handler(array($this, 'warningHandler'), E_WARNING | E_NOTICE | E_STRICT);
+    
     parent::init();
     $this->setArgs($args);
     $this->setRequestedVersion($this->getArg('v', null), $this->getArg('vmin', null));
