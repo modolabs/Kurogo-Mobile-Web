@@ -147,6 +147,13 @@ class PeopleAPIModule extends APIModule
         }
     }
 
+    protected function getDefaultFeed() {
+        if ($this->feeds) {
+            return current(array_keys($this->feeds));
+        }
+        return '';
+    }
+    
     public function initializeForCommand() {  
         $this->feeds = $this->loadFeedData();
         $this->fieldConfig = $this->getAPIConfigData('detail');
@@ -154,7 +161,9 @@ class PeopleAPIModule extends APIModule
             $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
         }
         $this->detailAttributes = array_values(array_unique($this->detailAttributes));
-        $peopleController = $this->getFeed('people');
+        
+        $feed = $this->getArg('feed', $this->getDefaultFeed());
+        $peopleController = $this->getFeed($feed);
         
         switch ($this->command) {
             case 'search':
@@ -183,6 +192,7 @@ class PeopleAPIModule extends APIModule
                         $response = array(
                             'total'        => $resultCount,
                             'returned'     => $resultCount,
+                            'feed'         => $feed,
                             'displayField' => 'name',
                             'results'      => $results,
                             );
@@ -248,6 +258,20 @@ class PeopleAPIModule extends APIModule
             	break;
             case 'displayfields':
                 //break;
+            case 'feeds':
+                $feeds = array();
+                foreach ($this->feeds as $key => $feedData) {
+                    $feeds[$key] = $feedData['TITLE'];
+                }
+                
+                $response = array(
+                    'total'   => count($feeds),
+                    'results' => $feeds 
+                );
+                
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                break;
             default:
                 $this->invalidCommand();
                 break;
