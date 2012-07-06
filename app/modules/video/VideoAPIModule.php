@@ -1,7 +1,5 @@
 <?php
 
-Kurogo::includePackage('Video');
-
 class VideoAPIModule extends APIModule {    
     protected $id='video';  // this affects which .ini is loaded
     protected $vmin = 1;
