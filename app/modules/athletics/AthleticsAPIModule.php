@@ -268,7 +268,7 @@ class AthleticsAPIModule extends APIModule
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         
         if (!$data) {
-            throw new KurogoConfigurationException('Unable to load data for nav '. $tab);
+            $data = array();
         }
         
         return $data;
