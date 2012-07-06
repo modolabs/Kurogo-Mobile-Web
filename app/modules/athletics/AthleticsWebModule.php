@@ -1,6 +1,5 @@
 <?php
 
-includePackage('Athletics');
 includePackage('News');
 includePackage('DateTime');
 class AthleticsWebModule extends WebModule {

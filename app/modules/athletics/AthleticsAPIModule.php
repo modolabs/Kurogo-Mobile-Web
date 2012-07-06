@@ -1,6 +1,5 @@
 <?php
 
-Kurogo::includePackage('Athletics');
 Kurogo::includePackage('News');
 
 class AthleticsAPIModule extends APIModule
