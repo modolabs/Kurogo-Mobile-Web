@@ -714,18 +714,41 @@ class Kurogo
             define('SITE_NAME', $site);
 
         } else {
-            //make sure active site is set
-            if (!$site = $siteConfig->getVar('ACTIVE_SITE')) {
-                die("FATAL ERROR: ACTIVE_SITE not set");
-            }
+        	$site = '';
+        	
+        	//if sites section is set attempt to load a site based on the domain name
+        	if ($sites = $siteConfig->getOptionalSection('sites')) {
+        		$host = self::arrayVal($_SERVER, 'SERVER_NAME', null);
+        		//try a direct match
+        		if (isset($sites[$host])) {
+        			$site = $sites[$host];
+        		} elseif (isset($sites['*'])) {
+	        		//* is the default site
+        			$site = $sites['*'];
+        		} else {
+        			throw new KurogoConfigurationException("Unable to locate a site for this host");
+        		}
 
-            // make sure site_dir is set and is a valid path
-            // Do not call realpath_exists here because until SITE_DIR define is set
-            // it will not allow files and directories outside ROOT_DIR
-            if (!($siteDir = $siteConfig->getVar('SITE_DIR')) || !(($siteDir = realpath($siteDir)) && file_exists($siteDir))) {
-                die("FATAL ERROR: Site Directory ". $siteConfig->getVar('SITE_DIR') . " not found for site " . $site);
-            }
+				$testPath = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
+				if ((!$siteDir = realpath($testPath)) || !file_exists($siteDir)) {
+					throw new KurogoConfigurationException("FATAL ERROR: Site Directory ". $testPath . " not found for site " . $site);
+				}
 
+        	} else {
+        
+				//make sure active site is set
+				if (!$site = $siteConfig->getVar('ACTIVE_SITE')) {
+					throw new KurogoConfigurationException("ACTIVE_SITE not set");
+				}
+	
+				// make sure site_dir is set and is a valid path
+				// Do not call realpath_exists here because until SITE_DIR define is set
+				// it will not allow files and directories outside ROOT_DIR
+				if (!($siteDir = $siteConfig->getVar('SITE_DIR')) || !(($siteDir = realpath($siteDir)) && file_exists($siteDir))) {
+					die("FATAL ERROR: Site Directory ". $siteConfig->getVar('SITE_DIR') . " not found for site " . $site);
+				}
+			}
+			
             define('SITE_NAME', $site);
             if (PHP_SAPI != 'cli') {
 
