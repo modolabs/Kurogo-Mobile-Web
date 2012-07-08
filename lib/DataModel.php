@@ -24,7 +24,7 @@ class DataModel {
 
     /**
       * Clears the internal cache for a new request. All responses and options are erased and 
-      * clearInteralCache is called on the retriever
+      * clearInternalCache is called on the retriever
       */
     public function clearInternalCache() {
         $this->options = array();
