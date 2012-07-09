@@ -24,6 +24,17 @@ class AthleticsAPIModule extends APIModule
         $responseVersion = $this->requestedVersion < 2 ? 1 : 2;
         
         switch ($this->command) {
+            case 'genders':
+                $genders = array();
+                foreach($this->feeds as $feed) {
+                    $gender = $feed['GENDER'];
+                    if(array_key_exists($gender, $this->navFeeds)) {
+                        $genders[$gender] = $this->navFeeds[$gender]['TITLE'];
+                    }
+                }
+                $this->setResponse($genders);
+                $this->setResponseVersion(1);
+                break;
             case 'sports':
                 // sports
                 $gender = $this->getArg('gender');
@@ -268,7 +279,7 @@ class AthleticsAPIModule extends APIModule
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         
         if (!$data) {
-            throw new KurogoConfigurationException('Unable to load data for nav '. $tab);
+            $data = array();
         }
         
         return $data;

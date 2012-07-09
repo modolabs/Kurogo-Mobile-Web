@@ -64,7 +64,17 @@ class PeopleAPIModule extends APIModule
                     } else {
                         $attributes[$label] = $values;
                     }
+                } elseif (isset($fieldOptions['format'])) {
+                	//always include attributes when using format
+                	$attributes[$label] = null;
                 }
+            }
+            
+            // if we use format and there are no fields then skip
+            if (isset($fieldOptions['format'])) {
+            	if (!array_filter($attributes)) {
+            		$attributes = array();
+            	}
             }
 
             if ($attributes) {

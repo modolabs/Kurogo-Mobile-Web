@@ -13,6 +13,15 @@ interface CalendarInterface {
 
 interface CalendarEvent {
     public function init($args);
+    public function get_location_coordinates();
+    public function get_location();
+    public function get_uid();
+    public function get_start();
+    public function get_summary();
+    public function get_description();
+    public function get_end();
+    public function isAllDay();
+    public function get_attribute($field);
 }
 
 class Calendar 

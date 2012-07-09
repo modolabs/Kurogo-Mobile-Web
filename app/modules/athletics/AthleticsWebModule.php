@@ -670,7 +670,7 @@ class AthleticsWebModule extends WebModule {
                 }
                 
                 //get sports for each gender
-                foreach (array('men','women') as $gender) {
+                foreach (array('men','women','coed') as $gender) {
                     $sportsData = $this->getNavData($gender);
                     if ($sportsConfig = $this->getSportsForGender($gender)) {
                         $sports = array();

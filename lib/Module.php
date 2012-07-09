@@ -84,6 +84,10 @@ abstract class Module
       * @param string $type, the type of module to load (web/api)
       */
     public static function factory($id, $type=null) {
+    	if ($id == 'error') {
+			set_exception_handler("exceptionHandlerForError");
+    	}
+    	
   
         Kurogo::log(LOG_INFO, "Initializing $type module $id", 'module');
         $configModule = $id;
