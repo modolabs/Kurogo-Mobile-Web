@@ -74,7 +74,11 @@ class StatsShellModule extends ShellModule {
                 $this->migrateData();
                 
                 return 0;
-                break;                
+                break;   
+            case 'update':
+                KurogoStats::exportStatsData();
+                return 0;
+                break;             
             default:
                  $this->invalidCommand();
                  break;

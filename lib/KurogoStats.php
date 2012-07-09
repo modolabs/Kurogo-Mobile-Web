@@ -122,6 +122,50 @@ class KurogoStats {
         }
         return $tables;
     }
+
+    private static function getStatsTablesForUpdating($startTimestamp) {
+        $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
+        $tableName = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+
+        $statsTables = array();
+
+        //parse all tables of databases
+        $timeForTables = array();
+        //$conn = self::connection();
+        if ($allTables = self::listSources()) {
+            foreach ($allTables as $key => $table) {
+                if (preg_match('/^'.preg_quote($tableName, '/').'_(.*)$/is', $table, $matches)) {
+                    if (isset($matches[1]) && $matches[1]) {
+                        list($year, $month, $day) = explode('_', $matches[1]);
+                        $timeForTables[$table] = mktime(0, 0, 0, $month, $day, $year);
+                    }
+                }
+            }
+        }
+
+        $startInterval = self::foramtTimePosition($startTimestamp, $tableSharding);
+
+        //start filter the tables
+        foreach ($timeForTables as $table => $time) {
+            if ($time >= $startInterval) {
+                $statsTables[] = $table;
+            }
+        }
+
+        $statsTables = array_unique($statsTables);
+        if (!$statsTables) {
+            return null;
+        } elseif (count($statsTables) == 1) {
+            return current($statsTables);
+        } else {
+            $tablesString = array();
+            foreach ($statsTables as $table) {
+                $tablesString[] = "SELECT * FROM " . $table;
+            }
+
+            return '(' . implode(' UNION ALL ', $tablesString) . ') AS kurogo_stats';
+        }
+    }
     
     private static function getStatsTables($chartData) {
         $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
@@ -133,6 +177,9 @@ class KurogoStats {
         }
         
         if (isset($chartData['summarytable']) && $chartData['summarytable']) {
+            if (isset($chartData['usevisittable']) && $chartData['usevisittable']) {
+                return $summaryTable.'_visits';
+            }
             return $summaryTable;
         }
         
@@ -198,7 +245,7 @@ class KurogoStats {
     }
     
     private static function createSummaryTables($table) {
-        //$table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+        $visitsTable = $table.'_visits';
         $createSQL = array();
         $conn = self::connection();
         switch($conn->getDBType()) {
@@ -213,7 +260,6 @@ class KurogoStats {
                                     pagetype varchar(16),
                                     platform varchar(16),
                                     viewCount int(11),
-                                    visitCount int(11),
                                     sizeCount int(11),
                                     elapsedAvg float(12,6),
                                     PRIMARY KEY (`id`),
@@ -221,6 +267,17 @@ class KurogoStats {
                                     KEY `moduleID` (`moduleID`),
                                     KEY `pagetype` (`pagetype`),
                                     KEY `platform` (`platform`),
+                                    KEY `timestamp` (`timestamp`)
+                                )";
+                $createSQL[] = "CREATE TABLE $visitsTable (
+                                    id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                                    timestamp int(11),
+                                    date datetime,
+                                    service char(3),
+                                    site char(32),
+                                    visitCount int(11),
+                                    PRIMARY KEY (`id`),
+                                    KEY `service` (`service`),
                                     KEY `timestamp` (`timestamp`)
                                 )";
                 break;
@@ -236,7 +293,6 @@ class KurogoStats {
                                     pagetype varchar(16),
                                     platform varchar(16),
                                     viewCount int(11),
-                                    visitCount int(11),
                                     sizeCount int(11),
                                     elapsedAvg float
                                 )";
@@ -245,13 +301,22 @@ class KurogoStats {
                 $createSQL[] = "CREATE INDEX key_pagetype ON $table (pagetype)";
                 $createSQL[] = "CREATE INDEX key_platform ON $table (platform)";
                 $createSQL[] = "CREATE INDEX key_timestamp ON $table (timestamp)";
+                $createSQL[] = "CREATE TABLE $visitsTable (
+                                    id integer PRIMARY KEY autoincrement,
+                                    timestamp int(11),
+                                    date datetime,
+                                    service char(3),
+                                    site char(32),
+                                    visitCount int(11),
+                                )";
+                $createSQL[] = "CREATE INDEX key_service ON $table (service)";
+                $createSQL[] = "CREATE INDEX key_timestamp ON $table (timestamp)";
                 break;
             default:
                 throw new Exception("Stats module do not support " . $conn->getDBType());
         }
 
         $checkSql = "SELECT 1 FROM $table";
-        $conn = self::connection();
         if (!$result = $conn->query($checkSql, array(), db::IGNORE_ERRORS)) {
             foreach ($createSQL as $sql) {
                 $conn->query($sql);
@@ -337,25 +402,44 @@ class KurogoStats {
     /**
      * summary the stats data. the data should be updated to the summary stats table
     */
-    protected static function summaryStatsData(&$statsData, $data) {
+    protected static function summaryStatsData(&$statsData, &$statsVisitsData, $data) {
         $day = date('Y-m-d', $data['timestamp']);
         $statsKey = $day.'@@'.$data['service'].'@@'.$data['site'].'@@'.$data['moduleID'].'@@'.$data['pagetype'].'@@'.$data['platform'];
+        $statsVisitsKey = $day.'@@'.$data['service'].'@@'.$data['site'];
+
+        // Main Summary Table
         if (!isset($statsData[$statsKey])) {
             $statsData[$statsKey] = array(
                 'viewCount' => 1,
                 'sizeCount' => $data['size'],
                 'elapsed'   => $data['elapsed'],
                 'summaryTimes' => 1,
-                'visitCount' => array($data['visitID']=>$data['visitID']),
             );
         } else {
             $statsData[$statsKey]['viewCount'] +=  1;
             $statsData[$statsKey]['sizeCount'] += $data['size'];
             $statsData[$statsKey]['elapsed'] += $data['elapsed'];
             $statsData[$statsKey]['summaryTimes'] += 1;
-            $statsData[$statsKey]['visitCount'][$data['visitID']] = $data['visitID'];
         }
-        
+
+        // Visits Summary Table
+        if (!isset($statsVisitsData[$statsVisitsKey])) {
+            $statsVisitsData[$statsVisitsKey] = array(
+                'visitCount' => array($data['visitID']=>$data['visitID']),
+            );
+        } else {
+            $statsVisitsData[$statsVisitsKey]['visitCount'][$data['visitID']] = $data['visitID'];
+        }
+    }
+
+    private static function deleteFromSummaryTablesAfterTimestamp($timestamp){
+        $summaryTable = Kurogo::getOptionalSiteVar("KUROGO_STATS_SUMMARY_TABLE","kurogo_stats_module_v1");
+        $summaryVisitsTable = $summaryTable.'_visits';
+        $conn = self::connection();
+        $sql = "DELETE FROM $summaryTable WHERE timestamp >= $timestamp";
+        $conn->query($sql, array(), db::IGNORE_ERRORS);
+        $sql = "DELETE FROM $summaryVisitsTable WHERE timestamp >= $timestamp";
+        $conn->query($sql, array(), db::IGNORE_ERRORS);
     }
     
     /**
@@ -378,34 +462,74 @@ class KurogoStats {
         if (!is_writable($tempLogFolder)) {
             throw new Exception("Unable to write to Temporary Directory $tempLogFolder");
         }
-        
-        
+
         if (!rename($statsLogFile, $statsLogFileCopy)) {
             Kurogo::log(LOG_DEBUG, "failed to rename $statsLogFile to $statsLogFileCopy", 'kurogostats');
             return; 
         }
-        
-        $statsData = array();
+
         $handle = fopen($statsLogFileCopy, 'r');
+        $startDate = '';
         while (!feof($handle)) {
             $line = trim(fgets($handle, 1024));
             $value = explode("\t", $line);
             if ((count($value) != count(self::validFields())) || !isset($value[0]) || intval($value[0]) <= 0) {
                 continue;
             }
+
+            if(!$startDate){
+                $startTimestamp = $value[0];
+                $startDate = date('Y-m-d', $startTimestamp);
+                // If startTimestamp is during today
+                // Set startTimestamp to the beginning of today
+                if($startDate == date('Y-m-d')){
+                    list($year, $month, $day) = explode('-', $startDate);
+                    $startTimestamp = mktime(0, 0, 0, $month, $day, $year);
+                }
+            }
+
             //insert the raw data to the database
             $logData = array_combine(self::validFields(), $value);
             self::insertStatsToMainTable($logData);
-            //summary the stats data
-            self::summaryStatsData($statsData, $logData);
         }
-        
         fclose($handle);
         unlink($statsLogFileCopy);
         
+        // Delete summary visit data for today.
+        self::deleteFromSummaryTablesAfterTimestamp($startTimestamp);
+
+        // Get summary data from $startTimestamp until now.
+        $conn = self::connection();
+        if(!$tables = self::getStatsTablesForUpdating($startTimestamp)){
+            return;
+        }
+        $sql = "SELECT * FROM " . $tables;
+        $sql .= " WHERE timestamp >= $startTimestamp";
+
+        if(!$data = $conn->query($sql)){
+            return;
+        }
+
+        $statsData = array();
+        $statsVisitsData = array();
+        while ($row = $data->fetch()) {
+            unset($row['id']);
+            $logData = array_combine(self::validFields(), $row);
+            // Build the summary visits data structure.
+            self::summaryStatsData($statsData, $statsVisitsData, $logData);
+        }
+        // Unset resource to avoid memory problems.
+        unset($data);
+
         if ($statsData) {
             foreach ($statsData as $statsKey => $statsValue) {
                 self::updateStatsToSummaryTable($statsKey, $statsValue);
+            }
+        }
+
+        if ($statsVisitsData) {
+            foreach ($statsVisitsData as $statsKey => $statsValue) {
+                self::updateStatsVisitsToSummaryTable($statsKey, $statsValue);
             }
         }
     }
@@ -454,14 +578,14 @@ class KurogoStats {
             'pagetype'  => $statsArray[4],
             'platform'  => $statsArray[5]
         );
-        
+
         $filters = array();
         $params = array();
         foreach ($insertData as $field => $value) {
             $filters[] = "$field = ?";
             $params[] = $value;
         }
-        
+
         try {
             $conn = self::connection();
         } catch (KurogoDataServerException $e) {
@@ -493,21 +617,80 @@ class KurogoStats {
 
             $updateData = array(
                 $result['viewCount'] + $statsValue['viewCount'],
-                $result['visitCount'] + count($statsValue['visitCount']),
                 $result['sizeCount'] + $statsValue['sizeCount'],
                 $newAverageElapsedTime,
                 $result['id']
             );
             
-            $updateSql = "UPDATE $summaryTable SET viewCount = ?, visitCount = ?, sizeCount = ?, elapsedAvg = ? WHERE id = ?";
+            $updateSql = "UPDATE $summaryTable SET viewCount = ?, sizeCount = ?, elapsedAvg = ? WHERE id = ?";
             return $conn->query($updateSql, $updateData);
         //if the database don't have the summary data, it should do insert
         } else {
             $insertValue = array(
                 'viewCount'  => $statsValue['viewCount'],
-                'visitCount' => count($statsValue['visitCount']),
                 'sizeCount'  => $statsValue['sizeCount'],
                 'elapsedAvg' => $statsValue['elapsed'] / $statsValue['summaryTimes'],
+            );
+            $insertData = array_merge($insertData, $insertValue);
+            $insertSql = sprintf("INSERT INTO %s (%s) VALUES (%s)", 
+                $summaryTable, 
+                implode(",", array_keys($insertData)), 
+                implode(",", array_fill(0, count($insertData), '?'))
+            );
+            
+            return $conn->query($insertSql, array_values($insertData));
+        }
+    }
+
+    protected static function updateStatsVisitsToSummaryTable($statsKey, $statsValue) {
+        $statsArray = explode('@@', $statsKey);
+        list($year, $month, $day) = explode('-', $statsArray[0]);
+        $statsDate = $year . '-' . $month . '-' . $day . ' 00:00:00';
+        $statsDateTime = mktime(0, 0, 0, $month, $day, $year);
+
+        $insertData = array(
+            'timestamp' => $statsDateTime,
+            'date'      => $statsDate,
+            'service'   => $statsArray[1],
+            'site'      => $statsArray[2],
+        );
+        
+        $filters = array();
+        $params = array();
+        foreach ($insertData as $field => $value) {
+            $filters[] = "$field = ?";
+            $params[] = $value;
+        }
+        
+        $conn = self::connection();
+        $table = Kurogo::getOptionalSiteVar("KUROGO_STATS_SUMMARY_TABLE","kurogo_stats_module_v1");
+        $summaryTable = $table.'_visits';
+        $sql = "SELECT * FROM " . $summaryTable;
+        $sql .= $filters ? " WHERE " . implode(' AND ', $filters) : '';
+        
+        //check the database contain the summary data
+        $result = array();
+        if (!$data = $conn->limitQuery($sql, $params, true)) {
+            self::createSummaryTables($table);
+        } else {
+            while ($row = $data->fetch()) {
+                $result = $row;
+            }
+        }
+        
+        //if the database has the summary data, it should do update
+        if ($result) {
+            $updateData = array(
+                $result['visitCount'] + count($statsValue['visitCount']),
+                $result['id']
+            );
+            
+            $updateSql = "UPDATE $summaryTable SET visitCount = ? WHERE id = ?";
+            return $conn->query($updateSql, $updateData);
+        //if the database don't have the summary data, it should do insert
+        } else {
+            $insertValue = array(
+                'visitCount' => count($statsValue['visitCount']),
             );
             $insertData = array_merge($insertData, $insertValue);
             $insertSql = sprintf("INSERT INTO %s (%s) VALUES (%s)", 
@@ -951,6 +1134,7 @@ class KurogoStats {
         if($totalRows = self::getTotalRowsPerDay($table, $startTimestamp, $endTimestamp)){
             $conn = self::connection();
             $statsData = array();
+            $statsVisitsData = array();
             $fields = self::validFields();
             $currentRowsProcessed = 0;
             while ($currentRowsProcessed < $totalRows) {
@@ -960,10 +1144,10 @@ class KurogoStats {
                 while ($row = $data->fetch()) {
                     $logData = array_combine($fields, $row);
                     // Insert log data into sharded table.
-                    #self::insertStatsToMainTable($logData);
+                    self::insertStatsToMainTable($logData);
                 
                     // Build the summary data structure.
-                    #self::summaryStatsData($statsData, $logData);
+                    self::summaryStatsData($statsData, $statsVisitsData, $logData);
                     $currentRowsProcessed++;
                 }
                 // Unset resource to avoid memory problems.
@@ -973,6 +1157,11 @@ class KurogoStats {
             if ($statsData) {
                 foreach ($statsData as $statsKey => $statsValue) {
                     self::updateStatsToSummaryTable($statsKey, $statsValue);
+                }
+            }
+            if ($statsVisitsData) {
+                foreach ($statsVisitsData as $statsKey => $statsValue) {
+                    self::updateStatsVisitsToSummaryTable($statsKey, $statsValue);
                 }
             }
             return $currentRowsProcessed;
@@ -999,43 +1188,7 @@ class KurogoStats {
         }
         return $result['date'];
     }
-    
-    public static function migratingData($table, $start = 0, $limit = 0) {
-    
-        $fields = self::validFields();
-        $conn = self::connection();
-        $oldSql = "SELECT * FROM $table";
-        $oldSql .= $limit ? " LIMIT $start, $limit" : '';
 
-        $isHaveData = false;
-        $statsData = array();
-        $data = $conn->query($oldSql, array());
-        while ($row = $data->fetch()) {
-            $isHaveData = true;
-            if ($row['timestamp'] > 0) {
-                $logData = array_combine($fields, $row);
-                //if (isset($logData['moduleID']) && $logData['moduleID'] && isset($logData['service']) && $logData['service']) {
-                    //if (self::isValidModuleID($logData['service'], $logData['moduleID'])) {
-                        //insert the raw data to the database
-                        self::insertStatsToMainTable($logData);
-                
-                        //summary the stats data
-                        self::summaryStatsData($statsData, $logData);
-                    //}
-                    
-                //}
-                
-            }
-        }
-
-        if ($statsData) {
-            foreach ($statsData as $statsKey => $statsValue) {
-                self::updateStatsToSummaryTable($statsKey, $statsValue);
-            }
-        }
-        return $isHaveData;
-    }
-    
     private static function fileAppend($file, $data = '') {
         if ($file) {
             $dir = dirname($file);

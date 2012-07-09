@@ -33,12 +33,6 @@ class StatsWebModule extends WebModule {
     }
         
 	protected function initializeForPage() {
-	    if ($this->page == 'migrating') {
-            return;
-	    }
-	    
-	    KurogoStats::exportStatsData();
-	    
 	    if (!Kurogo::getOptionalSiteVar('STATS_ENABLED', true)) {
 	        throw new KurogoException($this->getLocalizedString('STATS_DISABLED'));
 	    }
