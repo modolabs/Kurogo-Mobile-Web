@@ -295,16 +295,24 @@ function toggleClass(ele, cls) {
 
 // Share-related functions
 function showShare() {
-    if (!document.getElementById("sharesheet")) {
+    var sharesheet = document.getElementById("sharesheet");
+    if (!sharesheet) {
         return;
     }
-	document.getElementById("sharesheet").style.display="block";
-	var iframes = document.getElementsByTagName('iframe');
-	for (var i=0; i<iframes.length; i++) {
-	    iframes[i].style.visibility = 'hidden';
-	    iframes[i].style.height = '0';
-	}
-	window.scrollTo(0,0);
+    if (!sharesheet.parentNode || sharesheet.parentNode.nodeName != 'BODY') {
+        var elements = document.getElementsByTagName('body');
+        if (elements.length) {
+            var body = elements[0];
+            body.appendChild(sharesheet);
+        }
+    }
+    sharesheet.style.display="block";
+    var iframes = document.getElementsByTagName('iframe');
+    for (var i=0; i<iframes.length; i++) {
+        iframes[i].style.visibility = 'hidden';
+        iframes[i].style.height = '0';
+    }
+    window.scrollTo(0,0);
 }
 function hideShare() {
     if (!document.getElementById("sharesheet")) {
