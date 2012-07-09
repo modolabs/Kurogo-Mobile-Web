@@ -42,6 +42,7 @@ class RSSItem extends XMLElement implements NewsItem
     }
     
     public function init($args) {
+        $this->args = $args;
         if (isset($args['FETCH_CONTENT'])) {
             $this->setFetchContent($args['FETCH_CONTENT']);
         }
@@ -51,7 +52,7 @@ class RSSItem extends XMLElement implements NewsItem
     {
         if (strlen($this->content)==0) {
             if ($this->fetchContent && $fetch && ($url = $this->getLink())) {
-                $reader = new KurogoReader($url);
+                $reader = new KurogoReader($url, $this->args);
                 $this->content = $reader->getContent();
             }
         }

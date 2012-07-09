@@ -9,6 +9,8 @@ includePackage('readability');
  * @license 
  */
 class KurogoReader {
+
+    protected $DEFAULT_READER_RETRIEVER_CLASS = "URLDataRetriever";
     /**
      * baseurl 
      * the base url for this article
@@ -49,13 +51,15 @@ class KurogoReader {
     private $content;
     private $charset;
 
-    public function __construct($url) {
+    public function __construct($url, $args = array()) {
         /**
          * initail DiskCache
          */
         $this->cacheFolder = "KurogoReader";
         $this->cacheLifetime = 1800;
         $this->cacheFileName = md5($url);
+
+        $this->args = $args;
 
         if($this->isFresh()) {
             $this->getCacheData();
@@ -159,6 +163,21 @@ class KurogoReader {
         }
     }
 
+    protected function getRetriever() {
+        if(isset($this->args['READER_RETRIEVER_CLASS'])) {
+            $retrieverClass = $this->args['READER_RETRIEVER_CLASS'];
+        }else {
+            $retrieverClass = $this->DEFAULT_READER_RETRIEVER_CLASS;
+        }
+        if(isset($this->args['PARSER_CLASS'])) {
+            unset($this->args['PARSER_CLASS']);
+        }
+        if(isset($this->args['DEFAULT_PARSER_CLASS'])) {
+            unset($this->args['DEFAULT_PARSER_CLASS']);
+        }
+        return DataRetriever::factory($retrieverClass, $this->args);
+    }
+
     /**
      * fetchContent 
      * fetch content from specified url and convert source encoding if possible
@@ -168,16 +187,9 @@ class KurogoReader {
      * @return void
      */
     private function fetchContent($url) {
-        $content = file_get_contents($url);
-        
-        //KGO-770 -  rewrite baseURL if there is a redirect
-        foreach ($http_response_header as $http_header) {
-            list($header, $value) = $this->parseHTTPHeader($http_header);
-            if ($header=='Location') {
-                $urlArray = parse_url($value);
-                $this->baseUrl = $urlArray['scheme'] . "://" . $urlArray['host'];
-            }
-        }
+        $retriever = $this->getRetriever();
+        $retriever->setBaseURL($url);
+        $content = $retriever->getData();
 
         /**
          * if there is tidy support, then detect target source code from meta content
