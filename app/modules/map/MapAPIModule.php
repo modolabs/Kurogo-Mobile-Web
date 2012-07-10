@@ -515,7 +515,10 @@ class MapAPIModule extends APIModule
                         1000, 10);
 
                 } else {
-                    $searchTerms = $this->getArg('q');
+                    $searchTerms = $this->getArg('filter');
+                    if(empty($searchTerms)) {
+                        $searchTerms = $this->getArg('q');
+                    }
                     if ($searchTerms) {
                         $searchResults = $mapSearch->searchCampusMap($searchTerms);
                     }
