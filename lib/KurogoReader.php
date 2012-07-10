@@ -11,6 +11,7 @@ includePackage('readability');
 class KurogoReader {
 
     protected $DEFAULT_READER_RETRIEVER_CLASS = "URLDataRetriever";
+    protected $DEFAULT_READER_PARSER_CLASS = "KurogoReaderDataParser";
     /**
      * baseurl 
      * the base url for this article
@@ -114,12 +115,14 @@ class KurogoReader {
         }else {
             $retrieverClass = $this->DEFAULT_READER_RETRIEVER_CLASS;
         }
-        if(isset($this->args['PARSER_CLASS'])) {
-            unset($this->args['PARSER_CLASS']);
+        if(isset($this->args['READER_PARSER_CLASS'])) {
+            $parserClass = $this->args['READER_PARSER_CLASS'];
+        }else if ($this->DEFAULT_READER_PARSER_CLASS) {
+            $parserClass = $this->DEFAULT_READER_PARSER_CLASS;
+        }else {
+            $parserClass = "PassthroughDataParser";
         }
-        if(isset($this->args['DEFAULT_PARSER_CLASS'])) {
-            unset($this->args['DEFAULT_PARSER_CLASS']);
-        }
+        $this->args["PARSER_CLASS"] = $parserClass;
         return DataRetriever::factory($retrieverClass, $this->args);
     }
 
