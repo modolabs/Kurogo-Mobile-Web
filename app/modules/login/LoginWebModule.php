@@ -197,8 +197,9 @@ class LoginWebModule extends WebModule {
                     $this->redirectTo('index', array('logout'=>$authorityIndex));
                 } elseif ($this->nativeApp) {
                 	$this->assign('message', $this->getLocalizedString("LOGOUT_SUCCESSFUL"));
-					$this->assign('buttonURL', $this->buildURL('logoutComplete'));
-					$this->assign('buttonTitle', $this->getLocalizedString('LOGOUT_DISMISS'));
+//					$this->assign('buttonURL', $this->buildURL('logoutComplete'));
+//					$this->assign('buttonTitle', $this->getLocalizedString('LOGOUT_DISMISS'));
+					$this->assign('redirectURL', $this->buildURL('logoutComplete', array(), false));
                 } else {
                     $this->redirectToModule($this->getHomeModuleID(),'',array('logout'=>$authorityIndex));
                 }
@@ -276,8 +277,9 @@ class LoginWebModule extends WebModule {
                     if ($this->nativeApp) {
                     	$this->assign('showMessage', true);
 						$this->assign('message', $this->getLocalizedString("LOGIN_SUCCESSFUL"));
-						$this->assign('buttonURL', $this->buildURL('loginComplete'));
-						$this->assign('buttonTitle', $this->getLocalizedString('LOGIN_DISMISS'));
+//						$this->assign('buttonURL', $this->buildURL('loginComplete'));
+//						$this->assign('buttonTitle', $this->getLocalizedString('LOGIN_DISMISS'));
+						$this->assign('redirectURL', $this->buildURL('loginComplete', array(), false));
 						break 2;
                     } elseif ($urlArray) {
                         self::redirectToArray($urlArray);
