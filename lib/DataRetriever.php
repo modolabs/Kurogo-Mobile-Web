@@ -73,15 +73,19 @@ abstract class DataRetriever {
     }
     
     protected function getCachedResponse($cacheKey, $cacheGroup) {
+    	$response = null;
         if ($cacheKey) {
             $this->cache->setCacheGroup($cacheGroup);
             $this->cache->setCacheLifetime($this->cacheLifetime());
-            return $this->cache->get($cacheKey);
+            if ($response = $this->cache->get($cacheKey)) {
+            	$response->setFromCache(true);
+            }
+            
         } else {
             Kurogo::log(LOG_DEBUG, "Not getting cache since cacheKey is empty", 'dataRetriever');
         }
         
-        return null;
+        return $response;
     }
     
     protected function clearResponseCache($cacheKey, $cacheGroup) {
