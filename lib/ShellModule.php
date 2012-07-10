@@ -175,7 +175,6 @@ abstract class ShellModule extends Module {
             //$error = new KurogoError(6, 'Command not specified', "");
             //$this->throwError($error);
         }
-        $this->loadSiteConfigFile('strings');
         return $this->initializeForCommand();
     }
 
@@ -204,10 +203,20 @@ abstract class ShellModule extends Module {
     }
     
     protected function preFetchAllData() {
-		foreach ($this->getAllControllers() as $controller) {
-			$this->out("Fetching $this->configModule: " . $controller->getTitle());
+    	$time = 0;
+    	$controllers = $this->getAllControllers() ;
+		foreach ($controllers as $controller) {
+			$out = "Fetching $this->configModule: " . $controller->getTitle() . ". ";
 			$response = $this->preFetchData($controller);
+			if ($response->getFromCache()) {
+				$out .= "In cache";
+			} else {
+				$time += $response->getTimeElapsed();
+				$out .= "Took " . sprintf("%.2f", $response->getTimeElapsed()) . " seconds";
+			}
+			$this->out($out);
 		}
+		$this->out(count($controllers) . " feeds took " . sprintf("%.2f", $time) . " seconds");
     }
 }
 

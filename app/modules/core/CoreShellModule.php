@@ -39,18 +39,21 @@ class CoreShellModule extends ShellModule
                 return 0;
                 break;
             
+            case 'clearCaches':
+                $result = Kurogo::sharedInstance()->clearCaches();
+                return 0;
+            	break;
+            
             case 'fetchAllData':
-                if (Kurogo::getOptionalSiteVar('PREFETCH_DATA', false)) {
-                    $allModules = $this->getAllModules();
-                    
-                    foreach ($allModules as $moduleID => $module) {
-                        if ($module->isEnabled() && $module->isPreFetchData()) {
-                            $module->setDispatcher($this->Dispatcher());
-                            $module->init('fetchAllData');
-                            $module->executeCommand();
-                        }
-                    }
-                }
+				$allModules = $this->getAllModules();
+
+				foreach ($allModules as $moduleID => $module) {
+					if ($module->isEnabled() && $module->getOptionalModuleVar('PREFETCH_DATA')) {
+						$module->setDispatcher($this->Dispatcher());
+						$module->init('fetchAllData');
+						$module->executeCommand();
+					}
+				}
                 
                 return 0;
                 break;
