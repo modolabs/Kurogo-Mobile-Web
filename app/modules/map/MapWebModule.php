@@ -746,6 +746,9 @@ class MapWebModule extends WebModule {
         }
 
         $searchTerms = $this->getArg('filter');
+        if(empty($searchTerms)) {
+            $searchTerms = $this->getArg('q');
+        }
         if ($searchTerms) {
             $this->assign('searchTerms', $searchTerms);
         }
