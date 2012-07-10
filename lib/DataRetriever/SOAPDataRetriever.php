@@ -8,7 +8,7 @@
  * use soap api
  * @package ExternalData
  */
-includePackage('DataRetreiver','SOAP'); 
+includePackage('DataRetriever','SOAP'); 
 class SOAPDataRetriever extends DataRetriever {
 
     protected $DEFAULT_RESPONSE_CLASS = 'SOAPDataResponse';
