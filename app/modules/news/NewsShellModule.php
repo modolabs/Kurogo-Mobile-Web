@@ -30,11 +30,11 @@ class NewsShellModule extends ShellModule {
         }
     }
 
-    protected function preFetchData(DataModel $controller) {
+    protected function preFetchData(DataModel $controller, &$response) {
 		$maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
 		$controller->setStart(0);
 		$controller->setLimit($maxPerPage);
-		return parent::preFetchData($controller);
+		return parent::preFetchData($controller, $response);
     }
     
     protected function initializeForCommand() {

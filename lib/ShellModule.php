@@ -183,8 +183,9 @@ abstract class ShellModule extends Module {
      */
     abstract protected function initializeForCommand();
     
-    protected function preFetchData(DataModel $controller) {
-    	return $controller->getResponse();
+    protected function preFetchData(DataModel $controller, &$response) {
+    	$retriever = $controller->getRetriever();
+    	return $retriever->getData($response);
     }
     
     /* subclasses can override this method to return all controllers list */
@@ -207,7 +208,7 @@ abstract class ShellModule extends Module {
     	$controllers = $this->getAllControllers() ;
 		foreach ($controllers as $controller) {
 			$out = "Fetching $this->configModule: " . $controller->getTitle() . ". ";
-			$response = $this->preFetchData($controller);
+			$data = $this->preFetchData($controller, $response);
 			if ($response->getFromCache()) {
 				$out .= "In cache";
 			} else {
