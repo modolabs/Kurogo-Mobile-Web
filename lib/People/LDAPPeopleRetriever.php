@@ -431,7 +431,7 @@ class LDAPPeopleParser extends PeopleDataParser
         $entry = ldap_first_entry($ds, $data);
         
         if (!$entry) {
-            return FALSE;
+            return array();
         }
         
         $results = array();
