@@ -8,7 +8,6 @@ if [ -n "$phpPath" ]; then
     ${phpPath} -q ${LIB}KurogoShellDispatcher.php -working "${APP}" "$@"
     return=$?
     if [ ${return} -gt 0 ]; then
-        echo "failed"
         if [ ${return} -eq 1 ]; then
             echo "Command not specified"
         elif [ ${return} -eq 2 ]; then
@@ -16,19 +15,19 @@ if [ -n "$phpPath" ]; then
         elif [ ${return} -eq 3 ]; then
             echo "Unauthorized"
         elif [ ${return} -eq 4 ]; then
-            echo "Invalid Command"
+            echo "Module '$1' does not understand command '$2'"
         elif [ ${return} -eq 5 ]; then
-            echo "Not found the shell module"
+            echo "Module $1 not found"
         elif [ ${return} -eq 6 ]; then
             echo "Unable to load Kurogo class"
+        elif [ ${return} -eq 7 ]; then
+            echo "Usage: KurogoShell module command"
         else
             echo "Code:${return}"
         fi
-    else
-        echo "Success"
     fi
 else
-    echo "Not found PHP binary path"
+    echo "PHP binary not found in path"
 fi
 
-exit;
+exit ${return}
