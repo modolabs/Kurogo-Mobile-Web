@@ -31,17 +31,6 @@ class KurogoReader {
     private $tidyAvailable;
 
     /**
-     * cache vars
-     * 
-     * @var mixed
-     * @access private
-     */
-    private $cache;
-    private $cacheFileName;
-    private $cacheFolder;
-    private $cacheLifetime;
-
-    /**
      * article vars
      * 
      * @var mixed
@@ -52,21 +41,9 @@ class KurogoReader {
     private $charset;
 
     public function __construct($url, $args = array()) {
-        /**
-         * initail DiskCache
-         */
-        $this->cacheFolder = "KurogoReader";
-        $this->cacheLifetime = 1800;
-        $this->cacheFileName = md5($url);
-
         $this->args = $args;
 
-        if($this->isFresh()) {
-            $this->getCacheData();
-        }else {
-            $this->readFromServer($url);
-            
-        }
+        $this->readFromServer($url);
     }
 
     private function readFromServer($url) {
@@ -95,38 +72,6 @@ class KurogoReader {
             'title' => $this->title,
             'content' => $this->content
         );
-        $this->writeCache(serialize($article));
-    }
-
-    private function cacheFolder() {
-        return CACHE_DIR . "/" . $this->cacheFolder;
-    }
-
-    private function getCache() {
-        if ($this->cache === null) {
-            $this->cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime, true);
-            $this->cache->setSuffix('.cache');
-            $this->cache->preserveFormat();
-        }
-        return $this->cache;
-    }
-
-    private function getCacheData() {
-        $cache = $this->getCache();
-        $article = $cache->read($this->cacheFileName);
-        $article = unserialize($article);
-        $this->title = $article['title'];
-        $this->content = $article['content'];
-    }
-
-    private function writeCache($data) {
-        $cache = $this->getCache();
-        $cache->write($data, $this->cacheFileName);
-    }
-
-    private function isFresh() {
-        $cache = $this->getCache();
-        return $cache->isFresh($this->cacheFileName);
     }
 
     /**
