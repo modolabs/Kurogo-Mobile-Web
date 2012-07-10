@@ -226,7 +226,7 @@ class PeopleWebModule extends WebModule {
             'title'=>$this->htmlEncodeString($person->getName()),
             'url'  =>$this->buildBreadcrumbURL('detail', array(
                                             'uid'    => $person->getId(),
-                                            'filter' => $this->getArg('filter')
+                                            'filter' => $options['filter']
                     ))
         );
     }
@@ -380,7 +380,7 @@ class PeopleWebModule extends WebModule {
                                 $this->redirectTo('detail', array(
                                     'uid'=>$person->getId(),
                                     'total'=>1,
-                                    'filter'=>$this->getArg('filter')
+                                    'filter'=>$filter
                                     )
                                 );
                                 break;
@@ -388,8 +388,9 @@ class PeopleWebModule extends WebModule {
                             default:
                                 $results = array();
                                 
+                                $options = array('filter' => $filter);
                                 foreach ($people as $person) {
-                                    $results[] = $this->linkforItem($person);
+                                    $results[] = $this->linkforItem($person, $options);
                                 }
                                 //error_log(print_r($results, true));
                                 if($totalItems > $resultCount)
