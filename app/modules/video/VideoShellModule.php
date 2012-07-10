@@ -1,7 +1,5 @@
 <?php
 
-Kurogo::includePackage('Video');
-
 class VideoShellModule extends ShellModule {
 
     protected static $defaultModel = 'VideoDataModel';
@@ -29,6 +27,13 @@ class VideoShellModule extends ShellModule {
         } else {
             throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));
         }
+    }
+
+    protected function preFetchData(DataModel $controller) {
+		$maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
+		$controller->setStart(0);
+		$controller->setLimit($maxPerPage);
+		return parent::preFetchData($controller);
     }
     
     protected function initializeForCommand() {

@@ -184,52 +184,8 @@ abstract class ShellModule extends Module {
      */
     abstract protected function initializeForCommand();
     
-    public function isPreFetchData() {
-        return $this->getOptionalModuleVar('PREFETCH_DATA', false);
-    }
-    
-    protected function fetchDebugInfo($info) {
-        if (Kurogo::getOptionalSiteVar('PREFETCH_DEBUG', false)) {
-            $this->out($info);
-        }
-    }
-    
-    protected function preFetchData(DataModel $controller, $start=0) {
-        
-        $preFetchLimit = $controller->getInitArg('PREFETCH_LIMIT') ? intval($controller->getInitArg('PREFETCH_LIMIT')) : null;
-        $preFetchTotalItems = $controller->getInitArg('PREFETCH_TOTALITEMS') ? intval($controller->getInitArg('PREFETCH_TOTALITEMS')) : null;      
-
-        if (!is_null($preFetchLimit)) {
-            $controller->clearInternalCache();
-            $controller->setStart($start);
-            $controller->setLimit($preFetchLimit);
-            
-            if ($retriever = $controller->getRetriever()) {
-				$items = $retriever->getData($response);
-				$totalItems = $response->getContext('totalItems');
-				
-				// the result has not been limited
-				if (count($items) != $totalItems) {
-				    unset($items);
-				    unset($response);
-				    if ($preFetchTotalItems && (($start + $preFetchLimit) > $preFetchTotalItems)) {
-				        return true;
-				    }
-				    if (($totalItems - $start) > $preFetchLimit) {
-				        $start = $start + $preFetchLimit;
-				        $this->preFetchData($controller, $start);
-				    }
-				}
-			}
-        } else {
-            if ($retriever = $controller->getRetriever()) {
-                $retriever->getData($response);
-            } else {
-                $controller->items();
-            }
-        }
-        
-        return true;
+    protected function preFetchData(DataModel $controller) {
+    	return $controller->getResponse();
     }
     
     /* subclasses can override this method to return all controllers list */
@@ -248,21 +204,10 @@ abstract class ShellModule extends Module {
     }
     
     protected function preFetchAllData() {
-        if ($this->isPreFetchData()) {
-            $this->fetchDebugInfo('-----start '.$this->getConfigModule() . ' module to fetch data-----');
-
-            if ($allControllers = $this->getAllControllers()) {
-                foreach ($allControllers as $controller) {
-                    $this->fetchDebugInfo('fetch ' . $controller->getTitle() . ' feed data');
-                    $this->preFetchData($controller);
-                }
-            }
-            
-            $this->fetchDebugInfo('-----end '.$this->getConfigModule() . ' module to fetch data-----');
-            return true;
-        }
-        
-        return false;
+		foreach ($this->getAllControllers() as $controller) {
+			$this->out("Fetching $this->configModule: " . $controller->getTitle());
+			$response = $this->preFetchData($controller);
+		}
     }
 }
 

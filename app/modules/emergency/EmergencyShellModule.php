@@ -1,7 +1,5 @@
 <?php
 
-Kurogo::includePackage('Emergency');
-
 class EmergencyShellModule extends ShellModule {
 
     protected $id='emergency';

@@ -1,7 +1,5 @@
 <?php
 
-includePackage('Photos');
-
 class PhotosShellModule extends ShellModule {
 
     protected static $defaultModel = 'PhotosDataModel';
