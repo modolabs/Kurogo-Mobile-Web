@@ -64,7 +64,8 @@ class ErrorWebModule extends WebModule {
       $this->browser  = Kurogo::deviceClassifier()->getBrowser();
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);
-      $this->args = $args;
+      $this->setArgs($args);
+      $this->ajaxContentLoad = $this->getArg(self::AJAX_PARAMETER) ? true : false;
       $this->logView = Kurogo::getOptionalSiteVar('STATS_ENABLED', true) ? true : false;
       try {
           $this->moduleName = $this->getOptionalModuleVar('title', 'Error', 'module');
@@ -78,8 +79,6 @@ class ErrorWebModule extends WebModule {
   }
 
   protected function initializeForPage() {
-    $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
-    $this->assign('ajaxContentLoad', $this->ajaxContentLoad);
     $code = $this->getArg('code', 'default');
     $url = $this->buildURLFromArray($this->args);
 

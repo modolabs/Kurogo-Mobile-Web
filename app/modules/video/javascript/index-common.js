@@ -1,5 +1,5 @@
 function loadSection(select) {
-    window.location = "./index?section=" + select.value;
+    redirectTo("index", { "section" : select.value });
 }
 
 function toggleSearch() {

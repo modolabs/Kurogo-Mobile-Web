@@ -265,7 +265,6 @@ class NewsWebModule extends WebModule {
         $this->assign('author',        $this->htmlEncodeFeedString($story->getAuthor()));
         $this->assign('image',         $this->getImageForStory($story));
         $this->assign('link',          $story->getLink());
-        $this->assign('ajax',          $this->getArg('ajax'));
         $this->assign('showLink',      $this->showLink);
         $this->assign('showBodyThumbnail', $this->showBodyThumbnail);
         break;

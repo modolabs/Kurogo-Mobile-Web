@@ -669,7 +669,15 @@ class AdminAPIModule extends APIModule
                     $this->throwError(new KurogoError(1, "Error clearing caches", "There was an error ($result) clearing the caches"));
                 }
                 break;
-                
+            case 'buildNativeWebTemplates':
+                $moduleID = $this->getArg('module','');
+                $platform = $this->getArg('platform','');
+                $module = WebModule::factory($moduleID);
+                $module->buildNativeWebTemplatesForPlatform($platform);
+                $this->setResponse(true);
+                $this->setResponseVersion(1);
+                break;
+
             case 'upload':
                 $type = $this->getArg('type');
                 $section = $this->getArg('section','');

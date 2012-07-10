@@ -48,6 +48,7 @@ class CoreAPIModule extends APIModule
                             'title'     =>$module->getModuleVar('title','module'),
                             'access'    =>$module->getAccess(AccessControlList::RULE_TYPE_ACCESS),
                             'payload'   =>$module->getPayload(),
+                            'bridge'    =>$module->getWebBridgeConfig(),
                             'vmin'      =>$module->getVmin(),
                             'vmax'      =>$module->getVmax(),
                             'home'      =>$home

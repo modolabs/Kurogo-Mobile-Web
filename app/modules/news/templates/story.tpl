@@ -1,6 +1,4 @@
-{if !$ajax}
 {include file="findInclude:common/templates/header.tpl"}
-{/if}
 
 <div class="news">
     {block name="slugline"}
@@ -49,6 +47,4 @@
   </div><!--story-->
 </div>
 
-{if !$ajax}
 {include file="findInclude:common/templates/footer.tpl"}
-{/if}

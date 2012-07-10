@@ -69,8 +69,8 @@ function getErrorURL($exception, $devError = false) {
     ), $requestArgs
   );
 
-  if(array_key_exists('ajax', $requestArgs['args'])){
-    $args['ajax'] = $requestArgs['args']['ajax'];
+  if(array_key_exists(WebModule::AJAX_PARAMETER, $requestArgs['args'])){
+    $args[WebModule::AJAX_PARAMETER] = $requestArgs['args'][WebModule::AJAX_PARAMETER];
   }
 
   if($devError){
