@@ -18,6 +18,7 @@ abstract class ShellModule extends Module {
     }
 
     protected function Dispatcher() {
+        
         return $this->dispatcher;
     }
 
@@ -123,7 +124,7 @@ abstract class ShellModule extends Module {
 
     protected function out($string, $newLine = true) {
         $string = is_array($string) ? implode(PHP_EOL, $string) : $string;
-        return $this->Dispatcher()->stdout($string, $newLine);
+        $this->Dispatcher()->stdout($string, $newLine);
     }
 
     protected function error($string) {
@@ -174,7 +175,6 @@ abstract class ShellModule extends Module {
             //$error = new KurogoError(6, 'Command not specified', "");
             //$this->throwError($error);
         }
-        $this->loadSiteConfigFile('strings');
         return $this->initializeForCommand();
     }
 
@@ -182,6 +182,42 @@ abstract class ShellModule extends Module {
      * All modules must implement this method to handle the logic of each shell command.
      */
     abstract protected function initializeForCommand();
+    
+    protected function preFetchData(DataModel $controller) {
+    	return $controller->getResponse();
+    }
+    
+    /* subclasses can override this method to return all controllers list */
+    protected function getAllControllers() {
+        $controllers = array();
+        
+        if ($feeds = $this->loadFeedData()) {
+            foreach ($feeds as $index => $feesData) {
+                if ($feed = $this->getFeed($index)) {
+                    $controllers[] = $feed;
+                }
+            }
+        }
+        
+        return $controllers;
+    }
+    
+    protected function preFetchAllData() {
+    	$time = 0;
+    	$controllers = $this->getAllControllers() ;
+		foreach ($controllers as $controller) {
+			$out = "Fetching $this->configModule: " . $controller->getTitle() . ". ";
+			$response = $this->preFetchData($controller);
+			if ($response->getFromCache()) {
+				$out .= "In cache";
+			} else {
+				$time += $response->getTimeElapsed();
+				$out .= "Took " . sprintf("%.2f", $response->getTimeElapsed()) . " seconds";
+			}
+			$this->out($out);
+		}
+		$this->out(count($controllers) . " feeds took " . sprintf("%.2f", $time) . " seconds");
+    }
 }
 
 

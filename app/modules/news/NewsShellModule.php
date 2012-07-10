@@ -11,7 +11,6 @@ class NewsShellModule extends ShellModule {
     public function getFeed($index) {
         $feeds = $this->loadFeedData();
         if (isset($feeds[$index])) {
-            
             $feedData = $feeds[$index];
             try {
                 if (isset($feedData['CONTROLLER_CLASS'])) {
@@ -30,31 +29,25 @@ class NewsShellModule extends ShellModule {
             throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));
         }
     }
+
+    protected function preFetchData(DataModel $controller) {
+		$maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
+		$controller->setStart(0);
+		$controller->setLimit($maxPerPage);
+		return parent::preFetchData($controller);
+    }
     
     protected function initializeForCommand() {
-
         switch($this->command) {
-            case 'stories':
-                $categoryID = $this->getArg('id', 0);
-                $start = $this->getArg('start');
-                $limit = $this->getArg('limit');
-                $mode = $this->getArg('mode');
-
-                $feed = $this->getFeed($categoryID);
-                
-                $maxResults = $this->getOptionalModuleVar('MAX_RESULTS', 5);
-                
+            case 'fetchAllData':
+                $this->preFetchAllData();
                 return 0;
-                break;
-                
-            case 'test':
-                $this->setResponseVersion(1);
                 
                 break;
-                
             default:
-                 $this->invalidCommand();
-                 break;
+                $this->invalidCommand();
+                
+                break;
         }
     }
 }

@@ -163,6 +163,10 @@ class DataModel {
         } else {
             throw new KurogoDataException("Call of unknown function '$method'.");
         }
-    }    
+    }
+    
+    public function getInitArg($type='') {
+        return isset($this->initArgs[$type]) ? $this->initArgs[$type] : null;
+    }
 }
 
