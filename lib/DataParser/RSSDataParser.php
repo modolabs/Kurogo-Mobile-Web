@@ -41,6 +41,12 @@ class RSSDataParser extends XMLDataParser
         return $this->channel->getTitle();
     }
 
+    public function clearInternalCache() {
+    	parent::clearInternalCache();
+    	$this->items = array();
+    	$this->guids = array();
+    }
+
     public function init($args)
     {
         parent::init($args);

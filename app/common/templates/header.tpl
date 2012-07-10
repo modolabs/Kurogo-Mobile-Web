@@ -1,22 +1,34 @@
-{if !$ajaxContentLoad}<?xml version="1.0" encoding="UTF-8"?>
+{if !$webBridgeAjaxContentLoad && !$ajaxContentLoad}<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-  <meta http-equiv="content-type" content="application/xhtml+xml" charset={$charset}" />
+  <meta http-equiv="content-type" content="application/xhtml+xml" charset="{$charset}" />
   {if $refreshPage}
     <meta http-equiv="refresh" content="{$refreshPage}" />
   {/if}
-  <title>{if !$isModuleHome}{$moduleName}: {/if}{$pageTitle|strip_tags|escape:'htmlall'}</title>
+  <title>{block name="pageTitle"}{if !$isModuleHome}{$moduleName}: {/if}{$pageTitle|strip_tags|escape:'htmlall'}{/block}</title>
   <link rel="shortcut icon" href="/favicon.ico" />
-  <link href="{$minify['css']|escape}" rel="stylesheet" media="all" type="text/css"/>
-  {foreach $inlineCSSBlocks as $css}
-    <style type="text/css" media="screen">
-      {$css}
-    </style>
-  {/foreach}
-  {foreach $cssURLs as $cssURL}
-    <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
-  {/foreach}
+{/if}
+  
+  {capture name="headerCSS" assign="headerCSS"}
+    {block name="minifyCSS"}
+      <link href="{$minify['css']|escape}" rel="stylesheet" media="all" type="text/css"/>
+    {/block}
+    
+    {block name="cssURLs"}
+      {foreach $cssURLs as $cssURL}
+        <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
+      {/foreach}
+    {/block}
+    
+    {block name="inlineCSS"}
+      {foreach $inlineCSSBlocks as $css}
+        <style type="text/css" media="screen">
+          {$css}
+        </style>
+      {/foreach}
+    {/block}
+  {/capture}
   
   {capture name="ajaxContentLoadingHTML" assign="ajaxContentLoadingHTML"}{strip}
     {block name="ajaxContentLoadingHTML"}
@@ -30,59 +42,86 @@
     {/block}
   {/strip}{/capture}
   
-  {block name="javascript"}
+  {capture name="headerJavascript" assign="headerJavascript"}
+    {block name="urlBaseJavascript"}
       <script type="text/javascript">
         var URL_BASE='{$smarty.const.URL_BASE}';
         var API_URL_PREFIX='{$smarty.const.API_URL_PREFIX}';
       </script>
+    {/block}
+    
+    {block name="ajaxJavascript"}
       <script type="text/javascript">
         var AJAX_CONTENT_LOADING_HTML = '{$ajaxContentLoadingHTML|escape:"quotes"}';
         var AJAX_CONTENT_ERROR_HTML = '{$ajaxContentErrorHTML|escape:"quotes"}';
       </script>
-    {if strlen($GOOGLE_ANALYTICS_ID)}
-      <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', '{$GOOGLE_ANALYTICS_ID}']);
-        {if $GOOGLE_ANALYTICS_DOMAIN}
-        _gaq.push(['_setDomainName', '{$GOOGLE_ANALYTICS_DOMAIN}']);
-        {/if}
-        _gaq.push(['_trackPageview']);
-      </script>
-    {/if}
-    {if strlen($PERCENT_MOBILE_ID)}
-        <script src="{$PERCENT_MOBILE_URL}" type="text/javascript" charset="utf-8"></script>
-    {/if}
-    
-    {foreach $javascriptURLs as $url}
-      <script src="{$url|escape}" type="text/javascript"></script>
-    {/foreach}
-    
-    <script src="{$minify['js']|escape}" type="text/javascript"></script>
-    
-    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
-      <script type="text/javascript">{$inlineJavascriptBlock}</script>
-    {/foreach}
+    {/block}
 
-    <script type="text/javascript">
-      setupOrientationChangeHandlers();
-      {if count($onOrientationChangeBlocks)}
-        addOnOrientationChangeCallback(function () {ldelim}
-          {foreach $onOrientationChangeBlocks as $script}
-            {$script}
-          {/foreach}
-        {rdelim});
+    {block name="analyticsJavascript"}
+      {if strlen($GOOGLE_ANALYTICS_ID)}
+        <script type="text/javascript">
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', '{$GOOGLE_ANALYTICS_ID}']);
+          {if $GOOGLE_ANALYTICS_DOMAIN}
+          _gaq.push(['_setDomainName', '{$GOOGLE_ANALYTICS_DOMAIN}']);
+          {/if}
+          _gaq.push(['_trackPageview']);
+        </script>
       {/if}
-    </script>
+      {if strlen($PERCENT_MOBILE_ID)}
+          <script src="{$PERCENT_MOBILE_URL}" type="text/javascript" charset="utf-8"></script>
+      {/if}
+    {/block}
     
-    {if count($onLoadBlocks)}
+    {block name="javascriptURLs"}
+      {foreach $javascriptURLs as $url}
+        <script src="{$url|escape}" type="text/javascript"></script>
+      {/foreach}
+    {/block}
+    
+    {block name="minifyJavascript"}
+      <script src="{$minify['js']|escape}" type="text/javascript"></script>
+    {/block}
+    
+    {block name="inlineJavascriptBlocks"}
+      {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
+        <script type="text/javascript">{$inlineJavascriptBlock}</script>
+      {/foreach}
+    {/block}
+
+    {block name="orientationChangeJavascript"}
       <script type="text/javascript">
-        function onLoad() {ldelim}
-          {foreach $onLoadBlocks as $script}
-            {$script}
-          {/foreach}
-        {rdelim}
+        setupOrientationChangeHandlers();
+        {if count($onOrientationChangeBlocks)}
+          addOnOrientationChangeCallback(function () {ldelim}
+            {foreach $onOrientationChangeBlocks as $script}
+              {$script}
+            {/foreach}
+          {rdelim});
+        {/if}
       </script>
-    {/if}
+    {/block}
+    
+    {block name="onLoadJavascriptBlocks"}
+      {if count($onLoadBlocks)}
+        <script type="text/javascript">
+          function onLoad() {ldelim}
+            {foreach $onLoadBlocks as $script}
+              {$script}
+            {/foreach}
+          {rdelim}
+        </script>
+      {/if}
+    {/block}
+  {/capture}
+  
+{if !$webBridgeAjaxContentLoad && !$ajaxContentLoad}
+  {block name="css"}
+    {$headerCSS}
+  {/block}
+
+  {block name="javascript"}
+    {$headerJavascript}
   {/block}
   
   {if !$autoPhoneNumberDetection}
