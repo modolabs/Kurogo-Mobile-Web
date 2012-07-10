@@ -722,7 +722,11 @@ class MapWebModule extends WebModule {
 
     protected function initialize() {
         // this is in the wrong place
-        $this->feedGroup = $this->getArg('group', NULL);
+        $feedGroup = $this->getArg('feedgroup', NULL);
+        if(empty($feedGroup)) {
+            $feedGroup = $this->getArg('group', NULL);
+        }
+        $this->feedGroup = $feedGroup;
 
         $this->feedGroups = $this->getFeedGroups();
         $this->numGroups = count($this->feedGroups);
