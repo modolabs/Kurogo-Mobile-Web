@@ -153,7 +153,7 @@ class KurogoShellDispatcher {
     protected function dispatch() {
         if (isset($this->args[0])) {
             $shell = $this->args[0];
-            $command = 'index';
+            $command = '';
             
             $this->shell = $shell;
             $this->shiftArgs();
@@ -167,13 +167,20 @@ class KurogoShellDispatcher {
             $Kurogo = Kurogo::sharedInstance();
             $Kurogo->setRequest($shell, $command, $args);
     
-            if ($module = ShellModule::factory($shell, $command, $args, $this)) {
-                $Kurogo->setCurrentModule($module);
-                return $module->executeCommand();
-            }
+    		try {
+				if ($module = ShellModule::factory($shell, $command, $args, $this)) {
+					if (!$command) {
+						$this->stop(ShellModule::SHELL_COMMAND_EMPTY);
+					}
+					$Kurogo->setCurrentModule($module);
+					return $module->executeCommand();
+				}
+			} catch (KurogoModuleNotFound $e) {
+				$this->stop(ShellModule::SHELL_MODULE_NOT_FOUND);
+			} 
         }
         
-        $this->stop(ShellModule::SHELL_NOT_FOUND_MODULE);
+        $this->stop(ShellModule::SHELL_NO_MODULE);
         /*
         $this->stderr(PHP_EOL . "Kurogo Console: ");
 	    $this->stderr(PHP_EOL . "Not found the shell module");

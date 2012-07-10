@@ -9,8 +9,9 @@ abstract class ShellModule extends Module {
     const SHELL_MODULE_DISABLED=2;
     const SHELL_UNAUTHORIZED=3;
     const SHELL_INVALID_COMMAND=4;
-    const SHELL_NOT_FOUND_MODULE=5;
+    const SHELL_MODULE_NOT_FOUND=5;
     const SHELL_LOAD_KUROGO_ERROR=6;
+    const SHELL_NO_MODULE=7;
 
     protected function setDispatcher(&$dispatcher) {
         $this->dispatcher = $dispatcher;
