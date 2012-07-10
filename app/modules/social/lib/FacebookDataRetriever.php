@@ -49,18 +49,19 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
     protected function initRequest() {
         switch ($this->getOption('action'))
         {
+        	case 'getAccessToken':
+        		break;
             case 'posts':
                 $this->setBaseURL(sprintf('https://graph.facebook.com/%s/posts', $this->user));
                 if ($limit = $this->getOption('limit')) {
                     $this->addParameter('limit',$limit);
                 }
-                break;
+            default:
+            	if (!$this->accessToken) {
+            		$this->accessToken = $this->getAccessToken();
+            	}
+				$this->addParameter('access_token', $this->accessToken);
         }
-        
-        if ($this->accessToken) {
-            $this->addParameter('access_token', $this->accessToken);
-        }
-        
     }
     
     public function setUser($user)
@@ -86,8 +87,6 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
             throw new KurogoConfigurationException("OAUTH_CONSUMER_SECRET must be set for Facebook");
         }
         $this->clientSecret = $args['OAUTH_CONSUMER_SECRET'];
-        
-        $this->accessToken = $this->getAccessToken();
     }
     
     private function getAccessToken()
@@ -96,6 +95,7 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
         $this->addParameter('client_id', $this->clientId);
         $this->addParameter('client_secret', $this->clientSecret);
         $this->addParameter('grant_type', 'client_credentials');
+        $this->setOption('action','getAccessToken');
         $response = $this->getResponse();
         list($name, $token) = explode("=", $response->getResponse());
         $this->clearInternalCache();
@@ -145,25 +145,7 @@ class FacebookDataParser extends DataParser
         $user = new FacebookUser();
         $user->setUserID($entry['id']);
         $user->setName($entry['name']);
-       /* if(isset($entry['picture']))
-        {
-            $user->setImageURL($entry['picture']);
-        }
-        else
-        {*/
-            // The below code alone causes an 800% increase in run-time.  This is the more correct way of doing it, but it's way to slow.  Maybe this + caching?
-            /*$headers = get_headers('https://graph.facebook.com/'.$entry['id'].'/picture', 1);
-            if(is_array($headers['Location']))
-            {
-                $user->setImageURL(end($headers['Location']));
-            }
-            else
-            {
-                $user->setImageURL($headers['Location']);
-            }*/
-
-            $user->setImageURL(ImageLoader::cacheImage('https://graph.facebook.com/'.$entry['id'].'/picture?type=square', array()));
-        //}
+		$user->setImageURL(ImageLoader::cacheImage('https://graph.facebook.com/'.$entry['id'].'/picture?type=square', array()));
         return $user;
     }
 
