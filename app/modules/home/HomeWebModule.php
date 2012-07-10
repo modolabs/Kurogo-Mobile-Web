@@ -9,8 +9,6 @@
   * @subpackage Home
   */
 
-Kurogo::includePackage('Emergency');
-
 class HomeWebModule extends WebModule {
     protected $id = 'home';
     protected $canBeAddedToHomeScreen = false;
@@ -224,7 +222,7 @@ class HomeWebModule extends WebModule {
                 $moduleID = $this->getArg('id');
                 
                 try {
-                    $module = self::factory($moduleID, 'pane', array('ajax' => 1));
+                    $module = self::factory($moduleID, 'pane', array(self::AJAX_PARAMETER => 1));
                     $content = $module->fetchPage();
                     
                 } catch (Exception $e) {

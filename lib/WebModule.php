@@ -6,15 +6,6 @@
 /**
   * Breadcrumb Parameter
   */
-define('MODULE_BREADCRUMB_PARAM', '_b');
-define('MODULE_AJAX_BREADCRUMB_TITLE', '_abt');
-define('MODULE_AJAX_BREADCRUMB_LONG_TITLE', '_ablt');
-define('MODULE_AJAX_CONTAINER_PAGE', '_acp');
-define('MODULE_AJAX_CONTAINER_PAGE_ARGS', '_acpa');
-define('DISABLED_MODULES_COOKIE', 'disabledmodules');
-define('MODULE_ORDER_COOKIE', 'moduleorder');
-define('MODULE_TAB_COOKIE_PREFIX', 'moduletab_');
-define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
 if (!function_exists('gzdeflate')) {
     die("Kurogo requires the zlib PHP extension. http://www.php.net/manual/en/book.zlib.php");
@@ -24,6 +15,19 @@ abstract class WebModule extends Module {
 
     const INCLUDE_DISABLED_MODULES=true;
     const EXCLUDE_DISABLED_MODULES=false;
+    
+    const AJAX_PARAMETER = 'ajax';
+    
+    const BREADCRUMB_PARAM = '_b';
+    const AJAX_BREADCRUMB_TITLE = '_abt';
+    const AJAX_BREADCRUMB_LONG_TITLE = '_ablt';
+    const AJAX_BREADCRUMB_CONTAINER_PAGE = '_acp';
+    const AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS = '_acpa';
+
+    const DISABLED_MODULES_COOKIE = 'disabledmodules';
+    const MODULE_ORDER_COOKIE = 'moduleorder';
+    const TAB_COOKIE_PREFIX = 'moduletab_';
+    const BOOKMARK_COOKIE_DELIMITER = '@@';
       
   protected $page = 'index';
 
@@ -39,6 +43,8 @@ abstract class WebModule extends Module {
   protected $ajaxContentLoad = false;
   protected $ajaxContainerPage = '';
   protected $ajaxContainerPageArgs = '';
+  
+  protected $hasWebBridgePageRefresh = false;
   
   protected $imageExt = '.png';
   
@@ -88,13 +94,13 @@ abstract class WebModule extends Module {
     
     protected function tabCookieForPage() {
         $cookieArgs = $this->args;
-        unset($cookieArgs[MODULE_BREADCRUMB_PARAM]);
-        unset($cookieArgs[MODULE_AJAX_BREADCRUMB_TITLE]);
-        unset($cookieArgs[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
-        unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE]);
-        unset($cookieArgs[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
+        unset($cookieArgs[self::BREADCRUMB_PARAM]);
+        unset($cookieArgs[self::AJAX_BREADCRUMB_TITLE]);
+        unset($cookieArgs[self::AJAX_BREADCRUMB_LONG_TITLE]);
+        unset($cookieArgs[self::AJAX_BREADCRUMB_CONTAINER_PAGE]);
+        unset($cookieArgs[self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS]);
         
-        return MODULE_TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
+        return self::TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
     }
   
     protected function getCurrentTab($tabKeys) {
@@ -183,6 +189,15 @@ abstract class WebModule extends Module {
   // Override in subclass if you are using the pager
   protected function urlForPage($pageNumber) {
     return '';
+  }
+  
+  protected function getAccess() {
+    if (!$access = parent::getAccess()) {
+        if (KurogoWebBridge::shouldIgnoreAuth()) {
+            $access = true;
+        }
+    }
+    return $access;
   }
     
   private function getPager() {
@@ -369,12 +384,19 @@ abstract class WebModule extends Module {
   }
 
   public static function buildURLForModule($id, $page, $args=array()) {
-    $argString = '';
-    if (isset($args) && count($args)) {
-      $argString = http_build_query($args);
+    KurogoWebBridge::removeAddedParameters($args);
+    
+    if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+      return KurogoWebBridge::getInternalLink($id, $page, $args);
+      
+    } else {
+      $argString = '';
+      if (isset($args) && count($args)) {
+        $argString = http_build_query($args);
+      }
+      
+      return "/$id/$page".(strlen($argString) ? "?$argString" : '');
     }
-  
-    return "/$id/$page".(strlen($argString) ? "?$argString" : "");
   }
 
   protected function buildAjaxURL($page, $args=array()) {
@@ -390,7 +412,11 @@ abstract class WebModule extends Module {
   }
   
   protected function buildExternalURL($url) {
-    return $url;
+    if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+      return KurogoWebBridge::getExternalLink($url);
+    } else {
+      return $url;
+    }
   }
   
   protected function buildMailToLink($to, $subject, $body) {
@@ -429,9 +455,15 @@ abstract class WebModule extends Module {
 
   public function redirectToModule($id, $page, $args=array(), $type=Kurogo::REDIRECT_TEMPORARY) {
     $url = self::buildURLForModule($id, $page, $args);
+    
     //error_log('Redirecting to: '.$url);
-    Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url",'module');
-    Kurogo::redirectToURL(URL_PREFIX . ltrim($url, '/'), $type);
+    if (KurogoWebBridge::shouldRewriteRedirects()) {
+      KurogoWebBridge::redirectToURL($url);
+    } else {
+      $url = URL_PREFIX . ltrim($url, '/');
+      Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url", 'module');
+      Kurogo::redirectToURL($url, $type);
+    }
   }
 
   protected function redirectTo($page, $args=null, $preserveBreadcrumbs=false, $type=Kurogo::REDIRECT_TEMPORARY) {
@@ -445,8 +477,13 @@ abstract class WebModule extends Module {
     }
     
     //error_log('Redirecting to: '.$url);
-    Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url",'module');
-    Kurogo::redirectToURL(URL_PREFIX . ltrim($url, '/'), $type);
+    if (KurogoWebBridge::shouldRewriteRedirects()) {
+      KurogoWebBridge::redirectToURL($url);
+    } else {
+      $url = URL_PREFIX . ltrim($url, '/');
+      Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url", 'module');
+      Kurogo::redirectToURL($url, $type);
+    }
   }
 
     protected function buildURLFromArray($params) {
@@ -561,10 +598,10 @@ abstract class WebModule extends Module {
                 $this->imageExt = '.gif';
                 break;
         }
-
-        $this->ajaxContentLoad = $this->getArg('ajax') ? true : false;
-        $this->ajaxContainerPage = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->page);
-        $this->ajaxContainerPageArgs = $this->getArg(MODULE_AJAX_CONTAINER_PAGE_ARGS, http_build_query($this->args));
+        
+        $this->ajaxContentLoad = $this->getArg(self::AJAX_PARAMETER) ? true : false;
+        $this->ajaxContainerPage = $this->getArg(self::AJAX_BREADCRUMB_CONTAINER_PAGE, $this->page);
+        $this->ajaxContainerPageArgs = $this->getArg(self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS, http_build_query($this->args));
         
         if ($page) {
             // Pull in fontsize
@@ -826,8 +863,8 @@ abstract class WebModule extends Module {
     protected function getUserDisabledModuleIDs() {
     
         $disabledIDs = array();
-        if (isset($_COOKIE[DISABLED_MODULES_COOKIE]) && $_COOKIE[DISABLED_MODULES_COOKIE] != "NONE") {
-            $disabledIDs = explode(",", $_COOKIE[DISABLED_MODULES_COOKIE]);
+        if (isset($_COOKIE[self::DISABLED_MODULES_COOKIE]) && $_COOKIE[self::DISABLED_MODULES_COOKIE] != "NONE") {
+            $disabledIDs = explode(",", $_COOKIE[self::DISABLED_MODULES_COOKIE]);
         }
         
         return $disabledIDs;
@@ -924,8 +961,8 @@ abstract class WebModule extends Module {
   
   protected function getUserSortedModules($modules) {
     // sort primary modules if sort cookie is set
-    if (isset($_COOKIE[MODULE_ORDER_COOKIE])) {
-      $sortedIDs = array_merge(array($this->getHomeModuleID()), explode(",", $_COOKIE[MODULE_ORDER_COOKIE]));
+    if (isset($_COOKIE[self::MODULE_ORDER_COOKIE])) {
+      $sortedIDs = array_merge(array($this->getHomeModuleID()), explode(",", $_COOKIE[self::MODULE_ORDER_COOKIE]));
       $unsortedIDs = array_diff(array_keys($modules['primary']), $sortedIDs);
             
       $sortedModules = array();
@@ -944,8 +981,8 @@ abstract class WebModule extends Module {
     $lifespan = Kurogo::getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = implode(",", $moduleIDs);
     
-    setcookie(MODULE_ORDER_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE[MODULE_ORDER_COOKIE] = $value;
+    setcookie(self::MODULE_ORDER_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE[self::MODULE_ORDER_COOKIE] = $value;
     //error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
   
@@ -953,8 +990,8 @@ abstract class WebModule extends Module {
     $lifespan = Kurogo::getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
     
-    setcookie(DISABLED_MODULES_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE[DISABLED_MODULES_COOKIE] = $value;
+    setcookie(self::DISABLED_MODULES_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE[self::DISABLED_MODULES_COOKIE] = $value;
     //error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
   
@@ -1107,7 +1144,7 @@ abstract class WebModule extends Module {
     }
 
     protected function setBookmarks($bookmarks) {
-        $values = implode(BOOKMARK_COOKIE_DELIMITER, $bookmarks);
+        $values = implode(self::BOOKMARK_COOKIE_DELIMITER, $bookmarks);
         $expireTime = time() + $this->getBookmarkLifespan();
         setcookie($this->getBookmarkCookie(), $values, $expireTime, COOKIE_PATH);
     }
@@ -1169,7 +1206,7 @@ abstract class WebModule extends Module {
         $bookmarks = array();
         $bookmarkCookie = $this->getBookmarkCookie();
         if (isset($_COOKIE[$bookmarkCookie]) && strlen($_COOKIE[$bookmarkCookie])) {
-            $bookmarks = explode(BOOKMARK_COOKIE_DELIMITER, $_COOKIE[$bookmarkCookie]);
+            $bookmarks = explode(self::BOOKMARK_COOKIE_DELIMITER, $_COOKIE[$bookmarkCookie]);
         }
         return $bookmarks;
     }
@@ -1200,7 +1237,7 @@ abstract class WebModule extends Module {
   private function loadBreadcrumbs() {
     $breadcrumbs = array();
   
-    if ($breadcrumbArg = $this->getArg(MODULE_BREADCRUMB_PARAM)) {
+    if ($breadcrumbArg = $this->getArg(self::BREADCRUMB_PARAM)) {
       $breadcrumbs = $this->decodeBreadcrumbParam($breadcrumbArg);
       if (!is_array($breadcrumbs)) { $breadcrumbs = array(); }
     }
@@ -1242,7 +1279,7 @@ abstract class WebModule extends Module {
         $this->cleanBreadcrumbs($linkCrumbs);
         
         $crumbParam = http_build_query(array(
-          MODULE_BREADCRUMB_PARAM => $this->encodeBreadcrumbParam($linkCrumbs),
+          self::BREADCRUMB_PARAM => $this->encodeBreadcrumbParam($linkCrumbs),
         ));
         if (strlen($crumbParam)) {
           $breadcrumbs[$i]['url'] .= (strlen($b['a']) ? '&' : '?').$crumbParam;
@@ -1263,17 +1300,21 @@ abstract class WebModule extends Module {
   }
   
   private function getBreadcrumbString($addBreadcrumb=true) {
-    $breadcrumbs = $this->breadcrumbs;
+    if (KurogoWebBridge::isNativeCall()) {
+      return $addBreadcrumb ? 'new' : 'same'; // Don't need actual breadcrumb on native
+    } else {
+      $breadcrumbs = $this->breadcrumbs;
+    }
     
     $this->cleanBreadcrumbs($breadcrumbs);
     
     if ($addBreadcrumb) {
       $args = $this->args;
-      unset($args[MODULE_BREADCRUMB_PARAM]);
-      unset($args[MODULE_AJAX_BREADCRUMB_TITLE]);
-      unset($args[MODULE_AJAX_BREADCRUMB_LONG_TITLE]);
-      unset($args[MODULE_AJAX_CONTAINER_PAGE]);
-      unset($args[MODULE_AJAX_CONTAINER_PAGE_ARGS]);
+      unset($args[self::BREADCRUMB_PARAM]);
+      unset($args[self::AJAX_BREADCRUMB_TITLE]);
+      unset($args[self::AJAX_BREADCRUMB_LONG_TITLE]);
+      unset($args[self::AJAX_BREADCRUMB_CONTAINER_PAGE]);
+      unset($args[self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS]);
       
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
@@ -1289,7 +1330,7 @@ abstract class WebModule extends Module {
   
   private function getBreadcrumbArgs($addBreadcrumb=true) {
     return array(
-      MODULE_BREADCRUMB_PARAM => $this->getBreadcrumbString($addBreadcrumb),
+      self::BREADCRUMB_PARAM => $this->getBreadcrumbString($addBreadcrumb),
     );
   }
 
@@ -1298,7 +1339,17 @@ abstract class WebModule extends Module {
   }
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
-    return "/$id/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+    KurogoWebBridge::removeAddedParameters($args);
+    
+    $args = array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb));
+    
+    if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+      $url = KurogoWebBridge::getInternalLink($id, $page, $args);
+    } else {
+      $url = "/$id/$page?".http_build_query($args);
+    }
+    
+    return $url;
   }
   
   protected function buildAjaxBreadcrumbURL($page, $args, $addBreadcrumb=true) {
@@ -1312,20 +1363,20 @@ abstract class WebModule extends Module {
           
       } else {
           // forward breadcrumb title
-          $args[MODULE_AJAX_BREADCRUMB_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_TITLE, $this->breadcrumbTitle);
+          $args[self::AJAX_BREADCRUMB_TITLE] = $this->getArg(self::AJAX_BREADCRUMB_TITLE, $this->breadcrumbTitle);
           
           // forward breadcrumb title
-          $args[MODULE_AJAX_BREADCRUMB_LONG_TITLE] = $this->getArg(MODULE_AJAX_BREADCRUMB_LONG_TITLE, $this->breadcrumbLongTitle);
+          $args[self::AJAX_BREADCRUMB_LONG_TITLE] = $this->getArg(self::AJAX_BREADCRUMB_LONG_TITLE, $this->breadcrumbLongTitle);
           
           // forward parent page id
-          $args[MODULE_AJAX_CONTAINER_PAGE] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE, $this->ajaxContainerPage);
+          $args[self::AJAX_BREADCRUMB_CONTAINER_PAGE] = $this->getArg(self::AJAX_BREADCRUMB_CONTAINER_PAGE, $this->ajaxContainerPage);
           
           // forward parent page args
-          $args[MODULE_AJAX_CONTAINER_PAGE_ARGS] = $this->getArg(MODULE_AJAX_CONTAINER_PAGE_ARGS, $this->ajaxContainerPageArgs);
+          $args[self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS] = $this->getArg(self::AJAX_BREADCRUMB_CONTAINER_PAGE_ARGS, $this->ajaxContainerPageArgs);
           
           // forward current breadcrumb arg rather than adding
-          if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
-              $args[MODULE_BREADCRUMB_PARAM] = $this->args[MODULE_BREADCRUMB_PARAM];
+          if (isset($this->args[self::BREADCRUMB_PARAM])) {
+              $args[self::BREADCRUMB_PARAM] = $this->args[self::BREADCRUMB_PARAM];
           }
           
           return $this->buildAjaxURLForModule($id, $page, $args);
@@ -1353,16 +1404,26 @@ abstract class WebModule extends Module {
       if (isset($pageData[$this->page])) {
         $pageConfig = $pageData[$this->page];
         
-        if (isset($pageConfig['pageTitle']) && strlen($pageConfig['pageTitle'])) {
+        if (KurogoWebBridge::isNativeCall()) {
+          $this->hasWebBridgePageRefresh = self::argVal($pageConfig, 'nativePageRefresh', false);
+        }
+        
+        if (KurogoWebBridge::isNativeCall() && self::argVal($pageConfig, 'nativePageTitle', '')) {
+          $this->pageTitle = $pageConfig['nativePageTitle'];
+          
+        } else if (isset($pageConfig['pageTitle']) && strlen($pageConfig['pageTitle'])) {
           $this->pageTitle = $pageConfig['pageTitle'];
         }
+        
+        if (KurogoWebBridge::isNativeCall() && self::argVal($pageConfig, 'nativeBreadcrumbTitle', '')) {
+          $this->breadcrumbTitle = $pageConfig['nativeBreadcrumbTitle'];
           
-        if (isset($pageConfig['breadcrumbTitle'])  && strlen($pageConfig['breadcrumbTitle'])) {
+        } else if (isset($pageConfig['breadcrumbTitle'])  && strlen($pageConfig['breadcrumbTitle'])) {
           $this->breadcrumbTitle = $pageConfig['breadcrumbTitle'];
         } else {
           $this->breadcrumbTitle = $this->pageTitle;
         }
-          
+        
         if (isset($pageConfig['breadcrumbLongTitle']) && strlen($pageConfig['breadcrumbLongTitle'])) {
           $this->breadcrumbLongTitle = $pageConfig['breadcrumbLongTitle'];
         } else {
@@ -1375,13 +1436,13 @@ abstract class WebModule extends Module {
     }
     
     // Ajax overrides for breadcrumb title and long title
-    if (isset($this->args[MODULE_AJAX_BREADCRUMB_TITLE])) {
-      $this->breadcrumbTitle = $this->args[MODULE_AJAX_BREADCRUMB_TITLE];
+    if (isset($this->args[self::AJAX_BREADCRUMB_TITLE])) {
+      $this->breadcrumbTitle = $this->args[self::AJAX_BREADCRUMB_TITLE];
       $this->breadcrumbLongTitle = $this->breadcrumbTitle;
     }
     
-    if (isset($this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE])) {
-      $this->breadcrumbLongTitle = $this->args[MODULE_AJAX_BREADCRUMB_LONG_TITLE];
+    if (isset($this->args[self::AJAX_BREADCRUMB_LONG_TITLE])) {
+      $this->breadcrumbLongTitle = $this->args[self::AJAX_BREADCRUMB_LONG_TITLE];
     }
   }
   
@@ -1420,6 +1481,10 @@ abstract class WebModule extends Module {
   }
   protected function setBreadcrumbLongTitle($title) {
     $this->breadcrumbLongTitle = $title;
+  }
+
+  protected function setWebBridgePageRefresh($hasPageRefresh) {
+    $this->hasWebBridgePageRefresh = $hasPageRefresh;
   }
 
   //
@@ -1566,6 +1631,8 @@ abstract class WebModule extends Module {
     $this->assign('hideFooterLinks' , $this->hideFooterLinks);
     $this->assign('ajaxContentLoad', $this->ajaxContentLoad);
     $this->assign('charset', Kurogo::getCharset());
+
+    $this->assign('webBridgeAjaxContentLoad', KurogoWebBridge::isAjaxContentLoad());
     
     // Font size for template
     $this->assign('fontsizes',    $this->fontsizes);
@@ -1599,13 +1666,45 @@ abstract class WebModule extends Module {
     
     // Tablet module nav list
     if ($this->pagetype == 'tablet' && $this->page != 'pane') {
-      $this->addInternalJavascript('/common/javascript/lib/iscroll-4.0.js');
+      $this->addInternalJavascript('/common/javascript/lib/iscroll-4.1.9.js');
       $this->assign('moduleNavList', $this->getModuleNavlist());
     }
+    
+    if ($this->page == '__nativeWebTemplates') {
+        $title = 'Error!';
+        $message = '';
+        try {
+            if (!Kurogo::isLocalhost()) {
+                throw new KurogoException("{$this->page} command can only be run from localhost");
+            }
             
-    Kurogo::log(LOG_DEBUG,"Calling initializeForPage for $this->configModule - $this->page", 'module');
-    $this->initializeForPage(); //subclass behavior
-    Kurogo::log(LOG_DEBUG,"Returned from initializeForPage for $this->configModule - $this->page", 'module');
+            $platforms = array_filter(array_map('trim', explode(',', $this->getArg('platform', ''))));
+            if (!$platforms) {
+                throw new KurogoException("No platforms specified");
+            }
+            
+            foreach ($platforms as $platform) {
+                $this->buildNativeWebTemplatesForPlatform($platform);
+            }
+            
+            $title = 'Success!';
+            $message = 'Generated native web templates for '.implode(' and ', $platforms);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+        }
+        $this->assign('contentTitle', $title);
+        $this->assign('contentBody', $message);
+      
+    } else if (KurogoWebBridge::useNativeTemplatePageInitializer()) {
+        Kurogo::log(LOG_DEBUG,"Calling initializeForNativeTemplatePage for $this->configModule - $this->page", 'module');
+        $this->initializeForNativeTemplatePage(); //subclass behavior
+        Kurogo::log(LOG_DEBUG,"Returned from initializeForNativeTemplatePage for $this->configModule - $this->page", 'module');
+        
+    } else {
+        Kurogo::log(LOG_DEBUG,"Calling initializeForPage for $this->configModule - $this->page", 'module');
+        $this->initializeForPage(); //subclass behavior
+        Kurogo::log(LOG_DEBUG,"Returned from initializeForPage for $this->configModule - $this->page", 'module');
+    }
 
     // Set variables for each page
     $this->assign('pageTitle', $this->pageTitle);
@@ -1622,8 +1721,14 @@ abstract class WebModule extends Module {
     $this->assign('breadcrumbs',            $this->breadcrumbs);
     $this->assign('breadcrumbArgs',         $this->getBreadcrumbArgs());
     $this->assign('breadcrumbSamePageArgs', $this->getBreadcrumbArgs(false));
-
+    
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
+
+    $this->assign('webBridgeOnPageLoadParams', KurogoWebBridge::getOnPageLoadParams(
+          $this->pageTitle, $this->breadcrumbTitle, $this->hasWebBridgePageRefresh));
+    
+    $this->assign('webBridgeConfig', KurogoWebBridge::getServerConfig(
+          $this->configModule, $this->page, $this->args));
     
     $moduleStrings = $this->getOptionalModuleSection('strings');
     $this->assign('moduleStrings', $moduleStrings);
@@ -1631,11 +1736,20 @@ abstract class WebModule extends Module {
     $this->assign('homeModuleID', $this->getHomeModuleID());
     
     $this->assignLocalizedStrings();
-
-    // Module Help
+    
     if ($this->page == 'help') {
+      // Module Help
       $this->assign('hasHelp', false);
       $template = 'common/templates/'.$this->page;
+      
+    } else if ($this->page == '__nativeWebTemplates') {
+        $template = 'common/templates/staticContent';
+    
+    } else if (KurogoWebBridge::useWrapperPageTemplate()) {
+      // Web bridge page wrapper
+      $template = 'common/templates/webBridge';
+      $this->assign('webBridgeJSLocalizedStrings', json_encode(Kurogo::getLocalizedStrings()));
+      
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
       $this->assign('helpLink', $this->buildBreadcrumbURL('help',array()));
@@ -1705,6 +1819,50 @@ abstract class WebModule extends Module {
     
     return $template;
   }
+  
+  public function getLastNativeWebTemplatesBuildForPlatform($platform) {
+    $media = KurogoWebBridge::getAvailableMediaInfoForModule($this->configModule);
+    if (isset($media[$platform])) {
+        return $this->elapsedTime($media[$platform]['mtime']);
+    }
+    
+    return null;
+  }
+
+  public function getNativeWebTemplatesURLForPlatform($platform) {
+    $media = KurogoWebBridge::getAvailableMediaInfoForModule($this->configModule);
+    if (isset($media[$platform])) {
+        return $media[$platform]['url'];
+    }
+    
+    return null;
+  }
+
+  public function buildNativeWebTemplatesForPlatform($platform) {
+      $pages = array_keys($this->getModuleSections('pages'));
+      if ($pages) {
+         $pages = array_diff($pages, array('pane')); 
+      }
+      if (!$pages) {
+          throw new KurogoConfigurationException("module does not have any pages defined in pages.ini");
+      }
+      
+      $additionalAssets = $this->nativeWebTemplateAssets();
+      $nativeConfig = $this->getOptionalModuleSection('native_template');
+      if ($nativeConfig && $nativeConfig['additional_assets']) {
+          $additionalAssets = array_unique(array_merge($additionalAssets, $nativeConfig['additional_assets']));
+      }
+      
+      // Phone version
+      $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_PHONE, $platform, KurogoWebBridge::BROWSER);
+      $rewriter->saveTemplates($pages, $additionalAssets);
+      
+      if (Kurogo::getOptionalSiteVar('NATIVE_TABLET_ENABLED', 1)) {
+          // Tablet version
+          $rewriter = new KurogoWebBridge($this->configModule, KurogoWebBridge::PAGETYPE_TABLET, $platform, KurogoWebBridge::BROWSER);
+          $rewriter->saveTemplates($pages, $additionalAssets);
+      }
+  }
 
   //
   // Display page
@@ -1746,6 +1904,23 @@ abstract class WebModule extends Module {
   // Subclass this function to set up variables for each template page
   //
   abstract protected function initializeForPage();
+
+    //
+    // Subclass this function to set up variables for each native template page
+    // Native template pages are called with no arguments
+    // Since initializeForPage usually fails when called with no arguments 
+    // this is empty by default
+    //
+    protected function initializeForNativeTemplatePage() {
+    }
+    
+    //
+    // Subclass this function to manually specify additional local assets which must
+    // be loaded.  Return an array of asset paths. (e.g. '/common/images/button.png')
+    // Note: these can also be listed in module.ini in the [native_templates] section.
+    public function nativeWebTemplateAssets() {
+        return array();
+    }
 
     //
     // Subclass this function and return an array of items for a given search term and feed

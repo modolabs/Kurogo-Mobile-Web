@@ -1,4 +1,4 @@
-{if !$ajaxContentLoad}
+{if !$webBridgeAjaxContentLoad && !$ajaxContentLoad}
   {if $moduleDebug && count($moduleDebugStrings)}
     <p class="legend nonfocal">
       {foreach $moduleDebugStrings as $string}

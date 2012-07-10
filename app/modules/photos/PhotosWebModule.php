@@ -6,8 +6,6 @@
  * @package 
  */
 
-includePackage('Photos');
-
 class PhotosWebModule extends WebModule {
     protected static $defaultModel = 'PhotosDataModel';
     protected $id = 'photos'; 

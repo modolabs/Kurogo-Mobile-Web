@@ -90,7 +90,7 @@ abstract class DataController
 
     /**
      * Clears the internal cache of data. Subclasses can override this method to clean up any necessary
-     * state, if necessary. Subclasses should call parent::clearInteralCache()
+     * state, if necessary. Subclasses should call parent::clearInternalCache()
      */
     protected function clearInternalCache() {
         $this->setTotalItems(null);

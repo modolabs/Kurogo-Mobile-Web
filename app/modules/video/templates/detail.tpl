@@ -1,6 +1,4 @@
-{if !$ajax}
 {include file="findInclude:common/templates/header.tpl"}
-{/if}
 
 <div class="video">
     <h1 class="slugline">{$videoTitle}</h1>
@@ -33,6 +31,4 @@
 	</div>
 </div>
 
-{if !$ajax}
 {include file="findInclude:common/templates/footer.tpl"}
-{/if}

@@ -317,8 +317,9 @@ abstract class AuthenticationAuthority
     */
     public static function getDefaultAuthenticationAuthority()
     {
-        $authorities = self::getDefinedAuthenticationAuthorities();
-        return current($authorities);
+    	return self::getAuthenticationAuthority(
+    		self::getDefaultAuthenticationAuthorityIndex()
+    	);
     }
 
     public static function getDefaultAuthenticationAuthorityIndex()

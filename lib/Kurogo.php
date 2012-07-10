@@ -295,6 +295,10 @@ class Kurogo
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
 
+    public static function isLocalhost() {
+        return isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'));
+    }
+
     private static function checkIP($ip) {
         if (!empty($ip) && ip2long($ip)!=-1 && ip2long($ip)!=false) {
             $private_ips = array (
@@ -794,6 +798,7 @@ class Kurogo
         define('SITE_APP_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'app');
         define('SITE_MODULES_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'modules');
         define('DATA_DIR',             SITE_DIR . DIRECTORY_SEPARATOR . 'data');
+        define('WEB_BRIDGE_DIR',       SITE_DIR . DIRECTORY_SEPARATOR . KurogoWebBridge::getAssetsDir());
         define('CACHE_DIR',            SITE_DIR . DIRECTORY_SEPARATOR . 'cache');
         define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
         define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');
@@ -1092,6 +1097,26 @@ class Kurogo
         return Kurogo::sharedInstance()->localizedString($key, $opts);
     }
 
+    public function localizedStrings() {
+        $strings = array();
+    
+        $languages = $this->getLanguages();
+        foreach ($languages as $language) {
+            $langStrings = $this->getStringsForLanguage($language);
+            foreach ($langStrings as $key => $value) {
+                if (!isset($strings[$key])) {
+                    $strings[$key] = $value;
+                }
+            }
+        }
+        
+        return $strings;
+    }
+    
+    public static function getLocalizedStrings() {
+        return Kurogo::sharedInstance()->localizedStrings();
+    }
+    
     public function checkCurrentVersion() {
         $url = "http://kurogo.org/checkversion.php?" . http_build_query(array(
             'version'=>KUROGO_VERSION,
@@ -1106,7 +1131,7 @@ class Kurogo
 
     # Implmentation taken from https://gist.github.com/1407308
     public static function rmdir($path) {
-        if(is_dir($path)){
+        if (is_dir($path)){
             foreach (scandir($path) as $name){
                 if (in_array($name, array('.', '..'))){
                     continue;
@@ -1115,8 +1140,8 @@ class Kurogo
                 Kurogo::rmdir($subpath);
             }
             rmdir($path);
-        }else{
-            if(file_exists($path)){
+        } else {
+            if (file_exists($path)){
                 unlink($path);
             }
         }

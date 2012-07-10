@@ -1,0 +1,17 @@
+html {
+  position: relative;
+  height: auto;
+  overflow: visible;
+}
+body.iscroll-off, 
+body.iscroll-off #nonfooternav,
+body.iscroll-off #wrapper, 
+body.iscroll-off #container {
+  position: static;
+  height: auto;
+  overflow: visible;
+}
+
+#wrapper {
+  top: 0; /* no navbar */
+}

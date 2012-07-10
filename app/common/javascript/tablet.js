@@ -4,22 +4,24 @@ var navScroller = null;
 function onDOMChange() {
   if (containerScroller) {
     setContainerWrapperHeight();
-    containerScroller.refresh();
+    setTimeout(function () {
+      containerScroller.refresh();
+    }, 0);
   }
 }
 
 // Update the nav slide indicators
 function updateNavSlider() {
-  if (navScroller) {
-    var current = Math.abs(navScroller.x);
-    var max = Math.abs(navScroller.maxScrollX);
-
-    var canScrollLeft = (current > 0);
-    var canScrollRight = (current < max-1);
-  
-    document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
-    document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
-  }
+    if (navScroller) {
+        var current = Math.abs(navScroller.x);
+        var max = Math.abs(navScroller.maxScrollX);
+      
+        var canScrollLeft = (current > 0);
+        var canScrollRight = (current < max-1);
+        
+        document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
+        document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
+    }
 }
 
 function navSliderScrollLeft() {
@@ -77,6 +79,22 @@ function handleWindowResize(e) {
     }
 } 
 
+// form element-safe version of iScroll initialization
+function iScrollInit(id, options) {
+    options.useTransform = true;
+    options.onBeforeScrollStart = function (e) {
+        var target = e.target;
+        while (target.nodeType != 1) { target = target.parentNode; }
+        
+        var tagName = target.tagName;
+        if (target.tagName != 'SELECT' && target.tagName != 'INPUT' && target.tagName != 'TEXTAREA') {
+            e.preventDefault();
+        }
+    };
+
+    return new iScroll(id, options);
+}
+
 var moduleProvidesScrollers = false;
 
 function tabletInit() {
@@ -93,14 +111,10 @@ function tabletInit() {
     var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
     window.addEventListener(resizeEvent, function() { setTimeout(handleWindowResize, 0) }, false);
     
-    document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
-    
     if (document.getElementById('navsliderwrapper')) {
-        navScroller = new iScroll('navsliderwrapper', { 
-            checkDOMChanges: false, 
+        navScroller = iScrollInit('navsliderwrapper', { 
             hScrollbar: false,
             vScrollbar: false,
-            desktopCompatibility: true,
             bounce: false,
             bounceLock: true,
             onScrollStart: updateNavSlider,
@@ -118,10 +132,8 @@ function tabletInit() {
     }
   
     if (!moduleProvidesScrollers) {
-        containerScroller = new iScroll('wrapper', { 
-            checkDOMChanges: false, 
+        containerScroller = iScrollInit('wrapper', { 
             hScrollbar: false,
-            desktopCompatibility: true,
             bounce: false,
             bounceLock: true
         });
@@ -167,7 +179,10 @@ function scrollToTop() {
         this.orientation = getOrientation();
         this.list = document.getElementById(this.options.list);
         this.detail = document.getElementById(this.options.detail);
-        this.detailScroller = new iScroll(this.options.detail, {checkDOMChange: true});
+        this.detailScroller = iScrollInit(this.options.detail, {
+            hScrollbar : false,
+            hScroll : false
+        });
         
         if ('content' in this.options) {
             this.content = document.getElementById(this.options.content);
@@ -338,16 +353,18 @@ function scrollToTop() {
                 },0);
                 return;
             } else {
-              this.listScroller = new iScroll(this.options.list, options);
+              this.listScroller = iScrollInit(this.options.list, options);
             }
         },
         refreshScrollers: function () {
-            if (self.detailScroller) {
-                self.detailScroller.refresh();
-            }
-            if (self.listScroller) {
-                self.listScroller.refresh();
-            }
+            setTimeout(function() {
+                if (self.detailScroller) {
+                    self.detailScroller.refresh();
+                }
+                if (self.listScroller) {
+                    self.listScroller.refresh();
+                }
+            }, 0);
         },
     }
     

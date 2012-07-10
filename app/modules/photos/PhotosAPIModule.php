@@ -1,7 +1,5 @@
 <?php
 
-Kurogo::includePackage('Photos');
-
 class PhotosAPIModule extends APIModule {
     protected $id = 'photos';
     protected $vmin = 1;

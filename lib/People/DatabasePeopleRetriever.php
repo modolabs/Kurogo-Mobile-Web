@@ -195,7 +195,8 @@ class DatabasePeopleParser extends PeopleDataParser
     }
         
     public function parseResponse(DataResponse $response) {
-
+        $this->setResponse($response);
+        
         $result = $response->getResponse();    
         if (!$result instanceOf PDOStatement) {
             return false;
@@ -212,7 +213,7 @@ class DatabasePeopleParser extends PeopleDataParser
                     $person->setAttributes($row);
                     $results[] = $person;
                 }
-                
+                $this->setTotalItems(count($results));
                 return $results;
                 break;
                 
@@ -225,7 +226,7 @@ class DatabasePeopleParser extends PeopleDataParser
                 }
                 
                 $result->closeCursor();
-                            
+                $this->setTotalItems($person ? 1 : 0);   
                 return $person;
         }
 
