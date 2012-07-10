@@ -1139,10 +1139,10 @@ class Kurogo
                 $subpath = $path.DIRECTORY_SEPARATOR.$name;
                 Kurogo::rmdir($subpath);
             }
-            rmdir($path);
+            return rmdir($path);
         } else {
             if (file_exists($path)){
-                unlink($path);
+                return unlink($path);
             }
         }
     }
@@ -1188,7 +1188,7 @@ class Kurogo
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
                 $result = self::rmdir(CACHE_DIR . "/" . $dir);
-                if ($result !==0) {
+                if (!$result) {
                     return $result;
                 }
             }
