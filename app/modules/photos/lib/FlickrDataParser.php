@@ -51,7 +51,7 @@ class FlickrDataParser extends DataParser {
                 case 'api':
                     $type = $this->response->getContext('type');
                     $items = isset($data[$type]['photo']) ? $data[$type]['photo'] : array();
-                    $totalItems = isset($data['total']) ? $data['total'] : count($items);
+                    $totalItems = isset($data[$type]['total']) ? $data[$type]['total'] : count($items);
                     break;
             }
 
