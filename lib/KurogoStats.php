@@ -1127,7 +1127,10 @@ class KurogoStats {
         return false;
     }
 
-    public static function migrateData($table, $day, $limit = 50000){
+    public static function migrateData($table, $day, $limit = 50000, $updateSummaryOnly = false){
+        if(!is_numeric($limit)){
+            throw new KurogoException('Limit must be numeric. Default is 50000.');
+        }
         $startTimestamp = self::getStartTimestamp($day);
         $endTimestamp = self::getEndTimestamp($day);
 
@@ -1144,7 +1147,9 @@ class KurogoStats {
                 while ($row = $data->fetch()) {
                     $logData = array_combine($fields, $row);
                     // Insert log data into sharded table.
-                    self::insertStatsToMainTable($logData);
+                    if(!$updateSummaryOnly){
+                        self::insertStatsToMainTable($logData);
+                    }
                 
                     // Build the summary data structure.
                     self::summaryStatsData($statsData, $statsVisitsData, $logData);

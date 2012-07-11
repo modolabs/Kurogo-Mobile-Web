@@ -4,7 +4,7 @@ class StatsShellModule extends ShellModule {
 
     protected $id = 'stats';
 
-    public function migrateData(){
+    public function migrateData($updateSummaryOnly = false){
         $this->out("Beginning Migration");
         if ($table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE", "")) {
             $this->out("Using table $table");
@@ -23,7 +23,7 @@ class StatsShellModule extends ShellModule {
             $dayCount = 1;
             while (strtotime($day) <= strtotime($endDay)) {
                 $this->out("Migrating data for $day....",false);
-                $rowsProcessed = KurogoStats::migrateData($table, $day);
+                $rowsProcessed = KurogoStats::migrateData($table, $day, 50000, $updateSummaryOnly);
                 $this->out("rows processed: $rowsProcessed",false);
 
                 $timeTaken = microtime(true) - $startTime;
@@ -74,7 +74,12 @@ class StatsShellModule extends ShellModule {
                 $this->migrateData();
                 
                 return 0;
-                break;   
+                break;
+            case 'summary':
+                $this->migrateData(true);
+
+                return 0;
+                break;
             case 'update':
                 KurogoStats::exportStatsData();
                 return 0;
