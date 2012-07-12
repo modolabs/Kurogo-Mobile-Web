@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 /**
   * @package Core
   */
@@ -289,6 +299,12 @@ class TemplateEngine extends Smarty {
         $this->stripWhitespaceReplace("@@@SMARTY:TRIM:TEXTAREA@@@", $textareaBlocks, $source);
         $this->stripWhitespaceReplace("@@@SMARTY:TRIM:PRE@@@", $preBlocks, $source);
         $this->stripWhitespaceReplace("@@@SMARTY:TRIM:SCRIPT@@@", $scriptBlocks, $source);
+    
+        if (KurogoWebBridge::shouldRewriteAssetPaths()) {
+            // Need to rewrite Kurogo assets to use filenames used in native templates
+            $rewriter = new KurogoWebBridge($smarty->getTemplateVars('configModule'));
+            $source = $rewriter->rewriteURLsToFilePaths($source);
+        }
         
         return $source;
     }

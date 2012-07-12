@@ -23,7 +23,7 @@
               <td class="inputfield"><div id="video-category-select">{$categorySelect}</div></td>
               <td class="togglefield">
                 {block name="categoryButton"}
-                  <input src="/common/images/search_button.png" type="image" class="toggle-search-button"  onclick="return toggleSearch();" />
+                  <input src="/common/images/search_button.png" type="image" class="toggle-search-button"  onclick="return toggleSearch();" width="32" height="30" />
                 {/block}
               </td>
             </tr>

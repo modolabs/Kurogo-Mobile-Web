@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 /**
   * @package People
   */
@@ -19,6 +29,8 @@ define("LDAP_INSUFFICIENT_ACCESS", 0x32);
   */
 class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
 {
+    const MIN_NAME_SEARCH = 3;
+    
     protected $DEFAULT_PARSER_CLASS = 'LDAPPeopleParser';
     protected $MIN_PHONE_SEARCH = PeopleRetriever::MIN_PHONE_SEARCH;
     protected $personClass = 'LDAPPerson';
@@ -177,6 +189,10 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $filter = new LDAPFilter($this->getField('phone'), $searchString);
         } elseif (preg_match('/^[0-9]{'. $this->MIN_PHONE_SEARCH . ',}/', $searchString)) { //partial phone number
             $filter = new LDAPFilter($this->getField('phone'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND);
+        } elseif (strlen(trim($searchString)) < self::MIN_NAME_SEARCH) {
+            $firstFilter = new LDAPFilter($this->getField('firstname'), $searchString);
+            $lastFilter = new LDAPFilter($this->getField('lastname'), $searchString);
+            $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $firstFilter, $lastFilter);
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
             $names = preg_split("/\s+/", $searchString);
             $nameCount = count($names);

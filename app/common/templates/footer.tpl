@@ -1,4 +1,4 @@
-{if !$ajaxContentLoad}
+{if !$webBridgeAjaxContentLoad && !$ajaxContentLoad}
   {if $moduleDebug && count($moduleDebugStrings)}
     <p class="legend nonfocal">
       {foreach $moduleDebugStrings as $string}
@@ -74,13 +74,6 @@
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         {rdelim})();
       </script>
-    {/if}
-    {if strlen($PERCENT_MOBILE_ID)}
-        <script>
-           <!--
-            percent_mobile_track('{$PERCENT_MOBILE_ID}', '{$pageTitle}');
-            -->
-        </script>
     {/if}
   {/block}
 {block name="containerEnd"}

@@ -6,6 +6,6 @@
 
 <p class="nonfocal">{$LOGIN_INDEX_MESSAGE}</p>
 
-{include file="findInclude:modules/login/templates/loginForm.tpl"}
+{include file="findInclude:modules/login/templates/include/loginForm.tpl"}
 
 {include file="findInclude:modules/login/templates/footer.tpl"}

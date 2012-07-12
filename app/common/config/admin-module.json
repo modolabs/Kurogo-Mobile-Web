@@ -51,5 +51,18 @@
         "sectionsmethod":"getModuleAccessControlListArrays",
         "sectionaddnew":true,
         "sectiondelete":true
+    },
+    "appq":{
+        "titleKey":"ADMIN_MODULE_APPQ_TITLE",
+        "descriptionKey":"ADMIN_MODULE_APPQ_DESCRIPTION",
+        "sectiontype":"fields",
+        "fields":  {
+            "BUILD_NATIVE_TEMPLATES_IOS":{"labelKey":"ADMIN_MODULE_APPQ_BUILD_NATIVE_TEMPLATES_IOS_TITLE","valueKey":"ADMIN_MODULE_APPQ_BUILD_NATIVE_TEMPLATES_IOS_BUTTON","type":"action","dynamicParams":["moduleID"],"params":{"platform":"iphone"},"action":"buildNativeWebTemplates","runningMessage":"Building templates for iPhone. This may take up to 1 minute", "descriptionKey":"ADMIN_MODULE_APPQ_BUILD_NATIVE_TEMPLATES_IOS_DESCRIPTION"},
+            "NATIVE_TEMPLATES_LAST_BUILD_IOS":{"labelKey":"ADMIN_MODULE_APPQ_NATIVE_TEMPLATES_LAST_BUILD_IOS_TITLE","type":"label","valueMethod":["getLastNativeWebTemplatesBuildForPlatform","iphone"],"default":"Never"},
+            "DOWNLOAD_NATIVE_TEMPLATES_IOS":{"labelKey":"ADMIN_MODULE_APPQ_DOWNLOAD_NATIVE_TEMPLATES_IOS_TITLE","type":"link","valueMethod":["getNativeWebTemplatesURLForPlatform","iphone"],"useConstant":false},
+            "BUILD_NATIVE_TEMPLATES_ANDROID":{"labelKey":"ADMIN_MODULE_APPQ_BUILD_NATIVE_TEMPLATES_ANDROID_TITLE","valueKey":"ADMIN_MODULE_APPQ_BUILD_NATIVE_TEMPLATES_ANDROID_BUTTON","type":"action","dynamicParams":["moduleID"],"params":{"platform":"android"},"action":"buildNativeWebTemplates","runningMessage":"Building templates for Android. This may take up to 1 minute","descriptionKey":"ADMIN_MODULE_APPQ_BUILD_NATIVE_TEMPLATES_ANDROID_DESCRIPTION"},
+            "NATIVE_TEMPLATES_LAST_BUILD_ANDROID":{"labelKey":"ADMIN_MODULE_APPQ_NATIVE_TEMPLATES_LAST_BUILD_ANDROID_TITLE","type":"label","valueMethod":["getLastNativeWebTemplatesBuildForPlatform","android"],"default":"Never"},
+            "DOWNLOAD_NATIVE_TEMPLATES_ANDROID":{"labelKey":"ADMIN_MODULE_APPQ_DOWNLOAD_NATIVE_TEMPLATES_ANDROID_TITLE","type":"link","valueMethod":["getNativeWebTemplatesURLForPlatform","android"],"useConstant":false}
+        }
     }
 }
