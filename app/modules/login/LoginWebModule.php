@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 /**
   * @package Module
   * @subpackage Login
@@ -329,7 +339,7 @@ class LoginWebModule extends WebModule {
                     $authority = $user->getAuthenticationAuthority();
                     $users[] = array(
                         'class'=>$authority->getAuthorityClass(),
-                        'title'=>count($sessionUsers)>1 ? $this->getLocalizedString("SIGN_OUT_AUTHORITY", array($authority->getAuthorityTitle(), $user->getFullName())) : $this->getLocalizedString('SIGN_OUT'),
+                        'title'=>count($sessionUsers)>1 ? $this->getLocalizedString("SIGN_OUT_AUTHORITY", $authority->getAuthorityTitle(), $user->getFullName()) : $this->getLocalizedString('SIGN_OUT'),
                         'subtitle'=>count($sessionUsers)>1 ? $this->getLocalizedString('SIGN_OUT') : '',
                         'url'  =>$this->buildBreadcrumbURL('logout', array('authority'=>$authorityIndex), false)
                     );
@@ -359,7 +369,7 @@ class LoginWebModule extends WebModule {
                     ));
                 } else {
                     //there are multiple logged in users
-                    $this->assign('LOGIN_SIGNED_IN_MESSAGE', $this->getLocalizedString('LOGIN_SIGNED_IN_MULTIPLE', array(Kurogo::getSiteString('SITE_NAME'))));
+                    $this->assign('LOGIN_SIGNED_IN_MESSAGE', $this->getLocalizedString('LOGIN_SIGNED_IN_MULTIPLE', Kurogo::getSiteString('SITE_NAME')));
                 }
 
                 //use loggedin.tpl

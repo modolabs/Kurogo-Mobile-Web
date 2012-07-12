@@ -790,6 +790,7 @@ ul.focal li:first-child {
 	position: absolute;
 	top: 0;
 	background: transparent url(/common/images/sidenav-arrows.png) no-repeat;
+	background-size: 48px 58px;
 	height: 29px;
 	line-height: 29px;
 	padding: 0 10px;

@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
 
 define('POLYLINE_VERY_SMALL', 0.00001);
 
@@ -84,9 +92,9 @@ class Polyline {
   }
 
 
-  // Copyright applies to decodeToArray function below. Code is unmodified
-  // except for the addition of "static public" to the function and a rename
-  // from decodePolylineToArray to decodeToArray.
+  // The following copyright and license applies to decodeToArray function 
+  // below. Code is unmodified except for the addition of "static public" to 
+  // the function and a rename from decodePolylineToArray to decodeToArray.
   
   /*
    * Copyright (c) 2008 Peter Chng, http://unitstep.net/
