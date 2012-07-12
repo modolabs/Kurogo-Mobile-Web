@@ -1,6 +1,5 @@
 <?php
 
-=======
 /*
  * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
  *
