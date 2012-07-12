@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 /**
   * @package Module
   */
@@ -336,22 +346,6 @@ abstract class WebModule extends Module {
     }
   }
 
-
-   //
-  // Percent Mobile Analytics
-  //
-  private function percentMobileAnalyticsGetImageUrl($pmID){
-      if (isset($pmID) && strlen($pmID)){
-       $url = "http://tracking.percentmobile.com/pixel/" .
-          $pmID .
-          "/pixel.gif?v=271009_js";
-       
-       return $url;
-      }
-      else {
-          return "";
-      }
-  }
 
   //
   // Lazy load
@@ -1648,17 +1642,6 @@ abstract class WebModule extends Module {
         $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
         $this->assign('GOOGLE_ANALYTICS_DOMAIN', Kurogo::getOptionalSiteVar('GOOGLE_ANALYTICS_DOMAIN'));
         $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
-    }
-
-    // Percent Mobile Analytics
-    if ($pmID = Kurogo::getOptionalSiteVar('PERCENT_MOBILE_ID')){
-        $this->assign('PERCENT_MOBILE_ID', $pmID);
-        
-        $pmBASEURL = "http://assets.percentmobile.com/percent_mobile.js";
-        $this->assign('PERCENT_MOBILE_URL', $pmBASEURL);
-        
-        //$this->assign('pmImageURLJS', $this->percentMobileAnalyticsGetImageUrlJS($pmID));
-        $this->assign('pmImageURL', $this->percentMobileAnalyticsGetImageUrl($pmID));
     }
     
     // Breadcrumbs

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 abstract class ShellModule extends Module {
 
     protected $dispatcher = null;
@@ -9,14 +18,16 @@ abstract class ShellModule extends Module {
     const SHELL_MODULE_DISABLED=2;
     const SHELL_UNAUTHORIZED=3;
     const SHELL_INVALID_COMMAND=4;
-    const SHELL_NOT_FOUND_MODULE=5;
+    const SHELL_MODULE_NOT_FOUND=5;
     const SHELL_LOAD_KUROGO_ERROR=6;
+    const SHELL_NO_MODULE=7;
 
     protected function setDispatcher(&$dispatcher) {
         $this->dispatcher = $dispatcher;
     }
 
     protected function Dispatcher() {
+        
         return $this->dispatcher;
     }
 
@@ -122,7 +133,7 @@ abstract class ShellModule extends Module {
 
     protected function out($string, $newLine = true) {
         $string = is_array($string) ? implode(PHP_EOL, $string) : $string;
-        return $this->Dispatcher()->stdout($string, $newLine);
+        $this->Dispatcher()->stdout($string, $newLine);
     }
 
     protected function error($string) {
@@ -173,7 +184,6 @@ abstract class ShellModule extends Module {
             //$error = new KurogoError(6, 'Command not specified', "");
             //$this->throwError($error);
         }
-        $this->loadSiteConfigFile('strings');
         return $this->initializeForCommand();
     }
 
@@ -181,6 +191,43 @@ abstract class ShellModule extends Module {
      * All modules must implement this method to handle the logic of each shell command.
      */
     abstract protected function initializeForCommand();
+    
+    protected function preFetchData(DataModel $controller, &$response) {
+    	$retriever = $controller->getRetriever();
+    	return $retriever->getData($response);
+    }
+    
+    /* subclasses can override this method to return all controllers list */
+    protected function getAllControllers() {
+        $controllers = array();
+        
+        if ($feeds = $this->loadFeedData()) {
+            foreach ($feeds as $index => $feesData) {
+                if ($feed = $this->getFeed($index)) {
+                    $controllers[] = $feed;
+                }
+            }
+        }
+        
+        return $controllers;
+    }
+    
+    protected function preFetchAllData() {
+    	$time = 0;
+    	$controllers = $this->getAllControllers() ;
+		foreach ($controllers as $controller) {
+			$out = "Fetching $this->configModule: " . $controller->getTitle() . ". ";
+			$data = $this->preFetchData($controller, $response);
+			if ($response->getFromCache()) {
+				$out .= "In cache";
+			} else {
+				$time += $response->getTimeElapsed();
+				$out .= "Took " . sprintf("%.2f", $response->getTimeElapsed()) . " seconds";
+			}
+			$this->out($out);
+		}
+		$this->out(count($controllers) . " feeds took " . sprintf("%.2f", $time) . " seconds");
+    }
 }
 
 

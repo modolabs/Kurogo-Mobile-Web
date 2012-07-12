@@ -1,4 +1,5 @@
 #!/bin/bash
+echoerr() { echo "ERROR: $@" 1>&2; }
 
 LIB=${0/%KurogoShell/}
 APP=`pwd`
@@ -8,27 +9,26 @@ if [ -n "$phpPath" ]; then
     ${phpPath} -q ${LIB}KurogoShellDispatcher.php -working "${APP}" "$@"
     return=$?
     if [ ${return} -gt 0 ]; then
-        echo "failed"
         if [ ${return} -eq 1 ]; then
-            echo "Command not specified"
+            echoerr "Command not specified"
         elif [ ${return} -eq 2 ]; then
-            echo "Module Disabled"
+            echoerr "Module Disabled"
         elif [ ${return} -eq 3 ]; then
-            echo "Unauthorized"
+            echoerr "Unauthorized"
         elif [ ${return} -eq 4 ]; then
-            echo "Invalid Command"
+            echoerr "Module '$1' does not understand command '$2'"
         elif [ ${return} -eq 5 ]; then
-            echo "Not found the shell module"
+            echoerr "Module $1 not found"
         elif [ ${return} -eq 6 ]; then
-            echo "Unable to load Kurogo class"
+            echoerr "Unable to load Kurogo class"
+        elif [ ${return} -eq 7 ]; then
+            echo "Usage: KurogoShell module command"
         else
-            echo "Code:${return}"
+            echoerr ${return}
         fi
-    else
-        echo "Success"
     fi
 else
-    echo "Not found PHP binary path"
+    echoerr "PHP binary not found in path"
 fi
 
-exit;
+exit ${return}

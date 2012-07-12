@@ -75,13 +75,6 @@
         {rdelim})();
       </script>
     {/if}
-    {if strlen($PERCENT_MOBILE_ID)}
-        <script>
-           <!--
-            percent_mobile_track('{$PERCENT_MOBILE_ID}', '{$pageTitle}');
-            -->
-        </script>
-    {/if}
   {/block}
 {block name="containerEnd"}
 </div>
