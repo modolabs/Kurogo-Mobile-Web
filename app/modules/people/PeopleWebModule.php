@@ -290,11 +290,7 @@ class PeopleWebModule extends WebModule {
         switch ($this->page) {
         
             case 'detail':
-                $uid = $this->getArg('id');
-                if(empty($uid)) {
-                    $uid = $this->getArg('uid');
-                }
-                if ($uid) {
+                if ($uid = $this->getArg(array('id', 'uid'))) {
                     $person = $PeopleController->getUser($uid);
           
                     if ($person) {
@@ -331,11 +327,7 @@ class PeopleWebModule extends WebModule {
                 break;
                 
             case 'photo':
-                $uid = $this->getArg('id');
-                if(empty($uid)) {
-                    $uid = $this->getArg('uid');
-                }
-                if ($uid) {
+                if ($uid = $this->getArg(array('id', 'uid'))) {
                     if ($person = $PeopleController->getUser($uid)) {
                         if ($data = $person->getPhotoData()) {
                             header("Content-type: ".$person->getPhotoMIMEType());
@@ -350,11 +342,7 @@ class PeopleWebModule extends WebModule {
                 break;
         
             case 'search':
-                $filter = $this->getArg('filter');
-                if(empty($filter)) {
-                    $filter = $this->getArg('q');
-                }
-                if ($filter) {
+                if ($filter = $this->getArg(array('filter', 'q'))) {
                     $searchTerms = trim($filter);
           
                     $this->assign('searchTerms', $searchTerms);
