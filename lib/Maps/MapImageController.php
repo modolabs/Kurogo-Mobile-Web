@@ -22,6 +22,9 @@ abstract class MapImageController
     protected $maxZoomLevel = 20;
     protected $minZoomLevel = 0;
 
+    // adjusts the map viewport to include a newly added placemark
+    protected $resizeOnAddPlacemark = true;
+
     protected $imageWidth = 300;
     protected $imageHeight = 300;
 
@@ -82,6 +85,10 @@ abstract class MapImageController
 
         if (isset($params['DEFAULT_ZOOM_LEVEL'])) {
             $this->setZoomLevel($params['DEFAULT_ZOOM_LEVEL']);
+        }
+
+        if (isset($params['resizeOnAddPlacemark'])){
+            $this->resizeOnAddPlacemark = $params['resizeOnAddPlacemark'];
         }
 
         $this->maxZoomLevel = isset($params['MAXIMUM_ZOOM_LEVEL']) ? $params['MAXIMUM_ZOOM_LEVEL'] : $this->zoomLevel;
@@ -160,19 +167,25 @@ abstract class MapImageController
     protected function addPolygon(Placemark $polygon)
     {
         $rings = $polygon->getGeometry()->getRings();
-        $this->adjustBufferForPolyline($rings[0]);
+        if ($this->resizeOnAddPlacemark) {
+            $this->adjustBufferForPolyline($rings[0]);
+        }
     }
 
     protected function addPath(Placemark $polyline)
     {
         $geometry = $polyline->getGeometry();
-        $this->adjustBufferForPolyline($geometry);
+        if ($this->resizeOnAddPlacemark) {
+            $this->adjustBufferForPolyline($geometry);
+        }
     }
 
     protected function addPoint(Placemark $point)
     {
         $center = $point->getGeometry()->getCenterCoordinate();
-        $this->adjustBufferForPoint($center);
+        if ($this->resizeOnAddPlacemark) {
+            $this->adjustBufferForPoint($center);
+        }
     }
 
     protected function adjustBufferForPolyline(MapPolyline $polyline)
