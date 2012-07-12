@@ -64,6 +64,11 @@ class KurogoReaderDataParser extends DataParser {
         if(!$this->tidyAvailable) {
             return $html;
         }
+        $search = array (
+            "'<script[^>]*?>.*?</script>'si",
+            "'<style[^>]*?>.*?</style>'si"
+        );
+        $html = preg_replace($search, "", $html);
         if(empty($options)) {
             $options = array(
                 'indent' => true,
