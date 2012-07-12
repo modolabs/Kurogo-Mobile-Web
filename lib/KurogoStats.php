@@ -192,6 +192,11 @@ class KurogoStats {
             }
             return $summaryTable;
         }
+
+        // Not using summary table, this site is not using the default configs.
+        // Show them a nice error explaining the problem:
+        throw new KurogoStatsConfigurationException("Not using summary tables.");
+        
         
         $statsTables = array();
         
@@ -306,21 +311,21 @@ class KurogoStats {
                                     sizeCount int(11),
                                     elapsedAvg float
                                 )";
-                $createSQL[] = "CREATE INDEX key_service ON $table (service)";
-                $createSQL[] = "CREATE INDEX key_moduleID ON $table (moduleID)";
-                $createSQL[] = "CREATE INDEX key_pagetype ON $table (pagetype)";
-                $createSQL[] = "CREATE INDEX key_platform ON $table (platform)";
-                $createSQL[] = "CREATE INDEX key_timestamp ON $table (timestamp)";
+                $createSQL[] = "CREATE INDEX key_service_summary ON $table (service)";
+                $createSQL[] = "CREATE INDEX key_moduleID_summary ON $table (moduleID)";
+                $createSQL[] = "CREATE INDEX key_pagetype_summary ON $table (pagetype)";
+                $createSQL[] = "CREATE INDEX key_platform_summary ON $table (platform)";
+                $createSQL[] = "CREATE INDEX key_timestamp_summary ON $table (timestamp)";
                 $createSQL[] = "CREATE TABLE $visitsTable (
                                     id integer PRIMARY KEY autoincrement,
                                     timestamp int(11),
                                     date datetime,
                                     service char(3),
                                     site char(32),
-                                    visitCount int(11),
+                                    visitCount int(11)
                                 )";
-                $createSQL[] = "CREATE INDEX key_service ON $table (service)";
-                $createSQL[] = "CREATE INDEX key_timestamp ON $table (timestamp)";
+                $createSQL[] = "CREATE INDEX key_service_summary_visists ON $visitsTable (service)";
+                $createSQL[] = "CREATE INDEX key_timestamp_summary_visits ON $visitsTable (timestamp)";
                 break;
             default:
                 throw new Exception("Stats module do not support " . $conn->getDBType());
@@ -335,80 +340,7 @@ class KurogoStats {
         
         return true;
     }
-    /*
-    public static function logView($service, $id, $page, $data, $dataLabel, $size=0) {
-    
-        switch ($service)
-        {
-            case 'web':
-            case 'api':
-                break;
-            default;
-                throw new Exception("Invalid service $service");
-                break;
-        }
-        
-		$deviceClassifier = Kurogo::deviceClassifier();
-
-        $ip = Kurogo::determineIP();
-        $requestURI = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-        $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-        $visitID = self::getVisitID($service);
-
-        if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
-            $session = Kurogo::getSession();
-            $user = $session->getUser();
-        } else {
-            $user = false;
-        }
-
-        $current = time();
-		$logData = array(
-		    'timestamp' => time(),
-		    'date'      => date('Y-m-d H:i:s', $current),
-		    'site'      => SITE_KEY,
-		    'service'   => $service,
-		    'requestURI'=> $requestURI,
-		    'referrer'  => $referrer,
-		    'referredSite'   => intval(self::isFromThisSite($referrer)),
-		    'referredModule' => intval(self::isFromModule($referrer, $id)),
-		    'userAgent' => $userAgent,
-		    'ip'        => $ip,
-		    'user'      => $user ? $user->getUserID() : '',
-		    'authority' => $user ? $user->getAuthenticationAuthorityIndex() : '',
-            'visitID'   => $visitID,            		    
-		    'pagetype'  => $deviceClassifier->getPageType(),
-		    'platform'  => $deviceClassifier->getPlatform(),
-		    'moduleID'  => $id,
-		    'page'      => $page,
-		    'data'      => $data,
-		    'dataLabel' => $dataLabel,
-		    'size'      => $size,
-		    'elapsed'   => Kurogo::getElapsed()
-		);
-	
-	    try {
-            $conn = self::connection();
-        } catch (KurogoDataServerException $e) {
-            throw new KurogoConfigurationException("Database not configured for statistics. To disable stats, set STATS_ENABLED=0 in site.ini");
-        }
-        
-        $table = self::getStatsTable($current);
-        $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)", 
-            $table, 
-            implode(",", array_keys($logData)), 
-            implode(",", array_fill(0, count($logData), '?'))
-        );
-        if (!$result = $conn->query($sql, array_values($logData), db::IGNORE_ERRORS)) {
-            self::createStatsTables($table);
-            $result = $conn->query($sql, array_values($logData));
-        }
-        
-        return $result;
-    }
-    */
-    
+ 
     /**
      * summary the stats data. the data should be updated to the summary stats table
     */
@@ -455,7 +387,7 @@ class KurogoStats {
     /**
      * export the stats data to the database
      */
-    public static function exportStatsData() {
+    public static function exportStatsData($startTimestamp = null) {
         $statsLogFile = Kurogo::getSiteVar('KUROGO_STATS_LOG_FILE');
         
         if (!file_exists($statsLogFile)) {
@@ -505,6 +437,10 @@ class KurogoStats {
         fclose($handle);
         unlink($statsLogFileCopy);
         
+        self::updateSummaryFromShards($startTimestamp);
+    }
+
+    public static function updateSummaryFromShards($startTimestamp){
         // Delete summary visit data for today.
         self::deleteFromSummaryTablesAfterTimestamp($startTimestamp);
 
@@ -1218,4 +1154,8 @@ class KurogoStats {
             fclose($handle);
         }
     }
+}
+
+class KurogoStatsConfigurationException extends KurogoException {
+
 }

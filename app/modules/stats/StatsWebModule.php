@@ -43,6 +43,11 @@ class StatsWebModule extends WebModule {
     }
         
 	protected function initializeForPage() {
+        if($this->page == 'updateStats'){
+            KurogoStats::exportStatsData();
+            $this->redirectTo('index');
+        }
+
 	    if (!Kurogo::getOptionalSiteVar('STATS_ENABLED', true)) {
 	        throw new KurogoException($this->getLocalizedString('STATS_DISABLED'));
 	    }
@@ -116,12 +121,25 @@ class StatsWebModule extends WebModule {
         
 		switch ($this->page) {
 			case 'index':
+                // Get last updated time
+                $summaryTable = Kurogo::getOptionalSiteVar('KUROGO_STATS_SUMMARY_TABLE');
+                if($summaryTable){
+                    $date = KurogoStats::getLastTimestamp($summaryTable);
+                    $lastUpdated = date("l, F jS Y", strtotime($date));
+                    $this->assign('lastUpdated', $lastUpdated);
+                    $this->assign('updateStatsLink', $this->buildURL('updateStats'));
+                }
+
 			    //get config
 			    $chartsConfig = $this->getModuleSections('stats-index');
 			        
 			    $charts = array();
 			    foreach ($chartsConfig as $chartIndex=>$chartData) {
-			        $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);
+                    try {
+			            $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);
+                    } catch (KurogoStatsConfigurationException $e) {
+                        $this->redirectTo('statsconfigerror', array('chart' => $chartData['title']));
+                    }
 			    }
 
                 $this->assign('charts', $charts);
@@ -143,11 +161,19 @@ class StatsWebModule extends WebModule {
 			    $charts = array();
 			    $commonData[$group] = $$group;
 			    foreach ($chartsConfig as $chartIndex=>$chartData) {
-			        $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);
+                    try {
+                        $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);    
+                    } catch (KurogoStatsConfigurationException $e) {
+                        $this->redirectTo('statsconfigerror', array('chart' => $chartData['title']));
+                    }
+			        
 			    }
 
                 $this->setPageTitle(sprintf("Stats for %s", $$group));
                 $this->assign('charts', $charts);
+                break;
+            case 'statsconfigerror':
+                $this->assign('chart', $this->getArg('chart'));
                 break;
 		}
 	}

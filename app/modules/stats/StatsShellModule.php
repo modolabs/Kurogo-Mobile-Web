@@ -83,7 +83,16 @@ class StatsShellModule extends ShellModule {
             case 'update':
                 KurogoStats::exportStatsData();
                 return 0;
-                break;             
+                break;
+            case 'updateFromShards':
+                if($timestamp = $this->getArg('timestamp')){
+                    KurogoStats::updateSummaryFromShards($timestamp);
+                    return 0;
+                }
+                $this->out('timestamp parameter is required');
+                return 10;
+                break;
+                
             default:
                  $this->invalidCommand();
                  break;
