@@ -1,0 +1,64 @@
+.album {
+    float: left;
+    width: 25%;
+    min-width: 200px;
+    height: 250px;
+    text-align: center;
+}
+
+.album-cover {
+    display: block;
+    width: 190px;
+    height: 190px;
+    margin: 0 auto;
+    background: url(/modules/photos/images/album-frame.png) no-repeat center center;
+    position: relative;
+}   
+
+.album-cover img {
+    width: 150px;
+    height: 150px;
+    padding: 20px;
+}
+
+.album a {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.album-title {
+    display: block;
+    padding: 0 10px;
+}
+
+.serviceicon {
+	background-repeat: no-repeat;
+	background-position: left;
+	padding-left: 22px;
+	background-size: 16px 16px;
+}
+
+.flickr {
+	background-image: url(/common/images/button-flickr-16.png);
+}
+
+.picasa {
+	background-image: url(/common/images/button-picasa-16.png);
+}
+
+
+@media only screen and (min-width: 1200px) {
+/* rewrap on wider screens */
+    .album {
+        width: 20%;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+/* rewrap on narrower screens e.g., in portrait orientation */
+    .album {
+        width: 33.33%;
+        height: 260px;
+    }
+}
