@@ -1,0 +1,5 @@
+/* since there is no nav bar, make sure these have layout or 
+ * elements will jump around when the dom changes */
+#nonfooternav, #container {
+    overflow: hidden;
+}
