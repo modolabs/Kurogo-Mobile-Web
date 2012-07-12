@@ -24,6 +24,13 @@
   {$tabBodies['women'] = $womenTab}
 {/if}
 
+{if $coedSports}
+  {capture name="coedTab" assign="coedTab"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$coedSports}
+  {/capture}
+  {$tabBodies['coed'] = $coedTab}
+{/if}
+
 {if $bookmarksTitle} 
   {capture name="bookmarksTab" assign="bookmarksTab"}
     {include file="findInclude:modules/athletics/templates/bookmarks.tpl"}

@@ -10,8 +10,9 @@ body {
 	font: @@@base_font_size@@@/1.33em @@@primary_font_family@@@;
 }
 
-body, th, td, li, option, select, input {
-	/* Primary text color */
+body, th, td, li, option, select, input, textarea {
+	/* Primary text style and color */
+	font-family: @@@primary_font_family@@@;
 	color: @@@primary_text_color@@@;
 }
 

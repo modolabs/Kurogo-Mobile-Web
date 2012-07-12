@@ -791,6 +791,7 @@ ul.focal li:first-child {
 	position: absolute;
 	top: 0;
 	background: transparent url(/common/images/sidenav-arrows.png) no-repeat;
+	background-size: 48px 58px;
 	height: 29px;
 	line-height: 29px;
 	padding: 0 10px;
@@ -1455,6 +1456,7 @@ h2.icon {
     width: 44px;
     height: 38px;
     background: url(/common/images/bookmark.png) no-repeat 0 -38px;
+    background-size: 88px 76px;
 }
 #bookmark.pressed {
     background-position: 0 1px;
