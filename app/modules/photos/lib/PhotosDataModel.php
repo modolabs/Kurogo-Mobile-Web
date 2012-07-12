@@ -3,15 +3,6 @@
 includePackage('DataModel');
 class PhotosDataModel extends ItemListDataModel {
     protected $cacheFolder = 'Photo';
-    protected $pageSize = '20';
-
-    public function setPageSize($pageSize) {
-        $this->pageSize = $pageSize;
-    }
-
-    public function getPageSize(){
-        return $this->pageSize;
-    }
 
     public function getPhotos() {
         return $this->items();
@@ -49,10 +40,9 @@ class PhotosDataModel extends ItemListDataModel {
     }
 
     public function getPhotoByIndex($index){
-        $offset = $index % $this->getPageSize();
+        $offset = $index % $this->getLimit();
         $start = $index - $offset;
         $this->setStart($start);
-        $this->setLimit($this->getPageSize());
         $items = $this->items();
         if(isset($items[$offset])){
             return $items[$offset];    

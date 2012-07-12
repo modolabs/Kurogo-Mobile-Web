@@ -35,8 +35,10 @@ class PhotosWebModule extends WebModule {
 
         $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
         $controller = DataModel::factory($modelClass, $feedData);
-        $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 20);
-        $controller->setPageSize($maxPerPage);
+
+        $maxResultsOption = $this->pagetype == 'tablet' ? 'MAX_TABLET_RESULTS' : 'MAX_RESULTS';
+        $maxPerPage = $this->getOptionalModuleVar($maxResultsOption, 20);
+        $controller->setLimit($maxPerPage);
 
         return $controller;
     }
@@ -96,11 +98,10 @@ class PhotosWebModule extends WebModule {
         		$controller = $this->getFeed($album);
         		$this->setPageTitles($controller->getTitle());
 
-                $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 20);
+                $maxPerPage = $controller->getLimit();
                 $start = $this->getArg('start', 0);
 
                 $controller->setStart($start);
-                $controller->setLimit($maxPerPage);
         		$items = $controller->getPhotos();
         		$totalItems = $controller->getTotalItems();
         		
