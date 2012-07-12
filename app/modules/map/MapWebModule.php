@@ -722,11 +722,7 @@ class MapWebModule extends WebModule {
 
     protected function initialize() {
         // this is in the wrong place
-        $feedGroup = $this->getArg('feedgroup', NULL);
-        if(empty($feedGroup)) {
-            $feedGroup = $this->getArg('group', NULL);
-        }
-        $this->feedGroup = $feedGroup;
+        $this->feedGroup = $this->getArg(array('feedgroup', 'group'), NULL);
 
         $this->feedGroups = $this->getFeedGroups();
         $this->numGroups = count($this->feedGroups);
@@ -749,11 +745,7 @@ class MapWebModule extends WebModule {
             $this->assign('group', $this->feedGroup); // used in searchbar.tpl and selectcampus.tpl
         }
 
-        $searchTerms = $this->getArg('filter');
-        if(empty($searchTerms)) {
-            $searchTerms = $this->getArg('q');
-        }
-        if ($searchTerms) {
+        if ($searchTerms = $this->getArg(array('filter', 'q'))) {
             $this->assign('searchTerms', $searchTerms);
         }
 
@@ -949,7 +941,7 @@ class MapWebModule extends WebModule {
             return $placemarks;
         }
 
-        if (($searchTerms = $this->getArg('filter'))) {
+        if (($searchTerms = $this->getArg(array('filter', 'q')))) {
             return $this->searchItems($searchTerms, null, $this->args);
         }
 
@@ -1037,7 +1029,7 @@ class MapWebModule extends WebModule {
 
         if ($this->mapURL === null) {
             $toggleArgs = array('group' => $this->feedGroup, 'mapview' => true);
-            if (($searchTerms = $this->getArg('filter'))) {
+            if (($searchTerms = $this->getArg(array('filter', 'q')))) {
                 $toggleArgs['filter'] = $searchTerms;
             }
             if (($feed = $this->getArg('feed'))) {

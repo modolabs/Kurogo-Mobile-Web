@@ -147,11 +147,7 @@ class MapAPIModule extends APIModule
         $feedConfigFile = NULL;
         
         if ($this->feedGroup === NULL) {
-            $feedGroup = $this->getArg('feedgroup', NULL);
-            if(empty($feedGroup)) {
-                $feedGroup = $this->getArg('group', NULL);
-            }
-            if ($feedGroup) {
+            if ($feedGroup = $this->getArg(array('feedgroup', 'group'), NULL)) {
                 $this->feedGroup = $feedGroup;
             } elseif ($this->numGroups === 1) {
                 $this->feedGroup = key($this->feedGroups);
@@ -519,11 +515,7 @@ class MapAPIModule extends APIModule
                         1000, 10);
 
                 } else {
-                    $searchTerms = $this->getArg('filter');
-                    if(empty($searchTerms)) {
-                        $searchTerms = $this->getArg('q');
-                    }
-                    if ($searchTerms) {
+                    if ($searchTerms = $this->getArg(array('filter', 'q'))) {
                         $searchResults = $mapSearch->searchCampusMap($searchTerms);
                     }
                 }
