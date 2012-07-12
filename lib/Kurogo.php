@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
 define('KUROGO_VERSION', '1.4.1');
 
@@ -1139,10 +1148,10 @@ class Kurogo
                 $subpath = $path.DIRECTORY_SEPARATOR.$name;
                 Kurogo::rmdir($subpath);
             }
-            rmdir($path);
+            return rmdir($path);
         } else {
             if (file_exists($path)){
-                unlink($path);
+                return unlink($path);
             }
         }
     }
@@ -1188,7 +1197,7 @@ class Kurogo
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
                 $result = self::rmdir(CACHE_DIR . "/" . $dir);
-                if ($result !==0) {
+                if (!$result) {
                     return $result;
                 }
             }
