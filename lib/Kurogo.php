@@ -597,6 +597,8 @@ class Kurogo
         // everything after this point only applies to http requests
         //
         if (PHP_SAPI == 'cli') {
+        	define('IS_SECURE', false);
+        	define('FULL_URL_BASE','');
             return;
         }
 
