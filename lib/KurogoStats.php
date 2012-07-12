@@ -1130,6 +1130,20 @@ class KurogoStats {
         return $result['date'];
     }
 
+    public static function getLastTimestampFromSummary(){
+        $summaryTable = Kurogo::getOptionalSiteVar("KUROGO_STATS_SUMMARY_TABLE", "kurogo_stats_module_v1");
+        $conn = self::connection();
+        $sql = "SELECT date(`date`) AS date FROM `$summaryTable` GROUP BY 1 ORDER BY 1 DESC LIMIT 1";
+        if(!$data = $conn->query($sql, array(), db::IGNORE_ERRORS)){
+            self::createSummaryTables($summaryTable);
+            $data = $conn->query($sql);
+        }
+        if(!$result = $data->fetch()){
+            return false;;
+        }
+        return $result['date'];
+    }
+
     public static function getLastTimestamp($table){
         $conn = self::connection();
         $sql = "SELECT date(`date`) AS date FROM `$table` GROUP BY 1 ORDER BY 1 DESC LIMIT 1";

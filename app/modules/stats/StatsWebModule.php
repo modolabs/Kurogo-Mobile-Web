@@ -123,11 +123,10 @@ class StatsWebModule extends WebModule {
 			case 'index':
                 // Get last updated time
                 $summaryTable = Kurogo::getOptionalSiteVar('KUROGO_STATS_SUMMARY_TABLE');
-                if($summaryTable){
-                    $date = KurogoStats::getLastTimestamp($summaryTable);
+                $this->assign('updateStatsLink', $this->buildURL('updateStats'));
+                if($summaryTable && $date = KurogoStats::getLastTimestampFromSummary()){
                     $lastUpdated = date("l, F jS Y", strtotime($date));
                     $this->assign('lastUpdated', $lastUpdated);
-                    $this->assign('updateStatsLink', $this->buildURL('updateStats'));
                 }
 
 			    //get config
