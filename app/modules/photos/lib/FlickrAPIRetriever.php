@@ -8,6 +8,20 @@ class FlickrAPIRetriever extends URLDataRetriever {
     // not used
     //  'icon_server' , 'license', 'path_alias', 
 
+    protected function initRequest() {
+        parent::initRequest();
+
+        if ($limit = $this->getOption('limit')) {
+            $this->addFilter('per_page', $limit);
+        }
+        
+        $start = $this->getOption('start');
+        if (strlen($start)) {
+            $start = ($start / $limit);
+            $this->addFilter('page', $start+1);
+        }
+    }
+
     protected function init($args) {
         parent::init($args);
         $this->setContext('retriever','api');
@@ -39,5 +53,4 @@ class FlickrAPIRetriever extends URLDataRetriever {
         $this->addFilter('extras', implode(',', $this->extraFields));
         $this->addFilter('format', 'php_serial');
     }
-
 }
