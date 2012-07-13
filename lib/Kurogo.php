@@ -1236,6 +1236,14 @@ class Kurogo
         header("Location: $url", true, $code);
         exit();
     }
+
+    public static function getPagetype(){
+        return Kurogo::deviceClassifier()->getPagetype();
+    }
+
+    public static function getPlatform(){
+        return Kurogo::deviceClassifier()->getPlatform();
+    }
 }
 
 interface KurogoObject
