@@ -84,7 +84,7 @@ class PhotosWebModule extends WebModule {
                         $photo['albumcount'] = $this->getLocalizedString('PHOTOS_ALBUMCOUNT',$controller->getAlbumSize());
                         // use base64_encode to make sure it will not be blocked by GFW
                         $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
-                        $photo['img'] = $defaultPhoto->getThumbnailUrl();
+                        $photo['img'] = $defaultPhoto->getThumbnailUrl($this->pagetype);
                         $photos[] = $photo;
                     }
                 }
@@ -111,7 +111,7 @@ class PhotosWebModule extends WebModule {
                     $photo['title'] = $item->getTitle();
                     $index = $start + $i;
                     $photo['url'] = $this->buildBreadcrumbURL('show', array('id' => $index, 'album' => $album), true);
-                    $photo['img'] = $item->getThumbnailUrl();
+                    $photo['img'] = $item->getThumbnailUrl($this->pagetype);
                     $photos[] = $photo;
                 }
         		

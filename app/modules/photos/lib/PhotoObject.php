@@ -121,7 +121,7 @@ class PhotoObject implements KurogoObject {
         return $this->mimeType;
     }
     
-    public function getThumbnailUrl() {
+    public function getThumbnailUrl($pagetype = null) {
         return $this->thumbnailUrl;
     }
 
