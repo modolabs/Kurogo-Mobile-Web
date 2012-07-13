@@ -205,6 +205,23 @@ class PeopleAPIModule extends APIModule
                     $this->setResponseVersion(1);
                 }
                 break;
+                
+            case 'detail':
+            	
+            	$uid = $this->getArg('id');
+            	$person = $peopleController->getUser($uid);
+            	if ($person) {
+                	$this->setLogData($uid, $person->getName());
+                	$personDetails =  $this->formatPerson($person);
+            	}
+            	$response = array(
+            		'person'	=> $personDetails,
+            	);
+            	
+            	$this->setResponse($response);
+            	$this->setResponseVersion(1);
+            	break;
+                
             case 'contacts':
                 $convertTags = array(
                     'class' => 'type',
