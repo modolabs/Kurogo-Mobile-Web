@@ -66,6 +66,8 @@ class CoreAPIModule extends APIModule
                 }
                 $response = array(
                     'timezone'=>Kurogo::getSiteVar('LOCAL_TIMEZONE'),
+                    'site'=>Kurogo::getSiteString('SITE_NAME'),
+                    'organization'=>Kurogo::getSiteString('ORGANIZATION_NAME'),
                     'version'=>KUROGO_VERSION,
                     'modules'=>$modules,
                     'default'=>Kurogo::defaultModule()
