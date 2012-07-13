@@ -1,3 +1,7 @@
+body.PhotosModule {
+    background-color: #f0f0f0;
+}
+
 .album {
     float: left;
     width: 25%;
