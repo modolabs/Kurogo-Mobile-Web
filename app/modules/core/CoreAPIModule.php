@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 class CoreAPIModule extends APIModule
 {
     protected $id = 'core';
@@ -48,6 +57,7 @@ class CoreAPIModule extends APIModule
                             'title'     =>$module->getModuleVar('title','module'),
                             'access'    =>$module->getAccess(AccessControlList::RULE_TYPE_ACCESS),
                             'payload'   =>$module->getPayload(),
+                            'bridge'    =>$module->getWebBridgeConfig(),
                             'vmin'      =>$module->getVmin(),
                             'vmax'      =>$module->getVmax(),
                             'home'      =>$home
@@ -56,6 +66,8 @@ class CoreAPIModule extends APIModule
                 }
                 $response = array(
                     'timezone'=>Kurogo::getSiteVar('LOCAL_TIMEZONE'),
+                    'site'=>Kurogo::getSiteString('SITE_NAME'),
+                    'organization'=>Kurogo::getSiteString('ORGANIZATION_NAME'),
                     'version'=>KUROGO_VERSION,
                     'modules'=>$modules,
                     'default'=>Kurogo::defaultModule()

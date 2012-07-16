@@ -1,0 +1,37 @@
+/* Android native controls do not, in general, use rounded corners */
+
+.inputcombo .forminput, .emphasized .forminput, input.formbutton, .nav, .nav li, .nav span.nolink, .nav a, .focal .nav, .tabbody .nav, .tabbody .results, .results a, .secondary, .secondary a, .focal, #tabs li, .tabstrip, .tabstrip li a, .tabstrip li:first-child a, .tabstrip li:last-child a, #sharedialog, .staticContentBody, a.formbutton div  {
+    -webkit-border-radius: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+    -webkit-border-bottom-right-radius: 2px;
+    -webkit-border-top-left-radius: 2px;
+    -webkit-border-top-right-radius: 2px;
+    border-radius: 2px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+.nav {
+    margin-left: 0;
+    margin-right: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.nav li a, .results li a {
+    padding-right: 10px;
+    background-image: none;
+}
+
+a.formbutton {
+    background-image: none;
+    padding-right: 0;
+}
+
+a.formbutton div {
+    background-image: none;
+    padding: 5px 12px;
+    background-color: rgba(0,0,0,0.6);
+}

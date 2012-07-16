@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 /**
   * @package Module
   * @subpackage People
@@ -91,7 +101,7 @@ class PeopleWebModule extends WebModule {
             case 'imgdata':
                 $detail['title'] = "";
                 $detail['class'] = 'img';
-                $detail['img'] = $this->buildURL('photo', array('uid'=>$person->getID()));
+                $detail['img'] = $this->buildURL('photo', array('id'=>$person->getID()));
                 break;
 
             case 'imgurl':
@@ -240,8 +250,8 @@ class PeopleWebModule extends WebModule {
         return array(
             'title'=>$this->htmlEncodeString($person->getName()),
             'url'  =>$this->buildBreadcrumbURL('detail', array(
-                                            'uid'    => $person->getId(),
-                                            'filter' => $this->getArg('filter'),
+                                            'id'    => $person->getId(),
+                                            'filter' => self::argVal($options,'filter'),
                                             'feed'   => $this->feed
                     ))
         );
@@ -306,7 +316,7 @@ class PeopleWebModule extends WebModule {
         switch ($this->page) {
         
             case 'detail':
-                if ($uid = $this->getArg('uid')) {
+                if ($uid = $this->getArg(array('id', 'uid'))) {
                     $person = $PeopleController->getUser($uid);
           
                     if ($person) {
@@ -343,7 +353,7 @@ class PeopleWebModule extends WebModule {
                 break;
                 
             case 'photo':
-                if ($uid = $this->getArg('uid')) {
+                if ($uid = $this->getArg(array('id', 'uid'))) {
                     if ($person = $PeopleController->getUser($uid)) {
                         if ($data = $person->getPhotoData()) {
                             header("Content-type: ".$person->getPhotoMIMEType());
@@ -358,7 +368,7 @@ class PeopleWebModule extends WebModule {
                 break;
         
             case 'search':
-                if ($filter = $this->getArg('filter')) {
+                if ($filter = $this->getArg(array('filter', 'q'))) {
                     $searchTerms = trim($filter);
           
                     $this->assign('searchTerms', $searchTerms);
@@ -382,9 +392,9 @@ class PeopleWebModule extends WebModule {
                                 $person = $people[0];
                                 $this->logView();
                                 $this->redirectTo('detail', array(
-                                    'uid'=>$person->getId(),
+                                    'id'=>$person->getId(),
                                     'total'=>1,
-                                    'filter'=>$this->getArg('filter'),
+                                    'filter'=>$filter,
                                     'feed'=>$this->feed
                                     )
                                 );
@@ -393,8 +403,9 @@ class PeopleWebModule extends WebModule {
                             default:
                                 $results = array();
                                 
+                                $options = array('filter' => $filter);
                                 foreach ($people as $person) {
-                                    $results[] = $this->linkforItem($person);
+                                    $results[] = $this->linkforItem($person, $options);
                                 }
                                 //error_log(print_r($results, true));
                                 if($totalItems > $resultCount)

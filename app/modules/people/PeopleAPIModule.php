@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 Kurogo::includePackage('People');
 
 class PeopleAPIModule extends APIModule
@@ -167,7 +176,7 @@ class PeopleAPIModule extends APIModule
         
         switch ($this->command) {
             case 'search':
-                if ($filter = $this->getArg('q')) {
+                if ($filter = $this->getArg(array('filter', 'q'))) {
 
                     $people = $peopleController->search($filter);
                     if(!$people)
@@ -206,6 +215,23 @@ class PeopleAPIModule extends APIModule
                     $this->setResponseVersion(1);
                 }
                 break;
+                
+            case 'detail':
+            	
+            	$uid = $this->getArg('id');
+            	$person = $peopleController->getUser($uid);
+            	if ($person) {
+                	$this->setLogData($uid, $person->getName());
+                	$personDetails =  $this->formatPerson($person);
+            	}
+            	$response = array(
+            		'person'	=> $personDetails,
+            	);
+            	
+            	$this->setResponse($response);
+            	$this->setResponseVersion(1);
+            	break;
+                
             case 'contacts':
                 $convertTags = array(
                     'class' => 'type',

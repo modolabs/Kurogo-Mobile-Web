@@ -22,6 +22,7 @@
             "SHOW_IMAGES":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWIMAGES_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWIMAGES_DESCRIPTION","type":"checkbox","default":1},
             "SHOW_PUBDATE":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWPUBDATE_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWPUBDATE_DESCRIPTION","type":"checkbox"},
             "SHOW_AUTHOR":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWAUTHOR_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWAUTHOR_DESCRIPTION","type":"checkbox"},
+            "FETCH_CONTENT":{"labelKey":"NEWS_ADMIN_FEEDS_FETCH_CONTENT_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_FETCH_CONTENT_DESCRIPTION","type":"checkbox","fieldgroup":"advanced"},
             "CACHE_LIFETIME":{"labelKey":"NEWS_ADMIN_FEEDS_CACHE_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_CACHE_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"fieldgroup":"advanced"},
             "ITEM_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_ITEMCLASS_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_ITEMCLASS_DESCRIPTION","type":"text","placeholder":"RSSItem","omitBlankValue":true,"fieldgroup":"advanced"},
             "ENCLOSURE_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_ENCLOSURECLASS_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_ENCLOSURECLASS_DESCRIPTION","type":"text","placeholder":"RSSEnclosure","omitBlankValue":true,"fieldgroup":"advanced"}

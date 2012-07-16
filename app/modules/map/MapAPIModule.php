@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 Kurogo::includePackage('Maps');
 
 class MapAPIModule extends APIModule
@@ -147,8 +156,8 @@ class MapAPIModule extends APIModule
         $feedConfigFile = NULL;
         
         if ($this->feedGroup === NULL) {
-            if ($this->getArg('group')) {
-                $this->feedGroup = $this->getArg('group');
+            if ($feedGroup = $this->getArg(array('feedgroup', 'group'), NULL)) {
+                $this->feedGroup = $feedGroup;
             } elseif ($this->numGroups === 1) {
                 $this->feedGroup = key($this->feedGroups);
             }
@@ -515,8 +524,7 @@ class MapAPIModule extends APIModule
                         1000, 10);
 
                 } else {
-                    $searchTerms = $this->getArg('q');
-                    if ($searchTerms) {
+                    if ($searchTerms = $this->getArg(array('filter', 'q'))) {
                         $searchResults = $mapSearch->searchCampusMap($searchTerms);
                     }
                 }

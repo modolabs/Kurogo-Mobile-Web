@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
 define('KUROGO_VERSION', '1.4.1');
 
@@ -295,6 +304,10 @@ class Kurogo
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
 
+    public static function isLocalhost() {
+        return isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'));
+    }
+
     private static function checkIP($ip) {
         if (!empty($ip) && ip2long($ip)!=-1 && ip2long($ip)!=false) {
             $private_ips = array (
@@ -584,6 +597,8 @@ class Kurogo
         // everything after this point only applies to http requests
         //
         if (PHP_SAPI == 'cli') {
+        	define('IS_SECURE', false);
+        	define('FULL_URL_BASE','');
             return;
         }
 
@@ -794,6 +809,7 @@ class Kurogo
         define('SITE_APP_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'app');
         define('SITE_MODULES_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'modules');
         define('DATA_DIR',             SITE_DIR . DIRECTORY_SEPARATOR . 'data');
+        define('WEB_BRIDGE_DIR',       SITE_DIR . DIRECTORY_SEPARATOR . KurogoWebBridge::getAssetsDir());
         define('CACHE_DIR',            SITE_DIR . DIRECTORY_SEPARATOR . 'cache');
         define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
         define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');
@@ -1092,6 +1108,26 @@ class Kurogo
         return Kurogo::sharedInstance()->localizedString($key, $opts);
     }
 
+    public function localizedStrings() {
+        $strings = array();
+    
+        $languages = $this->getLanguages();
+        foreach ($languages as $language) {
+            $langStrings = $this->getStringsForLanguage($language);
+            foreach ($langStrings as $key => $value) {
+                if (!isset($strings[$key])) {
+                    $strings[$key] = $value;
+                }
+            }
+        }
+        
+        return $strings;
+    }
+    
+    public static function getLocalizedStrings() {
+        return Kurogo::sharedInstance()->localizedStrings();
+    }
+    
     public function checkCurrentVersion() {
         $url = "http://kurogo.org/checkversion.php?" . http_build_query(array(
             'version'=>KUROGO_VERSION,
@@ -1106,7 +1142,7 @@ class Kurogo
 
     # Implmentation taken from https://gist.github.com/1407308
     public static function rmdir($path) {
-        if(is_dir($path)){
+        if (is_dir($path)){
             foreach (scandir($path) as $name){
                 if (in_array($name, array('.', '..'))){
                     continue;
@@ -1114,10 +1150,10 @@ class Kurogo
                 $subpath = $path.DIRECTORY_SEPARATOR.$name;
                 Kurogo::rmdir($subpath);
             }
-            rmdir($path);
-        }else{
-            if(file_exists($path)){
-                unlink($path);
+            return rmdir($path);
+        } else {
+            if (file_exists($path)){
+                return unlink($path);
             }
         }
     }
@@ -1163,7 +1199,7 @@ class Kurogo
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
                 $result = self::rmdir(CACHE_DIR . "/" . $dir);
-                if ($result !==0) {
+                if (!$result) {
                     return $result;
                 }
             }
@@ -1199,6 +1235,14 @@ class Kurogo
     public static function redirectToURL($url, $code=self::REDIRECT_TEMPORARY) {
         header("Location: $url", true, $code);
         exit();
+    }
+
+    public static function getPagetype(){
+        return Kurogo::deviceClassifier()->getPagetype();
+    }
+
+    public static function getPlatform(){
+        return Kurogo::deviceClassifier()->getPlatform();
     }
 }
 
