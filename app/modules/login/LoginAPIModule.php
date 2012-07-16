@@ -13,9 +13,9 @@ class LoginAPIModule extends APIModule
 {
     protected $id = 'login';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
     public function availableVersions() {
-        return array(1);
+        return array(1,2);
     }
 
     protected function getAccessControlLists($type) {
@@ -65,22 +65,39 @@ class LoginAPIModule extends APIModule
                 
            case 'session':
                 $session = $this->getSession();
-                $user = $this->getUser();
-                
-                $response = array(
-                    'session_id'=>$session->getSessionID(),
-                    'token'=>$session->getLoginToken(),
-                    'user'=>array(
-                        'authority'=>$user->getAuthenticationAuthorityIndex(),
-                        'userID'=>$user->getUserID(),
-                        'name'=>$user->getFullName(),
-                        'sessiondata'=>$user->getSessionData()
-                    )
-                        
-                );
+				$response = array(
+					'session_id'=>$session->getSessionID(),
+					'token'=>$session->getLoginToken(),
+				);
+				
+				// version 2 implements multiple identities into the response
+                if ($this->requestedVersion == 2) {
+                	$response['users'] = array();
+                	$users = $session->getUsers();
+                	foreach ($users as $user) {
+                		$authority = $user->getAuthenticationAuthority();
+                		$response['users'][$authority->getAuthorityIndex()] = array(
+							'authority'=>$authority->getAuthorityIndex(),
+							'authorityTitle'=>$authority->getAuthorityTitle(),
+							'userID'=>$user->getUserID(),
+							'name'=>$user->getFullName(),
+							'sessiondata'=>$user->getSessionData()
+                		);
+                	}
+					$this->setResponseVersion(2);
+                } else {
+					// version 1 assumes only 1 user
+					$user = $this->getUser();
+					$response['user'] = array(
+						'authority'=>$user->getAuthenticationAuthorityIndex(),
+						'userID'=>$user->getUserID(),
+						'name'=>$user->getFullName(),
+						'sessiondata'=>$user->getSessionData()
+					);
+					$this->setResponseVersion(1);
+				}
 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
                 break;
                 
             default:

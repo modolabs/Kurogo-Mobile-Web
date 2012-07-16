@@ -17,7 +17,14 @@ class PicasaRetriever extends URLDataRetriever {
                 
         $this->setBaseURL($url);
         $this->addFilter('kind', 'photo');
-        $this->addFilter('thumbsize', '72c');
+        switch (Kurogo::getPagetype()) {
+            case 'tablet':
+                $this->addFilter('thumbsize', '150c');
+                break;
+            default:
+                $this->addFilter('thumbsize', '72c');
+                break;
+        }
         $this->addFilter('alt', 'json');
     }
 

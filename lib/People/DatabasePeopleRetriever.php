@@ -17,6 +17,8 @@
   * @package People
   */
 class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRetriever {
+    const MIN_NAME_SEARCH = 3;
+    
     protected $DEFAULT_PARSER_CLASS = 'DatabasePeopleParser';
     protected $table;
     protected $fieldMap=array();
@@ -67,6 +69,9 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
         } elseif ($this->getField('phone') && preg_match('/^[0-9]+/', $searchString)) { //partial phone number
             $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('phone'));
             $parameters = array($searchString.'%');
+        } elseif (strlen(trim($searchString)) < self::MIN_NAME_SEARCH) {
+            $sql = sprintf("SELECT %s FROM %s WHERE %s = ? OR %s = ?", '*', $this->table, $this->getField('firstname'), $this->getField('lastname'));
+            $parameters = array($searchString, $searchString);
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
 
             $names = preg_split("/\s+/", $searchString);

@@ -9,9 +9,6 @@ early generation smart phones, to modern devices and tablets. The mobile web com
 as a web based application served using PHP. This application is hosted on a web server and users 
 access it using the web browser on their mobile device.
  
-It is available under a liberal open source MIT license. This means you are free to download, install,
-copy, modify and use the software as you see fit. 
-
 =======
 Modules
 =======

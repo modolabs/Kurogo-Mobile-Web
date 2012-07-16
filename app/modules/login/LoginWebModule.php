@@ -174,7 +174,6 @@ class LoginWebModule extends WebModule {
                 
                 $this->assign('url', $this->buildURL('logout', array('authority'=>$authorityIndex)));
                 $this->assign('linkText', $this->getLocalizedString('SIGN_OUT'));
-                $this->setTemplatePage('message');
             } else {
                 //This honestly should never happen
                 $this->redirectTo('index');
@@ -206,12 +205,16 @@ class LoginWebModule extends WebModule {
                 //if they are still logged in return to the login page, otherwise go home.
                 if ($this->isLoggedIn()) {
                     $this->redirectTo('index', array('logout'=>$authorityIndex));
+                } elseif ($this->nativeApp) {
+                	$this->assign('message', $this->getLocalizedString("LOGOUT_SUCCESSFUL"));
+//					$this->assign('buttonURL', $this->buildURL('logoutComplete'));
+//					$this->assign('buttonTitle', $this->getLocalizedString('LOGOUT_DISMISS'));
+					$this->assign('redirectURL', $this->buildURL('logoutComplete', array(), false));
                 } else {
                     $this->redirectToModule($this->getHomeModuleID(),'',array('logout'=>$authorityIndex));
                 }
             } else {
                 //there was an error logging out
-                $this->setTemplatePage('message');
                 $this->assign('message', $this->getLocalizedString("ERROR_SIGN_OUT"));
             }
         
@@ -281,7 +284,14 @@ class LoginWebModule extends WebModule {
                     $user = $this->getUser($authority);
                     $this->setLogData($user, $user->getFullName());
                     $this->logView();
-                    if ($urlArray) {
+                    if ($this->nativeApp) {
+                    	$this->assign('showMessage', true);
+						$this->assign('message', $this->getLocalizedString("LOGIN_SUCCESSFUL"));
+//						$this->assign('buttonURL', $this->buildURL('loginComplete'));
+//						$this->assign('buttonTitle', $this->getLocalizedString('LOGIN_DISMISS'));
+						$this->assign('redirectURL', $this->buildURL('loginComplete', array(), false));
+						break 2;
+                    } elseif ($urlArray) {
                         self::redirectToArray($urlArray);
                     } else {
                         $this->redirectToModule($this->getHomeModuleID(),'',array('login'=>$authorityIndex));

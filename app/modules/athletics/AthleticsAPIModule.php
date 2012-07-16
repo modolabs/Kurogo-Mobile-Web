@@ -34,13 +34,20 @@ class AthleticsAPIModule extends APIModule
         switch ($this->command) {
             case 'genders':
                 $genders = array();
+                $response = array();
                 foreach($this->feeds as $feed) {
                     $gender = $feed['GENDER'];
-                    if(array_key_exists($gender, $this->navFeeds)) {
-                        $genders[$gender] = $this->navFeeds[$gender]['TITLE'];
+                    if (array_key_exists($gender, $this->navFeeds)) {
+                    	if (!in_array($gender, $genders)) {
+							$genders[] = $gender;
+							$response[] = array(
+								'key'=>$gender,
+								'title'=>$this->navFeeds[$gender]['TITLE']
+							);
+						}
                     }
                 }
-                $this->setResponse($genders);
+                $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
             case 'sports':
