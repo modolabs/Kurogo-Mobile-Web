@@ -29,6 +29,7 @@
             "section":{"labelKey":"ATHLETICS_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
             "TITLE":{"labelKey":"ATHLETICS_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"ATHLETICS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
             "GENDER":{"labelKey":"ATHLETICS_ADMIN_FEEDS_GENDER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_GENDER_DESCRIPTION", "type":"select","optionsMethod":"getGenders","optionsFirst":"--"},
+            "ICON":{"labelKey":"ATHLETICS_ADMIN_FEEDS_ICON_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_ICON_DESCRIPTION", "type":"text","omitBlankValue":true},
             "BASE_URL":{"labelKey":"ATHLETICS_ADMIN_FEEDS_URL_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_URL_DESCRIPTION", "type":"text","omitBlankValue":true},
             "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_FEEDS_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true},
             "FETCH_CONTENT":{"labelKey":"ATHLETICS_ADMIN_FEEDS_FETCH_CONTENT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_FETCH_CONTENT_DESCRIPTION", "type":"checkbox","fieldgroup":"advanced"},
