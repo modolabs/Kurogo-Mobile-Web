@@ -324,7 +324,7 @@ class KurogoStats {
                                     site char(32),
                                     visitCount int(11)
                                 )";
-                $createSQL[] = "CREATE INDEX key_service_summary_visists ON $visitsTable (service)";
+                $createSQL[] = "CREATE INDEX key_service_summary_visits ON $visitsTable (service)";
                 $createSQL[] = "CREATE INDEX key_timestamp_summary_visits ON $visitsTable (timestamp)";
                 break;
             default:
