@@ -8,12 +8,25 @@
         },
         "fields":{
             "BOOKMARKS_ENABLED":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
-            "TOPNEWS_FEED":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_DESCRIPTION", "type":"text","omitBlankValue":true,"config":"page-index","section":"topnews"},
             "FETCH_CONTENT":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_FETCH_CONTENT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_FETCH_CONTENT_DESCRIPTION","config":"module","section":"feeds","type":"checkbox","fieldgroup":"advanced"},
             "THUMB_MAX_WIDTH":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_WIDTH_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_WIDTH_DESCRIPTION","config":"module","section":"feeds","type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
             "THUMB_MAX_HEIGHT":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_HEIGHT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_HEIGHT_DESCRIPTION","config":"module","section":"feeds","type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
             "THUMB_CROP":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_CROP_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_CROP_DESCRIPTION","config":"module","section":"feeds","type":"checkbox","fieldgroup":"advanced"},
             "THUMB_BACKGROUND_RGB":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_BACKGROUND_RGB_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_BACKGROUND_RGB_DESCRIPTION","config":"module","section":"feeds","type":"text","omitBlankValue":true,"fieldgroup":"advanced"}
+       }
+    },
+    "page-index": {
+        "titleKey":"ATHLETICS_ADMIN_PAGE_INDEX_TITLE",
+        "descriptionKey":"ATHLETICS_ADMIN_PAGE_INDEX_DESCRIPTION",
+        "sectiontype":"fields",
+        "fields":{
+            "TOPNEWS_FEED":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_DESCRIPTION", "type":"text","omitBlankValue":true,"config":"page-index","section":"topnews"},
+            "FETCH_CONTENT":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_FETCH_CONTENT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_FETCH_CONTENT_DESCRIPTION","config":"module","section":"topnews","type":"checkbox","omitBlankValue":true},
+            "LIMIT":{"labelKey":"ATHLETICS_ADMIN_PAGE_INDEX_LIMIT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_PAGE_INDEX_LIMIT_DESCRIPTION","config":"page-index","section":"topnews","type":"text","omitBlankValue":true},
+            "THUMB_MAX_WIDTH":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_WIDTH_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_WIDTH_DESCRIPTION","config":"page-index","section":"topnews","type":"text","omitBlankValue":true},
+            "THUMB_MAX_HEIGHT":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_HEIGHT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_HEIGHT_DESCRIPTION","config":"page-index","section":"topnews","type":"text","omitBlankValue":true},
+            "THUMB_CROP":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_CROP_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_CROP_DESCRIPTION","config":"page-index","section":"topnews","type":"checkbox","omitBlankValue":true},
+            "THUMB_BACKGROUND_RGB":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_BACKGROUND_RGB_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_BACKGROUND_RGB_DESCRIPTION","config":"page-index","section":"topnews","type":"text","omitBlankValue":true}
        }
     },
     "feeds": {
