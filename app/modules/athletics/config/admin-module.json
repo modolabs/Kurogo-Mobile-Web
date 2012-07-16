@@ -3,9 +3,16 @@
         "titleKey":"ATHLETICS_ADMIN_OPTIONS_TITLE",
         "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
+        "fieldgroups":{
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_ADVANCED_DESCRIPTION"}
+        },
         "fields":{
             "BOOKMARKS_ENABLED":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
-            "TOPNEWS_FEED":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_DESCRIPTION", "type":"text","omitBlankValue":true,"config":"page-index","section":"topnews"}
+            "TOPNEWS_FEED":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_DESCRIPTION", "type":"text","omitBlankValue":true,"config":"page-index","section":"topnews"},
+            "THUMB_MAX_WIDTH":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_WIDTH_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_WIDTH_DESCRIPTION","config":"module","section":"feeds","type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_MAX_HEIGHT":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_HEIGHT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_MAX_HEIGHT_DESCRIPTION","config":"module","section":"feeds","type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_CROP":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_CROP_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_CROP_DESCRIPTION","config":"module","section":"feeds","type":"checkbox","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_BACKGROUND_RGB":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_BACKGROUND_RGB_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_THUMB_BACKGROUND_RGB_DESCRIPTION","config":"module","section":"feeds","type":"text","omitBlankValue":true,"fieldgroup":"advanced"}
        }
     },
     "feeds": {
@@ -14,12 +21,19 @@
         "config":"feeds",
         "sectiontype":"section",
         "sectiontitlefield":"GENDER_TITLE",
+        "fieldgroups":{
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"ATHLETICS_ADMIN_FEEDS_ADVANCED_DESCRIPTION"}
+        },
         "fields":{
             "section":{"labelKey":"ATHLETICS_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
             "TITLE":{"labelKey":"ATHLETICS_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"ATHLETICS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
             "GENDER":{"labelKey":"ATHLETICS_ADMIN_FEEDS_GENDER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_GENDER_DESCRIPTION", "type":"select","optionsMethod":"getGenders","optionsFirst":"--"},
             "BASE_URL":{"labelKey":"ATHLETICS_ADMIN_FEEDS_URL_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_URL_DESCRIPTION", "type":"text","omitBlankValue":true},
-            "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_FEEDS_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true}
+            "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_FEEDS_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true},
+            "THUMB_MAX_WIDTH":{"labelKey":"ATHLETICS_ADMIN_FEEDS_THUMB_MAX_WIDTH_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_THUMB_MAX_WIDTH_DESCRIPTION", "type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_MAX_HEIGHT":{"labelKey":"ATHLETICS_ADMIN_FEEDS_THUMB_MAX_HEIGHT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_THUMB_MAX_HEIGHT_DESCRIPTION", "type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_CROP":{"labelKey":"ATHLETICS_ADMIN_FEEDS_THUMB_CROP_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_THUMB_CROP_DESCRIPTION", "type":"checkbox","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_BACKGROUND_RGB":{"labelKey":"ATHLETICS_ADMIN_FEEDS_THUMB_BACKGROUND_RGB_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_THUMB_BACKGROUND_RGB_DESCRIPTION", "type":"text","omitBlankValue":true,"fieldgroup":"advanced"}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",
