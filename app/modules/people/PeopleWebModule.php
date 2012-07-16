@@ -100,7 +100,7 @@ class PeopleWebModule extends WebModule {
             case 'imgdata':
                 $detail['title'] = "";
                 $detail['class'] = 'img';
-                $detail['img'] = $this->buildURL('photo', array('uid'=>$person->getID()));
+                $detail['img'] = $this->buildURL('photo', array('id'=>$person->getID()));
                 break;
 
             case 'imgurl':
@@ -235,7 +235,7 @@ class PeopleWebModule extends WebModule {
         return array(
             'title'=>$this->htmlEncodeString($person->getName()),
             'url'  =>$this->buildBreadcrumbURL('detail', array(
-                                            'uid'    => $person->getId(),
+                                            'id'    => $person->getId(),
                                             'filter' => $options['filter']
                     ))
         );
@@ -376,7 +376,7 @@ class PeopleWebModule extends WebModule {
                                 $person = $people[0];
                                 $this->logView();
                                 $this->redirectTo('detail', array(
-                                    'uid'=>$person->getId(),
+                                    'id'=>$person->getId(),
                                     'total'=>1,
                                     'filter'=>$filter
                                     )
