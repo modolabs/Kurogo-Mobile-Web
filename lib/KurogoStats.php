@@ -90,7 +90,7 @@ class KurogoStats {
     private static function getStatsTable($time = 0) {
         $time = $time > 0 ? $time : time();
         $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
-        $tableName = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+        $tableName = self::getStatsTablePrefix();
         
         if (!$tableSharding) {
             return $tableName;
@@ -135,7 +135,7 @@ class KurogoStats {
 
     private static function getStatsTablesForUpdating($startTimestamp) {
         $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
-        $tableName = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+        $tableName = self::getStatsTablePrefix();
 
         $statsTables = array();
 
@@ -177,9 +177,13 @@ class KurogoStats {
         }
     }
     
+    private static function getStatsTablePrefix() {
+        return Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+    }
+    
     private static function getStatsTables($chartData) {
         $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
-        $tableName = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+        $tableName = self::getStatsTablePrefix();
         $summaryTable = Kurogo::getOptionalSiteVar("KUROGO_STATS_SUMMARY_TABLE", "kurogo_stats_module_v1");
 
         if (!$tableSharding) {
@@ -774,20 +778,25 @@ class KurogoStats {
                 size int(11),
                 elapsed int(11)
             )";
+
+        $prefix = self::getStatsTablePrefix();
+        $indexSuffix = '';
+		if (preg_match("/^($prefix)(_.+)/", $table, $bits)) {
+			$indexSuffix = $bits[2];
+		}
         $createIndex = array(
-            "CREATE INDEX key_service ON $table (service)",
-            "CREATE INDEX key_moduleID ON $table (moduleID)",
-            "CREATE INDEX key_pagetype ON $table (pagetype)",
-            "CREATE INDEX key_platform ON $table (platform)",
-            "CREATE INDEX key_visitID ON $table (visitID)",
-            "CREATE INDEX key_timestamp ON $table (timestamp)",
+            "CREATE INDEX key_service{$indexSuffix} ON $table (service)",
+            "CREATE INDEX key_moduleID{$indexSuffix} ON $table (moduleID)",
+            "CREATE INDEX key_pagetype{$indexSuffix} ON $table (pagetype)",
+            "CREATE INDEX key_platform{$indexSuffix} ON $table (platform)",
+            "CREATE INDEX key_visitID{$indexSuffix} ON $table (visitID)",
+            "CREATE INDEX key_timestamp{$indexSuffix} ON $table (timestamp)",
         );
         array_unshift($createIndex, $createSQL);
         return $createIndex;
     }
     
     private static function createStatsTables($table) {
-        //$table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
         $createSQL = array();
         $conn = self::connection();
         switch($conn->getDBType()) {
@@ -940,7 +949,6 @@ class KurogoStats {
         $result = self::initStatsResult($OptionObject);
         
         // build the query
-        //$table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
         if (!$tables = self::getStatsTables($chartData)) {
             if ($result) {
                 return $result;
