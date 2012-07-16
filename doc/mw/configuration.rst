@@ -180,12 +180,13 @@ Site settings
 * *LOCAL_AREA_CODE* - Set this to your environment's primary area code
 * *AUTODETECT_PHONE_NUMBERS* - Turn this off to prevent the auto detection of telephone numbers in 
   content. This is primarily only supported in iOS devices at this time.
-  
+* *DEFAULT_CHARSET* - Sets the output encoding. Typically set to UTF-8
   
 -------
 Modules
 -------
-
+* *HOME_MODULE* - This value sets which module is the home module. When the user taps the
+  home link button (in the top left corner in the default theme), it will return to this module.
 * *DYNAMIC_MODULE_NAV_DATA*  - This value determines whether
   modules can present dynamic data on the navigation home screen. This could include dynamic titles, 
   images or other information. If you are not providing dynamic data, then you should turn off this
@@ -218,7 +219,7 @@ Analytics
 --------------
 Temp Directory
 --------------
-* *TMP_DIR* - This should be set to your a writable temporary directory. If this entry is blank, it
+* *TMP_DIR* - This should be set to a writable temporary directory. If this entry is blank, it
   will use the system default temporary directory.
 
 ------
@@ -226,8 +227,9 @@ Themes
 ------
 * *ACTIVE_THEME* - This is set to the active theme. It should be a valid folder inside the *SITE_DIR/themes* 
   directory. 
-* *TABLET_ENABLED* - If set to 0 then the tablet devices will receive the compliant page type templates.
-  
+* *TABLET_ENABLED* - If set to 0 then tablet devices will receive the compliant page type templates.
+* *TOUCH_ENABLED* - If set to 0 then touch devices will receive the basic page type templates.
+
 .. _url-rewriting:
 
 ----------------------------------
@@ -318,14 +320,9 @@ contains values common to all modules, as well as module specific values.
 * *search* - Whether or not the module provides search in the federated search feature.
 * *secure* - Whether or not the module requires a secure (https) connection. Configuring secure
   sites is beyond the scope of this document.
+* *robots* - When set to 0, the module will be excluded from search engines by including
+  a *disallow* entry in robots.txt
   
------------------------------
-Permanently disabling modules
------------------------------
-
-When *CREATE_DEFAULT_CONFIG* is set to 0, if you remove a module's config folder it will
-be permanently disabled and will not be accessible. 
-
 -------------------------------
 Optional Common Module Settings
 -------------------------------
@@ -334,11 +331,19 @@ Optional Common Module Settings
   show up on other modules, you can set this value to 1 on any module you wish to see it. You could
   also set this to 0 on the home module to suppress its showing.
   
+-----------------------------
+Permanently disabling modules
+-----------------------------
+
+When *CREATE_DEFAULT_CONFIG* in *site.ini* is set to 0, if you remove a module's config folder it will
+be permanently disabled and will not be accessible. 
+
 ===========
 Home Screen
 ===========
 
 See :doc:`modulehome` for information on configuring the look and layout of the home screen.
+You can also set *HOME_MODULE* equal to a different module.
 
 =======
 Strings
