@@ -597,6 +597,8 @@ class Kurogo
         // everything after this point only applies to http requests
         //
         if (PHP_SAPI == 'cli') {
+        	define('IS_SECURE', false);
+        	define('FULL_URL_BASE','');
             return;
         }
 
@@ -1233,6 +1235,14 @@ class Kurogo
     public static function redirectToURL($url, $code=self::REDIRECT_TEMPORARY) {
         header("Location: $url", true, $code);
         exit();
+    }
+
+    public static function getPagetype(){
+        return Kurogo::deviceClassifier()->getPagetype();
+    }
+
+    public static function getPlatform(){
+        return Kurogo::deviceClassifier()->getPlatform();
     }
 }
 

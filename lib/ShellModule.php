@@ -22,6 +22,11 @@ abstract class ShellModule extends Module {
     const SHELL_LOAD_KUROGO_ERROR=6;
     const SHELL_NO_MODULE=7;
 
+    //always allow access
+    protected function getAccessControlLists($type) {
+        return array(AccessControlList::allAccess());
+    }
+
     protected function setDispatcher(&$dispatcher) {
         $this->dispatcher = $dispatcher;
     }

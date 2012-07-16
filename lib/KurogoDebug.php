@@ -13,8 +13,8 @@ class KurogoDebug
 {
     private static function compactTrace()
     {
-        $bt = debug_backtrace();
-        array_shift($bt);
+        $bt = array_reverse(debug_backtrace());
+        array_pop($bt);
         
         $return = array();
         foreach ($bt as $step=>$trace) {
