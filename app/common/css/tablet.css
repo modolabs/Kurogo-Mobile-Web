@@ -553,7 +553,7 @@ a.module img {
   padding-top: 2px;
 }
 
-.nav span.nolink {
+.nav span.nolink, .results span.nolink {
 	display: block;
 	padding: 8px;
 	margin: -8px;	 
@@ -561,7 +561,11 @@ a.module img {
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
+}
+
+.nav span.nolink {
 	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
 }
 
 .nav a  {
@@ -574,6 +578,7 @@ a.module img {
 	line-height: 1.2em;
 	text-decoration: none;
 	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
 }
 
 .nav li.icon {

@@ -287,13 +287,13 @@ class PeopleAPIModule extends APIModule
             case 'feeds':
                 $feeds = array();
                 foreach ($this->feeds as $key => $feedData) {
-                    $feeds[$key] = $feedData['TITLE'];
+                    $feeds[] = array(
+                    	'feed'=>$key,
+                    	'title'=>Kurogo::arrayVal($feedData,'TITLE', $feed)
+                    );
                 }
                 
-                $response = array(
-                    'total'   => count($feeds),
-                    'results' => $feeds 
-                );
+                $response = $feeds;
                 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);

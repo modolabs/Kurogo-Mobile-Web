@@ -12,6 +12,8 @@
 {block name="itemLink"}
   {if $item['url']}
     <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget || $item['linkTarget']} target="{if $item['linkTarget']}{$item['linkTarget']}{else}{$linkTarget}{/if}"{/if}>
+  {else}
+    <span class="nolink">
   {/if}
     {if $item['img']}
       <img src="{$item['img']}" alt="{if $item['imgAlt']}{$item['imgAlt']}{/if}"
@@ -34,5 +36,7 @@
     {/if}
   {if $item['url']}
     </a>
+  {else}
+    </span>
   {/if}
 {/block}
