@@ -5,6 +5,7 @@
         "sectiontype":"fields",
         "fields":{
             "BOOKMARKS_ENABLED":{"labelKey":"PEOPLE_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"PEOPLE_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "CONTACTS_SUBTITLE_NEWLINE":{"labelKey":"PEOPLE_ADMIN_OPTIONS_SUBTITLENEWLINE_TITLE", "descriptionKey":"PEOPLE_ADMIN_OPTIONS_SUBTITLENEWLINE_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":0},
             "SEARCH_TIP":{"labelKey":"PEOPLE_ADMIN_OPTIONS_SEARCHTIP_TITLE","type":"textarea","rows":2,"config":"module","section":"strings","descriptionKey":"PEOPLE_ADMIN_OPTIONS_SEARCHTIP_DESCRIPTION"}
        }
     },
