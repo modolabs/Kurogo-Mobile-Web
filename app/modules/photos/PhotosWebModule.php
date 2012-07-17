@@ -75,20 +75,19 @@ class PhotosWebModule extends WebModule {
                     $this->redirectTo('album', array('id' => $albumId), true);
                     exit;
                 }
-            	$photos = array();
+            	$albums = array();
             	foreach($this->feeds as $feed){
                     $controller = $this->getFeed($feed['INDEX']);
                     if ($defaultPhoto = $controller->getDefaultPhoto()) {
-                        $photo['title'] = $controller->getTitle();
-                        $photo['type'] = $defaultPhoto->getType();
-                        $photo['albumcount'] = $this->getLocalizedString('PHOTOS_ALBUMCOUNT',$controller->getAlbumSize());
-                        // use base64_encode to make sure it will not be blocked by GFW
-                        $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
-                        $photo['img'] = $defaultPhoto->getThumbnailUrl($this->pagetype);
-                        $photos[] = $photo;
+                        $album['title'] = $controller->getTitle();
+                        $album['type'] = $defaultPhoto->getType();
+                        $album['albumcount'] = $this->getLocalizedString('PHOTOS_ALBUMCOUNT',$controller->getAlbumSize());
+                        $album['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
+                        $album['img'] = $defaultPhoto->getThumbnailUrl($this->pagetype);
+                        $albums[] = $album;
                     }
                 }
-                $this->assign('photos', $photos);
+                $this->assign('albums', $albums);
                 $this->assign('description', $this->getModuleVar('description','strings'));
                 $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
