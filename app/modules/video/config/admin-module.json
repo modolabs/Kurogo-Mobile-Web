@@ -5,6 +5,7 @@
         "sectiontype":"fields",
         "fields":{
             "MAX_RESULTS":{"labelKey":"VIDEO_ADMIN_OPTIONS_MAXRESULTS_TITLE","type":"number","config":"module","section":"module","descriptionKey":"VIDEO_ADMIN_OPTIONS_MAXRESULTS_DESCRIPTION"},
+            "MAX_PANE_RESULTS":{"labelKey":"VIDEO_ADMIN_OPTIONS_MAXPANERESULTS_TITLE","type":"number","config":"module","section":"module","descriptionKey":"VIDEO_ADMIN_OPTIONS_MAXPANERESULTS_DESCRIPTION","omitBlankValue":true},
             "SHARING_ENABLED":{"labelKey":"VIDEO_ADMIN_OPTIONS_SHARINGENABLED_TITLE", "descriptionKey":"VIDEO_ADMIN_OPTIONS_SHARINGENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
             "BOOKMARKS_ENABLED":{"labelKey":"VIDEO_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"VIDEO_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1}
        }
