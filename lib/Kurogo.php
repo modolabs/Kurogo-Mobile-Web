@@ -540,6 +540,8 @@ class Kurogo
         define('SHARED_LIB_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'lib');
         define('SHARED_APP_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'app');
         define('SHARED_MODULES_DIR', SHARED_APP_DIR . DIRECTORY_SEPARATOR . 'modules');
+        define('SHARED_DATA_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'data');
+        define('SHARED_CONFIG_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'config');
         define('MIN_FILE_PREFIX',  'file-');
         define('API_URL_PREFIX',   'rest');
 
