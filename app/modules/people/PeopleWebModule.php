@@ -233,7 +233,7 @@ class PeopleWebModule extends WebModule {
     protected function getSearchFeeds() {
         $feeds = array();
         foreach ($this->feeds as $feed => $feedData) {
-            $feeds[$feed] = $feedData['TITLE'];
+            $feeds[$feed] = Kurogo::arrayVal($feedData,'TITLE', $feed);
         }
         return $feeds;
     }

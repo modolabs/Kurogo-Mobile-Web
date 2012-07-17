@@ -289,7 +289,7 @@ class PeopleAPIModule extends APIModule
                 foreach ($this->feeds as $key => $feedData) {
                     $feeds[] = array(
                     	'feed'=>$key,
-                    	'title'=>$feedData['TITLE']
+                    	'title'=>Kurogo::arrayVal($feedData,'TITLE', $feed)
                     );
                 }
                 
