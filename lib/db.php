@@ -129,7 +129,7 @@ class db {
      * Returns an array of sources (tables) in the database. 
      * @return array Array of tablenames in the database
      */
-    public function listSources() {
+    public function getTables() {
         $sql = '';
         switch ($this->dbType) {
             case 'mysql':
@@ -139,7 +139,7 @@ class db {
                 $sql = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;";
                 break;
             default:
-                throw new KurogoException("The mobil framwork don't support the database");
+                throw new KurogoException("db->getTables() not supported for $this->dbType");
         }
         
         $tables = array();

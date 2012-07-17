@@ -123,12 +123,12 @@ class KurogoStats {
         return $time;
     }
     
-    private static function listSources() {
+    private static function getDBTables() {
         static $tables;
         
         if (!$tables) {
             $conn = self::connection();
-            $tables = $conn->listSources();
+            $tables = $conn->getTables();
         }
         return $tables;
     }
@@ -142,7 +142,7 @@ class KurogoStats {
         //parse all tables of databases
         $timeForTables = array();
         //$conn = self::connection();
-        if ($allTables = self::listSources()) {
+        if ($allTables = self::getDBTables()) {
             foreach ($allTables as $key => $table) {
                 if (preg_match('/^'.preg_quote($tableName, '/').'_(.*)$/is', $table, $matches)) {
                     if (isset($matches[1]) && $matches[1]) {
@@ -207,7 +207,7 @@ class KurogoStats {
         //parse all tables of databases
         $timeForTables = array();
         //$conn = self::connection();
-        if ($allTables = self::listSources()) {
+        if ($allTables = self::getDBTables()) {
             foreach ($allTables as $key => $table) {
                 if (preg_match('/^'.preg_quote($tableName, '/').'_(.*)$/is', $table, $matches)) {
                     if (isset($matches[1]) && $matches[1]) {
