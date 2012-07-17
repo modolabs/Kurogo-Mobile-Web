@@ -1,0 +1,22 @@
+{
+    "feeds": {
+        "titleKey":"SOCIAL_ADMIN_FEEDS_TITLE",
+        "descriptionKey":"SOCIAL_ADMIN_FEEDS_DESCRIPTION",
+        "config":"feeds",
+        "sectiontype":"section",
+        "fields":{
+            "TITLE":{"labelKey":"SOCIAL_ADMIN_FEEDS_TITLE_TITLE", "descriptionKey":"SOCIAL_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
+            "ACCOUNT":{"labelKey":"SOCIAL_ADMIN_FEEDS_ACCOUNT_TITLE", "descriptionKey":"SOCIAL_ADMIN_FEEDS_ACCOUNT_DESCRIPTION", "type":"text"},
+            "RETRIEVER_CLASS":{"labelKey":"SOCIAL_ADMIN_FEEDS_RETRIEVER_CLASS_TITLE", "descriptionKey":"SOCIAL_ADMIN_FEEDS_RETRIEVER_CLASS_DESCRIPTION", "type":"select","optionsMethod":["SocialDataModel","getSocialDataRetrievers"],"optionsFirst":"-- Choose a social provider --"},
+            "OAUTH_CONSUMER_KEY":{"labelKey":"SOCIAL_ADMIN_FEEDS_OAUTH_CONSUMER_KEY_TITLE","descriptionKey":"SOCIAL_ADMIN_FEEDS_OAUTH_CONSUMER_KEY_DESCRIPTION","type":"text"},
+            "OAUTH_CONSUMER_SECRET":{"labelKey":"SOCIAL_ADMIN_FEEDS_OAUTH_CONSUMER_SECRET_TITLE","descriptionKey":"SOCIAL_ADMIN_FEEDS_OAUTH_CONSUMER_SECRET_DESCRIPTION","type":"text"}
+        },
+        "sectiontitlefield":"title",
+        "sectionindex":"string",
+        "sectionsmethod":"loadFeedData",
+        "sectionaddnew":true,
+        "sectiondelete":true,
+        "sectionreorder":true
+    }
+    
+}
