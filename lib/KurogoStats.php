@@ -392,7 +392,7 @@ class KurogoStats {
      * export the stats data to the database
      */
     public static function exportStatsData($startTimestamp = null) {
-        $statsLogFile = Kurogo::getSiteVar('KUROGO_STATS_LOG_FILE');
+        $statsLogFile = Kurogo::getOptionalSiteVar('KUROGO_STATS_LOG_FILE', LOG_DIR . "/kurogo_stats_log_v1");
         
         if (!file_exists($statsLogFile)) {
             Kurogo::log(LOG_DEBUG, "the stats log file not exists", 'kurogostats');
@@ -679,7 +679,7 @@ class KurogoStats {
             $user = false;
         }
 
-        $statsLogFile = Kurogo::getSiteVar('KUROGO_STATS_LOG_FILE');
+        $statsLogFile = Kurogo::getOptionalSiteVar('KUROGO_STATS_LOG_FILE', LOG_DIR . "/kurogo_stats_log_v1");
         if (empty($statsLogFile)) {
             //Kurogo::log(LOG_DEBUG, "Stats log file not configured for statistics", 'stats');
             throw new KurogoConfigurationException("Stats log file not configured for statistics. To disable stats, set STATS_ENABLED=0 in site.ini");
