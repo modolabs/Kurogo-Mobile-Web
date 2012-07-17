@@ -6,21 +6,49 @@
         "fields":{
             "MAP_SEARCH_CLASS":{"labelKey":"MAP_ADMIN_OPTIONS_SEARCHCLASS_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_SEARCHCLASS_DESCRIPTION","config":"module","section":"module","type":"text","placeholder":"MapSearch"},
             "DEFAULT_ZOOM_LEVEL":{"labelKey":"MAP_ADMIN_OPTIONS_DEFAULTZOOM_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_DEFAULTZOOM_DESCRIPTION","config":"module","section":"module","type":"text","placeholder":"10"},
-            "BOOKMARKS_ENABLED":{"labelKey":"MAP_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1}
+            "BOOKMARKS_ENABLED":{"labelKey":"MAP_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "GEOCODING_BASE_URL":{"labelKey":"MAP_ADMIN_OPTIONS_GEOCODING_BASEURL_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_GEOCODING_BASEURL_DESCRIPTION","config":"module","section":"module","type":"text","omitBlankValue":false},
+            "GEOCODING_DATA_CONTROLLER_CLASS":{"labelKey":"MAP_ADMIN_OPTIONS_GEOCODING_CONTROLLERCLASS_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_GEOCODING_CONTROLLERCLASS_DESCRIPTION","config":"module","section":"module","type":"text","omitBlankValue":false},
+            "GEOCODING_DATA_PARSER_CLASS":{"labelKey":"MAP_ADMIN_OPTIONS_GEOCODING_PARSERCLASS_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_GEOCODING_PARSERCLASS_DESCRIPTION","config":"module","section":"module","type":"text","omitBlankValue":false}
         }
-    },    
+    },
+    "showoptions": {
+        "titleKey":"MAP_ADMIN_SHOWOPTIONS_TITLE",
+        "descriptionKey":"MAP_ADMIN_SHOWOPTIONS_DESCRIPTION",
+        "sectiontype":"fields",
+        "fields":{
+            "SHOW_LISTVIEW_BY_DEFAULT":{"labelKey":"MAP_ADMIN_SHOWOPTIONS_SHOWLISTVIEW_TITLE", "descriptionKey":"MAP_ADMIN_SHOWOPTIONS_SHOWLISTVIEW_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":0},
+            "MAP_SHOWS_USER_LOCATION":{"labelKey":"MAP_ADMIN_SHOWOPTIONS_SHOWSUSERLOCATION_TITLE", "descriptionKey":"MAP_ADMIN_SHOWOPTIONS_SHOWSUSERLOCATION_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "SHOW_DISTANCES":{"labelKey":"MAP_ADMIN_SHOWOPTIONS_SHOWDISTANCES_TITLE", "descriptionKey":"MAP_ADMIN_SHOWOPTIONS_SHOWDISTANCES_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "SHOW_ALL_CAMPUSES_LINK":{"labelKey":"MAP_ADMIN_SHOWOPTIONS_SHOWALLCAMPUSESLINK_TITLE", "descriptionKey":"MAP_ADMIN_SHOWOPTIONS_SHOWALLCAMPUSESLINK_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "SORT_GROUPS_BY_DISTANCE":{"labelKey":"MAP_ADMIN_SHOWOPTIONS_SORTGROUPSBYDISTANCE_TITLE", "descriptionKey":"MAP_ADMIN_SHOWOPTIONS_SORTGROUPSBYDISTANCE_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "DISTANCE_MEASUREMENT_UNITS":{"labelKey":"MAP_ADMIN_SHOWOPTIONS_DISTANCEMEASUREMENTUNITS_TITLE", "descriptionKey":"MAP_ADMIN_SHOWOPTIONS_DISTANCEMEASUREMENTUNITS_DESCRIPTION","config":"module","section":"module","type":"select","options":{"Imperial":"Imperial","Metric":"Metric"},"optionsFirst":"--","default":"Metric"},
+            "placemarkLoad":{"labelKey":"MAP_ADMIN_SHOWOPTIONS_PLACEMARKLOAD_TITLE", "descriptionKey":"MAP_ADMIN_SHOWOPTIONS_PLACEMARKLOAD_DESCRIPTION","config":"module","section":"module","type":"text","default":30,"omitBlankValue":true}
+        }
+    },
     "feedgroups": {
         "titleKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_TITLE",
         "descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DESCRIPTION",
         "config":"feedgroups",
         "sectiontype":"section",
         "sectiontitlefield":"title",
+        "fieldgroups":{
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_ADVANCED_DESCRIPTION"}
+        },
         "fields":{
             "section":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_SECTION_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_SECTION_DESCRIPTION", "type":"label"},
             "title":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_TITLE_TITLE", "descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_TITLE_DESCRIPTION", "type":"text"},
             "center":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_CENTER_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_CENTER_DESCRIPTION","type":"text"},
             "address":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_ADDRESS_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_ADDRESS_DESCRIPTION","type":"text"},
-            "description":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DESCRIPTION_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DESCRIPTION_DESCRIPTION","type":"text"}
+            "description":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DESCRIPTION_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DESCRIPTION_DESCRIPTION","type":"text"},
+            "NEARBY_THRESHOLD":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_NEARBYTHRESHOLD_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_NEARBYTHRESHOLD_DESCRIPTION","type":"text","default":"1000","fieldgroup":"advanced"},
+            "NEARBY_ITEMS":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_NEARBYITEMS_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_NEARBYITEMS_DESCRIPTION","type":"text","default":"6","fieldgroup":"advanced"},
+            "DEFAULT_ZOOM_LEVEL":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DEFAULTZOOMLEVEL_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DEFAULTZOOMLEVEL_DESCRIPTION","type":"text","default":"16","omitBlankValue":true,"fieldgroup":"advanced"},
+            "MAXIMUM_ZOOM_LEVEL":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_MAXIMUMZOOMLEVEL_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_MAXIMUMZOOMLEVEL_DESCRIPTION","type":"text","default":"20","omitBlankValue":true,"fieldgroup":"advanced"},
+            "STATIC_MAP_CLASS":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_STATICCLASS_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_STATICCLASS_DESCRIPTION","type":"select","optionsMethod":["MapsAdmin","getStaticMapClasses"],"optionsFirst":"-","omitBlankValue":true,"fieldgroup":"advanced"},
+            "STATIC_MAP_BASE_URL":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_STATICCLASSURL_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_STATICCLASSURL_DESCRIPTION","type":"text","default":"","omitBlankValue":true,"fieldgroup":"advanced"},
+            "JS_MAP_CLASS":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_JSCLASS_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_JSCLASS_DESCRIPTION","type":"select","optionsMethod":["MapsAdmin","getDynamicControllerClasses"],"optionsFirst":"-","omitBlankValue":true,"fieldgroup":"advanced"},
+            "DYNAMIC_MAP_BASE_URL":{"labelKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DYNAMICMAPURL_TITLE","descriptionKey":"MAP_ADMIN_OPTIONS_FEEDGROUPS_DYNAMICMAPURL_DESCRIPTION","type":"text","omitBlankValue":true,"fieldgroup":"advanced"}
         },
         "sectionindex":"string",
         "sectionsmethod":"getFeedGroups",
