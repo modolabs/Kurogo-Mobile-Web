@@ -37,14 +37,14 @@ class AthleticsAPIModule extends APIModule
                 $response = array();
                 foreach($this->feeds as $feed) {
                     $gender = $feed['GENDER'];
-                    if (array_key_exists($gender, $this->navFeeds)) {
+                    if($tabData = $this->getNavData($gender)) {
                     	if (!in_array($gender, $genders)) {
-							$genders[] = $gender;
-							$response[] = array(
-								'key'=>$gender,
-								'title'=>$this->navFeeds[$gender]['TITLE']
-							);
-						}
+                            $genders[] = $gender;
+                            $response[] = array(
+                                'key' => $gender,
+                                'title' => $tabData['TITLE']
+                            );
+                        }
                     }
                 }
                 $this->setResponse($response);
@@ -294,7 +294,13 @@ class AthleticsAPIModule extends APIModule
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         
         if (!$data) {
-            $data = array();
+            $vars = $this->getOptionalModuleSection("index", "pages");
+            $key = "tab_" . $tab;
+            if(isset($vars[$key])) {
+                $data['TITLE'] = $vars[$key];
+            }else {
+                throw new KurogoDataException($this->getLocalizedString('ERROR_NAV', $tab));
+            }
         }
         
         return $data;

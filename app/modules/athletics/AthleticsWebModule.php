@@ -258,7 +258,13 @@ class AthleticsWebModule extends WebModule {
     
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         if (!$data) {
-            throw new KurogoDataException($this->getLocalizedString('ERROR_NAV', $tab));
+            $vars = $this->getOptionalModuleSection("index", "pages");
+            $key = "tab_" . $tab;
+            if(isset($vars[$key])) {
+                $data['TITLE'] = $vars[$key];
+            }else {
+                throw new KurogoDataException($this->getLocalizedString('ERROR_NAV', $tab));
+            }
         }
         
         return $data;
