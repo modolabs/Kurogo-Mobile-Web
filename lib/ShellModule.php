@@ -220,18 +220,23 @@ abstract class ShellModule extends Module {
     protected function preFetchAllData() {
     	$time = 0;
     	$controllers = $this->getAllControllers() ;
-		foreach ($controllers as $controller) {
-			$out = "Fetching $this->configModule: " . $controller->getTitle() . ". ";
+		foreach ($controllers as $key=>$controller) {
+			$title = $controller->getTitle() ? $controller->getTitle() : $key;
+			$out = "Fetching $this->configModule: $title. ";
+	        $start = microtime(true);
 			$data = $this->preFetchData($controller, $response);
 			if ($response->getFromCache()) {
-				$out .= "In cache";
+				$out .= "In cache. ";
 			} else {
-				$time += $response->getTimeElapsed();
-				$out .= "Took " . sprintf("%.2f", $response->getTimeElapsed()) . " seconds";
+				$out .= "Fetch took " . sprintf("%.2f", $response->getTimeElapsed()) . " seconds. ";
 			}
+	        $end = microtime(true);
+	        $diff = $end-$start;
+			$time += $diff;
+			$out .= "Total: " . sprintf("%.2f", $end-$start) . " seconds.";
 			$this->out($out);
 		}
-		$this->out(count($controllers) . " feeds took " . sprintf("%.2f", $time) . " seconds");
+		$this->out(count($controllers) . " feeds took " . sprintf("%.2f", $time) . " seconds.");
     }
 }
 
