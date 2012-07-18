@@ -209,7 +209,7 @@ class LoginWebModule extends WebModule {
                 	$this->assign('message', $this->getLocalizedString("LOGOUT_SUCCESSFUL"));
 //					$this->assign('buttonURL', $this->buildURL('logoutComplete'));
 //					$this->assign('buttonTitle', $this->getLocalizedString('LOGOUT_DISMISS'));
-					$this->assign('redirectURL', $this->buildURL('logoutComplete', array(), false));
+					$this->assign('redirectURL', KurogoWebBridge::getInternalLink($this->configModule, 'logoutComplete', array()));
                 } else {
                     $this->redirectToModule($this->getHomeModuleID(),'',array('logout'=>$authorityIndex));
                 }
@@ -287,7 +287,7 @@ class LoginWebModule extends WebModule {
                     if ($this->nativeApp) {
                     	$this->assign('showMessage', true);
 						$this->assign('message', $this->getLocalizedString("LOGIN_SUCCESSFUL"));
-						$this->assign('redirectURL', $this->buildURL('loginComplete', array(), false));
+						$this->assign('redirectURL', KurogoWebBridge::getInternalLink($this->configModule, 'loginComplete', array()));
 						break 2;
                     } elseif ($urlArray) {
                     	KurogoDebug::debug($urlArray, true);
