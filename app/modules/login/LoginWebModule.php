@@ -287,14 +287,13 @@ class LoginWebModule extends WebModule {
                     if ($this->nativeApp) {
                     	$this->assign('showMessage', true);
 						$this->assign('message', $this->getLocalizedString("LOGIN_SUCCESSFUL"));
-//						$this->assign('buttonURL', $this->buildURL('loginComplete'));
-//						$this->assign('buttonTitle', $this->getLocalizedString('LOGIN_DISMISS'));
 						$this->assign('redirectURL', $this->buildURL('loginComplete', array(), false));
 						break 2;
                     } elseif ($urlArray) {
-                        self::redirectToArray($urlArray);
+                    	KurogoDebug::debug($urlArray, true);
+                        $this->redirectToArray($urlArray, Kurogo::REDIRECT_SEE_OTHER);
                     } else {
-                        $this->redirectToModule($this->getHomeModuleID(),'',array('login'=>$authorityIndex));
+                        $this->redirectToModule($this->getHomeModuleID(),'',array('login'=>$authorityIndex), Kurogo::REDIRECT_SEE_OTHER);
                     }
                     break;
 
@@ -331,7 +330,7 @@ class LoginWebModule extends WebModule {
             
                 //if the url is set then redirect
                 if ($urlArray) {
-                    self::redirectToArray($urlArray);
+                    $this->redirectToArray($urlArray);
                 }
 
                 //if there is only 1 authority then redirect to logout confirm

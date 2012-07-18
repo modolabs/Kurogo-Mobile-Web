@@ -429,15 +429,15 @@ abstract class WebModule extends Module {
     return $url;
   }
 
-  protected function redirectToArray($params) {
+  protected function redirectToArray($params, $type=Kurogo::REDIRECT_TEMPORARY) {
         $id = isset($params['id']) ? $params['id'] : '';
         $page = isset($params['page']) ? $params['page'] : '';
         $args = isset($params['args']) ? $params['args'] : array();
         
         if ($id) {
-            self::redirectToModule($id, $page, $args);
+            self::redirectToModule($id, $page, $args, $type);
         } elseif ($page) {
-            self::redirectTo($page, $args);
+            self::redirectTo($page, $args, false, $type);
         }
         
         return false;
