@@ -73,7 +73,7 @@ class AthleticsShellModule extends ShellModule {
         
         $controllers[] = $this->getNewsFeed('topnews');
         
-        foreach (array('men', 'women') as $gender) {
+        foreach (array('men', 'women', 'coed') as $gender) {
             if ($sportsConfig = $this->getSportsForGender($gender)) {
                 foreach ($sportsConfig as $key => $sportData) {
                     if ($newsFeed = $this->getNewsFeed($key)) {

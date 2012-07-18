@@ -1271,12 +1271,6 @@ class Kurogo
     }
 }
 
-interface KurogoObject
-{
-    public function getID();
-    public function filterItem($filters);
-}
-
 /* retained for compatibility */
 function includePackage($packageName, $subpackageName=null) {
     Kurogo::includePackage($packageName, $subpackageName);

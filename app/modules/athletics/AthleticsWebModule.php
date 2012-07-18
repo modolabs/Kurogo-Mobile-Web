@@ -256,13 +256,20 @@ class AthleticsWebModule extends WebModule {
     
     protected function getNavData($tab) {
     
+    	//use the data in page-index first
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         if (!$data) {
-            throw new KurogoDataException($this->getLocalizedString('ERROR_NAV', $tab));
+        	//use the data in pages tab_ 
+            $vars = $this->getOptionalModuleSection("index", "pages");
+            $key = "tab_" . $tab;
+            if (isset($vars[$key])) {
+                $data = array('TITLE' => $vars[$key]);
+            } else {
+            	//no data for this type
+                $data = null;
+            }
         }
-        
         return $data;
-        
     }
 
     protected function getScheduleFeed($sport) {
@@ -680,23 +687,25 @@ class AthleticsWebModule extends WebModule {
                 //get sports for each gender
                 foreach (array('men','women','coed') as $gender) {
                     $sportsData = $this->getNavData($gender);
-                    if ($sportsConfig = $this->getSportsForGender($gender)) {
-                        $sports = array();
-                        foreach ($sportsConfig as $key => $sportData) {
-                            $image = "modules/{$this->configModule}/images/".
-                              (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])).
-                              $this->imageExt;
-                            $sport = array(
-                                'title' =>$sportData['TITLE'],
-                                'img'   =>$image,
-                                'url'   =>$this->buildURL('sport', array('sport' => $key))
-                            );
-                            $sports[] = $sport;
+                    if($sportsData) {
+                        if ($sportsConfig = $this->getSportsForGender($gender)) {
+                            $sports = array();
+                            foreach ($sportsConfig as $key => $sportData) {
+                                $image = "modules/{$this->configModule}/images/".
+                                    (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])).
+                                    $this->imageExt;
+                                $sport = array(
+                                    'title' =>$sportData['TITLE'],
+                                    'img'   =>$image,
+                                    'url'   =>$this->buildURL('sport', array('sport' => $key))
+                                );
+                                $sports[] = $sport;
+                            }
+
+                            $tabs[] = $gender;
+                            $this->assign($gender. 'SportsTitle', $sportsData['TITLE']);
+                            $this->assign($gender.'Sports', $sports);
                         }
-                    
-                        $tabs[] = $gender;
-                        $this->assign($gender. 'SportsTitle', $sportsData['TITLE']);
-                        $this->assign($gender.'Sports', $sports);
                     }
                 }
                 
