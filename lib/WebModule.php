@@ -413,6 +413,14 @@ abstract class WebModule extends Module {
     }
   }
   
+  protected function buildDownloadURL($url) {
+    if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+      return KurogoWebBridge::getDownloadLink($url);
+    } else {
+      return $url;
+    }
+  }
+  
   protected function buildMailToLink($to, $subject, $body) {
     $to = trim($to);
     

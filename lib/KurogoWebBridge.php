@@ -28,6 +28,7 @@ class KurogoWebBridge
     const ASSET_CHECK_PARAMETER = 'webBridgeAssetCheck';
     
     const BRIDGE_URL_INTERNAL_LINK = 'kgobridge://link/';
+    const BRIDGE_URL_EXTERNAL_LINK = 'kgobridge://external/link';
     const BRIDGE_URL_DOWNLOAD_LINK = 'kgobridge://download/';
     
     const FILE_TYPE_HTML       = 'html';
@@ -504,6 +505,17 @@ class KurogoWebBridge
     }
     
     public static function getExternalLink($url) {
+        if (strpos($url, self::BRIDGE_URL_INTERNAL_LINK) === 0) {
+            // Use different scheme for urls which should be external but are in Kurogo
+            // so they don't get rewritten automatically by the TemplateEngine
+            $url = self::BRIDGE_URL_EXTERNAL_LINK.'?'.http_build_query(array(
+                'url' => str_replace(self::BRIDGE_URL_INTERNAL_LINK, FULL_URL_PREFIX, $url),
+            ));
+        }
+        return $url;
+    }
+    
+    public static function getDownloadLink($url) {
         if (strpos($url, self::BRIDGE_URL_INTERNAL_LINK) === 0) {
             // Use different scheme for urls which should be external but are in Kurogo
             // These must always be files to be downloaded -- internal web pages
