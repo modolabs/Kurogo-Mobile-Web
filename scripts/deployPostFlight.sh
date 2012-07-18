@@ -1,5 +1,5 @@
 #!/bin/bash
-# Arguments = -f file -v
+# Arguments = -f file -v -q
 
 usage()
 {
@@ -12,21 +12,31 @@ OPTIONS:
     -h      Show this help message
     -f      File to untar
     -v      Verbose
+    -q      Silent
 EOF
 }
 
 FILE=
+HASFILE=
 VERBOSE=
+QUIET=
 
 # log only if in verbose mode
 function log () {
     if [[ $VERBOSE -eq 1 ]]; then
+        output "$@"
+    fi
+}
+
+# echo only if not in quiet mode
+function output () {
+    if [[ $QUIET -ne 1 ]]; then
         echo "$@"
     fi
 }
 
 # get options
-while getopts “hf:v” OPTION
+while getopts “hf:vq” OPTION
 do
     case $OPTION in
         h)
@@ -35,9 +45,14 @@ do
             ;;
         f)
             FILE=$OPTARG
+            HASFILE=1
             ;;
         v)
             VERBOSE=1
+            ;;
+        q)
+            QUIET=1
+            VERBOSE=0
             ;;
         ?)
             usage
@@ -46,37 +61,59 @@ do
     esac
 done
 
-if [[ -z $FILE ]]; then
-    usage
-    exit 1
-fi
-
 log "Running $0"
 
-if [ ! -f $FILE ]; then
-    log "$FILE: No such file"
-    exit 1
-else
+# If the -f parameter was used
+if [ $HASFILE ]; then
+    # Check if the file is an empty string
+    if [[ -z $FILE ]]; then
+        output "File must not be blank"
+        exit 1
+    fi
+    # Check if the file exists
+    if [ ! -f $FILE ]; then
+        output "$FILE: No such file"
+        exit 1
+    fi
+    
     log "Extracting file $FILE..."
+
+    # Extract the file given by the first arguement
+    # to the root directory, removing the container folder
+    if [[ $QUIET -eq 1 ]]; then
+        tar --strip-components 1 -xf "$FILE" -C ../ > /dev/null 2>&1
+        ERROR=$?
+    else
+        if [[ $VERBOSE -eq 1 ]]; then
+            tar --strip-components 1 -xvf "$FILE" -C ../
+            ERROR=$?
+        else
+            tar --strip-components 1 -xf "$FILE" -C ../
+            ERROR=$?
+        fi
+    fi
+
+    # if tar returned a non-zero error code exit with that code
+    if [[ $ERROR -ne 0 ]]; then
+        exit $ERROR
+    fi
+
+    log "Extraction complete"
 fi
-
-# extract the file given by the first arguement
-# to the root directory, removing the container folder
-tar --strip-components 1 -xf "$FILE" -C ../
-
-# if tar returned a non-zero error code exit with that code
-if [[ $? -ne 0 ]]; then
-    exit $?
-fi
-
-log "Extraction complete"
 
 # run the core deployPostFlight command
-if [[ $VERBOSE -eq 1 ]]; then
-    ../lib/KurogoShell core deployPostFlight -v
+if [[ $QUIET -eq 1 ]]; then
+    ../lib/KurogoShell core deployPostFlight > /dev/null 2>&1
+    ERROR=$?
 else
-    ../lib/KurogoShell core deployPostFlight
+    if [[ $VERBOSE -eq 1 ]]; then
+        ../lib/KurogoShell core deployPostFlight -v
+        ERROR=$?
+    else
+        ../lib/KurogoShell core deployPostFlight
+        ERROR=$?
+    fi
 fi
 
 # return the result of deployPostFlight
-exit $?
+exit $ERROR
