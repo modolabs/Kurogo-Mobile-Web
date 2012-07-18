@@ -263,7 +263,7 @@ class AthleticsWebModule extends WebModule {
             if(isset($vars[$key])) {
                 $data['TITLE'] = $vars[$key];
             }else {
-                throw new KurogoDataException($this->getLocalizedString('ERROR_NAV', $tab));
+                $data = null;
             }
         }
         
@@ -686,23 +686,25 @@ class AthleticsWebModule extends WebModule {
                 //get sports for each gender
                 foreach (array('men','women','coed') as $gender) {
                     $sportsData = $this->getNavData($gender);
-                    if ($sportsConfig = $this->getSportsForGender($gender)) {
-                        $sports = array();
-                        foreach ($sportsConfig as $key => $sportData) {
-                            $image = "modules/{$this->configModule}/images/".
-                              (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])).
-                              $this->imageExt;
-                            $sport = array(
-                                'title' =>$sportData['TITLE'],
-                                'img'   =>$image,
-                                'url'   =>$this->buildURL('sport', array('sport' => $key))
-                            );
-                            $sports[] = $sport;
+                    if($sportsData) {
+                        if ($sportsConfig = $this->getSportsForGender($gender)) {
+                            $sports = array();
+                            foreach ($sportsConfig as $key => $sportData) {
+                                $image = "modules/{$this->configModule}/images/".
+                                    (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])).
+                                    $this->imageExt;
+                                $sport = array(
+                                    'title' =>$sportData['TITLE'],
+                                    'img'   =>$image,
+                                    'url'   =>$this->buildURL('sport', array('sport' => $key))
+                                );
+                                $sports[] = $sport;
+                            }
+
+                            $tabs[] = $gender;
+                            $this->assign($gender. 'SportsTitle', $sportsData['TITLE']);
+                            $this->assign($gender.'Sports', $sports);
                         }
-                    
-                        $tabs[] = $gender;
-                        $this->assign($gender. 'SportsTitle', $sportsData['TITLE']);
-                        $this->assign($gender.'Sports', $sports);
                     }
                 }
                 

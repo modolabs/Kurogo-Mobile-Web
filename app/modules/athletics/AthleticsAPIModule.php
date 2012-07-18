@@ -54,21 +54,24 @@ class AthleticsAPIModule extends APIModule
                 // sports
                 $gender = $this->getArg('gender');
                 
-                $tabData = $this->getNavData($gender);
-                $sportsConfig = $this->getSportsForGender($gender);
-                
-                $sports = array();
-                foreach ($sportsConfig as $key => $sportData) {
-                    $image = FULL_URL_BASE . "modules/{$this->configModule}/images/" .
-                        (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])) .
-                        $this->imageExt;
-                    $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'icon' => $image);
+                if($tabData = $this->getNavData($gender)) {
+                    $sportsConfig = $this->getSportsForGender($gender);
+
+                    $sports = array();
+                    foreach ($sportsConfig as $key => $sportData) {
+                        $image = FULL_URL_BASE . "modules/{$this->configModule}/images/" .
+                            (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])) .
+                            $this->imageExt;
+                        $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'icon' => $image);
+                    }
+
+                    $response = array(
+                        'sports' => $sports,
+                        'sporttitle'    => $tabData['TITLE'],
+                    );
+                }else {
+                    $response = null;
                 }
-                
-                $response = array(
-                    'sports' => $sports,
-                    'sporttitle'    => $tabData['TITLE'],
-                );
                 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
@@ -299,7 +302,7 @@ class AthleticsAPIModule extends APIModule
             if(isset($vars[$key])) {
                 $data['TITLE'] = $vars[$key];
             }else {
-                throw new KurogoDataException($this->getLocalizedString('ERROR_NAV', $tab));
+                $data = null;
             }
         }
         
