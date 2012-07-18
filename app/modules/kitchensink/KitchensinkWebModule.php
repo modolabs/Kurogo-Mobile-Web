@@ -83,6 +83,10 @@ class KitchensinkWebModule extends WebModule {
                         'title' => 'AppQ Dialogs',
                         'url'   => $this->buildBreadcrumbURL('dialogs', array()),
                     );
+                    $links[] = array(
+                        'title' => 'Truncation Form Post',
+                        'url'   => $this->buildBreadcrumbURL('truncate', array()),
+                    );
                 }
                 $this->assign('links', $links);
                 break;
