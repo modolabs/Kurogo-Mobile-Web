@@ -540,6 +540,7 @@ class Kurogo
         define('SHARED_LIB_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'lib');
         define('SHARED_APP_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'app');
         define('SHARED_MODULES_DIR', SHARED_APP_DIR . DIRECTORY_SEPARATOR . 'modules');
+        define('SCRIPTS_DIR',        ROOT_DIR . DIRECTORY_SEPARATOR . 'scripts');
         define('MIN_FILE_PREFIX',  'file-');
         define('API_URL_PREFIX',   'rest');
 
@@ -814,6 +815,7 @@ class Kurogo
         define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
         define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');
         define('SITE_DISABLED_DIR',    SITE_DIR . DIRECTORY_SEPARATOR . 'config_disabled');
+        define('SITE_SCRIPTS_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'scripts');
 
         //load in the site config file (required);
         $config = ConfigFile::factory('site', 'site');

@@ -12,12 +12,19 @@
 class CoreShellModule extends ShellModule
 {
     protected $id = 'core';
+    protected $verbose = 1;
 
     // special factory method for core
     public static function factory($id='core', $command='', $args=array()) {
         $module = new CoreAPIModule();
         $module->init($command, $args);
         return $module;
+    }
+
+    protected function out($string, $newLine = true) {
+        if($this->verbose){
+            parent::out($string, $newLine);
+        }
     }
      
     public function initializeForCommand() {  
@@ -47,6 +54,25 @@ class CoreShellModule extends ShellModule
                 return 0;
                 break;
                 
+            case 'deployPostFlight':
+                $this->verbose = $this->getArg('v');
+                $this->out('Running KurogoShell Core deployPostFlight');
+
+                $postFlightFilePath = SITE_SCRIPTS_DIR . DIRECTORY_SEPARATOR . 'deployPostFlight.sh';
+                if(!file_exists($postFlightFilePath)){
+                    $this->out("$postFlightFilePath does not exist, skipping execution");
+                    return 0;
+                }
+
+                $command = 'sh '.$postFlightFilePath;
+                $outputLines = array();
+                exec($command, $outputLines, $returnValue);
+                foreach ($outputLines as $lineNumber => $line) {
+                    $this->out($line);
+                }
+                return $returnValue;
+                break;
+
             default:
                 $this->invalidCommand();
                 break;
