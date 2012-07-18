@@ -46,7 +46,9 @@
                 onKeyPress="return submitenter(this, event);"/>
               </td>
               <td class="togglefield">
+                {block name="searchCancelButton"}
                 <input type="button" class="toggle-search-button" onclick="return toggleSearch();" value="Cancel" />
+                {/block}
               </td>
             </tr>
           </table>
