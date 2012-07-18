@@ -256,19 +256,20 @@ class AthleticsWebModule extends WebModule {
     
     protected function getNavData($tab) {
     
+    	//use the data in page-index first
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         if (!$data) {
+        	//use the data in pages tab_ 
             $vars = $this->getOptionalModuleSection("index", "pages");
             $key = "tab_" . $tab;
-            if(isset($vars[$key])) {
-                $data['TITLE'] = $vars[$key];
-            }else {
+            if (isset($vars[$key])) {
+                $data = array('TITLE' => $vars[$key]);
+            } else {
+            	//no data for this type
                 $data = null;
             }
         }
-        
         return $data;
-        
     }
 
     protected function getScheduleFeed($sport) {
