@@ -31,6 +31,7 @@ class PeopleWebModule extends WebModule {
     protected $detailAttributes = array();
     protected $encoding = 'UTF-8';
     protected $feeds=array();
+    protected $feed;
     protected $contactGroups = array();
     protected $controllers = array();
     protected $legacyController = true;
@@ -100,7 +101,7 @@ class PeopleWebModule extends WebModule {
             case 'imgdata':
                 $detail['title'] = "";
                 $detail['class'] = 'img';
-                $detail['img'] = $this->buildURL('photo', array('uid'=>$person->getID()));
+                $detail['img'] = $this->buildURL('photo', array('id'=>$person->getID()));
                 break;
 
             case 'imgurl':
@@ -186,7 +187,8 @@ class PeopleWebModule extends WebModule {
     }
     
     public function searchItems($searchTerms, $limit=null, $options=null) {
-        $feed = isset($options['feed']) ? $options['feed'] : 'people';
+        $feed = $this->feed ? $this->feed : $this->getDefaultFeed();
+        //$feed = isset($options['feed']) ? $options['feed'] : 'people';
         $PeopleController = $this->getFeed($feed);
         $people = $PeopleController->search($searchTerms);
         return $people;
@@ -221,7 +223,20 @@ class PeopleWebModule extends WebModule {
         }
     }
 
-  
+    protected function getDefaultFeed() {
+        if ($this->feeds) {
+            return current(array_keys($this->feeds));
+        }
+        return '';
+    }
+    
+    protected function getSearchFeeds() {
+        $feeds = array();
+        foreach ($this->feeds as $feed => $feedData) {
+            $feeds[$feed] = Kurogo::arrayVal($feedData,'TITLE', $feed);
+        }
+        return $feeds;
+    }
     protected function initialize() {
         $this->feeds = $this->loadFeedData();
         $this->detailFields = $this->loadPageConfigFile('detail', 'detailFields');
@@ -235,8 +250,9 @@ class PeopleWebModule extends WebModule {
         return array(
             'title'=>$this->htmlEncodeString($person->getName()),
             'url'  =>$this->buildBreadcrumbURL('detail', array(
-                                            'uid'    => $person->getId(),
-                                            'filter' => $this->getArg('filter')
+                                            'id'    => $person->getId(),
+                                            'filter' => self::argVal($options,'filter'),
+                                            'feed'   => $this->feed
                     ))
         );
     }
@@ -288,19 +304,19 @@ class PeopleWebModule extends WebModule {
         return $contacts;
     }
     
-
     protected function initializeForPage() {
-
-        $PeopleController = $this->getFeed('people');
+        $this->feed = $this->getArg('feed', $this->getDefaultFeed());
+        $PeopleController = $this->getFeed($this->feed);
         
+        $this->assign('selectedFeed', $this->feed);
         if (Kurogo::getSiteVar('MODULE_DEBUG')) {
             $this->addModuleDebugString($PeopleController->debugInfo());
         }
-    
+
         switch ($this->page) {
         
             case 'detail':
-                if ($uid = $this->getArg('uid')) {
+                if ($uid = $this->getArg(array('id', 'uid'))) {
                     $person = $PeopleController->getUser($uid);
           
                     if ($person) {
@@ -337,7 +353,7 @@ class PeopleWebModule extends WebModule {
                 break;
                 
             case 'photo':
-                if ($uid = $this->getArg('uid')) {
+                if ($uid = $this->getArg(array('id', 'uid'))) {
                     if ($person = $PeopleController->getUser($uid)) {
                         if ($data = $person->getPhotoData()) {
                             header("Content-type: ".$person->getPhotoMIMEType());
@@ -352,7 +368,7 @@ class PeopleWebModule extends WebModule {
                 break;
         
             case 'search':
-                if ($filter = $this->getArg('filter')) {
+                if ($filter = $this->getArg(array('filter', 'q'))) {
                     $searchTerms = trim($filter);
           
                     $this->assign('searchTerms', $searchTerms);
@@ -366,7 +382,7 @@ class PeopleWebModule extends WebModule {
                     $people = $this->searchItems($searchTerms);
                     $this->assign('searchError', $PeopleController->getResponseError());
 
-                    if ($people !== false) {
+                    if (count($people) > 0) {
                         $resultCount = count($people);
                         $totalItems = $PeopleController->getTotalItems();
 
@@ -376,9 +392,10 @@ class PeopleWebModule extends WebModule {
                                 $person = $people[0];
                                 $this->logView();
                                 $this->redirectTo('detail', array(
-                                    'uid'=>$person->getId(),
+                                    'id'=>$person->getId(),
                                     'total'=>1,
-                                    'filter'=>$this->getArg('filter')
+                                    'filter'=>$filter,
+                                    'feed'=>$this->feed
                                     )
                                 );
                                 break;
@@ -386,27 +403,28 @@ class PeopleWebModule extends WebModule {
                             default:
                                 $results = array();
                                 
+                                $options = array('filter' => $filter);
                                 foreach ($people as $person) {
-                                    $results[] = $this->linkforItem($person);
+                                    $results[] = $this->linkforItem($person, $options);
                                 }
                                 //error_log(print_r($results, true));
                                 if($totalItems > $resultCount)
                                 {
                                     if($startIndex + $limit <= $totalItems)
                                     {
-                                        $nextLink = $this->buildURL('search', array('filter' => $searchTerms, 'start' => $startIndex + $limit));
+                                        $nextLink = $this->buildURL('search', array('feed' => $this->feed, 'filter' => $searchTerms, 'start' => $startIndex + $limit));
                                         $next = array('title' => $this->getLocalizedString("NEXT_PEOPLE_TEXT", $limit), 'url' => $nextLink, 'class' => 'pagerlink');
                                         array_push($results, $next);
                                     }
                                     if($startIndex > 0)
                                     {
-                                        $prevLink = $this->buildURL('search', array('filter' => $searchTerms, 'start' => $startIndex - $limit));
+                                        $prevLink = $this->buildURL('search', array('feed' => $this->feed, 'filter' => $searchTerms, 'start' => $startIndex - $limit));
                                         $prev = array('title' => $this->getLocalizedString("PREVIOUS_PEOPLE_TEXT", $limit), 'url' => $prevLink, 'class' => 'pagerlink');
                                         array_unshift($results, $prev);
                                     }
                                 }
-                                
-                                $this->assign('resultCount', $this->getFeed('people')->getTotalItems());
+                                $this->assign('feeds', $this->getSearchFeeds());
+                                $this->assign('resultCount', $this->getFeed($this->feed)->getTotalItems());
                                 $this->assign('results', $results);
                                 break;
                         }
@@ -461,6 +479,7 @@ class PeopleWebModule extends WebModule {
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->generateBookmarkLink();
                 }
+                $this->assign('feeds', $this->getSearchFeeds());
                 $this->assign('placeholder', $this->getLocalizedString("SEARCH"));
                 $this->assign('searchTip', $this->getOptionalModuleVar('SEARCH_TIP'));
                 $this->assign('contactsSubTitleNewline', $this->getOptionalModuleVar('CONTACTS_SUBTITLE_NEWLINE', false));

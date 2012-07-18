@@ -12,38 +12,42 @@ class PhotosDataModel extends ItemListDataModel {
     	$this->setStart(0);
     	$this->setLimit(1);
     	$items = $this->items();
-    	//clear cache so calls to subsequent albums don't return 1.
-    	$this->clearInternalCache();
     	return reset($items);
     }
 
-    public function getPhoto($id) {
-        return $this->getItem($id);
+    public function getPhoto($index) {
+        return $this->getPhotoByIndex($index);
     }
     
-    public function getPrevAndNextID($id){
-    	$photos = $this->items();
-    	foreach ($photos as $index =>$photo){
-    		if($photo->getID() == $id){
-    			
-				if($index-1 >= 0){
-					$preId = $photos[$index-1]->getID();
-				}else{
-					$preId = 0;
-				}
-				
-				if($index+1 < count($photos)){
-					$nextId = $photos[$index+1]->getID();
-				}else{
-					$nextId = 0;
-				}
-				return array('prev' => $preId,
-							 'next' => $nextId);
-    		}
-    	}
+    public function getPrevAndNextID($index){
+ 
+        if($index-1 >= 0){
+            $preId = $index-1;
+        }else{
+            $preId = false;
+        }
+
+        if($index+1 < $this->getAlbumSize()){
+            $nextId = $index+1;
+        }else{
+            $nextId = false;
+        }
+        return array('prev' => $preId,
+                     'next' => $nextId);
     }
     public function getAlbumSize() {
-		return count($this->getPhotos());
+        return $this->getTotalItems();
+    }
+
+    public function getPhotoByIndex($index){
+        $offset = $index % $this->getLimit();
+        $start = $index - $offset;
+        $this->setStart($start);
+        $items = $this->items();
+        if(isset($items[$offset])){
+            return $items[$offset];    
+        }
+        return null;
     }
     
     public static function getPhotoDataRetrievers() {

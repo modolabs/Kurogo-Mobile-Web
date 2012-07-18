@@ -31,6 +31,7 @@ class SocialShellModule extends ShellModule {
         
         switch($this->command) {
             case 'fetchAllData':
+                $this->authors = array();
                 $this->preFetchAllData();
                 
                 return 0;
@@ -39,6 +40,16 @@ class SocialShellModule extends ShellModule {
             default:
                 $this->invalidCommand();
                 break;
+        }
+    }
+
+    protected function preFetchData(DataModel $controller, &$response) {
+        $posts = parent::preFetchData($controller, $response);
+        foreach ($posts as $key => $post) {
+            if (is_object($post) && ($author = $post->getAuthor()) && !in_array($author, $this->authors)) {
+                $this->authors[] = $author;
+                $controller->getUser($author);
+            }
         }
     }
 }

@@ -97,7 +97,8 @@ aware of important requirements for development and deployment.
    LDAPAuthentication
    ActiveDirectoryAuthentication
    CASAuthentication
+   ShibbolethAuthentication
+   GoogleAppsAuthentication
+   GoogleAuthentication
    FacebookAuthentication
    TwitterAuthentication
-   GoogleAuthentication
-   GoogleAppsAuthentication

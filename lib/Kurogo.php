@@ -540,6 +540,8 @@ class Kurogo
         define('SHARED_LIB_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'lib');
         define('SHARED_APP_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'app');
         define('SHARED_MODULES_DIR', SHARED_APP_DIR . DIRECTORY_SEPARATOR . 'modules');
+        define('SHARED_DATA_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'data');
+        define('SHARED_CONFIG_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'config');
         define('MIN_FILE_PREFIX',  'file-');
         define('API_URL_PREFIX',   'rest');
 
@@ -597,6 +599,8 @@ class Kurogo
         // everything after this point only applies to http requests
         //
         if (PHP_SAPI == 'cli') {
+        	define('IS_SECURE', false);
+        	define('FULL_URL_BASE','');
             return;
         }
 
@@ -1256,6 +1260,14 @@ class Kurogo
     public static function redirectToURL($url, $code=self::REDIRECT_TEMPORARY) {
         header("Location: $url", true, $code);
         exit();
+    }
+
+    public static function getPagetype(){
+        return Kurogo::deviceClassifier()->getPagetype();
+    }
+
+    public static function getPlatform(){
+        return Kurogo::deviceClassifier()->getPlatform();
     }
 }
 

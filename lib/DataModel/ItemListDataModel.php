@@ -160,11 +160,12 @@ abstract class ItemListDataModel extends DataModel {
      * @return mixed the item or false if it's not there
      */
     public function getItemByIndex($index) {
-        if ($items = $this->items($index,1)) {
-            return current($items); 
-        } else {
-            return false;
+        if ($items = $this->items()) {
+            if(isset($items[$index])){
+                return $items[$index];
+            }
         }
+        return false;
     }
     
     /**

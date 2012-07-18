@@ -255,11 +255,9 @@ class KurogoWebBridge
         $contents = preg_replace(
             array(
               '@(<form\s+[^>]*action=")('.preg_quote(URL_PREFIX).')([^"\.]+)(.php|([^"]*))(")@',
-              '@(<form\s+[^>]*action=")([^"\.]+)(.php|([^"]*))(")@',
             ),
             array(
                 '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$3$5',
-                '$1'.self::BRIDGE_URL_INTERNAL_LINK.$this->module.'/$2$4$5',
             ),
             $contents
         );
@@ -377,9 +375,10 @@ class KurogoWebBridge
         // configMappings are so that keys used by native side are
         // independent of the config keys in the kgoBridge class
         $configMappings = json_encode(array(
-            'KGO_WEB_BRIDGE_CONFIG_URL' => 'urlPrefix',
-            'KGO_WEB_BRIDGE_PAGE_ARGS'  => 'pageArgs',
-            'KGO_WEB_BRIDGE_COOKIES'    => 'cookies',
+            'KGO_WEB_BRIDGE_CONFIG_URL'   => 'urlPrefix',
+            'KGO_WEB_BRIDGE_PAGE_ARGS'    => 'pageArgs',
+            'KGO_WEB_BRIDGE_COOKIES'      => 'cookies',
+            'KGO_WEB_BRIDGE_AJAX_CONTENT' => 'ajaxContent',
         ));
         
         // native bridge variables

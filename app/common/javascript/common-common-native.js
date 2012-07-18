@@ -62,6 +62,7 @@ function redirectToModule(module, page, args) {
             module: "",
             page: "",
             pageArgs: "",
+            ajaxContent: "", // if provided, use instead of ajax request
             timeout: 60,
             cookiePath: "",
             cookies: {},
@@ -70,6 +71,8 @@ function redirectToModule(module, page, args) {
         callbacks : {},
         callbackIdCounter : 0,
         
+        formTargetCounter : 0,
+        
         // This code list is duplicated in iOS and Android code.  
         // Do not change existing codes!
         errorCodes : {
@@ -77,8 +80,11 @@ function redirectToModule(module, page, args) {
             KGOBridgeErrorJSONConvertFailed : 2
         },
         
-        BRIDGE_LINK_PREFIX_INTERNAL : "kgobridge://link/",
-        BRIDGE_LINK_PREFIX_EXTERNAL : "kgobridge://external/link?url=",
+        // These url components are duplicated in iOS and Android code.  
+        // Do not change existing strings!
+        BRIDGE_LINK_INTERNAL : "kgobridge://link/",
+        BRIDGE_LINK_EXTERNAL : "kgobridge://external/link?url=",
+        BRIDGE_FORM_POST_PARAMS : "kgoBridgeFormPost=1",
         
         // ====================================================================
         // Bridge API
@@ -91,6 +97,7 @@ function redirectToModule(module, page, args) {
         initPage: function (params, statusCallback) {
             if (typeof statusCallback == "undefined") { statusCallback = null; }
             
+            // notify native side
             this.nativeAPI("page", "init", params, statusCallback);
         },
         
@@ -450,7 +457,7 @@ function redirectToModule(module, page, args) {
             var lcURL = url.toLowerCase();
             if (lcURL.indexOf("http://") == 0 || lcURL.indexOf("https://") == 0) {
                 // wrap external URLs so that we don't get confused by other iframes
-                url = this.BRIDGE_LINK_PREFIX_EXTERNAL+encodeURIComponent(url);
+                url = this.BRIDGE_LINK_EXTERNAL+encodeURIComponent(url);
             }
             
             if (this.config.events) {
@@ -473,24 +480,124 @@ function redirectToModule(module, page, args) {
         },
         
         ajaxLoad: function () {
-            var pageURL = this.config.urlPrefix + "/" + this.config.module + "/" + this.config.page + "?" + this.config.ajaxArgs;
-            if (this.config.pageArgs.length) {
-                pageURL += "&"+this.config.pageArgs;
-            }
+            var ajaxContainer = document.getElementById("container");
             
-            ajaxContentIntoContainer({
-                url: pageURL, 
-                container: document.getElementById("container"), 
-                timeout: this.config.timeout, 
-                error: this.initPageError
-            });
+            var that = this;
+            var onLoadSuccess = function () {
+                // check for forms with kgobridge links and method="post"
+                var forms = document.getElementsByTagName("form");
+                if (forms) {
+                    for (var i = 0; i < forms.length; i++) {
+                        var action = forms[i].action;
+                        var method = forms[i].method.toLowerCase();
+                    
+                        if (method.toLowerCase() === "post" && (action.indexOf(that.BRIDGE_LINK_INTERNAL) === 0 || 
+                                                                (!that.config.events && 
+                                                                 action.indexOf(that.config.urlPrefix) === 0))) {
+                            that.log("found a form with method POST and action "+action);
+                            
+                            // get the full url
+                            var url = that.bridgeToAjaxLink(action);
+                            
+                            // add special param so native side won't launch external browser
+                            url += (url.indexOf("?") > 0 ? "&" : "?")+that.BRIDGE_FORM_POST_PARAMS;
+                            
+                            var iframeName = "form_bridge_"+that.formTargetCounter;
+                            var iframeId = iframeName+"_iframe";
+                            that.formTargetCounter++;
+                            
+                            // create an iframe to post the form to
+                            var iframe = document.createElement("iframe");
+                            iframe.name = iframeName;
+                            iframe.id = iframeId;
+                            iframe.frameborder = 0;
+                            iframe.width = 0;
+                            iframe.height = 0;
+                            iframe.style.width = "0px";
+                            iframe.style.height = "0px";
+                            
+                            forms[i].action = url;
+                            forms[i].target = iframeName;
+                            forms[i].parentNode.appendChild(iframe);
+                            
+                            var onLoad = function (e) {
+                                if (typeof Android != "undefined") {
+                                    // Android OS registers a function for us to call
+                                    var resultHTML = that.formPostGetResult(iframeId);
+                                    if (resultHTML) {
+                                        try {
+                                            Android.handleFormPostResult(action, resultHTML);
+                                        } catch (e) {
+                                            that.log("Android.handleFormPostResult() java bridge failed");
+                                        }
+                                    }
+                                    
+                                } else {
+                                    // iOS will call formPostGetResult when it gets this event
+                                    var params = {
+                                        "id"  : iframeId,
+                                        "url" : action // original bridge url
+                                    };
+                                    that.nativeAPI("form", "post", params, function (error, params) {
+                                        if (error !== null) {
+                                            that.log("Form post failed with error '"+error+"'");
+                                        }
+                                    });
+                                }
+                            };
+                            if (window.addEventListener) {
+                                iframe.addEventListener("load", onLoad, true);
+                            } else if (window.attachEvent) {
+                                iframe.attachEvent("onload", onLoad);
+                            }
+                        }
+                    }
+                }
+            };
+            
+            if (this.config.ajaxContent.length) {
+                // native side already loaded content for us
+                // this happens on form posts where method="POST"
+                insertContentIntoContainer({
+                    "container" : ajaxContainer,
+                    "html"      : this.htmlEntityDecode(this.config.ajaxContent)
+                });
+                onLoadSuccess();
+                
+            } else {
+                // load content via ajax
+                var pageURL = this.config.urlPrefix + "/" + this.config.module + "/" + this.config.page + "?" + this.config.ajaxArgs;
+                if (this.config.pageArgs.length) {
+                    pageURL += "&" + this.config.pageArgs;
+                }
+                
+                ajaxContentIntoContainer({
+                    url: pageURL, 
+                    container: ajaxContainer, 
+                    timeout: this.config.timeout, 
+                    error: this.initPageError,
+                    success: onLoadSuccess
+                });
+            }
+        },
+        
+        formPostGetResult: function (iframeId) {
+            var iframe = document.getElementById(iframeId);
+            if (iframe) {
+                var frameContent = (iframe.contentDocument || iframe.contentWindow);
+                var postResult = frameContent.documentElement.innerHTML;
+                frameContent.documentElement.innerHTML = "";
+                
+                return this.htmlEntityEncode(postResult);
+            }
+            this.log("Attempt to get form post results from missing iframe '"+contentId+"'");
         },
         
         bridgeToAjaxLink: function (href) {
             // must be able to pass through non-kgobridge links
             var oldhref= href;
-            if (href.indexOf(this.BRIDGE_LINK_PREFIX_INTERNAL) === 0) {
-                href = this.config.urlPrefix + "/" + href.substr(this.BRIDGE_LINK_PREFIX_INTERNAL.length);
+            if (href.indexOf(this.BRIDGE_LINK_INTERNAL) === 0) {
+                href = this.config.urlPrefix + "/" + href.substr(this.BRIDGE_LINK_INTERNAL.length);
                 
                 var anchor = '';
                 var anchorPos = href.indexOf("#");
@@ -509,7 +616,7 @@ function redirectToModule(module, page, args) {
         
         redirectToModule: function (module, page, args) {
             var url = module + "/" + page + _getStringForArgs(args);
-            this.loadURL(this.BRIDGE_LINK_PREFIX_INTERNAL + url);
+            this.loadURL(this.BRIDGE_LINK_INTERNAL + url);
             
             if (!this.config.events) {
                 window.location = "../" + url; // use traditional redirect in emulation mode
@@ -523,6 +630,23 @@ function redirectToModule(module, page, args) {
             } else if (typeof console != "undefined" && typeof console.log != "undefined") {
                 console.log("KGO_LOG: "+message);
             }
+        },
+        
+        // The following functions do enough HTML escaping for script blocks
+        htmlEntityEncode: function (string) {
+            return string.replace(/&/g, '&amp;')
+                         .replace(/>/g, '&gt;')
+                         .replace(/</g, '&lt;')
+                         .replace(/"/g, '&quot;')
+                         .replace(/'/g, '&#39;');
+        },
+        
+        htmlEntityDecode: function (string) {
+            return string.replace(/&#39;/g, "'")
+                         .replace(/&quot;/g, '"')
+                         .replace(/&lt;/g, '<')
+                         .replace(/&gt;/g, '>')
+                         .replace(/&amp;/g, '&');
         }
     };
     

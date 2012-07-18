@@ -36,9 +36,18 @@ class StatsWebModule extends WebModule {
         
         return $interval_types;
     }
-   
+    
+    public function setRefresh($content) {
+    
+        $this->assign('refreshPage', $content);
+    }
+        
 	protected function initializeForPage() {
-	
+        if($this->page == 'updateStats'){
+            KurogoStats::exportStatsData();
+            $this->redirectTo('index');
+        }
+
 	    if (!Kurogo::getOptionalSiteVar('STATS_ENABLED', true)) {
 	        throw new KurogoException($this->getLocalizedString('STATS_DISABLED'));
 	    }
@@ -112,12 +121,24 @@ class StatsWebModule extends WebModule {
         
 		switch ($this->page) {
 			case 'index':
+                // Get last updated time
+                $summaryTable = Kurogo::getOptionalSiteVar('KUROGO_STATS_SUMMARY_TABLE');
+                $this->assign('updateStatsLink', $this->buildURL('updateStats'));
+                if($summaryTable && $date = KurogoStats::getLastTimestampFromSummary()){
+                    $lastUpdated = date("l, F jS Y", strtotime($date));
+                    $this->assign('lastUpdated', $lastUpdated);
+                }
+
 			    //get config
 			    $chartsConfig = $this->getModuleSections('stats-index');
 			        
 			    $charts = array();
 			    foreach ($chartsConfig as $chartIndex=>$chartData) {
-			        $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);
+                    try {
+			            $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);
+                    } catch (KurogoStatsConfigurationException $e) {
+                        $this->redirectTo('statsconfigerror', array('chart' => $chartData['title']));
+                    }
 			    }
 
                 $this->assign('charts', $charts);
@@ -139,11 +160,19 @@ class StatsWebModule extends WebModule {
 			    $charts = array();
 			    $commonData[$group] = $$group;
 			    foreach ($chartsConfig as $chartIndex=>$chartData) {
-			        $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);
+                    try {
+                        $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);    
+                    } catch (KurogoStatsConfigurationException $e) {
+                        $this->redirectTo('statsconfigerror', array('chart' => $chartData['title']));
+                    }
+			        
 			    }
 
                 $this->setPageTitle(sprintf("Stats for %s", $$group));
                 $this->assign('charts', $charts);
+                break;
+            case 'statsconfigerror':
+                $this->assign('chart', $this->getArg('chart'));
                 break;
 		}
 	}
@@ -199,11 +228,11 @@ class StatsWebModule extends WebModule {
         }
 
         if ($chartData['start']) {
-            $kurogoOption->addFilter('timestamp', 'GT', $chartData['start']);
+            $kurogoOption->addFilter('timestamp', 'GTE', $chartData['start']);
         }
 
         if ($chartData['end']) {
-            $kurogoOption->addFilter('timestamp', 'LT', $chartData['end']);
+            $kurogoOption->addFilter('timestamp', 'LTE', $chartData['end']);
         }
 
         if (isset($chartData['sort'])) {
@@ -232,7 +261,7 @@ class StatsWebModule extends WebModule {
             }
         }
 
-        return KurogoStats::retrieveStats($kurogoOption);
+        return KurogoStats::retrieveStats($kurogoOption, $chartData);
 	}
 
     protected function getIntervalTimesForInterval($interval, $data=null) {

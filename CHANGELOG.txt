@@ -1,3 +1,32 @@
+1.5 (Jul XX, 2012)
+* Version 1.5 is released under the Lesser GNU Public License v2.1
+* NEW MODULE : Social. Show feeds from facebook and Twitter
+* Created ShellModule to create modules that run on the command line (UNIX only at this time)
+* Kurogo shell modules have been created that can fetch public feed data in the background. See dev guide for setting up automatic fetching
+* It is possible to change which module is the home module
+* CACHE_LIFETIME is now respected
+* New XML Parser (SimpleXMLDataParser) makes it easier to parse simple XML documents
+* Improved the Calendar Detail page
+* More configurability of Map Module behavior
+* robots.txt file is now dynamic and modules can specify whether they should permit robot scraping
+* Enabled pagination of people results
+* Most module's library files are now included in the module's "lib" folder
+* Add Shibboleth authentication authority (requires a shibboleth SP installed on the Kurogo Server)
+* Tablet Panes are now loaded Asynchronously
+* Improved tablet interface for Photos (issue 57, 58)
+* Added CurlDataRetriever to retrieve data using the cURL library
+* Federated search can be disabled
+* A custom user class can be specified in Authentication configurations eliminating the need to create a custom authority
+* Improved styling of spring board to accomodate devices of various sizes
+* More informative error messages when required PHP extensions are not avaialable
+* Support for Co-Ed sports in Athletics module (issue 56)
+* The people module will perform exact searches for names less than 3 characters (to prevent too many results)
+* ArcGIS data feed results can be sorted
+* KurogoReader now utilizes the URLDataRetriver and therefore respects proxy and other settings
+* Fixes for pagination in Flickr feeds
+* Removed suport for Percent Mobile (service is ending)
+* Proper handling of calendars where the time zone is different than the server time zone (issue 53)
+
 1.4.1 (Apr 27, 2012)
 * Fixed issues with Drupal Contacts
 * Many fixes for maps module

@@ -19,35 +19,15 @@ class CoreShellModule extends ShellModule
         $module->init($command, $args);
         return $module;
     }
- 
-    //always allow access
-    protected function getAccessControlLists($type) {
-        return array(AccessControlList::allAccess());
-    }
-    
+     
     public function initializeForCommand() {  
     
         switch ($this->command) {
-            case 'hello':
-                $allmodules = $this->getAllModules();
-                //$homeModules = $this->getModuleNavigationIDs();
-                foreach ($allmodules as $moduleID=>$module) {
-                    if ($module->isEnabled()) {
-                        $modules[] = array(
-                            'id'        =>$module->getID(),
-                            'tag'       =>$module->getConfigModule(),
-                            'title'     =>$module->getModuleVar('title','module'),
-                            'access'    =>$module->getAccess(AccessControlList::RULE_TYPE_ACCESS),
-                        );
-                    }
-                }
+        	case 'version':
+        		$this->out(KUROGO_VERSION);
+        		return 0;
+        		break;
  
-                $modules = isset($modules) && is_array($modules) ? var_export($modules, true) : '';
-                $this->out($modules);
-                
-                return 0;
-                break;
-            
             case 'clearCaches':
                 $result = Kurogo::sharedInstance()->clearCaches();
                 return 0;
@@ -65,9 +45,6 @@ class CoreShellModule extends ShellModule
 				}
                 
                 return 0;
-                break;
-            case 'classify':
-                return 10;
                 break;
                 
             default:
