@@ -82,7 +82,7 @@ if [ $HASFILE ]; then
     # Extract the file given by the first arguement
     # to the root directory, removing the container folder
     if [[ $QUIET -eq 1 ]]; then
-        tar --strip-components 1 -xf "$FILE" -C ../ > /dev/null 2>&1
+        tar --strip-components 1 -xf "$FILE" -C "$ROOTDIR" > /dev/null 2>&1
         ERROR=$?
     else
         if [[ $VERBOSE -eq 1 ]]; then
@@ -104,7 +104,7 @@ fi
 
 # run the core deployPostFlight command
 if [[ $QUIET -eq 1 ]]; then
-    ../lib/KurogoShell core deployPostFlight > /dev/null 2>&1
+    "$ROOTDIR"/lib/KurogoShell core deployPostFlight > /dev/null 2>&1
     ERROR=$?
 else
     if [[ $VERBOSE -eq 1 ]]; then
