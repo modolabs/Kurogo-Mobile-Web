@@ -16,6 +16,7 @@ OPTIONS:
 EOF
 }
 
+ROOTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 FILE=
 HASFILE=
 VERBOSE=
@@ -107,10 +108,10 @@ if [[ $QUIET -eq 1 ]]; then
     ERROR=$?
 else
     if [[ $VERBOSE -eq 1 ]]; then
-        ../lib/KurogoShell core deployPostFlight -v
+        "$ROOTDIR"/lib/KurogoShell core deployPostFlight -v
         ERROR=$?
     else
-        ../lib/KurogoShell core deployPostFlight
+        "$ROOTDIR"/lib/KurogoShell core deployPostFlight
         ERROR=$?
     fi
 fi
