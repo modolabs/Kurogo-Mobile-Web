@@ -23,6 +23,7 @@
         "sectiontype":"section",
         "fields":{
             "title":{"labelKey":"LINKS_ADMIN_LINKS_TITLE_TITLE", "descriptionKey":"LINKS_ADMIN_LINKS_TITLE_DESCRIPTION", "type":"text"},
+            "subtitle":{"labelKey":"LINKS_ADMIN_LINKS_SUBTITLE_TITLE", "descriptionKey":"LINKS_ADMIN_LINKS_SUBTITLE_DESCRIPTION", "type":"text"},
             "url":{"labelKey":"LINKS_ADMIN_LINKS_URL_TITLE","descriptionKey":"LINKS_ADMIN_LINKS_URL_DESCRIPTION","type":"text"},
             "icon":{"labelKey":"LINKS_ADMIN_LINKS_ICON_TITLE","descriptionKey":"LINKS_ADMIN_LINKS_ICON_DESCRIPTION","type":"text"}
         },

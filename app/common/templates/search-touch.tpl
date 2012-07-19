@@ -3,7 +3,7 @@
 {block name="form"}
   {if !$insideForm}
     <div class="nonfocal" id="searchformcontainer">
-      <form method="get" action="{$searchPage|default:'search'}.php">
+      <form method="get" action="{$searchAction}">
   {/if}
       {if $placeholder}
         <h3>{$placeholder}:</h3>

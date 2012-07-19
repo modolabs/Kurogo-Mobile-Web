@@ -3,9 +3,17 @@
         "titleKey":"ATHLETICS_ADMIN_OPTIONS_TITLE",
         "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
+        "fieldgroups":{
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"ATHLETICS_ADMIN_PAGE_INDEX_ADVANCED_DESCRIPTION"}
+        },
         "fields":{
             "BOOKMARKS_ENABLED":{"labelKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
-            "TOPNEWS_FEED":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_DESCRIPTION", "type":"text","omitBlankValue":true,"config":"page-index","section":"topnews"}
+            "TOPNEWS_FEED":{"key":"BASE_URL","labelKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_TITLE", "descriptionKey":"ATHLETICS_ADMIN_OPTIONS_TOPNEWS_FEED_DESCRIPTION", "type":"text","omitBlankValue":true,"config":"page-index","section":"topnews"},
+            "FETCH_CONTENT":{"labelKey":"ATHLETICS_ADMIN_FETCH_CONTENT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FETCH_CONTENT_DESCRIPTION","config":"page-index","section":"topnews","type":"checkbox","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_MAX_WIDTH":{"labelKey":"ATHLETICS_ADMIN_THUMB_MAX_WIDTH_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_MAX_WIDTH_DESCRIPTION","config":"page-index","section":"topnews","type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_MAX_HEIGHT":{"labelKey":"ATHLETICS_ADMIN_THUMB_MAX_HEIGHT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_MAX_HEIGHT_DESCRIPTION","config":"page-index","section":"topnews","type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_CROP":{"labelKey":"ATHLETICS_ADMIN_THUMB_CROP_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_CROP_DESCRIPTION","config":"page-index","section":"topnews","type":"checkbox","omitBlankValue":true,"fieldgroup":"advanced"},
+            "THUMB_BACKGROUND_RGB":{"labelKey":"ATHLETICS_ADMIN_THUMB_BACKGROUND_RGB_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_BACKGROUND_RGB_DESCRIPTION","config":"page-index","section":"topnews","type":"text","omitBlankValue":true,"fieldgroup":"advanced"}
        }
     },
     "feeds": {
@@ -14,12 +22,21 @@
         "config":"feeds",
         "sectiontype":"section",
         "sectiontitlefield":"GENDER_TITLE",
+        "fieldgroups":{
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"ATHLETICS_ADMIN_FEEDS_ADVANCED_DESCRIPTION"}
+        },
         "fields":{
             "section":{"labelKey":"ATHLETICS_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
             "TITLE":{"labelKey":"ATHLETICS_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"ATHLETICS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
             "GENDER":{"labelKey":"ATHLETICS_ADMIN_FEEDS_GENDER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_GENDER_DESCRIPTION", "type":"select","optionsMethod":"getGenders","optionsFirst":"--"},
+            "ICON":{"labelKey":"ATHLETICS_ADMIN_FEEDS_ICON_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_ICON_DESCRIPTION", "type":"text","omitBlankValue":true},
             "BASE_URL":{"labelKey":"ATHLETICS_ADMIN_FEEDS_URL_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_URL_DESCRIPTION", "type":"text","omitBlankValue":true},
-            "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_FEEDS_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true}
+            "PARSER_CLASS":{"labelKey":"ATHLETICS_ADMIN_FEEDS_PARSER_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FEEDS_PARSER_DESCRIPTION", "type":"text","omitBlankValue":true,"fieldgroup":"advanced"},
+            "FETCH_CONTENT":{"labelKey":"ATHLETICS_ADMIN_FETCH_CONTENT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_FETCH_CONTENT_DESCRIPTION", "type":"checkbox","fieldgroup":"advanced","omitBlankValue":true},
+            "THUMB_MAX_WIDTH":{"labelKey":"ATHLETICS_ADMIN_THUMB_MAX_WIDTH_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_MAX_WIDTH_DESCRIPTION", "type":"text","fieldgroup":"advanced","omitBlankValue":true},
+            "THUMB_MAX_HEIGHT":{"labelKey":"ATHLETICS_ADMIN_THUMB_MAX_HEIGHT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_MAX_HEIGHT_DESCRIPTION", "type":"text","fieldgroup":"advanced","omitBlankValue":true},
+            "THUMB_CROP":{"labelKey":"ATHLETICS_ADMIN_THUMB_CROP_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_CROP_DESCRIPTION", "type":"checkbox","fieldgroup":"advanced","omitBlankValue":true},
+            "THUMB_BACKGROUND_RGB":{"labelKey":"ATHLETICS_ADMIN_THUMB_BACKGROUND_RGB_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_BACKGROUND_RGB_DESCRIPTION", "type":"text","fieldgroup":"advanced","omitBlankValue":true,"showIf":["THUMB_CROP",1]}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",

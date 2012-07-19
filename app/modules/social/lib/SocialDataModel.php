@@ -17,10 +17,17 @@ class SocialDataModel extends ItemListDataModel
     protected $endDate;
     protected $author;
 
+    public static function getSocialDataRetrievers() {
+        return array(
+            'FacebookDataRetriever'=>'Facebook',
+            'TwitterDataRetriever'=>'Twitter'
+        );
+    }
+
     public function getPosts() {
-        $this->setOption('action','posts');
-        return $this->items();
-    }    
+    	//the retriever is expected to limit the results
+        return $this->retriever->getPosts();
+    }
     
     public function setStartDate(DateTime $time) {
         $this->startDate = $time;

@@ -28,7 +28,7 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
     
     public function getUser($userID)
     {
-        $this->clearInternalCache();
+    	$this->requiresAccessToken();
         $this->setBaseURL(sprintf('https://graph.facebook.com/%s/', $this->user));
         $this->setOption('action', 'user');
         return $this->getData();
@@ -48,29 +48,49 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
     {
     }
     
+    public function getPosts() {
+    	$this->requiresAccessToken();
+		$this->setBaseURL(sprintf('https://graph.facebook.com/%s/posts', $this->user));
+        $this->setOption('action', 'posts');
+		if ($limit = $this->getOption('limit')) {
+			$this->addParameter('limit',$limit);
+		}
+		$data = $this->getData();
+		return $this->getData();
+    }
+    
     public function getItem($id, &$response=null)
     {
-        $this->clearInternalCache();
+    	$this->requiresAccessToken();
         $this->setBaseURL(sprintf('https://graph.facebook.com/%s', $id));
+        $this->setOption('action', 'post');
         return $this->getData();
     }
     
+    private function requiresAccessToken() {
+    	if (!$this->accessToken) {
+			$this->clearInternalCache();
+			$this->setBaseURL('https://graph.facebook.com/oauth/access_token');
+			$this->addParameter('client_id', $this->clientId);
+			$this->addParameter('client_secret', $this->clientSecret);
+			$this->addParameter('grant_type', 'client_credentials');
+	    	$this->setOption('action', 'getAccessToken');
+	        $response = $this->getResponse();
+    	    list($name, $token) = 	explode("=", $response->getResponse());
+        	if (!$token) {
+        		throw new KurogoDataException("Unable to retrieve facebook access token");
+        	}
+        	$this->accessToken = $token;
+			$this->clearInternalCache();
+    	}
+    	    	
+    	return $this->accessToken;
+    }
+    
     protected function initRequest() {
-        switch ($this->getOption('action'))
-        {
-        	case 'getAccessToken':
-        		break;
-            case 'posts':
-                $this->setBaseURL(sprintf('https://graph.facebook.com/%s/posts', $this->user));
-                if ($limit = $this->getOption('limit')) {
-                    $this->addParameter('limit',$limit);
-                }
-            default:
-            	if (!$this->accessToken) {
-            		$this->accessToken = $this->getAccessToken();
-            	}
-				$this->addParameter('access_token', $this->accessToken);
-        }
+    	if ($this->accessToken) {
+			$this->addParameter('access_token', $this->accessToken);
+    	}
     }
     
     public function setUser($user)
@@ -98,18 +118,6 @@ class FacebookDataRetriever extends URLDataRetriever implements ItemDataRetrieve
         $this->clientSecret = $args['OAUTH_CONSUMER_SECRET'];
     }
     
-    private function getAccessToken()
-    {
-        $this->setBaseURL('https://graph.facebook.com/oauth/access_token');
-        $this->addParameter('client_id', $this->clientId);
-        $this->addParameter('client_secret', $this->clientSecret);
-        $this->addParameter('grant_type', 'client_credentials');
-        $this->setOption('action','getAccessToken');
-        $response = $this->getResponse();
-        list($name, $token) = explode("=", $response->getResponse());
-        $this->clearInternalCache();
-        return $token;
-    }
 }
 
 class FacebookDataParser extends DataParser

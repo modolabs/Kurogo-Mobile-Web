@@ -483,32 +483,10 @@ function ajaxContentIntoContainer(options) {
         if (httpRequest.status == 200) { // Success
             options.container.innerHTML = "";
             
-            // innerHTML outside of DOM hierarchy to avoid drawing issues
-            var div = document.createElement("div");
-            div.innerHTML = httpRequest.responseText;
-            
-            // copy elements so we can move them without the list changing
-            var children = [];
-            for (var i = 0; i < div.childNodes.length; i++) {
-                children.push(div.childNodes[i]);
-            }
-            
-            // Manually appendChild elements so scripts get evaluated
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].nodeName == "SCRIPT") {
-                    // must clone script tags or they won't get executed
-                    document.body.appendChild(children[i].cloneNode(true));
-                    
-                } else if (children[i].nodeName == "STYLE") {
-                    // clone styles in case some browsers treat them like scripts
-                    document.getElementsByTagName("head")[0].appendChild(children[i].cloneNode(true));
-                    
-                } else {
-                    // don't clone anything else because browser may have already started 
-                    // loading assets associated with this element (e.g. img src)
-                    options.container.appendChild(children[i]);
-                }
-            }
+            insertContentIntoContainer({
+                "container" : options.container,
+                "html"      : httpRequest.responseText
+            });
             
             options.success();
             
@@ -532,6 +510,48 @@ function ajaxContentIntoContainer(options) {
         'options'     : options,
         'httpRequest' : httpRequest
     });
+}
+
+function insertContentIntoContainer(options) {
+    if (typeof options != 'object') { return; } // safety
+
+    var defaults = {
+        html: null, 
+        container: null, 
+    };
+    for (var i in defaults) {
+        if (typeof options[i] == 'undefined') {
+            options[i] = defaults[i];
+        }
+    }
+    if (!options.html || !options.container) { return; } // safety
+
+    // innerHTML outside of DOM hierarchy to avoid drawing issues
+    var div = document.createElement("div");
+    div.innerHTML = options.html;
+    
+    // copy elements so we can move them without the list changing
+    var children = [];
+    for (var i = 0; i < div.childNodes.length; i++) {
+        children.push(div.childNodes[i]);
+    }
+    
+    // Manually appendChild elements so scripts get evaluated
+    for (var i = 0; i < children.length; i++) {
+        if (children[i].nodeName == "SCRIPT") {
+            // must clone script tags or they won't get executed
+            document.body.appendChild(children[i].cloneNode(true));
+            
+        } else if (children[i].nodeName == "STYLE") {
+            // clone styles in case some browsers treat them like scripts
+            document.getElementsByTagName("head")[0].appendChild(children[i].cloneNode(true));
+            
+        } else {
+            // don't clone anything else because browser may have already started 
+            // loading assets associated with this element (e.g. img src)
+            options.container.appendChild(children[i]);
+        }
+    }
 }
 
 function getCSSValue(element, key) {

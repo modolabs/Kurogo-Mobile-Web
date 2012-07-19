@@ -73,7 +73,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 /* Text labels for springboards (grids of icons, e.g., homescreen) */
 
 .springboard a, .springboard a:visited {
-	color: @@@primary_link_color@@@;
+	color: @@@focal_link_color@@@;
 }
 
 
@@ -289,7 +289,7 @@ h1.slugline, h2.itemtitle {
     font-size: 129.4%;
 	line-height: 1.25em;
 	font-weight: normal;
-    color: @@@heading_text_color@@@;
+    color: @@@primary_heading_color@@@;
 	margin: 0 0 0.75em 0;
 }
 

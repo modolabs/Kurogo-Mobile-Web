@@ -2,7 +2,7 @@
 
 {block name="form"}
   {if !$insideForm}
-    <form method="get" action="{$searchPage|default:'search'}">
+    <form method="get" action="{$searchAction}">
       <p id="search" class="nonfocal">
   {/if}
         {if isset($placeholder) && strlen($placeholder)}

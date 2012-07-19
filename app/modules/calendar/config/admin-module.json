@@ -5,7 +5,10 @@
         "sectiontype":"fields",
         "fields":{
             "UserCalendar":{"key":"RETRIEVER_CLASS","labelKey":"CALENDAR_ADMIN_OPTIONS_USERCALENDARS_TITLE","type":"select","config":"module","section":"user_calendars","optionsMethod":["Calendar","getUserCalendarListRetrievers"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_CALENDARS_DESCRIPTION"},
-            "Resources":{"key":"RETRIEVER_CLASS","labelKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_TITLE","type":"select","config":"module","section":"resources","optionsMethod":["Calendar","getResourceListRetrievers"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_DESCRIPTION"}
+            "Resources":{"key":"RETRIEVER_CLASS","labelKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_TITLE","type":"select","config":"module","section":"resources","optionsMethod":["Calendar","getResourceListRetrievers"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_DESCRIPTION"},
+            "SHOW_CATEGORIES":{"labelKey":"CALENDAR_ADMIN_OPTIONS_SHOW_CATEGORIES_TITLE", "descriptionKey":"CALENDAR_ADMIN_OPTIONS_SHOW_CATEGORIES_DESCRIPTION","config":"module","section":"categories","type":"checkbox","default":1},
+            "SHOW_POPULAR_CATEGORIES":{"labelKey":"CALENDAR_ADMIN_OPTIONS_SHOW_POPULAR_CATEGORIES_TITLE", "descriptionKey":"CALENDAR_ADMIN_OPTIONS_SHOW_POPULAR_CATEGORIES_DESCRIPTION","config":"module","section":"categories","type":"text","default":"10","omitBlankValue":true},
+            "SHOW_MAX_EVENTS":{"labelKey":"CALENDAR_ADMIN_OPTIONS_SHOW_MAX_EVENTS_TITLE", "descriptionKey":"CALENDAR_ADMIN_OPTIONS_SHOW_MAX_EVENTS_DESCRIPTION","config":"module","section":"categories","type":"text","default":"20","omitBlankValue":true}
        }
     },
     "index": {

@@ -1,0 +1,73 @@
+/*Action Button adjustments*/
+
+ul.nav li a, ul.results a, a.phone, a.email    {
+    font-weight: bold;
+}
+
+
+/*Search Adjustments*/
+
+#searchformcontainer.nonfocal    {
+    margin:  0;
+    padding: 0;
+}
+
+#searchformcontainer.nonfocal form	{
+	padding: 0;
+	margin: 0;
+	margin: 0 auto;
+	background-color: #666;
+}
+
+#searchformcontainer.nonfocal form fieldset.inputcombo	{
+	padding: 5px 0 0 0;
+	margin: 0;
+	width: 100%;
+	line-height: 26px;
+}
+
+#searchformcontainer.nonfocal form .forminput {
+    padding: 6px 4px 8px 7px;
+    height: 18px;
+}
+
+div.searchwrapper	{
+	margin: 0;
+	padding: 0;
+	margin: 0 auto;
+	position: relative;
+	left: 0;
+	right: 0;
+}
+
+div.searchwrapper input#filter.forminput    {
+    border-radius: 19px;
+    border: 0;
+    width: 90%;
+    margin: 0 auto;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+}
+
+input#sch_btn.combobutton    {
+visibility: hidden;
+}
+
+p.smallprint    {
+    width: 50%;
+}
+
+/*Tabs spacer adjustment*/
+
+ul#tabs    {
+    margin-top: 20px;
+}
+
+/*Nav List - Icon Adjustments*/
+
+li.icon a.icon	{
+	padding-right: 25px;
+}
+

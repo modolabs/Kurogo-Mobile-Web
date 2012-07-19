@@ -37,14 +37,14 @@ class AthleticsAPIModule extends APIModule
                 $response = array();
                 foreach($this->feeds as $feed) {
                     $gender = $feed['GENDER'];
-                    if (array_key_exists($gender, $this->navFeeds)) {
+                    if($tabData = $this->getNavData($gender)) {
                     	if (!in_array($gender, $genders)) {
-							$genders[] = $gender;
-							$response[] = array(
-								'key'=>$gender,
-								'title'=>$this->navFeeds[$gender]['TITLE']
-							);
-						}
+                            $genders[] = $gender;
+                            $response[] = array(
+                                'key' => $gender,
+                                'title' => $tabData['TITLE']
+                            );
+                        }
                     }
                 }
                 $this->setResponse($response);
@@ -54,21 +54,24 @@ class AthleticsAPIModule extends APIModule
                 // sports
                 $gender = $this->getArg('gender');
                 
-                $tabData = $this->getNavData($gender);
-                $sportsConfig = $this->getSportsForGender($gender);
-                
-                $sports = array();
-                foreach ($sportsConfig as $key => $sportData) {
-                    $image = FULL_URL_BASE . "modules/{$this->configModule}/images/" .
-                        (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])) .
-                        $this->imageExt;
-                    $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'icon' => $image);
+                if($tabData = $this->getNavData($gender)) {
+                    $sportsConfig = $this->getSportsForGender($gender);
+
+                    $sports = array();
+                    foreach ($sportsConfig as $key => $sportData) {
+                        $image = FULL_URL_BASE . "modules/{$this->configModule}/images/" .
+                            (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])) .
+                            $this->imageExt;
+                        $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'icon' => $image);
+                    }
+
+                    $response = array(
+                        'sports' => $sports,
+                        'sporttitle'    => $tabData['TITLE'],
+                    );
+                }else {
+                    $response = null;
                 }
-                
-                $response = array(
-                    'sports' => $sports,
-                    'sporttitle'    => $tabData['TITLE'],
-                );
                 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
@@ -294,7 +297,13 @@ class AthleticsAPIModule extends APIModule
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
         
         if (!$data) {
-            $data = array();
+            $vars = $this->getOptionalModuleSection("index", "pages");
+            $key = "tab_" . $tab;
+            if(isset($vars[$key])) {
+                $data['TITLE'] = $vars[$key];
+            }else {
+                $data = null;
+            }
         }
         
         return $data;
