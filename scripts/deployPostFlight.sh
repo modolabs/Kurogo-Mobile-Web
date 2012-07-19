@@ -1,5 +1,5 @@
 #!/bin/bash
-# Arguments = -f file -v -q
+# Arguments = -f file -u user -v -q
 
 usage()
 {
@@ -11,16 +11,18 @@ This script will untar a file and run a KurogoShell command.
 OPTIONS:
     -h      Show this help message
     -f      File to untar
+    -u      User to run commands as
     -v      Verbose
     -q      Silent
 EOF
 }
 
 ROOTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+USER=
 FILE=
-HASFILE=
-VERBOSE=
-QUIET=
+HASFILE=0
+VERBOSE=0
+QUIET=0
 
 # log only if in verbose mode
 function log () {
@@ -37,7 +39,7 @@ function output () {
 }
 
 # get options
-while getopts “hf:vq” OPTION
+while getopts “hu:f:vq” OPTION
 do
     case $OPTION in
         h)
@@ -47,6 +49,9 @@ do
         f)
             FILE=$OPTARG
             HASFILE=1
+            ;;
+        u)
+            USER=$OPTARG
             ;;
         v)
             VERBOSE=1
@@ -64,8 +69,14 @@ done
 
 log "Running $0"
 
+if [[ -z $USER ]]; then
+    output "You must specify a user with -u"
+    usage
+    exit 1
+fi
+
 # If the -f parameter was used
-if [ $HASFILE ]; then
+if [[ $HASFILE -eq 1 ]]; then
     # Check if the file is an empty string
     if [[ -z $FILE ]]; then
         output "File must not be blank"
@@ -82,14 +93,14 @@ if [ $HASFILE ]; then
     # Extract the file given by the first arguement
     # to the root directory, removing the container folder
     if [[ $QUIET -eq 1 ]]; then
-        tar --strip-components 1 -xf "$FILE" -C "$ROOTDIR" > /dev/null 2>&1
+        su -c 'tar --strip-components 1 -xf "'"$FILE"'" -C "'"$ROOTDIR"'" > /dev/null 2>&1' "$USER"
         ERROR=$?
     else
         if [[ $VERBOSE -eq 1 ]]; then
-            tar --strip-components 1 -xvf "$FILE" -C "$ROOTDIR"
+            su -c 'tar --strip-components 1 -xvf "'"$FILE"'" -C "'"$ROOTDIR"'"' "$USER"
             ERROR=$?
         else
-            tar --strip-components 1 -xf "$FILE" -C "$ROOTDIR"
+            su -c 'tar --strip-components 1 -xf "'"$FILE"'" -C "'"$ROOTDIR"'"' "$USER"
             ERROR=$?
         fi
     fi
@@ -104,14 +115,14 @@ fi
 
 # run the core deployPostFlight command
 if [[ $QUIET -eq 1 ]]; then
-    "$ROOTDIR"/lib/KurogoShell core deployPostFlight > /dev/null 2>&1
+    su -c '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight > /dev/null 2>&1' "$USER"
     ERROR=$?
 else
     if [[ $VERBOSE -eq 1 ]]; then
-        "$ROOTDIR"/lib/KurogoShell core deployPostFlight -v
+        '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight -v' "$USER"
         ERROR=$?
     else
-        "$ROOTDIR"/lib/KurogoShell core deployPostFlight
+        '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight' "$USER"
         ERROR=$?
     fi
 fi
