@@ -93,14 +93,14 @@ if [[ $HASFILE -eq 1 ]]; then
     # Extract the file given by the first arguement
     # to the root directory, removing the container folder
     if [[ $QUIET -eq 1 ]]; then
-        su -c 'tar --strip-components 1 -xf "'"$FILE"'" -C "'"$ROOTDIR"'" > /dev/null 2>&1' "$USER"
+        su -c 'tar --strip-components 1 -xf "'"$FILE"'" -C "'"$ROOTDIR"'" > /dev/null 2>&1' -s '/bin/sh' "$USER"
         ERROR=$?
     else
         if [[ $VERBOSE -eq 1 ]]; then
-            su -c 'tar --strip-components 1 -xvf "'"$FILE"'" -C "'"$ROOTDIR"'"' "$USER"
+            su -c 'tar --strip-components 1 -xvf "'"$FILE"'" -C "'"$ROOTDIR"'"' -s '/bin/sh' "$USER"
             ERROR=$?
         else
-            su -c 'tar --strip-components 1 -xf "'"$FILE"'" -C "'"$ROOTDIR"'"' "$USER"
+            su -c 'tar --strip-components 1 -xf "'"$FILE"'" -C "'"$ROOTDIR"'"' -s '/bin/sh' "$USER"
             ERROR=$?
         fi
     fi
@@ -115,14 +115,14 @@ fi
 
 # run the core deployPostFlight command
 if [[ $QUIET -eq 1 ]]; then
-    su -c '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight > /dev/null 2>&1' "$USER"
+    su -c '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight > /dev/null 2>&1' -s '/bin/sh' "$USER"
     ERROR=$?
 else
     if [[ $VERBOSE -eq 1 ]]; then
-        '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight -v' "$USER"
+        su -c '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight -v' -s '/bin/sh' "$USER"
         ERROR=$?
     else
-        '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight' "$USER"
+        su -c '"'"$ROOTDIR"'"/lib/KurogoShell core deployPostFlight' -s '/bin/sh' "$USER"
         ERROR=$?
     fi
 fi
