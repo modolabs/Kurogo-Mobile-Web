@@ -36,6 +36,10 @@ class PhotosWebModule extends WebModule {
         $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
         $controller = DataModel::factory($modelClass, $feedData);
 
+        $maxResultsOption = $this->pagetype == 'tablet' ? 'MAX_TABLET_RESULTS' : 'MAX_RESULTS';
+        $maxPerPage = $this->getOptionalModuleVar($maxResultsOption, 20);
+        $controller->setLimit($maxPerPage);
+
         return $controller;
     }
 
@@ -71,20 +75,19 @@ class PhotosWebModule extends WebModule {
                     $this->redirectTo('album', array('id' => $albumId), true);
                     exit;
                 }
-            	$photos = array();
+            	$albums = array();
             	foreach($this->feeds as $feed){
                     $controller = $this->getFeed($feed['INDEX']);
                     if ($defaultPhoto = $controller->getDefaultPhoto()) {
-                        $photo['title'] = $controller->getTitle();
-                        $photo['type'] = $defaultPhoto->getType();
-                        $photo['albumcount'] = $this->getLocalizedString('PHOTOS_ALBUMCOUNT',$controller->getAlbumSize());
-                        // use base64_encode to make sure it will not be blocked by GFW
-                        $photo['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
-                        $photo['img'] = $defaultPhoto->getThumbnailUrl();
-                        $photos[] = $photo;
+                        $album['title'] = $controller->getTitle();
+                        $album['type'] = $defaultPhoto->getType();
+                        $album['albumcount'] = $this->getLocalizedString('PHOTOS_ALBUMCOUNT',$controller->getAlbumSize());
+                        $album['url'] = $this->buildBreadcrumbURL('album', array('id' => $feed['INDEX']), true);
+                        $album['img'] = $defaultPhoto->getThumbnailUrl($this->pagetype);
+                        $albums[] = $album;
                     }
                 }
-                $this->assign('photos', $photos);
+                $this->assign('albums', $albums);
                 $this->assign('description', $this->getModuleVar('description','strings'));
                 $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
@@ -94,21 +97,22 @@ class PhotosWebModule extends WebModule {
         		$controller = $this->getFeed($album);
         		$this->setPageTitles($controller->getTitle());
 
-                $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 20);
+                $maxPerPage = $controller->getLimit();
                 $start = $this->getArg('start', 0);
 
                 $controller->setStart($start);
-                $controller->setLimit($maxPerPage);
         		$items = $controller->getPhotos();
         		$totalItems = $controller->getTotalItems();
         		
         		$photos = array();
-        		foreach($items as $item){
-        			$photo['title'] = $item->getTitle();
-        			$photo['url'] = $this->buildBreadcrumbURL('show', array('id' => base64_encode($item->getID()), 'album' => $album), true);
-                    $photo['img'] = $item->getThumbnailUrl();
+                for ($i=0; $i < count($items); $i++) {
+                    $item = $items[$i];
+                    $photo['title'] = $item->getTitle();
+                    $index = $start + $i;
+                    $photo['url'] = $this->buildBreadcrumbURL('show', array('id' => $index, 'album' => $album), true);
+                    $photo['img'] = $item->getThumbnailUrl($this->pagetype);
                     $photos[] = $photo;
-        		}
+                }
         		
         		$this->assign('photos', $photos);
         		$this->assign('albumcount', $totalItems);
@@ -138,18 +142,18 @@ class PhotosWebModule extends WebModule {
             		throw new KurogoUserException($this->getLocalizedString('PHOTOS_SPECIFIED_ERROR_MESSAGE'));
             	}
             	$controller = $this->getFeed($album);
-                $id = base64_decode($this->getArg('id'));
-                if (empty($id) || !$photo = $controller->getPhoto($id)) {
+                $id = $this->getArg('id');
+                if (!$photo = $controller->getPhoto($id)) {
                     throw new KurogoUserException($this->getLocalizedString('PHOTO_NOT_FOUND'));
                 }
                 $preAndNextId = $controller->getPrevAndNextID($id);
                 
-                if($preAndNextId['prev']){
-                	$this->assign('prevURL', $this->buildBreadcrumbURL('show', array('id' => base64_encode($preAndNextId['prev']), 'album' => $album), false));
+                if($preAndNextId['prev'] !== false){
+                	$this->assign('prevURL', $this->buildBreadcrumbURL('show', array('id' => $preAndNextId['prev'], 'album' => $album), false));
                 }
                 
-                if($preAndNextId['next']){
-                	$this->assign('nextURL', $this->buildBreadcrumbURL('show', array('id' => base64_encode($preAndNextId['next']), 'album' => $album), false));
+                if($preAndNextId['next'] !== false){
+                	$this->assign('nextURL', $this->buildBreadcrumbURL('show', array('id' => $preAndNextId['next'], 'album' => $album), false));
                 }
                 
                 $this->assign('photoURL',    $photo->getUrl());

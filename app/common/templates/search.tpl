@@ -35,10 +35,12 @@
   {/if}
 {/capture}
 
+{$searchAction = $searchPage|default:"/$configModule/search"}
+
 {block name="form"}
   {if !$insideForm}
     <div class="nonfocal" id="searchformcontainer">
-      <form method="get" action="{$searchPage|default:'search'}">
+      <form method="get" action="{$searchAction}">
   {/if}
   
         <fieldset class="inputcombo{if $emphasized|default:$isModuleHome} emphasized{/if}">

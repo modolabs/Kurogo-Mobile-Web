@@ -20,13 +20,16 @@
 {/if}
 {/capture}
 
-{$sideNav}
+{block name="sideNavTop"}
+  {$sideNav}
+{/block}
 
 {block name="springboard"}
   {include file="findInclude:modules/photos/templates/springboard.tpl" springboardItems=$photos}
 {/block}
 
-
-{$sideNav}
+{block name="sideNavBottom"}
+  {$sideNav}
+{/block}
 
 {include file="findInclude:common/templates/footer.tpl"}

@@ -374,7 +374,20 @@ abstract class Module
       * @return mixed the value of the or the default 
       */
     protected function getArg($key, $default='', $filter=FILTER_SANITIZE_KUROGO_DEFAULT, $filterOptions=null) {
+      if (is_array($key)) {
+        $result = null;
+        foreach ($key as $val) {
+          $result = self::argVal($this->args, $val, null, $filter, $filterOptions);
+          if ($result !== null) {
+            return $result;
+          }
+        }
+        if ($result === null) {
+          return $default;
+        }
+      }else {
         return self::argVal($this->args, $key, $default, $filter, $filterOptions);
+      }
     }
 
     /**
