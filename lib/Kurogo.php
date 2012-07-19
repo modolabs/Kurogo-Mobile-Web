@@ -736,9 +736,13 @@ class Kurogo
         	//if sites section is set attempt to load a site based on the domain name
         	if ($sites = $siteConfig->getOptionalSection('sites')) {
         		$host = self::arrayVal($_SERVER, 'SERVER_NAME', null);
+        		$port = self::arrayVal($_SERVER, 'SERVER_PORT', null);
+
         		//try a direct match
         		if (isset($sites[$host])) {
         			$site = $sites[$host];
+        		} elseif (isset($sites[$host . ':' . $port])) {
+        			$site = $sites[$host . ':' . $port];
         		} elseif (isset($sites['*'])) {
 	        		//* is the default site
         			$site = $sites['*'];
