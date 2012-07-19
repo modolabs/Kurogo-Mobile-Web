@@ -156,7 +156,7 @@ class ConfigFile extends Config {
         if (!($options & ConfigFile::OPTION_IGNORE_MODE)) {
             if ($modeFile = $this->loadFile($this->modeFile())) {
                 Kurogo::log(LOG_DEBUG, "Found " . CONFIG_MODE . " mode config file $modeFile", 'config');
-                $this->moodeFile = $modeFile;
+                $this->modeFile = $modeFile;
             }
         }
 
