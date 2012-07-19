@@ -25,9 +25,9 @@ class SocialDataModel extends ItemListDataModel
     }
 
     public function getPosts() {
-        $this->setOption('action','posts');
-        return $this->items();
-    }    
+    	//the retriever is expected to limit the results
+        return $this->retriever->getPosts();
+    }
     
     public function setStartDate(DateTime $time) {
         $this->startDate = $time;
