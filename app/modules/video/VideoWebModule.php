@@ -212,9 +212,14 @@ class VideoWebModule extends WebModule
                     }		
                 }
     
-                $hiddenArgs = array(
-                  'section'=>$section
-                );
+    			/* only assign section if it's the search page, otherwise section comes from select box */
+    			if ($this->page=='search') {
+					$hiddenArgs = array(
+					  'section'=>$section
+					);
+				} else {
+					$hiddenArgs = array();
+				}				
           
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                 $this->addOnLoad('setupVideosListing();');

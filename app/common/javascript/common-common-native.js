@@ -521,19 +521,22 @@ function redirectToModule(module, page, args) {
                             forms[i].parentNode.appendChild(iframe);
                             
                             var onLoad = function (e) {
-                                if (typeof Android != "undefined") {
-                                    // Android OS registers a function for us to call
+                                if (window.kgoNativeBridge) {
+                                    // Some OSes (Android) register a function for us to call
                                     var resultHTML = that.formPostGetResult(iframeId);
                                     if (resultHTML) {
                                         try {
-                                            Android.handleFormPostResult(action, resultHTML);
+                                            var success = window.kgoNativeBridge.handleFormPost(action, resultHTML);
+                                            if (!success) {
+                                                that.log("kgoNativeBridge.handleFormPost() form post failed");
+                                            }
                                         } catch (e) {
-                                            that.log("Android.handleFormPostResult() java bridge failed");
+                                            that.log("kgoNativeBridge.handleFormPost() native bridge failed");
                                         }
                                     }
                                     
                                 } else {
-                                    // iOS will call formPostGetResult when it gets this event
+                                    // Other OSes (iOS) call formPostGetResult when they gets this event
                                     var params = {
                                         "id"  : iframeId,
                                         "url" : action // original bridge url
