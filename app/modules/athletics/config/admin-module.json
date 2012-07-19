@@ -36,7 +36,7 @@
             "THUMB_MAX_WIDTH":{"labelKey":"ATHLETICS_ADMIN_THUMB_MAX_WIDTH_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_MAX_WIDTH_DESCRIPTION", "type":"text","fieldgroup":"advanced","omitBlankValue":true},
             "THUMB_MAX_HEIGHT":{"labelKey":"ATHLETICS_ADMIN_THUMB_MAX_HEIGHT_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_MAX_HEIGHT_DESCRIPTION", "type":"text","fieldgroup":"advanced","omitBlankValue":true},
             "THUMB_CROP":{"labelKey":"ATHLETICS_ADMIN_THUMB_CROP_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_CROP_DESCRIPTION", "type":"checkbox","fieldgroup":"advanced","omitBlankValue":true},
-            "THUMB_BACKGROUND_RGB":{"labelKey":"ATHLETICS_ADMIN_THUMB_BACKGROUND_RGB_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_BACKGROUND_RGB_DESCRIPTION", "type":"text","fieldgroup":"advanced","omitBlankValue":true}
+            "THUMB_BACKGROUND_RGB":{"labelKey":"ATHLETICS_ADMIN_THUMB_BACKGROUND_RGB_TITLE", "descriptionKey":"ATHLETICS_ADMIN_THUMB_BACKGROUND_RGB_DESCRIPTION", "type":"text","fieldgroup":"advanced","omitBlankValue":true,"showIf":["THUMB_CROP",1]}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",
