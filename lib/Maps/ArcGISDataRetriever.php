@@ -44,11 +44,8 @@ class ArcGISDataRetriever extends URLDataRetriever
     protected function parameters() {
         switch ($this->action) {
             case self::ACTION_PLACEMARKS:
-                $extent = $this->parser->getExtent();
                 $fields = $this->parser->getFieldKeys();
 
-                $bbox = $extent['xmin'].','.$extent['ymin'].','.$extent['xmax'].','.$extent['ymax'];
-                
                 $params = array(
                     'text'           => '',
                     'inSR'           => $this->parser->getProjection(),
@@ -61,6 +58,8 @@ class ArcGISDataRetriever extends URLDataRetriever
 				);
 
                 if ($this->useExtentGeometry) {
+					$extent = $this->parser->getExtent();
+					$bbox = $extent['xmin'].','.$extent['ymin'].','.$extent['xmax'].','.$extent['ymax'];
                     $params['geometry'] = $bbox;
                     $params['geometryType'] = 'esriGeometryEnvelope';
                 }
