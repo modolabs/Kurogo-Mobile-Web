@@ -86,10 +86,10 @@ if [ $HASFILE ]; then
         ERROR=$?
     else
         if [[ $VERBOSE -eq 1 ]]; then
-            tar --strip-components 1 -xvf "$FILE" -C ../
+            tar --strip-components 1 -xvf "$FILE" -C "$ROOTDIR"
             ERROR=$?
         else
-            tar --strip-components 1 -xf "$FILE" -C ../
+            tar --strip-components 1 -xf "$FILE" -C "$ROOTDIR"
             ERROR=$?
         fi
     fi
