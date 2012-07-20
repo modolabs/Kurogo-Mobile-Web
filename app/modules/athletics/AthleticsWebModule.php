@@ -38,7 +38,8 @@ class AthleticsWebModule extends WebModule {
     public function getGenders() {
         return array(
             'men'=>$this->getLocalizedString('GENDER_MEN'),
-            'women'=>$this->getLocalizedString('GENDER_WOMEN')
+            'women'=>$this->getLocalizedString('GENDER_WOMEN'),
+            'coed'=>$this->getLocalizedString('GENDER_COED')
         );
         
     }

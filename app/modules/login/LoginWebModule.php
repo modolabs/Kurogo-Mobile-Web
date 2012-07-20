@@ -290,7 +290,6 @@ class LoginWebModule extends WebModule {
 						$this->assign('redirectURL', KurogoWebBridge::getInternalLink($this->configModule, 'loginComplete', array()));
 						break 2;
                     } elseif ($urlArray) {
-                    	KurogoDebug::debug($urlArray, true);
                         $this->redirectToArray($urlArray, Kurogo::REDIRECT_SEE_OTHER);
                     } else {
                         $this->redirectToModule($this->getHomeModuleID(),'',array('login'=>$authorityIndex), Kurogo::REDIRECT_SEE_OTHER);

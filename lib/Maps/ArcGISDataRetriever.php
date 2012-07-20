@@ -21,6 +21,7 @@ class ArcGISDataRetriever extends URLDataRetriever
 
     protected $selectedLayer;
     protected $orderByFields;
+    protected $useExtentGeometry = 0;
     //protected $layerTypes = array();
     protected $searchFilters = array();
 
@@ -33,21 +34,20 @@ class ArcGISDataRetriever extends URLDataRetriever
         if (isset($args['SORT_FIELD'])) {
             $this->orderByFields = $args['SORT_FIELD'];
         }
+        if (isset($args['USE_EXTENT_GEOMETRY'])) {
+            $this->useExtentGeometry = $args['USE_EXTENT_GEOMETRY'];
+        }
+
         $this->filters = array('f' => 'json');
     }
 
     protected function parameters() {
         switch ($this->action) {
             case self::ACTION_PLACEMARKS:
-                $extent = $this->parser->getExtent();
                 $fields = $this->parser->getFieldKeys();
 
-                $bbox = $extent['xmin'].','.$extent['ymin'].','.$extent['xmax'].','.$extent['ymax'];
-                
                 $params = array(
                     'text'           => '',
-                    'geometry'       => $bbox,
-                    'geometryType'   => 'esriGeometryEnvelope',
                     'inSR'           => $this->parser->getProjection(),
                     'spatialRel'     => 'esriSpatialRelIntersects',
                     'where'          => '',
@@ -56,7 +56,14 @@ class ArcGISDataRetriever extends URLDataRetriever
                     'outFields'      => implode(',', $fields),
                     'f'              => 'json',
 				);
-                
+
+                if ($this->useExtentGeometry) {
+					$extent = $this->parser->getExtent();
+					$bbox = $extent['xmin'].','.$extent['ymin'].','.$extent['xmax'].','.$extent['ymax'];
+                    $params['geometry'] = $bbox;
+                    $params['geometryType'] = 'esriGeometryEnvelope';
+                }
+
                 if ($this->orderByFields) {
                     $params['where']          = 'OBJECTID>0';
                 	$params['orderByFields']  = $this->orderByFields;

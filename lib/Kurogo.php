@@ -670,12 +670,13 @@ class Kurogo
         $siteConfig = new ConfigGroup();
         $saveCache = true;
         // Load main configuration file
-        $kurogoConfig = ConfigFile::factory('kurogo', 'project', ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
+        $kurogoConfig = ConfigFile::factory('kurogo', 'project', ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_SHARED);
         $siteConfig->addConfig($kurogoConfig);
 
         define('CONFIG_MODE', $siteConfig->getVar('CONFIG_MODE', 'kurogo'));
         Kurogo::log(LOG_DEBUG,"Setting config mode to " . (CONFIG_MODE ?  CONFIG_MODE : '<empty>'), 'config');
         define('CONFIG_IGNORE_LOCAL', $siteConfig->getVar('CONFIG_IGNORE_LOCAL', 'kurogo'));
+        define('CONFIG_IGNORE_SHARED', $siteConfig->getOptionalVar('CONFIG_IGNORE_SHARED', false, 'kurogo'));
 
         if ($cacheClass = $siteConfig->getOptionalVar('CACHE_CLASS','', 'cache')) {
             $this->cacher = KurogoMemoryCache::factory($cacheClass, $siteConfig->getOptionalSection('cache'));
@@ -736,9 +737,13 @@ class Kurogo
         	//if sites section is set attempt to load a site based on the domain name
         	if ($sites = $siteConfig->getOptionalSection('sites')) {
         		$host = self::arrayVal($_SERVER, 'SERVER_NAME', null);
+        		$port = self::arrayVal($_SERVER, 'SERVER_PORT', null);
+
         		//try a direct match
         		if (isset($sites[$host])) {
         			$site = $sites[$host];
+        		} elseif (isset($sites[$host . ':' . $port])) {
+        			$site = $sites[$host . ':' . $port];
         		} elseif (isset($sites['*'])) {
 	        		//* is the default site
         			$site = $sites['*'];
@@ -860,6 +865,7 @@ class Kurogo
         Kurogo::log(LOG_DEBUG,"Setting theme to $theme", 'kurogo');
 
         define('THEME_DIR', SITE_DIR . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $theme);
+        define('SHARED_THEME_DIR', SHARED_DIR . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $theme);
         $this->siteConfig = $siteConfig;
       }
 

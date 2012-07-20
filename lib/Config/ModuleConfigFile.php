@@ -72,6 +72,8 @@ class ModuleConfigFile extends ConfigFile {
             }
             
             throw new KurogoConfigurationException("Unable to find $type config file for module $id");
+        } elseif (preg_match("/(.*?)-shared$/", $type, $bits)) {
+            $file = sprintf('%s/%s/%s.ini', SHARED_CONFIG_DIR, $id, $bits[1]);
         } else {
             $file = sprintf('%s/%s/%s.ini', SITE_CONFIG_DIR, $id, $type);
         }
