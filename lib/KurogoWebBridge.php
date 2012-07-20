@@ -258,7 +258,7 @@ class KurogoWebBridge
               '@(<form\s+[^>]*action=")('.preg_quote(URL_PREFIX).')([^"\.]+)(.php|([^"]*))(")@',
             ),
             array(
-                '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$3$5',
+                '$1'.self::BRIDGE_URL_INTERNAL_LINK.'$3$5$6',
             ),
             $contents
         );
