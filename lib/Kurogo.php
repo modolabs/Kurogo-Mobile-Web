@@ -1205,6 +1205,15 @@ class Kurogo
 
         return $module;
     }
+    
+    public static function validateConnection($host, $port=80, $timeout=5) {
+		if (@fsockopen($host, $port, $errno, $err, $timeout)) {
+			return true;
+		} else {
+	        self::log(LOG_NOTICE, "Failed connecting to host $host on port $port ($err)", "kurogo");
+			return false;
+		}
+	}
 
     public static function arrayVal($args, $key, $default=null){
         if(isset($args[$key])){
