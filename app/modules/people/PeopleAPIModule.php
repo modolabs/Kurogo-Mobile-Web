@@ -162,16 +162,28 @@ class PeopleAPIModule extends APIModule
         }
         return '';
     }
+
+    protected function loadAPIDetailAttributes($feed){
+        if($this->feeds){
+            if(count($this->feeds) == 1){
+                # Load detail fields from api-detail.ini
+                $this->fieldConfig = $this->getAPIConfigData('detail');
+            }else{
+                # Load detail fields from page-detail-[feed].ini
+                $detailConfig = "detail-$feed";
+                $this->fieldConfig = $this->getAPIConfigData($detailConfig);
+            }
+            foreach($this->fieldConfig as $field => $info) {
+                $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
+            }
+            $this->detailAttributes = array_values(array_unique($this->detailAttributes));
+        }
+    }
     
     public function initializeForCommand() {  
         $this->feeds = $this->loadFeedData();
-        $this->fieldConfig = $this->getAPIConfigData('detail');
-        foreach($this->fieldConfig as $field => $info) {
-            $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
-        }
-        $this->detailAttributes = array_values(array_unique($this->detailAttributes));
-        
         $feed = $this->getArg('feed', $this->getDefaultFeed());
+        $this->loadAPIDetailAttributes($feed);
         $peopleController = $this->getFeed($feed);
         
         switch ($this->command) {
