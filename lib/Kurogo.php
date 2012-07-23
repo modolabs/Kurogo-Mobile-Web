@@ -540,8 +540,10 @@ class Kurogo
         define('SHARED_LIB_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'lib');
         define('SHARED_APP_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'app');
         define('SHARED_MODULES_DIR', SHARED_APP_DIR . DIRECTORY_SEPARATOR . 'modules');
-        define('SHARED_DATA_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'data');
-        define('SHARED_CONFIG_DIR',     SHARED_DIR . DIRECTORY_SEPARATOR . 'config');
+        define('SCRIPTS_DIR',        ROOT_DIR . DIRECTORY_SEPARATOR . 'scripts');
+        define('SHARED_DATA_DIR',    SHARED_DIR . DIRECTORY_SEPARATOR . 'data');
+        define('SHARED_CONFIG_DIR',  SHARED_DIR . DIRECTORY_SEPARATOR . 'config');
+        define('SHARED_SCRIPTS_DIR', SHARED_DIR . DIRECTORY_SEPARATOR . 'scripts');
         define('MIN_FILE_PREFIX',  'file-');
         define('API_URL_PREFIX',   'rest');
 
@@ -844,6 +846,7 @@ class Kurogo
         define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
         define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');
         define('SITE_DISABLED_DIR',    SITE_DIR . DIRECTORY_SEPARATOR . 'config_disabled');
+        define('SITE_SCRIPTS_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'scripts');
 
         //load in the site config file (required);
         $config = ConfigFile::factory('site', 'site');
@@ -1205,6 +1208,15 @@ class Kurogo
 
         return $module;
     }
+    
+    public static function validateConnection($host, $port=80, $timeout=5) {
+		if (@fsockopen($host, $port, $errno, $err, $timeout)) {
+			return true;
+		} else {
+	        self::log(LOG_NOTICE, "Failed connecting to host $host on port $port ($err)", "kurogo");
+			return false;
+		}
+	}
 
     public static function arrayVal($args, $key, $default=null){
         if(isset($args[$key])){
