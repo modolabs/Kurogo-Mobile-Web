@@ -65,7 +65,7 @@ class EmergencyAPIModule extends APIModule {
                         'secondary' => self::formatContacts($contactsController->getSecondaryContacts()),
                     );
                 }else {
-                    $response = null;
+                    $response = new stdClass();
                 }
                 $this->setResponse($response);
                 $this->setResponseVersion(2);
