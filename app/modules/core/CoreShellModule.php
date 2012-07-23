@@ -59,14 +59,22 @@ class CoreShellModule extends ShellModule
                 $this->out('Running KurogoShell Core deployPostFlight');
 
                 $postFlightFilePath = SITE_SCRIPTS_DIR . DIRECTORY_SEPARATOR . 'deployPostFlight.sh';
+                
                 if(!file_exists($postFlightFilePath)){
                     $this->out("$postFlightFilePath does not exist, skipping execution");
                     return 0;
+                } elseif (!is_executable($postFlightFilePath)) {
+                	$this->out("$postFlightFilePath exists, but is not executable. This must be fixed");
+                	return 126;
                 }
 
-                $command = 'sh '.$postFlightFilePath;
                 $outputLines = array();
-                exec($command, $outputLines, $returnValue);
+                exec(sprintf("%s %s %s", 
+                		escapeshellcmd($postFlightFilePath), 
+                		escapeshellarg(ROOT_DIR), 
+                		escapeshellarg(SITE_DIR)
+                	), $outputLines, $returnValue);
+                	
                 foreach ($outputLines as $lineNumber => $line) {
                     $this->out($line);
                 }
