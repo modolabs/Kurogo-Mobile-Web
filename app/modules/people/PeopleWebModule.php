@@ -239,11 +239,23 @@ class PeopleWebModule extends WebModule {
     }
     protected function initialize() {
         $this->feeds = $this->loadFeedData();
-        $this->detailFields = $this->loadPageConfigFile('detail', 'detailFields');
-        foreach($this->detailFields as $field => $info) {
-            $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
+    }
+
+    protected function loadDetailAttributes($feed){
+        if($this->feeds){
+            if(count($this->feeds) == 1){
+                # Load detail fields from page-detail.ini
+                $this->detailFields = $this->loadPageConfigFile('detail', 'detailFields');
+            }else{
+                # Load detail fields from page-detail-[feed].ini
+                $detailConfig = "detail-$feed";
+                $this->detailFields = $this->loadPageConfigFile($detailConfig, 'detailFields');
+            }
+            foreach($this->detailFields as $field => $info) {
+                $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
+            }
+            $this->detailAttributes = array_values(array_unique($this->detailAttributes));
         }
-        $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
     
     public function linkforItem(KurogoObject $person, $options=null) {    
@@ -306,6 +318,7 @@ class PeopleWebModule extends WebModule {
     
     protected function initializeForPage() {
         $this->feed = $this->getArg('feed', $this->getDefaultFeed());
+        $this->loadDetailAttributes($this->feed);
         $PeopleController = $this->getFeed($this->feed);
         
         $this->assign('selectedFeed', $this->feed);
