@@ -11,7 +11,7 @@
 
 interface SocialDataRetriever 
 {
-/*    public function search($q, $start=0, $limit=null); */
+    public function getPosts(); //the retriever is expected to limit the results
     public function getUser($userID);
     public function canRetrieve();
     public function canPost();

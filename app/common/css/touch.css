@@ -341,7 +341,7 @@ a.module img {
   padding-top: 2px;
 }
 
-.nav span.nolink {
+.nav span.nolink, .results span.nolink {
 	display: block;
 	background-repeat: no-repeat;
 	background-position: right; 

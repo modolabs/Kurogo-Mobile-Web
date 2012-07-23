@@ -1,0 +1,11 @@
+h1.slugline {
+    font-size: 93.75%;
+    line-height: 1em;
+    color: #999999;
+    margin: 0 0 0.5em 0;
+    padding: 0;
+}
+
+.caption .fineprint {
+    color: #666666;
+}

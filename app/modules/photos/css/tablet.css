@@ -1,0 +1,66 @@
+body.PhotosModule {
+	background-color: #202020;
+}
+
+.gallery {
+	overflow:hidden;
+	width: 936px;
+	margin: 50px auto;
+}
+
+.gallery div {
+	height:150px;
+	width: 150px;
+	margin: 3px;
+	overflow: hidden;
+	float: left;
+	background-color: #000
+}
+
+.gallery img {
+	width: 100%;
+}
+
+
+.sidenav2 {
+    margin: 16px 10px;
+}
+
+.sidenav2 a, .sidenav2 a:visited, .sidenavlabel {
+    color: #808080
+}
+
+.sidenav2 a {
+    background-image:  url("/modules/photos/images/sidenav-arrows-reverse.png");
+}
+
+
+
+
+@media only screen and (max-width: 980px) {
+/* rewrap to 5-wide in wide portrait orientation */
+    .gallery {
+        width: 780px;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+/* rewrap to 4-wide in portrait orientation */
+    .gallery {
+        width: 624px;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+/* rewrap to 7-wide on wider screens */
+    .gallery {
+        width: 1092px;
+    }
+}
+
+@media only screen and (min-width: 1400px) {
+/* rewrap to 8-wide on widest screens */
+    .gallery {
+        width: 1248px;
+    }
+}

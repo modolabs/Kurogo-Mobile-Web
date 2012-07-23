@@ -13,7 +13,9 @@
             "BASE_URL":{"labelKey":"CONTENT_ADMIN_FEEDS_BASEURL_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_BASEURL_DESCRIPTION","type":"text","showIf":["CONTENT_TYPE",["html_url","rss"]]},
             "CONTENT_HTML":{"labelKey":"CONTENT_ADMIN_FEEDS_CONTENTHTML_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_CONTENTHTML_DESCRIPTION","type":"paragraph","showIf":["CONTENT_TYPE","html"]},
             "HTML_ID":{"labelKey":"CONTENT_ADMIN_FEEDS_HTMLID_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_HTMLID_DESCRIPTION","type":"text","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true},
-            "HTML_TAG":{"labelKey":"CONTENT_ADMIN_FEEDS_HTMLTAG_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_HTMLTAG_DESCRIPTION","type":"text","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true}
+            "HTML_TAG":{"labelKey":"CONTENT_ADMIN_FEEDS_HTMLTAG_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_HTMLTAG_DESCRIPTION","type":"text","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true},
+            "HTML_CLASS":{"labelKey":"CONTENT_ADMIN_FEEDS_HTMLCLASS_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_HTMLCLASS_DESCRIPTION","type":"text","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true},
+            "KUROGO_READER":{"labelKey":"CONTENT_ADMIN_FEEDS_KUROGO_READER_TITLE","descriptionKey":"CONTENT_ADMIN_FEEDS_KUROGO_READER_DESCRIPTION","type":"checkbox","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",

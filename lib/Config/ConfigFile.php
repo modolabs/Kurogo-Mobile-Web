@@ -23,12 +23,14 @@ class ConfigFile extends Config {
   const OPTION_DO_NOT_CREATE=4;
   const OPTION_IGNORE_LOCAL=8;
   const OPTION_IGNORE_MODE=16;
+  const OPTION_IGNORE_SHARED=32;
   protected $configs = array();
   protected $file;
   protected $type;
   protected $filepath;
   protected $localFile = false;
   protected $modeFile = false;
+  protected $sharedFile = false;
 
   protected function fileVariant($variant) 
   {
@@ -48,6 +50,15 @@ class ConfigFile extends Config {
   public function localFile()
   {
     return CONFIG_IGNORE_LOCAL ? false : $this->fileVariant('local');
+  }
+
+  public function sharedFile()
+  {
+  	if (CONFIG_IGNORE_SHARED) {
+		return false;
+	}
+	
+	return $this->getFileByType($this->file, $this->type . '-shared');
   }
 
   // loads a config object from a file/type combination  
@@ -78,6 +89,9 @@ class ConfigFile extends Config {
         case 'site-default':
             $pattern = sprintf('%s/common/config/%%s-default.ini', APP_DIR);
             break;
+        case 'site-shared':
+            $pattern = sprintf("%s/%%s.ini", SHARED_CONFIG_DIR);
+            break;
         case 'file':
             if ($f = realpath($file)) {
                 $file = $f;
@@ -89,14 +103,23 @@ class ConfigFile extends Config {
             $file = $pathinfo['filename'];
             $pattern = sprintf("%s/%%s-default.%s", $pathinfo['dirname'], $pathinfo['extension']);
             break;
+        case 'file-shared':
+        	return null;
+            break;
         case 'project':
             $pattern = sprintf('%s/%%s.ini', MASTER_CONFIG_DIR);
             break;
         case 'project-default':
             $pattern = sprintf('%s/%%s-default.ini', MASTER_CONFIG_DIR);
             break;
+        case 'project-shared':
+        	return null;
+            break;
         case 'theme':
             $pattern = sprintf('%s/%%s.ini', THEME_DIR);
+            break;
+        case 'theme-shared':
+            $pattern = sprintf('%s/%%s.ini', SHARED_THEME_DIR);
             break;
         default:
             throw new KurogoConfigurationException("Unknown config type $type");
@@ -149,6 +172,13 @@ class ConfigFile extends Config {
     if (!$_file = $this->getFileByType($file, $type)) {
         return false;
     }
+
+	if (!($options & ConfigFile::OPTION_IGNORE_SHARED)) {
+		if ($sharedFile = $this->loadFile($this->sharedFile())) {
+			Kurogo::log(LOG_DEBUG, "Found shared config file $sharedFile", 'config');
+			$this->sharedFile = $sharedFile;
+		}
+	}
     
     if ($filepath = $this->loadFile($_file)) {
         $this->filepath = $filepath;
@@ -156,7 +186,7 @@ class ConfigFile extends Config {
         if (!($options & ConfigFile::OPTION_IGNORE_MODE)) {
             if ($modeFile = $this->loadFile($this->modeFile())) {
                 Kurogo::log(LOG_DEBUG, "Found " . CONFIG_MODE . " mode config file $modeFile", 'config');
-                $this->moodeFile = $modeFile;
+                $this->modeFile = $modeFile;
             }
         }
 
@@ -168,7 +198,9 @@ class ConfigFile extends Config {
         }
 
         return true;
-    } 
+    } elseif ($this->sharedFile) {
+    	return true;
+    }
     
     if ($options & ConfigFile::OPTION_CREATE_EMPTY) {
         //create an empty file and then load it

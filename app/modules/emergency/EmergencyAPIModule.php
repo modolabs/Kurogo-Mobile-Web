@@ -47,24 +47,26 @@ class EmergencyAPIModule extends APIModule {
                 break;
 
             case 'contacts':
-                $contactsConfig = $config->getSection('contacts');
+                if($contactsConfig = $config->getOptionalSection('contacts')) {
+                    try {
+                        if (isset($contactsConfig['CONTROLLER_CLASS'])) {
+                            $modelClass = $contactsConfig['CONTROLLER_CLASS'];
+                        } else {
+                            $modelClass = isset($contactsConfig['MODEL_CLASS']) ? $contactsConfig['MODEL_CLASS'] : 'EmergencyContactsDataModel';
+                        }
 
-                try {
-                    if (isset($contactsConfig['CONTROLLER_CLASS'])) {
-                        $modelClass = $contactsConfig['CONTROLLER_CLASS'];
-                    } else {
-                        $modelClass = isset($contactsConfig['MODEL_CLASS']) ? $contactsConfig['MODEL_CLASS'] : 'EmergencyContactsDataModel';
+                        $contactsController = EmergencyContactsDataModel::factory($modelClass, $contactsConfig);
+                    } catch (KurogoException $e) { 
+                        $contactsController = DataController::factory($contactsConfig['CONTROLLER_CLASS'], $contactsConfig);
                     }
-                    
-                    $contactsController = EmergencyContactsDataModel::factory($modelClass, $contactsConfig);
-                } catch (KurogoException $e) { 
-                    $contactsController = DataController::factory($contactsConfig['CONTROLLER_CLASS'], $contactsConfig);
-                }
 
-                $response = array(
-                    'primary' => self::formatContacts($contactsController->getPrimaryContacts()),
-                    'secondary' => self::formatContacts($contactsController->getSecondaryContacts()),
-                );
+                    $response = array(
+                        'primary' => self::formatContacts($contactsController->getPrimaryContacts()),
+                        'secondary' => self::formatContacts($contactsController->getSecondaryContacts()),
+                    );
+                }else {
+                    $response = null;
+                }
                 $this->setResponse($response);
                 $this->setResponseVersion(2);
                 break;
