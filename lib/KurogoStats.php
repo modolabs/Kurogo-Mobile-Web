@@ -403,7 +403,7 @@ class KurogoStats {
 
         //copy the log file
 		$tempLogFolder = Kurogo::tempDirectory();
-        $statsLogFileCopy = $tempLogFolder . "stats_log_copy.$today";
+        $statsLogFileCopy = rtrim($tempLogFolder,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . "stats_log_copy.$today";
 
         if (!is_writable($tempLogFolder)) {
             throw new Exception("Unable to write to Temporary Directory $tempLogFolder");
