@@ -11,7 +11,7 @@
 
 includePackage('Authorization');
 
-class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetriever
+class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetriever, ItemDataRetriever
 {
     protected $DEFAULT_PARSER_CLASS='TwitterDataParser';
     protected $OAuthProviderClass='TwitterOAuthProvider';
@@ -38,7 +38,7 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
         return $this->getData();
     }
 
-    public function getPost($id) {
+    public function getItem($id, &$response=null) {
         $this->setBaseURL("http://api.twitter.com/1/statuses/show/$id.json");
         return $this->getData();
     }
