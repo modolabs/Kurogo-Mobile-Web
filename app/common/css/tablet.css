@@ -536,6 +536,7 @@ a.module img {
 	border: 1px solid #ccc;
 	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
+	position: relative;
 }
 
 .nav li {	
@@ -570,6 +571,7 @@ a.module img {
 
 .nav a  {
 	display: block;
+	position: relative;
 	padding: 8px 24px 10px 8px;
 	margin: -8px;	 
 	background-image: url(/common/images/action-arrow.png); 
@@ -657,12 +659,14 @@ ul.focal li:first-child {
 	margin: 10px 0; 
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
+	position: relative;
 }
 
 .results li {	
 	list-style-type: none;		
 	border-top: 1px solid #ccc;
 	padding: 10px;
+	position: relative;
 }
 
 .results li:first-child {
@@ -671,6 +675,7 @@ ul.focal li:first-child {
 
 .results a  {
 	display: block;
+	position: relative;
 	padding: 9px 25px 9px 7px;
 	margin: -7px;	 
 	background-image: url(/common/images/action-arrow.png); 
