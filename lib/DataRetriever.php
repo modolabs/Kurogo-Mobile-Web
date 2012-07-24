@@ -343,6 +343,10 @@ abstract class DataRetriever {
         $parsedData = $parser->parseResponse($response);
         return $parsedData;
     }
+    
+    public function getLastResponse() {
+    	return $this->lastResponse;
+    }
 
     public function getResponseError() {
         if ($this->lastResponse) {

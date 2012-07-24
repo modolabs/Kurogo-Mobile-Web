@@ -220,9 +220,10 @@ abstract class ShellModule extends Module {
     protected function preFetchAllData() {
     	$time = 0;
     	$controllers = $this->getAllControllers() ;
+		$this->out("Fetching $this->configModule");
 		foreach ($controllers as $key=>$controller) {
 			$title = $controller->getTitle() ? $controller->getTitle() : $key;
-			$out = "Fetching $this->configModule: $title. ";
+			$out = "Fetching $title. ";
 	        $start = microtime(true);
 			$data = $this->preFetchData($controller, $response);
 			if ($response->getFromCache()) {

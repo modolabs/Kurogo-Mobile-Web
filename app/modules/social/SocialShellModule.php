@@ -44,7 +44,9 @@ class SocialShellModule extends ShellModule {
     }
 
     protected function preFetchData(DataModel $controller, &$response) {
-        $posts = parent::preFetchData($controller, $response);
+    	$retriever = $controller->getRetriever();
+        $posts = $retriever->getPosts();
+        $response = $retriever->getLastResponse();
         foreach ($posts as $key => $post) {
             if (is_object($post) && ($author = $post->getAuthor()) && !in_array($author, $this->authors)) {
                 $this->authors[] = $author;
