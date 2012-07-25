@@ -12,13 +12,20 @@ class KurogoReaderDataParser extends DataParser {
         if(function_exists('tidy_parse_string')) {
             $this->tidyAvailable = true;
         }
-        $url = $this->getOption("readerUrl");
-        $urlArray = parse_url($url);
-        $this->baseUrl = $urlArray['scheme'] . "://" . $urlArray['host'];
-    	$headers = $this->response->getHeaders();
+        $headers = $this->response->getHeaders();
     	if(isset($headers['Location'])) {
-    		$this->baseUrl = $headers["Location"];
-    	}
+    		$url = $headers["Location"];
+        }else {
+            $url = $this->getOption("readerUrl");
+        }
+        $urlArray = parse_url($url);
+        if(isset($urlArray['path'])) {
+            $path = dirname($urlArray['path']);
+        }
+        $this->baseUrl = $urlArray['scheme'] . "://" . $urlArray['host'];
+        if($path) {
+            $this->baseUrl .= $path; 
+        }
 
     	$html = $this->tidyClean($html);
         $readability = new Readability($html, $url);
