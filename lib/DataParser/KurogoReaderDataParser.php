@@ -3,8 +3,9 @@
 includePackage('readability');
 
 class KurogoReaderDataParser extends DataParser {
-	private $tidyAvailable;
-	private $baseUrl;
+    private $tidyAvailable;
+    private $baseUrl;
+    private $basePath;
     
     public function parseData($html) {
 
@@ -20,12 +21,11 @@ class KurogoReaderDataParser extends DataParser {
         }
         $urlArray = parse_url($url);
         if(isset($urlArray['path'])) {
-            $path = dirname($urlArray['path']);
+            $this->basePath = dirname($urlArray['path']);
+        }else {
+            $this->basePath = "";
         }
         $this->baseUrl = $urlArray['scheme'] . "://" . $urlArray['host'];
-        if($path) {
-            $this->baseUrl .= $path; 
-        }
 
     	$html = $this->tidyClean($html);
         $readability = new Readability($html, $url);
@@ -114,9 +114,10 @@ class KurogoReaderDataParser extends DataParser {
             $urlArray = parse_url($imgSrc);
             if(!isset($urlArray['host'])) {
                 if(strpos($imgSrc, '/') !== 0) {
-                    $imgSrc = "/" . $imgSrc;
+                    $imgNodes->item($i)->setAttribute("src", $this->baseUrl . $this->basePath . "/" . $imgSrc);
+                }else {
+                    $imgNodes->item($i)->setAttribute("src", $this->baseUrl . $imgSrc);
                 }
-                $imgNodes->item($i)->setAttribute("src", $this->baseUrl . $imgSrc);
             }
         }
         /**
@@ -126,11 +127,12 @@ class KurogoReaderDataParser extends DataParser {
         for($i = 0;$i < $hrefNodes->length;$i ++) {
             $href = $hrefNodes->item($i)->getAttribute("href");
             $urlArray = parse_url($href);
-            if(!isset($urlArray['host'])) {
+            if(!isset($urlArray['host']) && strpos($href, 'mailto:') !== 0) {
                 if(strpos($href, '/') !== 0) {
-                    $href = "/" . $href;
+                    $hrefNodes->item($i)->setAttribute("href", $this->baseUrl . $this->basePath . "/" . $href);
+                }else {
+                    $hrefNodes->item($i)->setAttribute("href", $this->baseUrl . $href);
                 }
-                $hrefNodes->item($i)->setAttribute("href", $this->baseUrl . $href);
             }
         }
 
