@@ -4,7 +4,7 @@
   {if count($sections) > 1}
     <table id="newsHeader" class="section-search">
       <tr><td id="categoryformcontainer">
-        <form method="get" action="index.php">
+        <form method="get" action="/{$configModule}/index">
           <fieldset>
             <label for="section" class="formlabel">Section:</label>
             {$categorySelect}
@@ -18,7 +18,7 @@
           </fieldset>
         </form>
       </td><td id="searchformcontainer">
-        <form method="get" action="search">
+        <form method="get" action="/{$configModule}/search">
           {include file="findInclude:common/templates/search.tpl" insideForm=true extraArgs=$hiddenArgs}
         </form>
       </td></tr>

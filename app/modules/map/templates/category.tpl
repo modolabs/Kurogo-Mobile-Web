@@ -17,7 +17,7 @@
 
 {if $categories|@count>1}
 <div class="nonfocal">
-  <form action="category.php" method="get">
+  <form action="/{$configModule}/category" method="get">
     <select name="category" onchange="this.parentNode.submit();">
         <option value="" selected="selected">Browse map by:</option>
       {foreach $categories as $category}

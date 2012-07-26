@@ -5,7 +5,7 @@
     <tr>
     {if count($sections) > 1}
       <td id="categoryformcontainer">
-        <form method="get" action="index.php">
+        <form method="get" action="/{$configModule}/index">
           <fieldset>
             <label for="section" class="formlabel">{"SECTION_TEXT"|getLocalizedString}</label>
             {$categorySelect}
@@ -21,7 +21,7 @@
       </td>
     {/if}
       <td id="searchformcontainer">
-        <form method="get" action="search">
+        <form method="get" action="/{$configModule}/search">
           {include file="findInclude:common/templates/search.tpl" insideForm=true extraArgs=$hiddenArgs}
         </form>
       </td>
