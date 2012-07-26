@@ -1,4 +1,4 @@
-<form method="POST" id="loginForm" action="login">
+<form method="POST" id="loginForm" action="/{$configModule}/login">
 {foreach $urlArray as $key=>$val}
 <input type="hidden" name="{$key}" value="{$val|escape}" />
 {/foreach}

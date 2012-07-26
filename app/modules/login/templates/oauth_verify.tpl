@@ -3,7 +3,7 @@
 {$authorityTitle} should have provided you with a code to enter to verify your authorization. Please enter it below
 </p>
 <div class="focal">
-<form method="POST" id="loginForm" action="login">
+<form method="POST" id="loginForm" action="/{$configModule}/login">
 <input type="hidden" name="url" value="{$url|escape}" />
 <input type="hidden" name="authority" value="{$authority}" />
 
