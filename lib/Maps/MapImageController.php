@@ -19,10 +19,10 @@ abstract class MapImageController
     protected $bufferBox;
 
     protected $zoomLevel = 14;
-    protected $maxZoomLevel = 20;
-    protected $minZoomLevel = 0;
+    protected $minZoomLevel = 2;
+    protected $maxZoomLevel = 25;
 
-    // adjusts the map viewport to include a newly added placemark
+    // adjust map viewport when placemark is added
     protected $resizeOnAddPlacemark = true;
 
     protected $imageWidth = 300;
@@ -73,7 +73,6 @@ abstract class MapImageController
 
         $baseMap = new $mapClass();
         $baseMap->init($params);
-
         return $baseMap;
     }
 
@@ -91,7 +90,13 @@ abstract class MapImageController
             $this->resizeOnAddPlacemark = $params['resizeOnAddPlacemark'];
         }
 
-        $this->maxZoomLevel = isset($params['MAXIMUM_ZOOM_LEVEL']) ? $params['MAXIMUM_ZOOM_LEVEL'] : $this->zoomLevel;
+        if (isset($params['MINIMUM_ZOOM_LEVEL'])){
+            $this->minZoomLevel = $params['MINIMUM_ZOOM_LEVEL'];
+        }
+
+        if (isset($params['MAXIMUM_ZOOM_LEVEL']) && $params['MAXIMUM_ZOOM_LEVEL'] >= $this->minZoomLevel){
+            $this->maxZoomLevel = $params['MAXIMUM_ZOOM_LEVEL'];
+        }
 
         $this->bufferBox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
 
