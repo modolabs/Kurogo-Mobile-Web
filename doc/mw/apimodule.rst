@@ -77,7 +77,5 @@ Methods to override
 The CoreAPIModule
 =================
 
-The CoreAPIModule is a special subclass of APIModule that lives in *lib* rather
-than the *app* directory, and returns metadata about each of the enabled 
-APIModules.
-
+The CoreAPIModule is a special subclass of APIModule. It contains general information
+about the site.

@@ -34,6 +34,7 @@ each other. Details about WebModule and APIModule are in the following pages:
 
    webmodule
    apimodule
+   shellmodule
 
 ---------------------------
 Module life cycle
