@@ -1,4 +1,4 @@
-<p>Kurogo is distributed under the MIT License by Modo Labs, Inc.</p>
+<p>Kurogo is distributed under the LGPL License by Modo Labs, Inc.</p>
 
 <p>
 <strong>Modo Labs, Inc.</strong><br />
