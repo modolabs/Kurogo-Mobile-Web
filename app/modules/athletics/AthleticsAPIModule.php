@@ -24,6 +24,21 @@ class AthleticsAPIModule extends APIModule
     protected $maxPerPage = 10;
     protected $feeds;
     protected $navFeeds;
+
+    protected function cleanContent($content) {
+        //deal with pre tags. strip out pre tags and add <br> for newlines
+        $bits = preg_split( '#(<pre.*?'.'>)(.*?)(</pre>)#s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $content = array_shift($bits);
+        $i=0;
+        while ($i<count($bits)) {
+            $tag = $bits[$i++];
+            $content .= nl2br($bits[$i++]);
+            $close = $bits[$i++];
+            $i++;
+        }
+    
+        return $content;
+    }
     
     public function  initializeForCommand() {
 
@@ -208,7 +223,7 @@ class AthleticsAPIModule extends APIModule
 
         if($story->getContent()) {
             if($mode == 'full') {
-                $item['body'] = $story->getContent();
+                $item['body'] = $this->cleanContent($story->getContent());
             }
             $item['hasBody'] = TRUE;
         } else {
