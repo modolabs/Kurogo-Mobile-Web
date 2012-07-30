@@ -49,7 +49,7 @@ class PeopleAPIModule extends APIModule
         }
     }
     
-    private function formatPerson($person) {
+    private function formatPersonByNative($person) {
         $result = array();
         $result['uid'] = $person->getId();
 
@@ -127,6 +127,24 @@ class PeopleAPIModule extends APIModule
         return $result;
     }
     
+    private function formatPersonByFields($person) {
+        $result = array();
+        
+        $result['uid'] = $person->getId();
+        $result = array_merge($result, $person->getAttributes());
+        
+        return $result;
+    }
+    
+    private function formatPerson($person, $output='') {
+        if ($output == 'fields') {
+            return $this->formatPersonByFields($person);
+        } else {
+            return $this->formatPersonByNative($person);
+        }
+        
+    }
+    
     protected function getFeed($index) {
         if (isset($this->controllers[$index])) {
             return $this->controllers[$index];
@@ -186,6 +204,8 @@ class PeopleAPIModule extends APIModule
         $this->loadAPIDetailAttributes($feed);
         $peopleController = $this->getFeed($feed);
         
+        $output = $this->getArg('output', '');
+        
         switch ($this->command) {
             case 'search':
                 if ($filter = $this->getArg(array('filter', 'q'))) {
@@ -208,7 +228,7 @@ class PeopleAPIModule extends APIModule
                         $results = array();
                         $resultCount = count($people);
                         foreach ($people as $person) {
-                            $results[] = $this->formatPerson($person);
+                            $results[] = $this->formatPerson($person, $output);
                         }
                         $response = array(
                             'total'        => $resultCount,
@@ -230,18 +250,30 @@ class PeopleAPIModule extends APIModule
                 
             case 'detail':
             	
-            	$uid = $this->getArg('id');
-            	$person = $peopleController->getUser($uid);
-            	if ($person) {
-                	$this->setLogData($uid, $person->getName());
-                	$personDetails =  $this->formatPerson($person);
-            	}
-            	$response = array(
-            		'person'	=> $personDetails,
-            	);
-            	
-            	$this->setResponse($response);
-            	$this->setResponseVersion(1);
+            	if($uid = $this->getArg(array('id', 'uid'))){
+                    $person = $peopleController->getUser($uid);
+                    if ($person) {
+                        $personDetails =  $this->formatPerson($person, $output);
+                        $response = array(
+                            'person'    => $personDetails,
+                        );
+
+                        $this->setResponse($response);
+                        $this->setResponseVersion(1);
+                    }else{
+                        $errorCode = $peopleController->getResponseCode();
+                        if ($errorCode) {
+                            // TODO decide on error title
+                            $errorTitle = 'Warning';
+                            $errorMsg = $peopleController->getResponseError();
+                            $error = new KurogoError($errorCode, $errorTitle, $errorMsg);
+                            $this->setResponseError($error);
+                        }
+                    }
+                }else{
+                    $this->invalidCommand();
+                    $this->setResponseVersion(1);
+                }
             	break;
                 
             case 'contacts':
