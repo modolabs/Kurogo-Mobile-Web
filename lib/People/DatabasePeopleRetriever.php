@@ -272,4 +272,7 @@ class DatabasePerson extends Person
         }
     }    
 
+    public function getAttributes(){
+        return $this->attributes;
+    }
 }
