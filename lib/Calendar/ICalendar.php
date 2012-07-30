@@ -507,7 +507,7 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
                 // set the event timezone if it's present in the start time
                 if (array_key_exists('TZID', $params)) {
                     $this->timezone = self::getTimezoneForID($params['TZID']);
-                    $this->tzid = $params['TZID'];
+                    $this->tzid = $this->timezone->getName();
                 }
             case 'DTEND':
                 $dayOnly = false;
@@ -589,7 +589,7 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
             case 'TZID': // this only gets called by ICalendar::__construct
                 $timezone = self::getTimezoneForID($value);
                 $this->timezone = $timezone;
-                $this->tzid = $value;
+                $this->tzid = $timezone->getName();
                 break;
             default:
                 $this->properties[$attr] = iCalendar::ical_unescape_text($value);
