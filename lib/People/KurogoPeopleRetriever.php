@@ -13,6 +13,10 @@ class KurogoPeopleRetriever extends URLDataRetriever implements PeopleRetriever 
     protected $attributes = array();
     protected $peopleAPI = '';
     protected $feed;
+
+    public function getCacheKey() {
+        return false;
+    }
     
     public function debugInfo() {
         return sprintf("Using Kurogo People API");
