@@ -330,7 +330,7 @@ class OAuthDataRetriever extends URLDataRetriever
         
         //if there is a location header we need to re-sign before redirecting
         if ($redirectURL = $response->getHeader("Location")) {
-            Kurogo::log(LOG_WARNING, "Found Location Header", 'oauth');
+            Kurogo::log(LOG_NOTICE, "Found Location Header", 'oauth');
 		    $redirectParts = parse_url($redirectURL);
 		    //if the redirect does not include the host or scheme, use the scheme/host from the original URL
             if (!isset($redirectParts['scheme']) || !isset($redirectParts['host'])) {
@@ -349,7 +349,7 @@ class OAuthDataRetriever extends URLDataRetriever
 
 		    //reset headers
 		    $this->setHeaders($headers);
-            Kurogo::log(LOG_DEBUG, "Redirecting to $this->baseURL", 'oauth');
+            Kurogo::log(LOG_INFO, "Redirecting to $this->baseURL", 'oauth');
             $response =  $this->retrieveResponse();
         }
         
