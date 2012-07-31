@@ -31,9 +31,14 @@ class URLDataRetriever extends DataRetriever {
     protected $requestData;
     protected $streamContext = null;
     protected $saveToFile = false;
+    protected $useCurl = false;
     
     public function __wakeup() {
-        $this->initStreamContext($this->initArgs);
+    	if ($this->useCurl) {
+	        $this->initCurl($this->initArgs);
+    	} else {
+    	    $this->initStreamContext($this->initArgs);
+    	}
     }
     
     /**
@@ -97,9 +102,74 @@ class URLDataRetriever extends DataRetriever {
     public function removeAllFilters() {
         $this->filters = array();
     }
+
+    protected function setCurlOption($key, $value) {
+        curl_setopt($this->curl, $key, $value);
+    }
+
+    protected function processCurlHeader($curl, $header) {
+        $this->responseHeaders[] = trim($header);
+        return strlen($header);
+    }
+
+	protected function setCurlMethod() {
+        $method = $this->method();
+        switch($method) {
+            case "POST":
+                $this->setCurlOption(CURLOPT_POST, 1);
+                break;
+            case "GET":
+                $this->setCurlOption(CURLOPT_HTTPGET, 1);
+                break;
+            default:
+                $this->setCurlOption(CURLOPT_CUSTOMREQUEST, $method);
+                break;
+        }
+        return $method;
+    }
+    
+    protected function setCurlHeaders() {
+        $headers = array();
+        foreach($this->headers() as $key => $val) {
+            $headers[] = $key . ": " . $val;
+        }
+        $this->setCurlOption(CURLOPT_HTTPHEADER, $headers);
+        return $headers;
+    }
+
+    protected function setCurlData() {
+        if ($data = $this->data()) {
+            $this->setCurlOption(CURLOPT_POSTFIELDS, $data);
+        }
+        return $data;
+    }
+    
+    protected function initCurl($args) {
+        if(!function_exists("curl_init")) {
+            throw new KurogoDataException("cURL PHP extension not available");
+        }
+
+        $this->curl = curl_init();
+        
+        $this->setCurlOption(CURLOPT_USERAGENT, Kurogo::KurogoUserAgent());
+        $this->setCurlOption(CURLOPT_RETURNTRANSFER, true);
+        $this->setCurlOption(CURLOPT_HEADERFUNCTION, array($this, 'processCurlHeader'));
+        $this->setCurlOption(CURLOPT_MAXREDIRS, 20);
+
+        //setup the option which configured in feed file
+        foreach($args as $key=>$value) {
+        	if (preg_match("/CURLOPT_/", $key)) {
+        	    $this->setCurlOption(constant($key), $value);
+        	}
+        }
+    }
     
     protected function init($args) {
         parent::init($args);
+        if (isset($args['USE_CURL'])) {
+        	$this->useCurl = (bool) $args['USE_CURL'];
+        }
+        
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
         }
@@ -116,7 +186,11 @@ class URLDataRetriever extends DataRetriever {
             $this->setData($args['DATA']);
         }
         
-        $this->initStreamContext($args);
+        if ($this->useCurl) {
+			$this->initCurl($args);
+		} else {
+			$this->initStreamContext($args);
+		}
     }
     
     public function setHeaders($headers) {
@@ -280,9 +354,15 @@ class URLDataRetriever extends DataRetriever {
         }
                 
         $this->requestParameters = $this->parameters();
-        $this->requestMethod = $this->setContextMethod();
-        $this->requestHeaders = $this->setContextHeaders();
-        $this->requestData = $this->setContextData();
+        if ($this->useCurl) {
+			$this->requestMethod = $this->setCurlMethod();
+			$this->requestHeaders = $this->setCurlHeaders();
+			$this->requestData = $this->setCurlData();
+		} else {
+			$this->requestMethod = $this->setContextMethod();
+			$this->requestHeaders = $this->setContextHeaders();
+			$this->requestData = $this->setContextData();
+		}
         
         Kurogo::log(LOG_INFO, "Retrieving $this->requestURL", 'url_retriever');
 
@@ -299,21 +379,38 @@ class URLDataRetriever extends DataRetriever {
         if (!$this->showWarnings) {
         	Kurogo::pushErrorReporting(E_ERROR);
         }
-        if ($file = $this->saveToFile()) {
-            $data = $this->cache->getFullPath($file);
-            $result = file_put_contents($data, file_get_contents($this->requestURL, false, $this->streamContext));
-        } else {
-            $data = file_get_contents($this->requestURL, false, $this->streamContext);
-        }
+        
+        if ($this->useCurl) {
+			$this->setCurlOption(CURLOPT_URL, $this->requestURL);
+			if ($file = $this->saveToFile()) {
+				$data = $this->cache->getFullPath($file);
+				$this->setCurlOption(CURLOPT_FILE, $data);
+				$result = curl_exec($this->curl);
+			} else {
+				$data = curl_exec($this->curl);
+				$response->setResponseError(curl_error($this->curl));
+			}
+		} else {
+			if ($file = $this->saveToFile()) {
+				$data = $this->cache->getFullPath($file);
+				$result = file_put_contents($data, file_get_contents($this->requestURL, false, $this->streamContext));
+			} else {
+				$data = file_get_contents($this->requestURL, false, $this->streamContext);
+			}
+		}
         if (!$this->showWarnings) {
         	Kurogo::popErrorReporting();
         }
         $response->setEndTime(microtime(true));
         
         if ($response instanceOf HTTPDataResponse) {
-            $http_response_header = isset($http_response_header) ? $http_response_header : array();
             $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders, $this->requestData);
-            $response->setResponseHeaders($http_response_header);
+        	if ($this->useCurl) {
+	            $response->setResponseHeaders($this->responseHeaders);
+        	} else {
+				$http_response_header = isset($http_response_header) ? $http_response_header : array();
+	            $response->setResponseHeaders($http_response_header);
+			}
             Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
         } elseif ($response instanceOf FileDataResponse) {
             $response->setRequest($this->requestURL);
