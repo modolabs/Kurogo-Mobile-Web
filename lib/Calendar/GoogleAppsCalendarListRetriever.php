@@ -82,13 +82,9 @@ class GoogleAppsCalendarListParser extends DataParser
     }
     
     private function getBaseFeed() {
-        $baseFeed = array(
-            'RETRIEVER_CLASS'=>'GoogleAppsCalendarDataRetriever',
-        );
-        
-        if ($this->authority) {
-            $baseFeed['AUTHORITY'] = $this->authority->getAuthorityIndex();
-        }
+    	$baseFeed = $this->initArgs;
+        unset($baseFeed['PARSER_CLASS']);
+        $baseFeed['RETRIEVER_CLASS']='GoogleAppsCalendarDataRetriever';
         
         return $baseFeed;
     }
