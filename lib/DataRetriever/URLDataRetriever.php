@@ -355,6 +355,7 @@ class URLDataRetriever extends DataRetriever {
                 
         $this->requestParameters = $this->parameters();
         if ($this->useCurl) {
+        	$this->responseHeaders = array();
 			$this->requestMethod = $this->setCurlMethod();
 			$this->requestHeaders = $this->setCurlHeaders();
 			$this->requestData = $this->setCurlData();
