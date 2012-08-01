@@ -504,6 +504,13 @@ class KurogoWebBridge
             ($args ? '?'.http_build_query($args) : '');
     }
     
+    public static function getAjaxLink($id, $page, $args=array()) {
+        if (self::forceNativePlatform($pagetype, $platform, $browser)) {
+            $args = array_merge(self::pagetypeAndPlatformToParams($pagetype, $platform, $browser), $args);
+        }
+        return FULL_URL_PREFIX."$id/$page?".http_build_query($args);
+    }
+    
     public static function getExternalLink($url) {
         if (strpos($url, self::BRIDGE_URL_INTERNAL_LINK) === 0) {
             // Use different scheme for urls which should be external but are in Kurogo

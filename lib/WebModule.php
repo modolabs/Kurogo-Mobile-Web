@@ -385,7 +385,7 @@ abstract class WebModule extends Module {
       
     } else {
       $argString = '';
-      if (isset($args) && count($args)) {
+      if (is_array($args) && count($args)) {
         $argString = http_build_query($args);
       }
       
@@ -398,11 +398,16 @@ abstract class WebModule extends Module {
   }
 
   public static function buildAjaxURLForModule($id, $page, $args=array()) {
-      $argString = '';
-      if (isset($args) && count($args)) {
-          $argString = http_build_query($args);
+      if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+        return KurogoWebBridge::getAjaxLink($id, $page, $args);
+        
+      } else {
+        $argString = '';
+        if (is_array($args) && count($args)) {
+            $argString = http_build_query($args);
+        }
+        return FULL_URL_PREFIX."$id/$page".(strlen($argString) ? "?$argString" : '');
       }
-      return FULL_URL_PREFIX."$id/$page".(strlen($argString) ? "?$argString" : '');
   }
   
   protected function buildExternalURL($url) {
