@@ -213,7 +213,12 @@ Analytics
   analytics server
 * *GOOGLE_ANALYTICS_DOMAIN* - If you use subdomains in your google analytics reporting, set this to the appropriate domain
 * *STATS_ENABLED* - if set to 0 then the internal statistics engine will be disabled
-* *KUROGO_STATS_TABLE* (kurogo_stats_v1) - The name of the table to use for internal statistics gathering
+* *KUROGO_STATS_TABLE* (kurogo_stats_v1) - The name of the table to use for internal statistics gathering. 
+* *KUROGO_STATS_SHARDING_TYPE* (month) - To accomodate high volume sites, it is recommended to shard the pageview logs into
+  separate tables. Possible values are: week, day, month.
+* *KUROGO_STATS_SUMMARY_TABLE* (kurogo_stats_module_v1) - To improve performance of viewing statistics of large volume
+  sites, a summary table is used.
+* *KUROGO_STATS_LOG_FILE* - All access is logged in a file then compiled into database tables
 * *KUROGO_VISIT_LIFESPAN* (1800) - The timeout (in seconds) for tracking visits
 
 --------------
@@ -322,6 +327,8 @@ contains values common to all modules, as well as module specific values.
   sites is beyond the scope of this document.
 * *robots* - When set to 0, the module will be excluded from search engines by including
   a *disallow* entry in robots.txt
+* *PREFETCH_DATA* - When set to 1, this module will attempt to prefetch data when the Core shell
+  command prefetchData is run. See :ref:`data_prefetching` for more information.
   
 -------------------------------
 Optional Common Module Settings

@@ -63,3 +63,40 @@ Methods to override
 * *getAllControllers* - In some modules you will need to override this method when implementing
   prefetch. This would be necessary if you are using a mechanism other than *feeds.ini*
 
+===============
+CoreShellModule
+===============
+
+
+The CoreShellModule has several commands:
+
+* *version* - Returns the Kurogo version
+* *clearCaches* - Clears the Kurogo cache folder. It is recommended to run this periodically 
+  to ensure that caches don't build up
+* *fetchAllData* - Cycle through all modules and call fetchAllData for modules that have 
+  PREFETCH_DATA = 1 set in their module.ini file.
+
+.. _data_prefetching:
+
+----------------
+Data Prefetching
+----------------
+
+Certain modules can prefetch their data. When run in the background (like a cron job), you
+can ensure that the data cache is primed. This is especially useful for servers that are
+slow.
+
+You can run the core shell command *fetchAllData* and it will fetch data for all modules
+that have PREFETCH_DATA = 1 in their module.ini. Built in modules that support this include:
+
+* News
+* Video
+* Photos
+* Calendar
+* Athletics
+* Emergency
+* Social
+
+It is recommended to run /path/to/kurogo/lib/KurogoShell core prefetchData in a cron
+job. It should be run at an interval less than the cache time of the modules. 10 minutes is
+a good default time.

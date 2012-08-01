@@ -3,6 +3,7 @@
 * NEW MODULE : Social. Show feeds from facebook and Twitter
 * Created ShellModule to create modules that run on the command line (UNIX only at this time)
 * Kurogo shell modules have been created that can fetch public feed data in the background. See dev guide for setting up automatic fetching
+* Kurogo will load libraries and configuration from the shared site directory to reduce code duplication
 * It is possible to change which module is the home module
 * CACHE_LIFETIME is now respected
 * New XML Parser (SimpleXMLDataParser) makes it easier to parse simple XML documents
@@ -13,6 +14,7 @@
 * Most module's library files are now included in the module's "lib" folder
 * Add Shibboleth authentication authority (requires a shibboleth SP installed on the Kurogo Server)
 * Tablet Panes are now loaded Asynchronously
+* Updated handling of stats information to improve stats module performance. See dev guide for important migration information
 * Improved tablet interface for Photos (issue 57, 58)
 * Added ability to retrieve data using the cURL library
 * Federated search can be disabled
@@ -26,6 +28,7 @@
 * Fixes for pagination in Flickr feeds
 * Removed suport for Percent Mobile (service is ending)
 * Proper handling of calendars where the time zone is different than the server time zone (issue 53)
+* The MySQL DB class will now connect to hosts without a password (strongly discouraged except in dev environments)
 
 1.4.1 (Apr 27, 2012)
 * Fixed issues with Drupal Contacts

@@ -26,4 +26,5 @@ you can learn more about these modules, what they do and how to configure them.
    moduleabout
    modulelogin
    modulestats
+   modulekitchensink
    

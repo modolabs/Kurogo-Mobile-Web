@@ -235,6 +235,8 @@ template system and file naming) A non-exhaustive list of these templates includ
 * **springboard** - template for displaying content as a grid of icons
 * **tabs.tpl** - template for displaying content in tabs
 
+View the :doc:`Kitchen Sink <modulekitchensink>` module for examples on using these templates.
+
 -------
 Modules
 -------

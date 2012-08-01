@@ -21,6 +21,7 @@ Version 1.5
 * Added ability to retrieve data using the cURL library
 * A custom user class can be specified in :doc:`Authentication <authentication>` configurations eliminating the need to create a custom authority
 * Support for Co-Ed sports in :doc:`Athletics <moduleathletics>` module
+* Updated handling of stats date. See :ref:`stats_migration` for important details on migrating existing stats data
 * Many other bug fixes and minor improvements
 
 Version 1.4 (March 5, 2012)
