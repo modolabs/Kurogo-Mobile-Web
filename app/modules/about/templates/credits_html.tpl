@@ -1,5 +1,3 @@
-<p>Kurogo is distributed under the MIT License by Modo Labs, Inc.</p>
-
 <p>
 <strong>Modo Labs, Inc.</strong><br />
 100 Cambridgepark Drive, Suite 302<br />

@@ -16,6 +16,8 @@ function KGOMapLoader(attribs) {
     this.initLon = ("lon" in attribs) ? attribs["lon"] : 0;
     this.initZoom = ("zoom" in attribs) ? attribs["zoom"] : 1;
     this.mapElement = ("mapElement" in attribs) ? attribs["mapElement"] : null;
+    this.minZoomLevel = ("minZoom" in attribs) ? parseInt(attribs["minZoom"]) : 0;
+    this.maxZoomLevel = ("maxZoom" in attribs) ? parseInt(attribs["maxZoom"]) : 25;
 
     this.placemarks = [];
     this.showUserLocation = true;
@@ -223,6 +225,12 @@ KGOGoogleMapLoader.prototype.loadMap = function() {
     var tilesLoadedListener = google.maps.event.addListener(map, 'tilesloaded', function() {
         map.setCenter(initCoord);
         google.maps.event.removeListener(tilesLoadedListener);
+    });
+
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+        currZoom = map.getZoom();
+        if (currZoom < that.minZoomLevel) map.setZoom(that.minZoomLevel);
+        if (currZoom > that.maxZoomLevel) map.setZoom(that.maxZoomLevel);
     });
 
     var controlDiv = this.createMapControls();

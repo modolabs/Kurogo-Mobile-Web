@@ -240,7 +240,10 @@ class GoogleJSMap extends JavascriptMapImageController {
             '___OPTIONS___' => $options,
             '___MARKER_SCRIPT___' => $this->getMarkerJS(),
             '___POLYGON_SCRIPT___' => $this->getPolygonJS(),
-            '___PATH_SCRIPT___' => $this->getPathJS()));
+            '___PATH_SCRIPT___' => $this->getPathJS(),
+            '___MINZOOM___' => $this->minZoomLevel,
+            '___MAXZOOM___' => $this->maxZoomLevel
+        ));
         return $footer->getScript();
     }
 
