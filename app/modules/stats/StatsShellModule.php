@@ -8,37 +8,42 @@ class StatsShellModule extends ShellModule {
         $this->out("Beginning Migration");
         if ($table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE", "")) {
             $this->out("Using table $table");
-            $this->out("Retrieving timeframe.",false);
+            $this->out("Analyzing data.",false);
             $day = KurogoStats::getStartDate($table);
             $this->out(".",false);
-            $endDay = KurogoStats::getLastTimestamp($table);
+            $endDay = KurogoStats::getLastDate($table);
             $this->out(".",false);
-            $totalNumberOfDays = ((strtotime($endDay) - strtotime($day)) / (float)(60 * 60 * 24))+1;
+            $totalRows = KurogoStats::getTotalRows($table);
+            $totalNumberOfDays = floor((strtotime($endDay) - strtotime($day)) / (60 * 60 *24));
             $this->out(".",false);
             $this->out("Done.");
             $this->out("Migrating data from $day to $endDay");
             $this->out("Total Number of Days: $totalNumberOfDays");
+            $this->out("Total Number of Rows: " . number_format($totalRows));
             $this->out("");
             $startTime = microtime(true);
-            $dayCount = 1;
+            $totalRowsProcessed = 0;
+            $dayCount = 0;
             while (strtotime($day) <= strtotime($endDay)) {
                 $this->out("Migrating data for $day....",false);
                 $rowsProcessed = KurogoStats::migrateData($table, $day, 50000, $updateSummaryOnly);
-                $this->out("rows processed: $rowsProcessed",false);
+                $totalRowsProcessed += $rowsProcessed;
+                $dayCount++;
+                $this->out("rows found: $rowsProcessed",false);
 
                 $timeTaken = microtime(true) - $startTime;
                 $clockTimeTaken = $this->secondsToTime($timeTaken);
-                $estimatedTimeRemaining = ($timeTaken * ($totalNumberOfDays - $dayCount)) / $dayCount;
-                $clockTimeRemaining = $this->secondsToTime($estimatedTimeRemaining);
+                $rowsRemaining = $totalRows - $totalRowsProcessed;
+                $daysRemaining = $totalNumberOfDays - $dayCount;
+                $pctDone = floor(($totalRowsProcessed * 100) / $totalRows);
 
-                $this->out("\t Taken: $clockTimeTaken \t Remaining: $clockTimeRemaining");
+                $this->out("\t Elapsed: $clockTimeTaken \t $daysRemaining days remaining. " . number_format($rowsRemaining) . " rows remaining. $pctDone% complete.");
 
                 $dayTimestamp = strtotime($day);
                 $nextDayTimestamp = strtotime("+1 day", $dayTimestamp);
                 $day = date("Y-m-d", $nextDayTimestamp);
-                $dayCount++;
             }
-            $this->out('Congratulations, all data has been migrated successfully.');
+            $this->out('All data has been migrated successfully.');
            
         } else {
             $this->out('The stats table is not configured.');

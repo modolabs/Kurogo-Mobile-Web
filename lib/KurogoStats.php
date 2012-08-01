@@ -1128,6 +1128,17 @@ class KurogoStats {
         return 0;
     }
 
+    public static function getTotalRows($table) 
+    {
+        $conn = self::connection();
+        $sql = "SELECT count(*) as count FROM `$table`";
+        $data = $conn->query($sql);
+        if(!$result = $data->fetch()){
+            throw new Exception("Could not get total rows");
+        }
+        return $result['count'];
+    }
+
     public static function getStartDate($table){
         $conn = self::connection();
         $sql = "SELECT date(`date`) AS date FROM `$table` GROUP BY 1 ORDER BY 1 ASC LIMIT 1";
@@ -1138,7 +1149,7 @@ class KurogoStats {
         return $result['date'];
     }
 
-    public static function getLastTimestampFromSummary(){
+    public static function getLastDateFromSummary(){
         $summaryTable = Kurogo::getOptionalSiteVar("KUROGO_STATS_SUMMARY_TABLE", "kurogo_stats_module_v1");
         $conn = self::connection();
         $sql = "SELECT date(`date`) AS date FROM `$summaryTable` GROUP BY 1 ORDER BY 1 DESC LIMIT 1";
@@ -1152,7 +1163,7 @@ class KurogoStats {
         return $result['date'];
     }
 
-    public static function getLastTimestamp($table){
+    public static function getLastDate($table){
         $conn = self::connection();
         $sql = "SELECT date(`date`) AS date FROM `$table` GROUP BY 1 ORDER BY 1 DESC LIMIT 1";
         $data = $conn->query($sql);

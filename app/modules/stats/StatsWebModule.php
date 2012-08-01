@@ -124,7 +124,7 @@ class StatsWebModule extends WebModule {
                 // Get last updated time
                 $summaryTable = Kurogo::getOptionalSiteVar('KUROGO_STATS_SUMMARY_TABLE');
                 $this->assign('updateStatsLink', $this->buildURL('updateStats'));
-                if($summaryTable && $date = KurogoStats::getLastTimestampFromSummary()){
+                if($summaryTable && $date = KurogoStats::getLastDateFromSummary()){
                     $lastUpdated = date("l, F jS Y", strtotime($date));
                     $this->assign('lastUpdated', $lastUpdated);
                 }
