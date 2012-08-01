@@ -37,20 +37,20 @@ class StatsWebModule extends WebModule {
         return $interval_types;
     }
     
-    public function setRefresh($content) {
-    
-        $this->assign('refreshPage', $content);
-    }
-        
 	protected function initializeForPage() {
-        if($this->page == 'updateStats'){
-            KurogoStats::exportStatsData();
-            $this->redirectTo('index');
-        }
-
 	    if (!Kurogo::getOptionalSiteVar('STATS_ENABLED', true)) {
 	        throw new KurogoException($this->getLocalizedString('STATS_DISABLED'));
 	    }
+
+        if ($this->page == 'updateStats'){
+            KurogoStats::exportStatsData();
+            $this->redirectTo('index');
+        }
+        
+        if ($this->getOptionalModuleVar('AUTO_UPDATE_STATS')) {
+            KurogoStats::exportStatsData();
+        }
+
 	
 	    $serviceTypes = $this->getServiceTypes();
 	    $service = $this->getArg('service', 'web');
@@ -118,16 +118,15 @@ class StatsWebModule extends WebModule {
             'start'=>$startTime,
             'end'=>$endTime
         );
-        
+
+		if ($date = KurogoStats::getLastDateFromSummary()){
+			includePackage('DateTime');
+			$date = new DateTime($date);
+			$this->assign('lastUpdated', DateFormatter::formatDate($date, DateFormatter::LONG_STYLE, DateFormatter::NO_STYLE));
+		}
+		        
 		switch ($this->page) {
 			case 'index':
-                // Get last updated time
-                $summaryTable = Kurogo::getOptionalSiteVar('KUROGO_STATS_SUMMARY_TABLE');
-                $this->assign('updateStatsLink', $this->buildURL('updateStats'));
-                if($summaryTable && $date = KurogoStats::getLastDateFromSummary()){
-                    $lastUpdated = date("l, F jS Y", strtotime($date));
-                    $this->assign('lastUpdated', $lastUpdated);
-                }
 
 			    //get config
 			    $chartsConfig = $this->getModuleSections('stats-index');
