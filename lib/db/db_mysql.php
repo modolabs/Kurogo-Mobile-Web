@@ -30,8 +30,8 @@ class db_mysql extends db
             throw new KurogoConfigurationException("MySQL user not specified");
         }
 
-        if (!isset($dsn_data['DB_PASS']) || empty($dsn_data['DB_PASS'])) {
-            throw new KurogoConfigurationException("MySQL password not specified");
+        if (!isset($dsn_data['DB_PASS'])) {
+        	$dsn_data['DB_PASS'] = '';
         }
 
         if (!isset($dsn_data['DB_DBNAME']) || empty($dsn_data['DB_DBNAME'])) {
