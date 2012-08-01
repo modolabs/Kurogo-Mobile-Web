@@ -1,4 +1,4 @@
-1.5 (Jul XX, 2012)
+1.5 (Aug 1, 2012)
 * Version 1.5 is released under the Lesser GNU Public License v2.1
 * NEW MODULE : Social. Show feeds from facebook and Twitter
 * Created ShellModule to create modules that run on the command line (UNIX only at this time)

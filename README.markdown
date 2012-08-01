@@ -10,6 +10,9 @@ to early generation smart phones, to modern devices and tablets. It currently in
 * Event Calendar
 * Maps
 * Video
+* Photos
+* Athletics
+* Social
 * Emergency
 * Links
 * Statistics
@@ -39,15 +42,14 @@ Kurogo is a PHP application. It is currently qualified for use with
 To install, simply copy the files to your webserver, and set the document root to the www
 folder. For more detailed setup information, please see the Developer's guide on kurogo.org/docs
 
-## Version 1.4.1
+## Version 1.5 RC1
 
-This version is primarily a security and bug fix release. No new major functionality is present.
-In particular there are key fixes for the following areas:
-
-* Maps
-* RSS
-* Calendar
-* DiskCache
+* Version 1.5 is released under the Lesser GNU Public License v2.1
+* NEW MODULE : Social. Show feeds from facebook and Twitter
+* Data can be fetched in the background improving performance
+* New XML Parser (SimpleXMLDataParser) makes it easier to parse simple XML documents
+* Add Shibboleth authentication authority (requires a shibboleth SP installed on the Kurogo Server)
+* Many other improvements and fixes
 
 ## History
 
