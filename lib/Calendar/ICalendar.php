@@ -1096,7 +1096,7 @@ class ICalendar extends ICalObject implements CalendarInterface {
     }
 
     public static function ical_unescape_text($text) {
-        $text = str_replace(array("DQUOTE","\\\\", "\,","\;","\\n"), array("\"","\\",",",";","\n"), $text);
+        $text = str_replace(array("DQUOTE","\\\\", "\,","\;","\\n","\\r"), array("\"","\\",",",";","\n",""), $text);
         return $text;
     }
 
