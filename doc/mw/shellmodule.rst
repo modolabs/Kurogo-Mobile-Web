@@ -44,9 +44,9 @@ Methods to Use
 The ShellModule is primarily used to perform actions (typically administrative actions). 
 
 * *preFetchAllData* - This command will call *getAllControllers* and then attempt to fetch
-all the data for module. This is used to prime the Kurogo Cache so that users are not waiting
-for data to be fetched. Not all modules or retrievers will be able to use prefetching due
-to the nature of their API calls.
+  all the data for module. This is used to prime the Kurogo Cache so that users are not waiting
+  for data to be fetched. Not all modules or retrievers will be able to use prefetching due
+  to the nature of their API calls.
 
 -------
 Output
@@ -63,9 +63,3 @@ Methods to override
 * *getAllControllers* - In some modules you will need to override this method when implementing
   prefetch. This would be necessary if you are using a mechanism other than *feeds.ini*
 
-=================
-The CoreShellModule
-=================
-
-The CoreShellModule is a special subclass of ShellModule. It contains general information
-about the site.

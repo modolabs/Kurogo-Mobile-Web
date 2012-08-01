@@ -18,7 +18,7 @@ Version 1.5
 * Add :doc:`Shibboleth authentication <ShibbolethAuthentication>` authority
 * Tablet Panes are now loaded Asynchronously
 * Improved tablet interface for Photos
-* Added :doc:`CurlDataRetriever <dataretriever>` to retrieve data using the cURL library
+* Added ability to retrieve data using the cURL library
 * A custom user class can be specified in :doc:`Authentication <authentication>` configurations eliminating the need to create a custom authority
 * Support for Co-Ed sports in :doc:`Athletics <moduleathletics>` module
 * Many other bug fixes and minor improvements

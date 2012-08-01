@@ -63,3 +63,11 @@ these methods to return your own values.
   settings. You should call parent::initRequest(). No return value is necessary
 
 
+====
+cURL
+====
+
+In certain cases you may wish to utilize the cURL library for retrieving data. You can 
+include a *USE_CURL = 1* option to enable cURL. The configuration will also recognize
+valid CURLOPT_XXXX options set in the configuration file. i.e. CURLOPT_PROXY, CURLOPT_SSLCERT,
+CURLOPT_USERPWD, etc. 

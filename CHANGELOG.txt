@@ -14,7 +14,7 @@
 * Add Shibboleth authentication authority (requires a shibboleth SP installed on the Kurogo Server)
 * Tablet Panes are now loaded Asynchronously
 * Improved tablet interface for Photos (issue 57, 58)
-* Added CurlDataRetriever to retrieve data using the cURL library
+* Added ability to retrieve data using the cURL library
 * Federated search can be disabled
 * A custom user class can be specified in Authentication configurations eliminating the need to create a custom authority
 * Improved styling of spring board to accomodate devices of various sizes
