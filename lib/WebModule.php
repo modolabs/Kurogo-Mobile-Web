@@ -113,7 +113,7 @@ abstract class WebModule extends Module {
         return self::TAB_COOKIE_PREFIX."{$this->configModule}_{$this->page}_".md5(http_build_query($cookieArgs));
     }
   
-    protected function getCurrentTab($tabKeys) {
+    protected function getCurrentTab($tabKeys, $defaultTab=null) {
         $currentTab = null;
         
         $tabCookie = $this->tabCookieForPage();
@@ -136,8 +136,12 @@ abstract class WebModule extends Module {
             }
         
             if (!isset($currentTab)) {
-                // still haven't found it, fall back on tabKey order
-                $currentTab = reset($tabKeys);
+                if (isset($defaultTab) && $defaultTab) {
+                    $currentTab = $defaultTab;
+                } else {
+                    // still haven't found it, fall back on tabKey order
+                    $currentTab = reset($tabKeys);
+                }
             }
         }
         
@@ -175,7 +179,7 @@ abstract class WebModule extends Module {
             $tabs[$tabKey]['class'] = isset($classes[$tabKey]) ? $classes[$tabKey] : '';
         }
         
-        $currentTab = $this->getCurrentTab($tabKeys);
+        $currentTab = $this->getCurrentTab($tabKeys, $defaultTab);
         $tabCookie = $this->tabCookieForPage();
         
         $this->tabbedView = array(
@@ -385,7 +389,7 @@ abstract class WebModule extends Module {
       
     } else {
       $argString = '';
-      if (isset($args) && count($args)) {
+      if (is_array($args) && count($args)) {
         $argString = http_build_query($args);
       }
       
@@ -398,11 +402,16 @@ abstract class WebModule extends Module {
   }
 
   public static function buildAjaxURLForModule($id, $page, $args=array()) {
-      $argString = '';
-      if (isset($args) && count($args)) {
-          $argString = http_build_query($args);
+      if (KurogoWebBridge::shouldRewriteInternalLinks()) {
+        return KurogoWebBridge::getAjaxLink($id, $page, $args);
+        
+      } else {
+        $argString = '';
+        if (is_array($args) && count($args)) {
+            $argString = http_build_query($args);
+        }
+        return FULL_URL_PREFIX."$id/$page".(strlen($argString) ? "?$argString" : '');
       }
-      return FULL_URL_PREFIX."$id/$page".(strlen($argString) ? "?$argString" : '');
   }
   
   protected function buildExternalURL($url) {
