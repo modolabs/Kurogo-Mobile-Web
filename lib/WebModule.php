@@ -516,7 +516,7 @@ abstract class WebModule extends Module {
         if ($this->isLoggedIn()) {  
             $this->redirectToModule('error', '', array_merge($this->getArrayForRequest(), array('code'=>'protected')));
         } else {
-            $this->redirectToModule('login', '', $this->getArrayForRequest());
+            $this->redirectToModule($this->getLoginModuleID(), '', $this->getArrayForRequest());
         }
   }
   
@@ -1782,14 +1782,14 @@ abstract class WebModule extends Module {
             $this->assign('session_userID', $user->getUserID());
             $this->assign('session_fullName', $user->getFullname());
             if (count($session->getUsers())==1) {
-                $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
-                $this->assign('footerLoginLink', $this->buildURLForModule('login', '', array()));
+                $this->assign('session_logout_url', $this->buildURLForModule($this->getLoginModuleID(), 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
+                $this->assign('footerLoginLink', $this->buildURLForModule($this->getLoginModuleID(), '', array()));
                 $this->assign('footerLoginText', $this->getLocalizedString('SIGNED_IN_SINGLE', $authority->getAuthorityTitle(), $user->getFullName()));
                 $this->assign('footerLoginClass', $authority->getAuthorityClass());
             } else {
                 $this->assign('footerLoginClass', 'login_multiple');
-                $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
-                $this->assign('footerLoginLink', $this->buildURLForModule('login', 'logout', array()));
+                $this->assign('session_logout_url', $this->buildURLForModule($this->getLoginModuleID(), 'logout', array()));
+                $this->assign('footerLoginLink', $this->buildURLForModule($this->getLoginModuleID(), 'logout', array()));
                 $this->assign('footerLoginText', $this->getLocalizedString('SIGNED_IN_MULTIPLE'));
             }
 
@@ -1798,7 +1798,7 @@ abstract class WebModule extends Module {
             }
         } else {
             $this->assign('footerLoginClass', 'noauth');
-            $this->assign('footerLoginLink', $this->buildURLForModule('login','', array()));
+            $this->assign('footerLoginLink', $this->buildURLForModule($this->getLoginModuleID(),'', array()));
             $this->assign('footerLoginText', $this->getLocalizedString('SIGN_IN_SITE', Kurogo::getSiteString('SITE_NAME')));
         }
     }
