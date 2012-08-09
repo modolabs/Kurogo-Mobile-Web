@@ -150,6 +150,8 @@ abstract class Module
         $modulePaths = array(
             SITE_MODULES_DIR."/$id/Site%s.php"=>"Site%s",
             SITE_MODULES_DIR."/$id/%s.php"=>"%s",
+            SHARED_MODULES_DIR."/$id/Site%s.php"=>"Site%s",
+            SHARED_MODULES_DIR."/$id/%s.php"=>"%s",
             MODULES_DIR."/$id/%s.php"=>"%s",
         );
         
