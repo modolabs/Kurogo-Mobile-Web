@@ -73,6 +73,7 @@ class Watchdog {
                 $delimiter.
                 '^('.preg_quote(realpath(THEME_DIR), $delimiter).'|'.
                       preg_quote(realpath(SITE_DIR).DIRECTORY_SEPARATOR, $delimiter).'app|'.
+                      preg_quote(realpath(SHARED_DIR).DIRECTORY_SEPARATOR, $delimiter).'app|'.
                       preg_quote(realpath(ROOT_DIR).DIRECTORY_SEPARATOR, $delimiter).'app)'.
                   preg_quote(DIRECTORY_SEPARATOR, $delimiter).
                   '(common|modules'.preg_quote(DIRECTORY_SEPARATOR, $delimiter).'[^'.preg_quote(DIRECTORY_SEPARATOR, $delimiter).']+)'.
