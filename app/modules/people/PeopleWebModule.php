@@ -259,8 +259,9 @@ class PeopleWebModule extends WebModule {
     }
     
     public function linkforItem(KurogoObject $person, $options=null) {    
+        $title = $person->getName() ? $this->htmlEncodeString($person->getName()) : $this->getLocalizedString('NO_HEADER_TITLE');
         return array(
-            'title'=>$this->htmlEncodeString($person->getName()),
+            'title'=>$title,
             'url'  =>$this->buildBreadcrumbURL('detail', array(
                                             'id'    => $person->getId(),
                                             'filter' => self::argVal($options,'filter'),
