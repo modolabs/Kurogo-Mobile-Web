@@ -170,27 +170,31 @@ class FacebookDataParser extends DataParser
     {
         if ($data = json_decode($data, true)) {
             if (is_array($data)) {
-                // Multiple entries
-                if ($this->getOption('action') !== 'user' && isset($data['data']) && count($data['data'])>0 && isset($data['data'][0])) {
-                    $return = array();
-                    foreach ($data['data'] as $entry) {
-                        $post = $this->parsePost($entry);
-                        if($post->getBody())
-                        {
-                            $return[] = $post;
-                        }
-                    }
-                    return $return;
-                // Single entry
-                } elseif ($this->getOption('action') !== 'user') {
-                    return $this->parsePost($data);
-                } elseif (isset($data['id'])) {
-                    return $this->parseUser($data);
-                }
+		    	$action = $this->getOption('action');
+		    	switch ($action)
+		    	{
+		    		case 'user':
+	                    return $this->parseUser($data);
+		    			break;
+		    		case 'posts':
+						$return = array();
+						$posts = Kurogo::arrayVal($data, 'data', array());
+						foreach ($posts as $entry) {
+							$post = $this->parsePost($entry);
+							if ($post->getBody()) {
+								$return[] = $post;
+							}
+						}
+						return $return;
+		    			break;
+		    		case 'post':
+	                    return $this->parsePost($data);
+		    			break;
+		    	}
             }
         }
         
-        return array();
+        return null;
     }
 }
 
