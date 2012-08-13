@@ -28,6 +28,7 @@ abstract class DataRetriever {
     protected $DEFAULT_CACHE_LIFETIME = 900; // 15 min
     protected $initArgs=array();
     protected $authority;
+    protected $dataModel;
     protected $debugMode = false;
     protected $options = array();
     protected $context = array(); // sent to the response
@@ -42,6 +43,10 @@ abstract class DataRetriever {
     protected $parser;
 
     abstract protected function retrieveResponse();
+    
+    public function setDataModel(DataModel $dataModel) {
+    	$this->dataModel = $dataModel;
+    }
     
     public function setCacheLifeTime($cacheLifetime) {
         $this->cacheLifetime = $cacheLifetime;

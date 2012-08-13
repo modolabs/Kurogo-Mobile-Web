@@ -119,6 +119,7 @@ class DataModel {
         //instantiate the retriever class and add it to the controller
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
         $this->setRetriever($retriever);
+        $retriever->setDataModel($this);
 
         if (isset($args['TITLE'])) {
             $this->setTitle($args['TITLE']);
