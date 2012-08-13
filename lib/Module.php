@@ -24,6 +24,7 @@ abstract class Module
     protected $configModule;
     protected $moduleName = '';
     protected $homeModuleID;
+    protected $loginModuleID;
     protected $args = array();
     protected $configs = array();
     protected $logView = true;
@@ -149,6 +150,8 @@ abstract class Module
         $modulePaths = array(
             SITE_MODULES_DIR."/$id/Site%s.php"=>"Site%s",
             SITE_MODULES_DIR."/$id/%s.php"=>"%s",
+            SHARED_MODULES_DIR."/$id/Site%s.php"=>"Site%s",
+            SHARED_MODULES_DIR."/$id/%s.php"=>"%s",
             MODULES_DIR."/$id/%s.php"=>"%s",
         );
         
@@ -824,6 +827,14 @@ abstract class Module
         }
         
         return $this->homeModuleID;
+    }
+
+    protected function getLoginModuleID() {
+        if (!$this->loginModuleID) {
+            $this->loginModuleID = Kurogo::getOptionalSiteVar('LOGIN_MODULE', 'login', 'authentication');
+        }
+        
+        return $this->loginModuleID;
     }
 
     /**

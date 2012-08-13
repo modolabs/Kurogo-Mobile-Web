@@ -528,9 +528,9 @@ class LDAPPerson extends Person {
         if ($this->fieldMap['fullname']) {
             return $this->getFieldSingle($this->fieldMap['fullname']);
         } else {
-            return sprintf("%s %s", 
+            return trim(sprintf("%s %s", 
                     $this->getFieldSingle($this->fieldMap['firstname']), 
-                    $this->getFieldSingle($this->fieldMap['lastname']));
+                    $this->getFieldSingle($this->fieldMap['lastname'])));
         }
     }
     

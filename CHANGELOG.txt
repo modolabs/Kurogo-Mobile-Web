@@ -1,10 +1,11 @@
-1.5 (Aug 1, 2012)
+1.5 (Aug 14, 2012)
 * Version 1.5 is released under the Lesser GNU Public License v2.1
 * NEW MODULE : Social. Show feeds from facebook and Twitter
 * Created ShellModule to create modules that run on the command line (UNIX only at this time)
 * Kurogo shell modules have been created that can fetch public feed data in the background. See dev guide for setting up automatic fetching
 * Kurogo will load libraries and configuration from the shared site directory to reduce code duplication
 * It is possible to change which module is the home module
+* It is possible to change which module is the login module
 * CACHE_LIFETIME is now respected
 * New XML Parser (SimpleXMLDataParser) makes it easier to parse simple XML documents
 * Improved the Calendar Detail page
@@ -29,6 +30,8 @@
 * Removed suport for Percent Mobile (service is ending)
 * Proper handling of calendars where the time zone is different than the server time zone (issue 53)
 * The MySQL DB class will now connect to hosts without a password (strongly discouraged except in dev environments)
+* If an event's end time is less than it's start time, an exception will no longer be thrown. In this case the end time will be disregarded
+
 
 1.4.1 (Apr 27, 2012)
 * Fixed issues with Drupal Contacts

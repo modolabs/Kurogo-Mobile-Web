@@ -18,12 +18,16 @@
       {/block}
     {/if}
     <div class="header-text">
+      {if isset($headerSections['HEADER_TITLE'])}
       {$item = reset($headerSections['HEADER_TITLE'])}
       {block name="headerTitle"}
         {if $item['url']}<a href="{$item['url']}" class="{$item['class']}">{/if}
           <h2>{$item['title']}</h2>
         {if $item['url']}</a>{/if}
       {/block}
+      {else}
+      <h2>{"NO_HEADER_TITLE"|getLocalizedString}</h2>
+      {/if}
       {if isset($headerSections['HEADER_SUBTITLE'])}
         {foreach $headerSections['HEADER_SUBTITLE'] as $item}
           {block name="headerSubtitles"}

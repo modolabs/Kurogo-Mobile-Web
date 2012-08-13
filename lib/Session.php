@@ -123,8 +123,9 @@ abstract class Session
         //load arguments
         $this->maxIdleTime = isset($args['AUTHENTICATION_IDLE_TIMEOUT']) ? intval($args['AUTHENTICATION_IDLE_TIMEOUT']) : 0;
         $this->remainLoggedInTime = isset($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) ? intval($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) : 0;
-        $this->loginCookiePath = URL_BASE . 'login';
-        $this->apiCookiePath = URL_BASE . API_URL_PREFIX . '/login';
+        $loginModuleID = isset($args['LOGIN_MODULE']) ? $args['LOGIN_MODULE'] : 'login';
+        $this->loginCookiePath = URL_BASE . $loginModuleID;
+        $this->apiCookiePath = URL_BASE . API_URL_PREFIX . '/' . $loginModuleID;
         $this->debugMode = isset($args['DEBUG_MODE']) ? $args['DEBUG_MODE'] : false;
                 
         if (!isset($_SESSION)) {

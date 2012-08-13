@@ -269,8 +269,8 @@ class ICalEvent extends ICalObject implements KurogoObject, CalendarEvent {
             if ($dayOnly) {
                 $timestamp = $start;
             } else {
-                //end time must be greater. 
-                throw new KurogoDataException("End time $timestamp must be greater than start time $start");
+            	//ignore end time if it's later
+            	return false;
             }
         }
             
@@ -1096,7 +1096,7 @@ class ICalendar extends ICalObject implements CalendarInterface {
     }
 
     public static function ical_unescape_text($text) {
-        $text = str_replace(array("DQUOTE","\\\\", "\,","\;","\\n"), array("\"","\\",",",";","\n"), $text);
+        $text = str_replace(array("DQUOTE","\\\\", "\,","\;","\\n","\\r"), array("\"","\\",",",";","\n",""), $text);
         return $text;
     }
 
