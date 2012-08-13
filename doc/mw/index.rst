@@ -38,6 +38,7 @@ This guide serves as a tour of the project source code and its features.
    kurogoobject
    moduleinteraction
    template
+   appq
    themes
    libs
    dataretrieval
