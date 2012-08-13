@@ -65,6 +65,11 @@ class KurogoModuleNotFound extends KurogoException {
     protected $sendNotification = false;
 }
 
+class KurogoPageNotFoundException extends KurogoException {
+    protected $code = 'notfound';
+    protected $sendNotification = false;
+}
+
 /**
   */
 function getErrorURL($exception, $devError = false) {
