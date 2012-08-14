@@ -735,9 +735,17 @@ class Kurogo
 
         } else {
         	$site = '';
-        	
+            if (PHP_SAPI == 'cli') {
+
+                $site = strlen($path)>0 ? $path : $siteConfig->getVar('ACTIVE_SITE');
+
+                $siteDir = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
+                if (!file_exists(realpath($siteDir))) {
+                    die("FATAL ERROR: Site Directory $siteDir not found for site $path");
+                }
+            }        	
         	//if sites section is set attempt to load a site based on the domain name
-        	if ($sites = $siteConfig->getOptionalSection('sites')) {
+        	elseif ($sites = $siteConfig->getOptionalSection('sites')) {
         		$host = self::arrayVal($_SERVER, 'SERVER_NAME', null);
         		$port = self::arrayVal($_SERVER, 'SERVER_PORT', null);
 
