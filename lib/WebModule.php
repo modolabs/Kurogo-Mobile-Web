@@ -1466,8 +1466,12 @@ abstract class WebModule extends Module {
   
   // Programmatic overrides for titles generated from backend data
   protected function setPage($page) {
-    Kurogo::log(LOG_INFO, "Setting page to $page", 'module');
-    $this->page = $page;
+    if (preg_match("/^([a-z0-9_-]+)$/i", $page)) {
+        Kurogo::log(LOG_INFO, "Setting page to $page", 'module');
+        $this->page = $page;
+    } else {
+        throw new KurogoPageNotFoundException("Invalid Page Name");
+    }
   }
   protected function getPageTitle() {
     return $this->pageTitle;
