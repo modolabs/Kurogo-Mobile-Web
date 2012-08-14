@@ -123,6 +123,9 @@ class KurogoShellDispatcher {
         }
         
         if (isset($this->params['site'])) {
+            if (!preg_match("/^[a-z0-9-_]+$/i", $this->params['site'])) {
+                throw new Exception("Invalid site name " . $this->params['site']);
+            }
             $this->siteName = $this->params['site'];
             unset($this->params['site']);
         }
