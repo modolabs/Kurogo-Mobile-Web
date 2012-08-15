@@ -1216,6 +1216,10 @@ h2.icon {
 	padding: 0 12px;
 }
 
+#tabscontainer {
+	padding: 0 12px;
+}
+
 #tabbodies {
 	margin: 0 -12px 0 -12px;
 	clear: both;
