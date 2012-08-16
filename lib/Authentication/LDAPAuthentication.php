@@ -90,6 +90,10 @@ class LDAPAuthentication extends AuthenticationAuthority
         if (!$user = $this->getUser($login)) {
             return AUTH_USER_NOT_FOUND;
         }
+
+        if (strlen($password)==0) {
+            return AUTH_FAILED;
+        }
      
         // attempt to bind as this user
         $auth = @ldap_bind($ldap, $user->getDN(), $password);

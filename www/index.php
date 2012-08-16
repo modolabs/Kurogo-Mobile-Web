@@ -291,7 +291,7 @@ if ($parts[0]==API_URL_PREFIX) {
     // find the page part
     if (isset($parts[1])) {
       if (strlen($parts[1])) {
-        $page = rtrim($parts[1], '.php');
+        $page = $parts[1];
       }
       
     } else {

@@ -10,7 +10,7 @@
  */
 
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
-define('KUROGO_VERSION', '1.5RC1');
+define('KUROGO_VERSION', '1.5');
 
 //
 // And a double quote define for ini files (php 5.1 can't escape them)
