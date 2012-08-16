@@ -248,7 +248,9 @@ abstract class DataRetriever {
             }            
         }
 
-        if (!isset($args['CACHE_LIFETIME'])) {
+        if (isset($args['CACHE_LIFETIME'])) {
+            $this->cacheLifetime = $args['CACHE_LIFETIME'];
+        } else {
             $args['CACHE_LIFETIME'] = $this->DEFAULT_CACHE_LIFETIME;
         }
 
