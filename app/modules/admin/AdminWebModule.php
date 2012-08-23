@@ -249,6 +249,17 @@ class AdminWebModule extends WebModule {
                 $this->assign('subNavSections', $subNavSections);
                 
                 if (isset($subNavSections[$section])) {
+                    switch ($section)
+                    {
+                        case 'license':
+                            $licenseFile = ROOT_DIR . "/LICENSE";
+                            if (is_file($licenseFile)) {
+                                $this->assign('license', file_get_contents($licenseFile));
+                            } else {
+                                die($licenseFile);
+                                throw new KurogoException("Unable to load LICENSE file, you may have a compromised Kurogo Installation");
+                            }
+                    }
                     $this->setTemplatePage($section);
                 } else {
                     $this->redirectTo('section', array());
