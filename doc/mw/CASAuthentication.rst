@@ -18,6 +18,10 @@ Configuration
 
 The CASAuthentication authority relies on the `phpCAS library <https://wiki.jasig.org/display/CASC/phpCAS>`_ to handle communication with the CAS server. If you don't already have phpCAS, download the latest release.
 
+-------------------
+Basic Configuration
+-------------------
+
 To configure authentication, you only need to add a few parameters:
 
 * *USER_LOGIN* - Should be set to *LINK*
@@ -29,11 +33,13 @@ To configure authentication, you only need to add a few parameters:
 * *CAS_PATH* - The path of the CAS application, e.g. ``"/cas/"``
 * *CAS_CA_CERT* - The filesystem path to a CA certificate that will be used to validate the authenticity of the CAS server, e.g. ``"/etc/tls/pki/certs/my_ca_cert.crt"``. If empty, no certificate validation will be performed (not recommended for production).
 
-If you wish to authenticate as a proxy (which will allow Kurogo to may proxy-authenticated requests to back-end data sources) then you can provide the following attributes to configure proxy authentication.
+Basic optional parameters:
 
-* *CAS_PROXY_INIT* - Set to ``1`` to initialize as a proxy.
-* *CAS_PROXY_TICKET_PATH* - The path in which phpCAS should look for proxy-granting-tickets. E.g. ``"/tmp"``
-* *CAS_PROXY_FIXED_CALLBACK_URL* - If your Kurogo installation isn't running under SSL but shares a filesystem with an SSL-enabled host, then you can provide an alternate proxy-granting-ticket storage URL. E.g. ``"https://host.domain.edu/storePGT.php"``
+* *CAS_DEBUG_LOG* - The path of a log file in which phpCAS should log its activity. Only set this parameter for testing/debugging as the log files grow very rapidly. E.g. ``"/var/log/phpcas.log"``
+
+---------------
+User Attributes
+---------------
 
 If your CAS server returns user attributes in a SAML-1.1 or CAS-2.0 response, you can provide these attributes
 to Kurogo to display full names and support group-based :doc:`authorization`.
@@ -44,25 +50,68 @@ to Kurogo to display full names and support group-based :doc:`authorization`.
 * *ATTRA_FULL_NAME* - Attribute name for the user's full name, e.g. ``"displayname"``.
 * *ATTRA_MEMBER_OF* - Attribute name for the user's groups, e.g. ``"memberof"``.
 
-Other optional parameters:
+-----------------------
+Authenticate as a Proxy
+-----------------------
+If you wish to authenticate as a proxy (which will allow Kurogo to make proxy-authenticated requests to back-end data sources) then you can provide the following parameters to configure proxy authentication.
 
-* *CAS_DEBUG_LOG* - The path of a log file in which phpCAS should log its activity. Only set this parameter for testing/debugging as the log files grow very rapidly. E.g. ``"/var/log/phpcas.log"``
+* *CAS_PROXY_INIT* - Set to ``1`` to initialize as a proxy.
+* *CAS_PROXY_FIXED_CALLBACK_URL* - If your Kurogo installation isn't running under SSL but shares a filesystem with an SSL-enabled host, then you can provide an alternate proxy-granting-ticket storage URL. E.g. ``"https://host.domain.edu/storePGT.php"``
+
+When the application asks the CAS server to authenticate it as a proxy, the CAS server makes a request back to the the SSL url for the application with a proxy-granting-ticket (PGT) to verify the application's identity. phpCAS supports storage of these PGTs as either files in a webserver-writable directory or in a SQL database. File storage is the most simple, but database (DB) storage is useful when running Kurogo on a cluster of webservers.
+
+~~~~~~~~~~~~~~~~~~~~~~
+Filesystem PGT Storage
+~~~~~~~~~~~~~~~~~~~~~~
+
+* *CAS_PROXY_TICKET_PATH* - The path in which phpCAS should look for PGTs. E.g. ``"/tmp"``
+
+~~~~~~~~~~~~~~~~~~~~
+Database PGT storage
+~~~~~~~~~~~~~~~~~~~~
+Database storage for PGTs allows proxy authentication to work in a clustered webserver environment where the end user and the CAS server may be making requests to different hosts. PGTs are placed in a shared database accessible to all webservers in the cluster.
+
+To use this storage method, a database table needs to be created with the following SQL:
+
+.. code-block:: sql
+
+    CREATE TABLE cas_pgts (pgt_iou VARCHAR(255) NOT NULL PRIMARY KEY, pgt VARCHAR(255) NOT NULL);
+
+The table name can be changed, but the structure should stay the same.
+
+* *CAS_PROXY_TICKET_DB_DSN* - The `PDO "Data Source Name" or DSN <http://www.php.net/manual/en/pdo.construct.php>`_ to connect to, e.g. ``"mysql:dbname=kurogo_data;host=127.0.0.1"``
+* *CAS_PROXY_TICKET_DB_USER* - The username to use when connecting to the database.
+* *CAS_PROXY_TICKET_DB_PASS* - The password to use when connecting to the database.
+* *CAS_PROXY_TICKET_DB_TABLE* - Optional. The table in which to store proxy-granting-tickets. The default table name is ``cas_pgts``.
+* *CAS_PROXY_TICKET_DB_DRIVER_OPTS* - Optional. PDO driver-specific options for the database connection. See the `PDO Documentation <http://www.php.net/manual/en/pdo.construct.php>`_ for details.
+
+==========================
+Example Configuration File
+==========================
 
 .. code-block:: ini
 
     [cas]
-    CONTROLLER_CLASS        = "CASAuthentication"
-    TITLE                   = "Central Authentication Service (CAS)"
-    USER_LOGIN              = "LINK"
-    CAS_PROTOCOL            = "2.0"
-    CAS_HOST                = "login.example.edu"
-    CAS_PORT                = 443
-    CAS_PATH                = "/cas/"
-    CAS_CA_CERT             = ""
-    CAS_DEBUG_LOG           = ""
-    ATTRA_EMAIL             = "EMail"
-    ATTRA_FIRST_NAME        = "FirstName"
-    ATTRA_LAST_NAME         = "LastName"
-    ATTRA_FULL_NAME         = "DisplayName"
-    ATTRA_MEMBER_OF         = "MemberOf"
+    CONTROLLER_CLASS                = "CASAuthentication"
+    TITLE                           = "Central Authentication Service (CAS)"
+    USER_LOGIN                      = "LINK"
+    CAS_PROTOCOL                    = "2.0"
+    CAS_HOST                        = "login.example.edu"
+    CAS_PORT                        = 443
+    CAS_PATH                        = "/cas/"
+    CAS_CA_CERT                     = ""
+    CAS_DEBUG_LOG                   = ""
+    ATTRA_EMAIL                     = "EMail"
+    ATTRA_FIRST_NAME                = "FirstName"
+    ATTRA_LAST_NAME                 = "LastName"
+    ATTRA_FULL_NAME                 = "DisplayName"
+    ATTRA_MEMBER_OF                 = "MemberOf"
+    CAS_PROXY_INIT                  = 0
+    CAS_PROXY_FIXED_CALLBACK_URL    = ""
+    CAS_PROXY_TICKET_PATH           = ""
+    CAS_PROXY_TICKET_DB_DSN         = ""
+    CAS_PROXY_TICKET_DB_USER        = ""
+    CAS_PROXY_TICKET_DB_PASS        = ""
+    CAS_PROXY_TICKET_DB_TABLE       = ""
+    CAS_PROXY_TICKET_DB_DRIVER_OPTS = ""
 
