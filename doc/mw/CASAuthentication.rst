@@ -44,6 +44,10 @@ to Kurogo to display full names and support group-based :doc:`authorization`.
 * *ATTRA_FULL_NAME* - Attribute name for the user's full name, e.g. ``"displayname"``.
 * *ATTRA_MEMBER_OF* - Attribute name for the user's groups, e.g. ``"memberof"``.
 
+Other optional parameters:
+
+* *CAS_DEBUG_LOG* - The path of a log file in which phpCAS should log its activity. Only set this parameter for testing/debugging as the log files grow very rapidly. E.g. ``"/var/log/phpcas.log"``
+
 .. code-block:: ini
 
     [cas]
@@ -55,6 +59,7 @@ to Kurogo to display full names and support group-based :doc:`authorization`.
     CAS_PORT                = 443
     CAS_PATH                = "/cas/"
     CAS_CA_CERT             = ""
+    CAS_DEBUG_LOG           = ""
     ATTRA_EMAIL             = "EMail"
     ATTRA_FIRST_NAME        = "FirstName"
     ATTRA_LAST_NAME         = "LastName"

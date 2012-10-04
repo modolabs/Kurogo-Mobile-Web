@@ -79,6 +79,9 @@ class CASAuthentication
         else
             require_once($args['CAS_PHPCAS_PATH'].'/CAS.php');
     
+        if (!empty($args['CAS_DEBUG_LOG']))
+            phpCAS::setDebug($args['CAS_DEBUG_LOG']);
+        
         if (empty($args['CAS_PROTOCOL']))
             throw new KurogoConfigurationException('CAS_PROTOCOL value not set for ' . $this->AuthorityTitle);
     
