@@ -36,3 +36,42 @@ To setup Multisite, you must first enable it in the config/kurogo.ini file.
     ACTIVE_SITES[] = "es"
 
 This would enable only the *en* and *es* sites on this server.
+
+============================================
+Setting the active-site from the environment
+============================================
+
+There are some cases where there is a need to host multiple Kurogo sites from the same 
+webserver, but where one cannot use MultiSite mode due to its dependency on subpaths. 
+An example is serving each Kurogo site under a different host-name or domain name, 
+e.g. students.example.edu and faculty.example.edu.
+
+To accomplish this switching, Kurogo supports the specification of the ``ACTIVE_SITE`` 
+parameter via an environmental variable set by your webserver. Kurogo will only look for the ``ACTIVE_SITE`` in the environment when *not* in MultiSite mode and when the ``ACTIVE_SITE`` parameter has no value.
+
+Example ``kurogo.ini``:
+
+.. code-block:: ini
+
+	[kurogo]
+	MULTI_SITE = 0
+	ACTIVE_SITE = ""
+
+The ``ACTIVE_SITE`` environmental parameter can be set in a number of ways, but one of
+the easiest is in your Apache configuration:
+
+::
+	
+	<VirtualHost *:80>
+		ServerName students.example.edu
+		DocumentRoot /var/www/kurogo/www/
+		
+		SetEnv ACTIVE_SITE Students
+	</VirtualHost>
+
+	<VirtualHost *:80>
+		ServerName faculty.example.edu
+		DocumentRoot /var/www/kurogo/www/
+		
+		SetEnv ACTIVE_SITE Faculty
+	</VirtualHost>
