@@ -101,9 +101,14 @@ class CASAuthentication
             
             if (!empty($args['CAS_PROXY_TICKET_PATH']) && !empty($args['CAS_PROXY_TICKET_DB_DSN']))
             	throw new KurogoConfigurationException('Only one of CAS_PROXY_TICKET_PATH or CAS_PROXY_TICKET_DB_DSN may be set for ' . $this->AuthorityTitle);
-            
-            if (!empty($args['CAS_PROXY_TICKET_PATH']))
-                phpCAS::setPGTStorageFile('', $args['CAS_PROXY_TICKET_PATH']);
+             
+            if (!empty($args['CAS_PROXY_TICKET_PATH'])) {
+                if (version_compare(PHPCAS_VERSION, '1.3', '>=')) {
+                    phpCAS::setPGTStorageFile($args['CAS_PROXY_TICKET_PATH']);
+                } else {
+                    phpCAS::setPGTStorageFile('', $args['CAS_PROXY_TICKET_PATH']);
+                }
+            }
             
             if (!empty($args['CAS_PROXY_TICKET_DB_DSN'])) {
                 $user = $pass = $table = $driver_opts = '';
