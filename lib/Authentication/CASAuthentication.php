@@ -96,8 +96,13 @@ class CASAuthentication
         } else {
             phpCAS::proxy($args['CAS_PROTOCOL'], $args['CAS_HOST'], intval($args['CAS_PORT']), $args['CAS_PATH'], false);
             
-            if (!empty($args['CAS_PROXY_TICKET_PATH']))
-                phpCAS::setPGTStorageFile('', $args['CAS_PROXY_TICKET_PATH']);
+            if (!empty($args['CAS_PROXY_TICKET_PATH'])) {
+                if (version_compare(PHPCAS_VERSION, '1.3', '>=')) {
+                    phpCAS::setPGTStorageFile($args['CAS_PROXY_TICKET_PATH']);
+                } else {
+                    phpCAS::setPGTStorageFile('', $args['CAS_PROXY_TICKET_PATH']);
+                }
+            }
             
             if (!empty($args['CAS_PROXY_FIXED_CALLBACK_URL']))
                 phpCAS::setFixedCallbackURL($args['CAS_PROXY_FIXED_CALLBACK_URL']);
