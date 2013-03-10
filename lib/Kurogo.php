@@ -734,6 +734,21 @@ class Kurogo
             define('SITE_NAME', $site);
 
         } else {
+            // If there is no active site configured and there is one set in the environment
+            // (such as set by a VirtualHost SetEnv entry), then set the active site to the one
+            // defined in the environment.
+            try {
+                $activeSite = $siteConfig->getVar('ACTIVE_SITE', 'kurogo');
+                if (empty($activeSite)) {
+                    throw new KurogoKeyNotFoundException('ACTIVE_SITE is empty');
+                }
+            } catch (KurogoKeyNotFoundException $e) {
+                $activeSite = getenv('ACTIVE_SITE');
+                if (!empty($activeSite)) {
+                    $siteConfig->setVar('kurogo', 'ACTIVE_SITE', $activeSite, $changed);
+                }
+            }
+            
         	$site = '';
             if (PHP_SAPI == 'cli') {
 
