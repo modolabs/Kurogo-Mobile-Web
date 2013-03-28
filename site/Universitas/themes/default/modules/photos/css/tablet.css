@@ -1,9 +1,0 @@
-body.PhotosModule {
-    /* Special dark background just for photo gallery and detail views */
-	background-color: #202020;
-}
-
-.sidenav2 a, .sidenav2 a:visited, .sidenavlabel {
-    /* Contrasting color for text on dark background just for photo gallery and detail views */
-    color: #808080;
-}
