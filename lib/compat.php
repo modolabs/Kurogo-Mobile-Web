@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -102,13 +102,10 @@ function mime_type($filename) {
   }
 }
 
-/**
-  * Add json_(de/en)code functions (this really shouldn't happen, but is there for people who must use 5.1)
-  */
-if(!function_exists('json_decode')) {
-    include(LIB_DIR .'/compat/JSON.php');
-}
-
-function realpath_exists($path) {
-  return Watchdog::kurogoPath($path);
+function realpath_exists($path, $safe = true) {
+    if ($safe) {
+        return Watchdog::kurogoPath($path);
+    } else {
+        return realpath($path) && file_exists($path);
+    }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -25,7 +25,6 @@ if (!function_exists('mb_convert_encoding')) {
   */
 class PeopleWebModule extends WebModule {
     protected static $defaultModel = 'PeopleDataModel';
-    protected static $defaultController = 'LDAPPeopleController'; //legacy
     protected $id = 'people';
     protected $detailFields = array();
     protected $detailAttributes = array();
@@ -34,7 +33,6 @@ class PeopleWebModule extends WebModule {
     protected $feed;
     protected $contactGroups = array();
     protected $controllers = array();
-    protected $legacyController = true;
     protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
 
     protected function detailURLForBookmark($aBookmark) {
@@ -147,6 +145,9 @@ class PeopleWebModule extends WebModule {
                     foreach ($values as $i => $value) {
                         $valueGroups[$i][] = $value;
                     }
+                } elseif (isset($info['format'])) {
+                    //ensure that there is a value when format is set
+                    $valueGroups[0][] = '';
                 }
             }
           
@@ -202,19 +203,8 @@ class PeopleWebModule extends WebModule {
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
             
-            try {
-                if (isset($feedData['CONTROLLER_CLASS'])) {
-                    $modelClass = $feedData['CONTROLLER_CLASS'];
-                } else {
-                    $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
-                }
-                
-                $controller = PeopleDataModel::factory($modelClass, $feedData);
-            } catch (KurogoException $e) { 
-                $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-                $this->legacyController = true;
-            }
-            
+            $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            $controller = PeopleDataModel::factory($modelClass, $feedData);
             $controller->setAttributes($this->detailAttributes);
             $this->controllers[$index] = $controller;
             return $controller;
@@ -245,11 +235,11 @@ class PeopleWebModule extends WebModule {
         if($this->feeds){
             if(count($this->feeds) == 1){
                 # Load detail fields from page-detail.ini
-                $this->detailFields = $this->loadPageConfigFile('detail', 'detailFields');
+                $this->detailFields = $this->loadPageConfigArea('detail', 'detailFields');
             }else{
                 # Load detail fields from page-detail-[feed].ini
                 $detailConfig = "detail-$feed";
-                $this->detailFields = $this->loadPageConfigFile($detailConfig, 'detailFields');
+                $this->detailFields = $this->loadPageConfigArea($detailConfig, 'detailFields');
             }
             foreach($this->detailFields as $field => $info) {
                 $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
@@ -270,7 +260,7 @@ class PeopleWebModule extends WebModule {
         );
     }
 
-    public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null) {
+    public function linkForValue($value, Module $callingModule, $otherValue=null) {
         return array_merge(
             parent::linkForValue($value, $callingModule, $otherValue), 
             array('class' => 'action people'));
@@ -299,7 +289,7 @@ class PeopleWebModule extends WebModule {
     protected function getContacts() {
         //try version -1.1 page-index version first for backwards compatibility
         try { 
-            $contacts = $this->loadPageConfigFile('index', 'contacts');
+            $contacts = $this->loadPageConfigArea('index', 'contacts');
         } catch (KurogoConfigurationException $e) {
             $contacts = $this->getModuleSections('contacts');
         }
@@ -323,9 +313,6 @@ class PeopleWebModule extends WebModule {
         $PeopleController = $this->getFeed($this->feed);
         
         $this->assign('selectedFeed', $this->feed);
-        if (Kurogo::getSiteVar('MODULE_DEBUG')) {
-            $this->addModuleDebugString($PeopleController->debugInfo());
-        }
 
         switch ($this->page) {
         
@@ -382,9 +369,10 @@ class PeopleWebModule extends WebModule {
                 break;
         
             case 'search':
-                if ($filter = $this->getArg(array('filter', 'q'))) {
+                if ($filter = trim($this->getArg(array('filter', 'q')))) {
                     $searchTerms = trim($filter);
-          
+                    
+                    $this->assign('feeds', $this->getSearchFeeds());
                     $this->assign('searchTerms', $searchTerms);
           
                     $startIndex = $this->getArg('start', 0);
@@ -396,14 +384,14 @@ class PeopleWebModule extends WebModule {
                     $people = $this->searchItems($searchTerms);
                     $this->assign('searchError', $PeopleController->getResponseError());
 
-                    if (count($people) > 0) {
+                    if ($people != false && count($people) > 0) {
                         $resultCount = count($people);
                         $totalItems = $PeopleController->getTotalItems();
 
                         switch ($totalItems) 
                         {
                             case 1:
-                                $person = $people[0];
+                                $person = current($people);
                                 $this->logView();
                                 $this->redirectTo('detail', array(
                                     'id'=>$person->getId(),
@@ -424,7 +412,7 @@ class PeopleWebModule extends WebModule {
                                 //error_log(print_r($results, true));
                                 if($totalItems > $resultCount)
                                 {
-                                    if($startIndex + $limit <= $totalItems)
+                                    if($startIndex + $limit < $totalItems)
                                     {
                                         $nextLink = $this->buildURL('search', array('feed' => $this->feed, 'filter' => $searchTerms, 'start' => $startIndex + $limit));
                                         $next = array('title' => $this->getLocalizedString("NEXT_PEOPLE_TEXT", $limit), 'url' => $nextLink, 'class' => 'pagerlink');
@@ -437,7 +425,6 @@ class PeopleWebModule extends WebModule {
                                         array_unshift($results, $prev);
                                     }
                                 }
-                                $this->assign('feeds', $this->getSearchFeeds());
                                 $this->assign('resultCount', $this->getFeed($this->feed)->getTotalItems());
                                 $this->assign('results', $results);
                                 break;

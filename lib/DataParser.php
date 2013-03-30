@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -31,7 +31,6 @@ abstract class DataParser
     protected $debugMode=false;
     protected $totalItems = null;
     protected $haltOnParseErrors = true;
-    protected $dataController;
     protected $options = array();
     protected $response;
 
@@ -64,10 +63,6 @@ abstract class DataParser
 
     public function getTotalItems() {
         return $this->totalItems;
-    }
-
-    public function setDataController($dataController) {
-        $this->dataController = $dataController;
     }
 
     protected function setTotalItems($total) {

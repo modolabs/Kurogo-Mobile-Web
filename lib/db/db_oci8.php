@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 /**
   * Oracle database abstraction
   * @package Database
@@ -58,7 +68,7 @@ class db_oci8 extends db
 
         foreach($parameters as $key => $val) {
             // Important: the 3rd param is a reference, if we use $val, it will cause problem.
-            oci_bind_by_name($stmt, $key, $params[$key]);
+            oci_bind_by_name($stmt, $key, $parameters[$key]);
         }
         
         if (!$result = oci_execute($stmt)) {

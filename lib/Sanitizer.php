@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -23,14 +23,14 @@ class Sanitizer
         'inline' => array('<strong>', '<em>', '<code>', '<dfn>', '<samp>', '<var>', '<cite>', '<span>', 
                           '<del>', '<ins>', '<b>', '<i>', '<tt>', '<big>', '<small>', '<sup>', '<sub>', '<bdo>'),
         'header' => array('<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>'),
-        'block'  => array('<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', 'legend', '<fieldset>'),
+        'block'  => array('<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', '<legend>', '<fieldset>'),
         'link'   => array('<a>'),
         'media'  => array('<img>', '<video>', '<audio>', '<iframe>'),
         'list'   => array('<ol>', '<ul>', '<li>', '<dl>', '<dd>', '<dt>'),
         'table'  => array('<table>', '<thead>', '<tbody>', '<tfoot>', '<tr>', '<th>', '<td>', '<col>', '<colgroup>', '<caption>'),
         
-        'plugin' => array('<object>', '<param>'),
-        'form'   => array('<form>', 'label', '<input>', '<textarea>', '<select>', '<option>', '<optgroup>', '<button>'),
+        'plugin' => array('<object>', '<param>', '<embed>'),
+        'form'   => array('<form>', '<label>', '<input>', '<textarea>', '<select>', '<option>', '<optgroup>', '<button>'),
         'style'  => array('<style>'),
         'imgmap' => array('<map>', '<area>'),
         
@@ -39,7 +39,7 @@ class Sanitizer
             '<strong>', '<em>', '<code>', '<dfn>', '<samp>', '<var>', '<cite>', '<span>', 
                 '<del>', '<ins>', '<b>', '<i>', '<tt>', '<big>', '<small>', '<sup>', '<sub>', '<bdo>', 
             '<h1>', '<h2>', '<h3>', '<h4>', '<h5>', '<h6>',
-            '<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', 'legend', '<fieldset>', 
+            '<div>', '<blockquote>', '<p>', '<hr>', '<br>', '<pre>', '<legend>', '<fieldset>', 
             '<a>', 
             '<img>', '<video>', '<audio>', '<source>', '<iframe>', 
             '<ol>', '<ul>', '<li>', '<dl>', '<dd>', '<dt>', 
@@ -61,6 +61,42 @@ class Sanitizer
     
     static private $reOpts = "ims";
     
+    static private $entityNameToNumber = array('&apos;'=>'&#39;', '&minus;'=>'&#45;', '&circ;'=>'&#94;', '&tilde;'=>'&#126;', '&Scaron;'=>'&#138;', '&lsaquo;'=>'&#139;', '&OElig;'=>'&#140;', '&lsquo;'=>'&#145;', '&rsquo;'=>'&#146;', '&ldquo;'=>'&#147;', '&rdquo;'=>'&#148;', '&bull;'=>'&#149;', '&ndash;'=>'&#150;', '&mdash;'=>'&#151;', '&tilde;'=>'&#152;', '&trade;'=>'&#153;', '&scaron;'=>'&#154;', '&rsaquo;'=>'&#155;', '&oelig;'=>'&#156;', '&Yuml;'=>'&#159;', '&yuml;'=>'&#255;', '&OElig;'=>'&#338;', '&oelig;'=>'&#339;', '&Scaron;'=>'&#352;', '&scaron;'=>'&#353;', '&Yuml;'=>'&#376;', '&fnof;'=>'&#402;', '&circ;'=>'&#710;', '&tilde;'=>'&#732;', '&Alpha;'=>'&#913;', '&Beta;'=>'&#914;', '&Gamma;'=>'&#915;', '&Delta;'=>'&#916;', '&Epsilon;'=>'&#917;', '&Zeta;'=>'&#918;', '&Eta;'=>'&#919;', '&Theta;'=>'&#920;', '&Iota;'=>'&#921;', '&Kappa;'=>'&#922;', '&Lambda;'=>'&#923;', '&Mu;'=>'&#924;', '&Nu;'=>'&#925;', '&Xi;'=>'&#926;', '&Omicron;'=>'&#927;', '&Pi;'=>'&#928;', '&Rho;'=>'&#929;', '&Sigma;'=>'&#931;', '&Tau;'=>'&#932;', '&Upsilon;'=>'&#933;', '&Phi;'=>'&#934;', '&Chi;'=>'&#935;', '&Psi;'=>'&#936;', '&Omega;'=>'&#937;', '&alpha;'=>'&#945;', '&beta;'=>'&#946;', '&gamma;'=>'&#947;', '&delta;'=>'&#948;', '&epsilon;'=>'&#949;', '&zeta;'=>'&#950;', '&eta;'=>'&#951;', '&theta;'=>'&#952;', '&iota;'=>'&#953;', '&kappa;'=>'&#954;', '&lambda;'=>'&#955;', '&mu;'=>'&#956;', '&nu;'=>'&#957;', '&xi;'=>'&#958;', '&omicron;'=>'&#959;', '&pi;'=>'&#960;', '&rho;'=>'&#961;', '&sigmaf;'=>'&#962;', '&sigma;'=>'&#963;', '&tau;'=>'&#964;', '&upsilon;'=>'&#965;', '&phi;'=>'&#966;', '&chi;'=>'&#967;', '&psi;'=>'&#968;', '&omega;'=>'&#969;', '&thetasym;'=>'&#977;', '&upsih;'=>'&#978;', '&piv;'=>'&#982;', '&ensp;'=>'&#8194;', '&emsp;'=>'&#8195;', '&thinsp;'=>'&#8201;', '&zwnj;'=>'&#8204;', '&zwj;'=>'&#8205;', '&lrm;'=>'&#8206;', '&rlm;'=>'&#8207;', '&ndash;'=>'&#8211;', '&mdash;'=>'&#8212;', '&lsquo;'=>'&#8216;', '&rsquo;'=>'&#8217;', '&sbquo;'=>'&#8218;', '&ldquo;'=>'&#8220;', '&rdquo;'=>'&#8221;', '&bdquo;'=>'&#8222;', '&dagger;'=>'&#8224;', '&Dagger;'=>'&#8225;', '&bull;'=>'&#8226;', '&hellip;'=>'&#8230;', '&permil;'=>'&#8240;', '&prime;'=>'&#8242;', '&Prime;'=>'&#8243;', '&lsaquo;'=>'&#8249;', '&rsaquo;'=>'&#8250;', '&oline;'=>'&#8254;', '&frasl;'=>'&#8260;', '&euro;'=>'&#8364;', '&image;'=>'&#8465;', '&weierp;'=>'&#8472;', '&real;'=>'&#8476;', '&trade;'=>'&#8482;', '&alefsym;'=>'&#8501;', '&larr;'=>'&#8592;', '&uarr;'=>'&#8593;', '&rarr;'=>'&#8594;', '&darr;'=>'&#8595;', '&harr;'=>'&#8596;', '&crarr;'=>'&#8629;', '&lArr;'=>'&#8656;', '&uArr;'=>'&#8657;', '&rArr;'=>'&#8658;', '&dArr;'=>'&#8659;', '&hArr;'=>'&#8660;', '&forall;'=>'&#8704;', '&part;'=>'&#8706;', '&exist;'=>'&#8707;', '&empty;'=>'&#8709;', '&nabla;'=>'&#8711;', '&isin;'=>'&#8712;', '&notin;'=>'&#8713;', '&ni;'=>'&#8715;', '&prod;'=>'&#8719;', '&sum;'=>'&#8721;', '&minus;'=>'&#8722;', '&lowast;'=>'&#8727;', '&radic;'=>'&#8730;', '&prop;'=>'&#8733;', '&infin;'=>'&#8734;', '&ang;'=>'&#8736;', '&and;'=>'&#8743;', '&or;'=>'&#8744;', '&cap;'=>'&#8745;', '&cup;'=>'&#8746;', '&int;'=>'&#8747;', '&there4;'=>'&#8756;', '&sim;'=>'&#8764;', '&cong;'=>'&#8773;', '&asymp;'=>'&#8776;', '&ne;'=>'&#8800;', '&equiv;'=>'&#8801;', '&le;'=>'&#8804;', '&ge;'=>'&#8805;', '&sub;'=>'&#8834;', '&sup;'=>'&#8835;', '&nsub;'=>'&#8836;', '&sube;'=>'&#8838;', '&supe;'=>'&#8839;', '&oplus;'=>'&#8853;', '&otimes;'=>'&#8855;', '&perp;'=>'&#8869;', '&sdot;'=>'&#8901;', '&lceil;'=>'&#8968;', '&rceil;'=>'&#8969;', '&lfloor;'=>'&#8970;', '&rfloor;'=>'&#8971;', '&lang;'=>'&#9001;', '&rang;'=>'&#9002;', '&loz;'=>'&#9674;', '&spades;'=>'&#9824;', '&clubs;'=>'&#9827;', '&hearts;'=>'&#9829;', '&diams;'=>'&#9830;');
+    
+    private static function regexForDelimiters($tags) {
+        return implode('|', array_map(function ($tag) {
+            return rtrim(ltrim($tag, '<'), '>');
+        }, $tags));
+    }
+    
+    private static function stripTags($string, $tagWhitelist=array()) {
+        $selfClosingBlockTags = array('<br>', '<hr>');
+        $blockTags = array_diff(array_merge(
+            self::$tagTypes['header'],
+            self::$tagTypes['block'],
+            self::$tagTypes['list'],
+            self::$tagTypes['table']
+        ), $selfClosingBlockTags); // handle <br> separately below because it is self-closing
+        
+        if (count($tagWhitelist)) {
+            // Leave whitelisted tags alone
+            $blockTags = array_diff($blockTags, $tagWhitelist);
+            $selfClosingBlockTags = array_diff($selfClosingBlockTags, $tagWhitelist);
+        }
+        
+        // add spaces after block close tags which will be removed
+        $string = preg_replace(';\s*(<\s*/\s*('.
+            self::regexForDelimiters($blockTags).')\s*>)\s*;'.self::$reOpts, '\1 ', $string);
+        
+        if (count($selfClosingBlockTags)) {
+            // add spaces after self-closing block tags <br> if not in the whitelist
+            $string = preg_replace(';\s*(<\s*('.
+                self::regexForDelimiters($selfClosingBlockTags).')\s*/?\s*>)\s*;'.self::$reOpts, '\1 ', $string);
+        }
+
+        return trim(strip_tags($string, implode('', $tagWhitelist)));
+    }
+
     //
     // Filter to remove XSS injection attacks and unwanted tags from HTML
     // Note: always removes all javascript from HTML even if $allowedTags contains <script>
@@ -89,9 +125,6 @@ class Sanitizer
             $tagWhitelist = array_map('strtolower', array_unique($tagWhitelist));
         }
         
-        // Remove all newlines to make regular expression mapping
-        //$string = str_replace("\n", " ", $string);
-        
         // The content of these tags is only useful if the tag exists.  Remove the entire block 
         // unless the caller has explicitly asked for it to be included.  
         // Otherwise the content would show up unexpectedly.
@@ -106,7 +139,7 @@ class Sanitizer
         }
         
         if ($useTagWhitelist) {
-            $string = strip_tags($string, implode('', $tagWhitelist));
+            $string = self::stripTags($string, $tagWhitelist);
         }
         
         // remove attribute-based injection attacks:
@@ -286,5 +319,22 @@ class Sanitizer
     //
     public static function sanitizeURL($string) {
         return preg_replace('/javascript:.*/'.self::$reOpts, '', strip_tags($string));
+    }
+    
+    //
+    // Function to remove HTML tags and convert HTML entities to UTF-8
+    // Safe to call on strings which already contain UTF-8
+    //
+    public static function htmlStripTags2UTF8($string) {
+        $string = self::stripTags($string);
+        
+        // There are lots of html entity names which are not supported
+        // by html_entity_decode so we convert them to entity numbers first:
+        $entityNames = array_keys(self::$entityNameToNumber);
+        $entityNumbers = array_values(self::$entityNameToNumber);
+        $string = str_replace($entityNames, $entityNumbers, $string);
+        
+        // Do not use mb_convert_encoding because string may already contain UTF-8
+        return html_entity_decode($string, ENT_QUOTES, 'UTF-8');
     }
 }

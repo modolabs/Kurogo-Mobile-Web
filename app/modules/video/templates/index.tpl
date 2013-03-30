@@ -1,7 +1,7 @@
 {include file="findInclude:common/templates/header.tpl"}
 
 {capture name="categorySelect" assign="categorySelect"}
-  <select class="input" id="section" name="section" onchange="loadSection(this);">
+  <select class="input" id="section" name="feed" onchange="loadSection(this);">
     {foreach $sections as $section}
       {if $section['value']==$currentSection}
         <option value="{$section['value']}" selected="true">{$section['title']}</option>
@@ -37,6 +37,7 @@
         </form>
   
         <form method="get" action="/{$configModule}/search" id="search-form">
+          <input type="hidden" name="feed" value="{$currentSection}" />
           <table border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="formlabel">{"SEARCH"|getLocalizedString}</td>

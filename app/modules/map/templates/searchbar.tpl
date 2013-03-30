@@ -5,6 +5,7 @@
             {if !$mapURL}
               onsubmit="submitMapSearch(this);return false"
             {/if}
+            >
             <fieldset class="inputcombo">
           		<div class="searchwrapper">
                     <input id="search_terms"
@@ -12,7 +13,7 @@
                         type="text"
                         value="{$searchTerms|default:''|escape}"
                         name="filter"
-                        placeholder={"MAP_SEARCH_PLACEHOLDER"|getLocalizedString}
+                        placeholder="{"MAP_SEARCH_PLACEHOLDER"|getLocalizedString}"
                         onfocus="androidPlaceholderFix(this);showSearchFormButtons();" />
                     {if $group && !$campuses}
                         <input type="hidden" name="group" value="{$group}" />
@@ -26,8 +27,8 @@
                 </div>
                 <div id="toolbar-buttons">
                     <div class="toolbar-button">
-                        <a href="{$bookmarkLink[0]['url']}">
-                            <img src="/modules/map/images/map-button-favorites.png" width="24" height="24"/>
+                        <a href="{$bookmarkLink[0]['url']}" title="{"SEARCHBAR_BUTTON_FAVORITES"|getLocalizedString}">
+                            <img src="/modules/map/images/map-button-favorites.png" width="24" height="24" alt="{"SEARCHBAR_BUTTON_FAVORITES"|getLocalizedString}"/>
                         </a>
                     </div>
                     {if $mapURL}
@@ -36,7 +37,9 @@
                         </div>
                     {else}
                         <div class="toolbar-button">
-                            <a id="browseLink" href="{$browseURL}"><img src="/modules/map/images/map-button-browse.png" width="24" height="24" /></a>
+                            <a id="browseLink" href="{$browseURL}" title="{"SEARCHBAR_BUTTON_BROWSE"|getLocalizedString}">
+                                <img src="/modules/map/images/map-button-browse.png" width="24" height="24" alt="{"SEARCHBAR_BUTTON_BROWSE"|getLocalizedString}"/>
+                            </a>
                         </div>
                     {/if}
                 </div>

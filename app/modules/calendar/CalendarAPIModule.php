@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -17,14 +17,12 @@ class CalendarAPIModule extends APIModule
 
     protected $id = 'calendar';
     protected $vmin = 1;
-    protected $vmax = 2;
+    protected $vmax = 3;
 
     protected $timezone;
     protected $fieldConfig;
     protected $feeds = array();
     protected static $defaultModel = 'CalendarDataModel';
-    protected static $defaultController = 'CalendarDataController'; // legacy
-    protected $legacyController = false;
 
     protected function getCalendarsForGroup($groupConfig) {
         $calendars = array();
@@ -54,9 +52,26 @@ class CalendarAPIModule extends APIModule
         return $calendars;
     }
 
+    protected function getEventCategories() {
+    
+        $categories = array();
+    
+        if ($this->getOptionalModuleVar('SHOW_CATEGORIES', false, 'categories')) {
+            $type     = $this->getArg('type', 'static');
+            $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+            $limit    = $this->getArg('limit', $this->getOptionalModuleVar('SHOW_POPULAR_CATEGORIES',null,'categories'));
+    
+            $feed = $this->getFeed($calendar, $type);
+            
+            $categories = $feed->getEventCategories($limit);
+        }
+        
+        return $categories;
+    }
+
     // modified from CalendarWebModule
     protected function getFeedsByType() {
-        $groups = $this->getAPIConfigData('groups');
+        $groups = $this->getModuleSections('api-groups');
         $feeds = array();
         foreach ($groups as $groupConfig) {
             $feedGroup = array(
@@ -90,51 +105,20 @@ class CalendarAPIModule extends APIModule
             $section = $type=='user' ?  'user_calendars' :'resources';
             $sectionData = $this->getOptionalModuleSection($section);
             $controller = false;
+
+            $modelClass = isset($sectionData['MODEL_CLASS']) ? $sectionData['MODEL_CLASS'] : 'CalendarListModel';
+            $controller = CalendarDataModel::factory($modelClass, $sectionData);
     
-            if (isset($sectionData['MODEL_CLASS']) || isset($sectionData['RETRIEVER_CLASS']) || isset($sectionData['CONTROLLER_CLASS'])) {
-    
-                try {
-                    if (isset($sectionData['CONTROLLER_CLASS'])) {
-                        $modelClass = $sectionData['CONTROLLER_CLASS'];
-                    } else {
-                        $modelClass = isset($sectionData['MODEL_CLASS']) ? $sectionData['MODEL_CLASS'] : 'CalendarListModel';
-                    }
-                    
-                    $controller = CalendarDataModel::factory($modelClass, $sectionData);
-                } catch (KurogoException $e) { 
-                    $controller = CalendarListController::factory($sectionData['CONTROLLER_CLASS'], $sectionData);
-                }
-    
-                switch ($type)
-                {
-                    case 'resource':
-                        $feeds = $controller->getResources();
-                        break;
-                    case 'user':
-                        $feeds = $controller->getUserCalendars();
-                        break;
-                }
+            switch ($type)
+            {
+                case 'resource':
+                    $feeds = $controller->getResources();
+                    break;
+                case 'user':
+                    $feeds = $controller->getUserCalendars();
+                    break;
             }
             break;
-                
-            case 'category':
-                $sectionData = $this->getOptionalModuleSection('categories');
-                $controllerClass = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : '';
-                if (strlen($controllerClass)) {
-                    $controller = DataController::factory($controllerClass, $sectionData);
-                    foreach ($controller->items() as $category) {
-                        $feeds[$category->getId()] = array(
-                            'TITLE' => $category->getName(),
-                            'CATEGORY' => $category->getId(),
-                            'BASE_URL' => $sectionData['EVENT_BASE_URL'],
-                            'CONTROLLER_CLASS' => $sectionData['EVENT_CONTROLLER_CLASS'],
-                            );
-                    }
-                }
-                break;
-
-            default:
-                throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $type));
         }
 
         if ($feeds) {
@@ -166,18 +150,8 @@ class CalendarAPIModule extends APIModule
         $feeds = $this->getFeeds($type);
         if (isset($feeds[$index])) {
             $feedData = $feeds[$index];
-            try {
-                if (isset($feedData['CONTROLLER_CLASS'])) {
-                    $modelClass = $feedData['CONTROLLER_CLASS'];
-                } else {
-                    $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
-                }
-                
-                $controller = CalendarDataModel::factory($modelClass, $feedData);
-            } catch (KurogoException $e) { 
-                $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-                $this->legacyController = true;
-            }
+            $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            $controller = CalendarDataModel::factory($modelClass, $feedData);
             return $controller;
         } else {
             throw new KurogoConfigurationException($this->getLocalizedString("ERROR_NO_CALENDAR_FEED", $index));
@@ -284,7 +258,7 @@ class CalendarAPIModule extends APIModule
     public function  initializeForCommand() {
 
         $this->timezone = Kurogo::siteTimezone();
-        $this->fieldConfig = $this->getAPIConfigData('detail');
+        $this->fieldConfig = $this->getModuleSections('api-detail');
 
         $responseVersion = $this->requestedVersion < 2 ? 1 : 2;
 
@@ -316,25 +290,29 @@ class CalendarAPIModule extends APIModule
 
                 // default to the full day that includes current time
                 $current = $this->getArg('time', time());
-                $start   = $this->getStartArg($current);
                 $feed    = $this->getFeed($calendar, $type);
-                $feed->setStartDate($start);
-                
+
+				// in v3 the start parameter is used to paginate (along with limit)
+				if ($this->requestedVersion >= 3) {
+					$start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
+					$start->setTime(0,0,0);
+					$startEvent = $this->getArg('start', 0);
+				} else {
+					$start = $this->getStartArg($current);
+					$startEvent = 0;
+				}
+
+				$feed->setStartDate($start);
+                $feed->setStart($startEvent);
+
                 if ($limit = $this->getArg('limit')) {
-                    if (!$this->legacyController) {
-                        $feed->setLimit($limit);
-                    }
+                    $feed->setLimit($limit);
                 } else {
                     $end = $this->getEndArg($start->format('U'));
                     $feed->setEndDate($end);
                 }
                 
-                if ($limit && $this->legacyController) {
-                    if ($catid) {
-                        $feed->addFilter('category', $catid);
-                    }
-                    $iCalEvents = $feed->items(0, $limit);
-                } else if ($catid) {
+                if ($catid) {
                     $iCalEvents = $feed->getEventsByCategory($catid);
                 } else {
                     $iCalEvents = $feed->items();
@@ -421,13 +399,9 @@ class CalendarAPIModule extends APIModule
 
                     $feed->setStartDate($start);
                     $feed->setEndDate($end);
+			    	$this->setLogData($searchTerms);
                     
-                    if ($this->legacyController) {
-                        $feed->addFilter('search', $searchTerms);
-                        $iCalEvents = $feed->items();
-                    } else {
-                        $iCalEvents = $feed->search($searchTerms);
-                    }
+                    $iCalEvents = $feed->search($searchTerms);
 					
                     $events = array();
                     $count = 0;
@@ -464,7 +438,7 @@ class CalendarAPIModule extends APIModule
                 $group = $this->getArg('group');
                 $response = array();
 
-                $groups = $this->getAPIConfigData('groups');
+                $groups = $this->getModuleSections('api-groups');
                 foreach ($groups as $groupData) {
                     if ($groupData['id'] == $group) {
                         $response = $this->getCalendarsForGroup($groupData);
@@ -477,17 +451,8 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'categories':
-                $categories = array();
+                $categories = $this->getEventCategories();
 
-                if ($this->getOptionalModuleVar('SHOW_CATEGORIES', false, 'categories')) {
-                    $type     = $this->getArg('type', 'static');
-                    $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-                    $limit    = $this->getArg('limit', $this->getOptionalModuleVar('SHOW_POPULAR_CATEGORIES',null,'categories'));
-    
-                    $feed = $this->getFeed($calendar, $type);
-                    
-                    $categories = $feed->getEventCategories($limit);
-                }
                 
                 $response = $this->apiArrayFromCategories($categories);
                 $this->setResponse($response);

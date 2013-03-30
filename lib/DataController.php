@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -202,7 +202,7 @@ abstract class DataController
         // instantiate the parser class and add it to the controller
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
         $this->setParser($parser);
-        $parser->setDataController($this);
+        //$parser->setDataController($this);
         
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);

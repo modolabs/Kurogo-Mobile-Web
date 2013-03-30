@@ -1,0 +1,260 @@
+#wrapper {
+  overflow: auto;
+  font-size: 94.1%;
+  line-height: 1.4em;
+}
+.fillscreen #wrapper {
+  overflow: hidden;
+}
+#navbar {
+	height: 44px;
+}
+#navbar .navmenu-button {
+  display: none;
+}
+#container {
+  height: auto;
+}
+.fillscreen #container {
+  height: 100%;
+}
+
+.nav li > a:hover, .results li > a:hover {
+	color: @@@focal_link_hover_color@@@;
+}
+
+.kgo-site-homepage #container-wrapper,
+.kgo-site-homepage.kgo-has-navmenu #container-wrapper {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  height: 100%;
+}
+.kgo-site-homepage #container {
+  min-height: 100%;
+}
+
+.home-logo {
+  display: block;
+  float: left;
+  height: 44px;
+  width: 180px;
+  overflow: hidden;
+}
+.kgo-has-navmenu .help { 
+	right: 0;
+}
+
+
+/* Login status in navbar */
+
+.helpon .loginstatus {
+    right: 65px;
+}
+.kgo-has-navmenu .loginstatus {
+    right: 10px;
+}
+.kgo-has-navmenu .helpon .loginstatus {
+    right: 65px;
+}
+
+
+#navmenu {
+  display: block; /* always visible */
+  position: absolute;
+  width: 180px;
+  height: auto;
+  top: 0;
+  left: 0;
+  right: auto;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  min-height: 100%;
+  -ms-overflow-y: hidden;
+  overflow-y: hidden;
+  background-color: transparent;
+  background-image: none;
+}
+/* menu background is on wrapper so it extends to the bottom of the page */
+#wrapper {
+  background-color: @@@navmenu_background_color@@@;	
+  background-image: @@@navmenu_background_image@@@ repeat top left;
+}
+.fillscreen #navmenu {
+  height: 100%;
+  -ms-overflow-y: auto;
+  overflow-y: auto;
+}
+#container-wrapper {
+  height: auto;
+  min-height: 100%;
+  min-width: 700px;
+  overflow-y: visible;
+  background-color: @@@body_background_color@@@;	
+  background-image: @@@body_background_image@@@;
+	background-position: @@@body_background_position@@@;
+	background-repeat: @@@body_background_repeat@@@;
+}
+.kgo-has-navmenu #container-wrapper {
+  margin-left: 180px;
+}
+.fillscreen #container-wrapper {
+  height: 100%;
+  max-width: 100%;
+}
+#navmenu .navmenu-items .navmenu-item {
+  border:none;
+}
+#navmenu .navmenu-items .navmenu-module a {
+  padding: 3px 6px 3px 38px;
+}
+#navmenu .navmenu-items .navmenu-module a .navmenu-icon {
+  top: 0;
+}
+#navmenu .navmenu-items .navmenu-module a:hover {
+  color: @@@navmenu_link_hover_color@@@;
+}
+
+
+.pane-stories .title {
+  font-size: 125%;
+  line-height: 1.25em;
+  font-weight: normal;
+}
+
+#tabbodies {
+  margin-bottom: 12px;
+}
+.results,
+.nav,
+#container .nonfocal#searchformcontainer {
+ /* max-width: 700px; */
+}
+
+.splitview .splitview-listwrapper,
+.splitview .splitview-detailwrapper {
+  overflow-y: hidden;
+}
+
+.splitview ul.results .title {
+    color: @@@primary_text_color@@@;
+}
+
+/* Search form elements */
+
+.inputcombo {
+	height: auto;
+	line-height: 1.4em;
+}
+
+.inputcombo .forminput {
+	padding: 3px 4px 3px 24px;
+	height: auto;
+	line-height: 1.4em;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
+	-moz-border-bottom-left-radius: 5px;
+	-moz-border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-top-left-radius: 5px;
+}
+
+.inputcombo .hiddensubmit {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+	padding: 0;
+	border: none;
+	visibility: hidden;
+	-webkit-appearance: none;
+}
+
+.emphasized {
+	margin: 14px 0;
+	line-height: 1.4em;
+	border-width: 1px;
+}
+
+.emphasized .forminput {
+	border-width: 1px;
+	padding: 3px 4px 3px 24px;
+	height: auto;
+	line-height: 1.4em;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
+	-moz-border-bottom-left-radius: 5px;
+	-moz-border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-top-left-radius: 5px;
+	border-width: 1px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.emphasized .combobutton {
+	width: 38px;
+	height: 38px;
+}
+
+table.section-search tr td {
+	line-height: 28px;
+	height: auto
+}
+
+h1.slugline {
+	font-size: 175%;
+}
+
+/* Desktop splitviews should have master list width scale with window width */
+@media only screen and (min-width: 1300px) {
+  .splitview .splitview-listwrapper {
+      width: 382px;
+  }
+  .splitview .splitview-listwrapper .splitview-list {
+      width: 382px;
+  }
+  .splitview .splitview-detailwrapper {
+      left: 383px; /* width of listwrapper + 1px for border */
+  }
+}
+
+@media only screen and (max-width: 1100px) {
+  .splitview .splitview-listwrapper {
+      width: 302px;
+      font-size: 93.7%;
+  }
+  .splitview .splitview-listwrapper .splitview-list {
+      width: 302px;
+  }
+  .splitview .splitview-detailwrapper {
+      left: 303px; /* width of listwrapper + 1px for border */
+  }
+  .splitview-stories .splitview-listwrapper ul.results li .thumbnail {
+      margin-right: 8px;
+  }
+}
+
+@media only screen and (max-width: 960px) {
+  .splitview .splitview-listwrapper {
+      width: 272px;
+      font-size: 87.5%;
+  }
+  .splitview .splitview-listwrapper .splitview-list {
+      width: 272px;
+  }
+  .splitview .splitview-detailwrapper {
+      left: 273px; /* width of listwrapper + 1px for border */
+  }
+  .splitview-stories .splitview-listwrapper ul.results li .thumbnail {
+      margin-right: 7px;
+  }
+}
+

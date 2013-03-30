@@ -29,10 +29,13 @@
         <th>{"ADMIN_MODULES_OVERVIEW_HOME_TITLE"|getLocalizedString}</th>
         <th>{"ADMIN_MODULES_OVERVIEW_SSL_TITLE"|getLocalizedString}</th>
         <th>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"|getLocalizedString}</th>
+        {*
         <th></th>
+        *}
     </tr>
 </thead>
 <tbody>
+{*
 <tr>
     <td>Add</td>
     <td><input type="input" id="newModuleTitle" size="10" /></td>
@@ -44,9 +47,10 @@
     <td><input type="checkbox" id="newModuleSearch" value="1" /></td>
     <td><input type="submit" id="addNewModule" value="+" /></td>
 </tr>
+*}
 {foreach $modules as $moduleData}
 <tr>
-    <td><img src="/modules/{$homeModuleID}/images/compliant/{$moduleData.id}.png" width="30" height="30" alt="{$moduleData.title|escape}" /></td>
+    <td><img src="{if $navigation_icon_set}/common/images/iconsets/{$navigation_icon_set}/30/{else}/modules/{$homeModuleID}/images/compliant/{/if}{$moduleData.icon}.png" width="30" height="30" alt="" /></td>
     <td><a href="{$moduleData.url}">{$moduleData.title|escape}</a></td>
     <td>{$moduleData.id}</td>
     <td>{$moduleData.type}</td>
@@ -56,7 +60,9 @@
     <td>{if $moduleData.home}<img src="/common/images/available.png" alt="Yes" />{/if}</td>
     <td><input type="hidden" name="{$moduleData.id}[secure]" value="0" /> <input type="checkbox" name="{$moduleData.id}[secure]" value="1"{if $moduleData.secure} checked{/if} /></td>
     <td><input type="hidden" name="{$moduleData.id}[search]" value="0" /> <input type="checkbox" name="{$moduleData.id}[search]" value="1"{if $moduleData.search} checked{/if} /></td>
+    {*
     <td>{if $moduleData.canRemove}<input type="submit" id="removeModule_{$moduleData.id}" class="removeModule" value="-" />{/if}</td>
+    *}
 </tr>
 {/foreach}
 </tbody>

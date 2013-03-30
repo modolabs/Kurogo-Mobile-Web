@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -9,191 +9,20 @@
  *
  */
 
-/**
-  * @package ExternalData
-  * @subpackage RSS
-  */
+includePackage('News');
 
-/**
-  */
-includePackage('RSS');
-
-/**
-  * @package ExternalData
-  * @subpackage RSS
-  */
-class RSSDataParser extends XMLDataParser
+class RSSDataParser extends SimpleXMLDataParser
 {
-    protected $channel;
-    protected $channelClass='RSSChannel';
-    protected $itemClass='RSSItem';
-    protected $imageClass='RSSImage';
-    protected $enclosureClass='RSSEnclosure';
-    protected $imageEnclosureClass='RSSImageEnclosure';
-    protected $removeDuplicates = false;
-    protected $htmlEscapedCDATA = false;
+    protected $multiValueElements = array('item');
+    protected $imageClass ='NewsImage';
+    protected $itemClass  ='NewsItem';
     protected $useDescriptionForContent = false;
-    protected $items=array();
-    protected $guids=array();
-
-    protected static $startElements=array(
-        'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY',
-        'ENCLOSURE', 'MEDIA:THUMBNAIL','MEDIA:CONTENT', 'IMAGE', 'LINK');
-    protected static $endElements=array(
-        'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'DESCRIPTION');
+    protected $userFields = array();
     
-    public function items()
-    {
-        return $this->items;
-    }
+    static $standardProperties = array('title', 'link', 'description','content','pubdate','category','author');
     
-    public function getTitle() {
-        return $this->channel->getTitle();
-    }
-
-    public function clearInternalCache() {
-    	parent::clearInternalCache();
-    	$this->items = array();
-    	$this->guids = array();
-    }
-
-    public function init($args)
-    {
-        parent::init($args);
-        
-        if (isset($args['CHANNEL_CLASS'])) {
-            $this->setChannelClass($args['CHANNEL_CLASS']);
-        }
-
-        if (isset($args['ITEM_CLASS'])) {
-            $this->setItemClass($args['ITEM_CLASS']);
-        }
-
-        if (isset($args['IMAGE_CLASS'])) {
-            $this->setImageClass($args['IMAGE_CLASS']);
-        }
-
-        if (isset($args['ENCLOSURE_CLASS'])) {
-            $this->setEnclosureClass($args['ENCLOSURE_CLASS']);
-        }
-        
-        if (isset($args['IMAGE_ENCLOSURE_CLASS'])) {
-            $this->setImageEnclosureClass($args['IMAGE_ENCLOSURE_CLASS']);
-        }
-
-        if (isset($args['REMOVE_DUPLICATES'])) {
-            $this->removeDuplicates = $args['REMOVE_DUPLICATES'];
-        }
-
-        if (isset($args['HTML_ESCAPED_CDATA'])) {
-            $this->htmlEscapedCDATA = $args['HTML_ESCAPED_CDATA'];
-        }
-        
-        if (isset($args['USE_DESCRIPTION_FOR_CONTENT'])) {
-            $this->setUseDescriptionForContent($args['USE_DESCRIPTION_FOR_CONTENT']);
-        }
-    }
-    
-    public function setUseDescriptionForContent($bool) {
+    protected function setUseDescriptionForContent($bool) {
     	$this->useDescriptionForContent = $bool ? true : false;
-    }
-
-    protected function shouldHandleStartElement($name)
-    {
-        return in_array($name, self::$startElements);
-    }
-
-    protected function handleStartElement($name, $attribs)
-    {
-        switch ($name)
-        {
-            case 'RSS':
-            case 'RDF:RDF':
-                break;
-            case 'CHANNEL':
-            case 'FEED': //for atom feeds
-                $this->elementStack[] = new $this->channelClass($attribs);
-                break;
-            case 'ITEM':
-            case 'ENTRY': //for atom feeds
-                $element = new $this->itemClass($attribs);
-                $element->init($this->initArgs);
-                $this->elementStack[] = $element;
-                break;
-            case 'ENCLOSURE':
-            case 'MEDIA:CONTENT':
-            case 'MEDIA:THUMBNAIL':
-                if ($this->enclosureIsImage($name, $attribs)) {
-                    $element = new $this->imageEnclosureClass($attribs);
-                } else {
-                    $element = new $this->enclosureClass($attribs);
-                }
-                $element->init($this->initArgs);
-                $this->elementStack[] = $element;
-                break;
-            case 'LINK':
-                if (isset($attribs['REL'], $attribs['HREF']) && $attribs['REL'] == 'enclosure') {
-                    $attribs['URL'] = $attribs['HREF'];
-                    if ($this->enclosureIsImage($name, $attribs)) {
-                        $element = new $this->imageEnclosureClass($attribs);
-                    } else {
-                        $element = new $this->enclosureClass($attribs);
-                    }
-                    $element->init($this->initArgs);
-                    $element->setName('enclosure');
-                } else {
-                    $element = new XMLElement($name, $attribs, $this->getEncoding());
-                }
-                $this->elementStack[] = $element;
-                break;
-            case 'IMAGE':
-                $this->elementStack[] = new $this->imageClass($attribs);
-                break;
-        }
-    }
-
-    protected function shouldHandleEndElement($name)
-    {
-        return in_array($name, self::$endElements);
-    }
-
-    protected function handleEndElement($name, $element, $parent)
-    {
-        switch ($name)
-        {
-            case 'FEED': //for atom feeds
-            case 'CHANNEL':
-                $this->channel = $element;
-                break;
-            case 'ITEM':
-            case 'ENTRY': //for atom feeds
-                if (!$this->removeDuplicates || !in_array($element->getGUID(), $this->guids)) {
-                    $this->guids[] = $element->getGUID();
-                    $this->items[] = $element;
-                }
-                break;
-            case 'DESCRIPTION':
-                $parent->addElement($element); // add description as description
-                
-                if ($this->useDescriptionForContent) {
-                    // add description element again as content
-                    $element->setName('CONTENT');
-                    $element->shouldStripTags($this->shouldStripTags($element));
-                    $element->shouldHTMLDecodeCDATA($this->shouldHTMLDecodeCDATA($element));
-                    $parent->addElement($element);
-                }
-                break;
-        }
-    }
-
-    public function setChannelClass($channelClass)
-    {
-    	if ($channelClass) {
-    		if (!class_exists($channelClass)) {
-    			throw new KurogoConfigurationException("Cannot load class $channelClass");
-    		}
-			$this->channelClass = $channelClass;
-		}
     }
 
     public function setItemClass($itemClass)
@@ -206,16 +35,6 @@ class RSSDataParser extends XMLDataParser
 		}
     }
 
-    public function setEnclosureClass($enclosureClass)
-    {
-    	if ($enclosureClass) {
-    		if (!class_exists($enclosureClass)) {
-    			throw new KurogoConfigurationException("Cannot load class $enclosureClass");
-    		}
-			$this->enclosureClass = $enclosureClass;
-		}
-    }
-
     public function setImageClass($imageClass)
     {
     	if ($imageClass) {
@@ -225,51 +44,210 @@ class RSSDataParser extends XMLDataParser
 			$this->imageClass = $imageClass;
 		}
     }
-    
-    protected function shouldStripTags($element)
-    {
-        $strip_tags = true;
-        switch ($element->name())
-        {
-            case 'CONTENT:ENCODED':
-            case 'CONTENT':
-            case 'BODY':
-                $strip_tags = false;
-                break;
-        }
-        
-        return $strip_tags;
-    }
-    
-    protected function shouldHTMLDecodeCDATA($element)
-    {
-        $html_decode = false;
-        
-        if ($this->htmlEscapedCDATA) {
-            // Some buggy feeds have HTML escaped with both CDATA and html entities
-            switch ($element->name()) {
-                case 'CONTENT:ENCODED':
-                case 'CONTENT':
-                case 'BODY':
-                    $html_decode = true;
-                    break;
+
+    protected function parseChannel($channel) {
+        $channelItems = Kurogo::arrayVal($channel, 'item', array());
+        $items = array();
+        foreach ($channelItems as $itemData) {
+            if ($item = $this->parseItem($itemData)) {
+                $items[] = $item;
             }
         }
-        return $html_decode;
+        
+        return $items;
+    }
+            
+    protected function getPropertyForKey($key)
+    {
+        if (in_array($key, self::$standardProperties)) {
+            return $key;
+        }
+        
+        $propertyMap = array_merge(array(
+            'content:encoded'=>'content',
+            'guid'=>'id',
+            'dc:creator'=>'author',
+            'dc:date'=>'pubdate',
+            'dc:subject'=>'category',
+            'enclosure'=>'thumbnail',
+            'media:content'=>'thumbnail',
+            'media:thumbnail'=>'thumbnail',
+            'media:group'=>'mediagroup',
+            'body'=>'content',
+        ), $this->userFields);
+                        
+        return Kurogo::arrayVal($propertyMap, $key);
     }
     
-    protected function enclosureIsImage($name, $attribs)
-    {
+    protected function processPubDate($value) {
+        try {
+            if ($date = new DateTime($value)) {
+                $value = $date;
+            }
+        } catch (Exception $e) {
+            $value = null;
+        }
+        return $value;
+    }
+
+    protected function processCategory($value) {
+        return array_filter(array_map('trim', explode(',', $value)));
+    }
+
+    protected function typeIsImage($type) {
+    
         $imageTypes = array(
+            'image',
             'image/jpeg',
             'image/jpg',
             'image/gif',
             'image/png',
         );
-        $type   = isset($attribs['TYPE'])   ? $attribs['TYPE']   : '';
-        $medium = isset($attribs['MEDIUM']) ? $attribs['MEDIUM'] : '';
-        
-        return in_array($type, $imageTypes) || $name == 'MEDIA:THUMBNAIL' || ($name == 'MEDIA:CONTENT' && $medium == 'image');
+
+        return in_array($type, $imageTypes);
     }
 
+    protected function processMediaGroup($value, $key) {
+        $group = array();
+
+        if ($media = Kurogo::arrayVal($value, 'media:content')) {
+            if ($thumbnail = Kurogo::arrayVal($media, 'media:thumbnail')) {
+                $group['thumbnail'] = $this->processMedia($thumbnail, 'media:thumbnail', true);
+            }
+            $group['image'] = $this->processMedia($media, 'media:content', false);
+        }
+
+        return $group;
+    }
+    
+    protected function processDescription($value, $key) {
+        return Sanitizer::sanitizeHTML($value);
+    }
+
+    protected function processContent($value, $key) {
+        return Sanitizer::sanitizeHTML($value);
+    }
+    
+    protected function processImage($value, $key) {
+        return $this->processMedia($value, $key, false);
+    }
+
+    protected function processThumbnail($value, $key) {
+        return $this->processMedia($value, $key, true);
+    }
+
+    // enclosure, media, etc 
+    protected function processMedia($value, $key, $thumbnail = true) {        
+        $image = null;
+        $type = null;
+    
+        if (is_array($value)) {
+
+            $attributes = Kurogo::arrayVal($value, '@attributes', array());
+            if (!$url = Kurogo::arrayVal($attributes, 'url')) {
+                return null;
+            }
+            if (!$type = Kurogo::arrayVal($attributes, 'type')) {
+                if ($medium = Kurogo::arrayVal($attributes, 'medium')) {
+                    $type = $medium;
+                } else {
+                    $bits = parse_url($url);
+                    $type = mime_type(Kurogo::arrayVal($bits, 'path'));
+                }
+            }
+
+        } elseif (is_scalar($value)) {
+            //assume it's a url_stat
+            $url = $value;
+            $bits = parse_url($url);
+            $type = mime_type(Kurogo::arrayVal($bits, 'path'));
+        }
+
+        if ($this->typeIsImage($type)) {
+            $image = new $this->imageClass();
+            $image->setURL($url);
+            $image->setThumbnail($thumbnail);
+            $image->init($this->initArgs);
+        }
+        return $image;
+    }
+    
+    protected function parseItem($itemData) {
+        $item = new $this->itemClass();
+        $item->init($this->initArgs);
+
+        if ($this->useDescriptionForContent) {
+            $itemData['content'] = Kurogo::arrayVal($itemData, 'description');            
+        }
+
+        foreach ($itemData as $key => $value) {
+                    
+            if ($property = $this->getPropertyForKey($key)) {
+                $setMethod = "set" . $property;
+                $processMethod = "process" . $property;
+
+                if (is_callable(array($this, $processMethod))) {
+                    // if we have an array of items (perhaps media), process them individually
+                    if ($this->isNumericArray($value)) {
+                        $tmpValue = $value;
+                        $value = array();
+                        foreach ($tmpValue as $v) {
+                            $v = $this->$processMethod($v, $key);
+                            // only include items that are non-null
+                            if (isset($v)) {
+                                $value[] = $v;
+                            }
+                        } 
+                    } else {
+                        $value = $this->$processMethod($value, $key);
+                    }
+                }
+
+                Kurogo::log(LOG_DEBUG, "Setting $property from $key", 'rss');
+                $item->$setMethod($value);
+            } else {
+                Kurogo::log(LOG_DEBUG, "Setting attribute $key", 'rss');
+                $item->setAttribute($key, $value);
+            }
+        }
+
+        return $item;
+    }
+    
+    public function parseData($data) {
+        $items = array();
+        if (!$feed = parent::parseData($data, true)) {
+            return $items;
+        }
+        if (isset($feed['channel'])) {
+            $items = $this->parseChannel($feed['channel']);
+        } else {
+            throw new KurogoException("Don't know how to parse this feed yet");
+        }
+
+        if (is_null($this->totalItems)) {
+            $this->setTotalItems(count($items));
+        }
+
+        return $items;
+    }
+    
+    public function init($args)
+    {
+        parent::init($args);
+        
+        if (isset($args['ITEM_CLASS'])) {
+            $this->setItemClass($args['ITEM_CLASS']);
+        }
+
+        if (isset($args['IMAGE_CLASS'])) {
+            $this->setImageClass($args['IMAGE_CLASS']);
+        }
+
+        if (isset($args['USE_DESCRIPTION_FOR_CONTENT'])) {
+            $this->setUseDescriptionForContent($args['USE_DESCRIPTION_FOR_CONTENT']);
+        }
+
+        $this->userFields = Kurogo::arrayVal($args, 'FIELDS', array());
+    }
 }

@@ -2,6 +2,7 @@
 
 includePackage('Calendar');
 class AthleticEventsDataModel extends CalendarDataModel {
+    protected $DEFAULT_PARSER_CLASS = 'ICSAthleticParser';
 
     public static function getAthleticScheduleRetrievers() {
         return array(

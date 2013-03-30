@@ -25,6 +25,31 @@
             ]
         },
         {
+            "groupName": "iemobile-10",
+            "description": "IEMobile 10.* - Windows Phone 8 Devices",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "winphone8",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "touch",
+                    "platform": "winphone8",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "IEMobile/10\\.\\d",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+
+        {
             "groupName": "annoying bots that are neither search engines nor user-invoked command line tools",
             "description": "annoying bots that are neither search engines nor user-invoked command line tools",
             "classification": {
@@ -217,6 +242,122 @@
             ]
         },
         {
+            "groupName": "galaxy-tab-7",
+            "description": "Galaxy Tab 7.0 Devices (Too small of a screen to support tablet interfaces, gets treated as a large phone)",
+            "classification": {
+                "3": {
+                    "pagetype": "compliant",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "android",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Android .*(?:GT-P6210|SGH-T869|GT-P3100|GT-P3113)",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "galaxy-tab-7-7",
+            "description": "Galaxy Tab 7.7 Devices (Too small of a screen to support tablet interfaces, gets treated as a large phone)",
+            "classification": {
+                "3": {
+                    "pagetype": "compliant",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "android",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Android .*(?:GT-P6810|SCH-I815)",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "android-4x-phones",
+            "description": "Android 4.x.x Phones",
+            "classification": {
+                "3": {
+                    "pagetype": "compliant",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "android",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Android 4\\.\\d.*Mobile Safari",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "android-4x-tablets",
+            "description": "Android 4.x.x Tablets",
+            "classification": {
+                "3": {
+                    "pagetype": "tablet",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "android",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "android",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "Android 4\\.\\d.*Safari",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
             "groupName": "Android",
             "description": "Android",
             "classification": {
@@ -289,30 +430,6 @@
             ]
         },
         {
-            "groupName": "blackberry-bold-99xx",
-            "description": "BlackBerry Bold 99XX",
-            "classification": {
-                "2": {
-                    "pagetype": "compliant",
-                    "platform": "webos",
-                    "supports_certificate": false
-                },
-                "1": {
-                    "pagetype": "webkit",
-                    "platform": "webos",
-                    "supports_certificate": false
-                }
-            },
-            "match": [
-                {
-                    "regex": "BlackBerry\\s*99\\d\\d",
-                    "options": {
-                        "CASE_INSENSITIVE": false
-                    }
-                }
-            ]
-        },
-        {
             "groupName": "BlackBerry Torch",
             "description": "BlackBerry Torch",
             "classification": {
@@ -378,6 +495,30 @@
             "match": [
                 {
                     "regex": "BlackBerry8100",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
+            "groupName": "blackberry-6-and-7",
+            "description": "BlackBerry 6.x and 7.x devices",
+            "classification": {
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "blackberry6",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "compliant",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BlackBerry.*Version/(6|7)\\.\\d",
                     "options": {
                         "CASE_INSENSITIVE": false
                     }
@@ -1481,7 +1622,7 @@
             },
             "match": [
                 {
-                    "regex": "Opera Mini|NetFront|Novarra|UP.Browser|Blazer|Fennec",
+                    "regex": "Opera Mini|NetFront|Novarra|UP.Browser|Blazer|Fennec|Obigo",
                     "options": {
                         "CASE_INSENSITIVE": false
                     }

@@ -1,0 +1,125 @@
+#navbar { margin-bottom: -1px; } /* needed to make allapps lie*/
+#statusmsg { margin-top: 13px; } /* flush with top when statusmsg is missing */
+.formbuttons { margin-bottom: 16px; } /* even out padding below bottom button */
+#allapps {
+    background-color: #ccc;
+    padding: 3px 3px 3px 10px;
+    border-bottom: 1px solid #999;
+    border-top: 1px solid #999; /* added lw */
+    margin: 0;
+}
+ul {
+    margin: 0;
+    padding: 0;
+}
+#dragReorderList {
+    border-top: 1px solid @@@focal_border_color@@@;
+}
+#dragReorderList li {
+    display: block;
+    position: relative;
+    border-bottom: 1px solid @@@focal_border_color@@@;
+    border-collapse: collapse;
+    background-color: @@@focal_background_color@@@;
+    overflow: hidden;
+    list-style-type: none; /* important to keep all drawing inside of element, or else animations become choppy */
+    padding: 0;
+}
+#dragReorderList li input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    padding: 4px;
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    margin-top: -10px;
+}
+#dragReorderList li .required {
+    visibility: hidden;
+}
+#dragReorderList li .title {
+    display: inline-block;
+    width: 80%;
+    margin: 8px 8px 8px 48px;
+    line-height: 1.2em;
+    /* display, width, overflow, text-overflow, and white-space combine to enable ellipsis truncation */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#dragReorderList li a {
+    color: inherit;
+    text-decoration: none;
+}
+#dragReorderList li img.homeicon {
+    margin: 0 2px 0 0;
+    position: relative;
+    top: -1px;
+}
+#dragReorderList li .draghandle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    margin-top: -12px;
+    background-image: url(/modules/home/images/compliant/handle.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    width: 24px;
+    height: 24px;
+}
+ul.newapps {
+    margin: 0.5em 0 0 0;
+}
+.newapps li {
+    display: inline;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.newapps.threePlus li:after {
+    content: ",";
+}
+.newapps.twoPlus li:last-child:before {
+    content: "and ";
+}
+
+.moving {
+/*  color: white;*/
+/*  background-color: green;*/
+    border-bottom: 1px solid #333;
+    opacity: 0.9;
+/*  -webkit-box-shadow: #000 0px 0px 10px;*/ /* makes mobilesafari dragging choppy */
+}
+
+#savedMessage {
+    background: white;
+    -webkit-border-radius: 9px;
+    -webkit-box-shadow: #111 0px 0px 42px;
+    padding: 0.5em 0.8em;
+    font-weight: bolder;
+    position: absolute;
+    top: 100px;
+    left: 130px;
+    opacity: 0.0;
+    z-index: 9999;
+}
+.fadeinout {
+/*  opacity: 0.0;*/
+    -webkit-animation-name: fadeinout;
+    -webkit-animation-duration: 1.1s;
+/*  -webkit-animation-iteration-count: 1;*/
+}
+
+@-webkit-keyframes fadeinout {
+
+    0% {
+        opacity: 1.0;
+    }
+    60% {
+        opacity: 1.0;
+    }
+    100% {
+        opacity: 0.0;
+    }
+
+}

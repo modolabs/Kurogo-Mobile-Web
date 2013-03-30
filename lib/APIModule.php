@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -14,6 +14,10 @@ abstract class APIModule extends Module
     protected $responseVersion;
     protected $requestedVersion;
     protected $requestedVmin;
+    protected $clientVersion;
+    protected $clientPagetype;
+    protected $clientPlatform;
+    protected $clientBrowser;
     protected $vmin;
     protected $vmax;
     protected $command = '';
@@ -32,11 +36,27 @@ abstract class APIModule extends Module
         return null;
     }
 
-    public function getWebBridgeConfig() {
-        return KurogoWebBridge::getHelloMessageForModule($this->configModule);
+    public function getWebBridgeConfig($platform=null) {
+        return KurogoWebBridge::getHelloMessageForModule($this->configModule, $platform);
     }
 
-    protected function warningHandler($errno, $str, $file, $line) {
+    protected function getAllModuleNavigationData() {
+
+        $modules = $moduleNavData = array(
+            'primary'  => array(), 
+            'secondary'=> array(), 
+        );
+        
+        $navModules = Kurogo::getSiteSections('navigation', Config::APPLY_CONTEXTS_NAVIGATION);
+        foreach ($navModules as $moduleID=>$moduleData) {
+            $type = Kurogo::arrayVal($moduleData, 'type', 'primary');
+            $moduleNavData[$type][$moduleID] = $moduleData;
+        }
+        
+        return $moduleNavData;
+    }
+    
+    public function warningHandler($errno, $str, $file, $line) {
         if (!(error_reporting() & $errno)) {
             // This error code is not included in error_reporting
             return;
@@ -68,8 +88,33 @@ abstract class APIModule extends Module
      * The module must be run securely (https)
      */
     protected function secureModule() {
-        $error = new KurogoError(3, 'Secure access required', 'This module must be used using https');
-        $this->throwError($error);
+        $secure_host = Kurogo::getOptionalSiteVar('SECURE_HOST', $_SERVER['SERVER_NAME']);
+        if (empty($secure_host)) {
+            $secure_host = $_SERVER['SERVER_NAME'];
+        }
+        $secure_port = Kurogo::getOptionalSiteVar('SECURE_PORT', 443);
+        if (empty($secure_port)) {
+            $secure_port = 443;
+        }
+
+        $redirect= sprintf("https://%s%s%s", $secure_host, $secure_port == 443 ? '': ":$secure_port", $_SERVER['REQUEST_URI']);
+        Kurogo::log(LOG_DEBUG, "Redirecting to secure url $redirect",'module');
+        Kurogo::redirectToURL($redirect, Kurogo::REDIRECT_PERMANENT);
+    }
+
+    protected function unsecureModule() {
+        $host = Kurogo::getOptionalSiteVar('HOST', $_SERVER['SERVER_NAME'], 'site settings');
+        if (empty($host)) {
+            $host = $_SERVER['SERVER_NAME'];
+        }
+        $port = Kurogo::getOptionalSiteVar('PORT', 80, 'site settings');
+        if (empty($port)) {
+            $port = 80;
+        }
+
+        $redirect= sprintf("http://%s%s%s", $host, $port == 80 ? '': ":$port", $_SERVER['REQUEST_URI']);
+        Kurogo::log(LOG_DEBUG, "Redirecting to non-secure url $redirect",'module');
+        Kurogo::redirectToURL($redirect);
     }
   
    /**
@@ -158,38 +203,6 @@ abstract class APIModule extends Module
         return $module;
     }
 
-    protected function getAPIConfig($name, $opts=0) {
-        $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
-        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts, $this);
-        return $config;
-    }
-
-    protected function getAPIConfigData($name) {
-        $config = $this->getAPIConfig($name);
-        return $config->getSectionVars(Config::EXPAND_VALUE);
-    }
-
-    protected function getModuleNavigationData() {
-        $moduleNavConfig = $this->getModuleNavigationConfig();
-        $modules = array(
-            'primary'  => $moduleNavConfig->getOptionalSection('primary_modules'),
-            'secondary'=> $moduleNavConfig->getOptionalSection('secondary_modules')
-        );
-
-        return $modules;
-    }
-
-    protected function getModuleNavigationIDs() {
-        $moduleNavConfig = $this->getModuleNavigationConfig();
-        
-        $modules = array(
-            'primary'  => array_keys($moduleNavConfig->getOptionalSection('primary_modules')),
-            'secondary'=> array_keys($moduleNavConfig->getOptionalSection('secondary_modules'))
-        );
-
-        return $modules;
-    }
-   
     public static function getAllModules() {
         $configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
         $modules = array();
@@ -252,6 +265,20 @@ abstract class APIModule extends Module
         $this->context = $context;
         $this->response->setContext($context);
     }
+    
+    protected function setClientVersion($version) {
+    	$this->clientVersion = $version;
+    }
+    
+    protected function setClient($clientString) {
+        if ($clientString) {
+            $parts = explode('-', $clientString);
+            $this->clientPagetype = Kurogo::arrayVal($parts, 0);
+            $this->clientPlatform = Kurogo::arrayVal($parts, 1);
+            $this->clientBrowser = Kurogo::arrayVal($parts, 2);
+            Kurogo::deviceClassifier()->setDevice($clientString);
+        }
+    }
   
    /**
      * Initialize the request
@@ -262,19 +289,14 @@ abstract class APIModule extends Module
         parent::init();
         $this->setArgs($args);
         $this->setRequestedVersion($this->getArg('v', null), $this->getArg('vmin', null));
+        $this->setClientVersion($this->getArg('clientv', null));
+        $this->setClient($this->getArg('client'));
         if ($context = $this->getArg('context', null)) {
             $this->setContext($context);
         }
         $this->setCommand($command);
     }
   
-    protected function loadSiteConfigFile($name, $opts=0) {
-        $config = ConfigFile::factory($name, 'site', $opts);
-        Kurogo::siteConfig()->addConfig($config);
-    
-        return $config->getSectionVars(true);
-    }
-    
    /**
      * Execute the command. Will call initializeForCommand() which should set the version, error and response
      * values appropriately
@@ -284,7 +306,21 @@ abstract class APIModule extends Module
             throw new KurogoException("Command not specified");
         }
         $this->loadResponseIfNeeded();
-        $this->loadSiteConfigFile('strings');
+        if ($this->clientBrowser == 'native') {
+            if ($appData = Kurogo::getAppData($this->clientPlatform)) {
+            	if ($minversion = Kurogo::arrayVal($appData, 'minversion')) {
+            		if (version_compare($this->clientVersion, $minversion)<0) {
+            			$data = array(
+            				'url'=>Kurogo::arrayVal($appData, 'url'),
+            				'version'=>Kurogo::arrayVal($appData, 'version')
+						);
+						$error = new KurogoError(7, 'Upgrade Required', 'You must upgrade your application');
+						$error->setData($data);
+						$this->throwError($error);
+            		}
+            	}
+            }
+        }
     
         $this->initializeForCommand();
         

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -16,46 +16,43 @@ class DateFormatter
     const MEDIUM_STYLE=2;
     const LONG_STYLE=3;
     const FULL_STYLE=4;
+    const DEFAULT_STYLE=null;
 
-    public static function formatDate($date, $dateStyle, $timeStyle) {
-        $dateStyleConstant = self::getDateConstant($dateStyle);
-        $timeStyleConstant = self::getTimeConstant($timeStyle);
-        
+    public static function formatDateUsingFormat($date, $dateFormat, $timeFormat) {
+
         if ($date instanceOf DateTime) {
             $date = $date->format('U');
         }
         
         $string = '';
-        if ($dateStyleConstant) {
-            $format = Kurogo::getLocalizedString($dateStyleConstant);
+        if ($dateFormat) {
 
             // Work around lack of %e support in windows
             // http://php.net/manual/en/function.strftime.php
 		    if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
-               $format = preg_replace('#(?<!%)((?:%%)*)%e#', '\1%#d', $format);
+               $dateFormat = preg_replace('#(?<!%)((?:%%)*)%e#', '\1%#d', $dateFormat);
 			}	
 			
-            $string .= strftime($format, $date);
-            if ($timeStyleConstant) {
+            $string .= strftime($dateFormat, $date);
+            if ($timeFormat) {
                 $string .= " ";
             }
         }
         
-        if ($timeStyleConstant) {
+        if ($timeFormat) {
             // Work around lack of %P support in Mac OS X
-            $format = Kurogo::getLocalizedString($timeStyleConstant);
             $lowercase = false;
-            if (strpos($format, '%P') !== false) {
-                $format = str_replace('%P', '%p', $format);
+            if (strpos($timeFormat, '%P') !== false) {
+                $timeFormat = str_replace('%P', '%p', $timeFormat);
                 $lowercase = true;
             }
-            $formatted = strftime($format, $date);
+            $formatted = strftime($timeFormat, $date);
             if ($lowercase) {
                 $formatted = strtolower($formatted);
             }
             
             // Work around leading spaces that come from use of %l (but don't exist in date())
-            if (strpos($format, '%l') !== false) {
+            if (strpos($timeFormat, '%l') !== false) {
                 $formatted = trim($formatted);
             }
             
@@ -63,6 +60,36 @@ class DateFormatter
         }
         
         return $string;
+    }
+    
+    public static function formatDate($date, $dateStyle=self::DEFAULT_STYLE, $timeStyle=self::DEFAULT_STYLE) {
+        if ($dateStyle === self::DEFAULT_STYLE) {
+            $dateStyle = self::MEDIUM_STYLE;
+        }
+
+        if ($timeStyle === self::DEFAULT_STYLE) {
+            $timeStyle = self::MEDIUM_STYLE;
+        }
+        
+        $dateStyleConstant = self::getDateConstant($dateStyle);
+        $timeStyleConstant = self::getTimeConstant($timeStyle);
+
+        $timestamp = $date instanceOf DateTime ? $date->format('U') : $date;
+
+        $dateFormat = null;
+        if ($dateStyleConstant) {
+            if (($dateStyleConstant=='SHORT_DATE_FORMAT') && date('Y') != date('Y', $timestamp)) {
+                $dateStyleConstant .="_YEAR";
+            }
+            $dateFormat = Kurogo::getLocalizedString($dateStyleConstant);
+        }
+        
+        $timeFormat = null;
+        if ($timeStyleConstant) {
+            $timeFormat = Kurogo::getLocalizedString($timeStyleConstant);
+        }
+        
+        return self::formatDateUsingFormat($date, $dateFormat, $timeFormat);
     }
 
     private static function getTimeConstant($timeStyle) {

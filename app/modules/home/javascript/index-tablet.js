@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -28,8 +28,8 @@ function loadModulePages(modulePanes) {
         });
     }
     
-    for (var pane in modulePanes) {
-        loadModulePage(modulePanes[pane]);
+    for (var i = 0; i < modulePanes.length; i++) {
+        loadModulePage(modulePanes[i]);
     }
 }
 
@@ -44,63 +44,67 @@ function callPaneResizeHandlers() {
     }
 }
 
+// figure out where an element is relative to its enclosing portlet
+function getPortletOffsetTop(elem) {
+    var offsetTop = 0;
+    if (elem && elem.offsetParent) {
+        while (!hasClass(elem, 'portlet-content') && elem.offsetParent) {
+            offsetTop += elem.offsetTop;
+            elem = elem.offsetParent;
+        }
+        if (!hasClass(elem, 'portlet-content')) {
+            offsetTop = 0;  // error!
+        }
+    }
+    return offsetTop;
+}
+
 function moduleHandleWindowResize() {
-    var blocks = document.getElementById('fillscreen').childNodes;
+    callPaneResizeHandlers();
     
-    for (var i = 0; i < blocks.length; i++) {
-        var blockborder = blocks[i].childNodes[0];
-        if (!blockborder) { continue; }
-          
-        var clipHeight = getCSSHeight(blocks[i])
-            - parseFloat(getCSSValue(blockborder, 'border-top-width')) 
-            - parseFloat(getCSSValue(blockborder, 'border-bottom-width'))
-            - parseFloat(getCSSValue(blockborder, 'padding-top'))
-            - parseFloat(getCSSValue(blockborder, 'padding-bottom'))
-            - parseFloat(getCSSValue(blockborder, 'margin-top'))
-            - parseFloat(getCSSValue(blockborder, 'margin-bottom'));
-        
-        blockborder.style.height = clipHeight+'px';
-        
-        // If the block ends in a list, clip off items in the list so that 
-        // we don't see partial items
-        if (blockborder.childNodes.length < 2) { continue; }
-        var blockheader = blockborder.childNodes[0];
-        var blockcontent = blockborder.childNodes[1];
-        
-        // How big can the content be?
-        var contentClipHeight = clipHeight 
-            - blockheader.offsetHeight
-            - parseFloat(getCSSValue(blockheader, 'margin-top'))
-            - parseFloat(getCSSValue(blockheader, 'margin-bottom'))
-            - parseFloat(getCSSValue(blockheader, 'border-top-width'))
-            - parseFloat(getCSSValue(blockheader, 'border-bottom-width'))
-            - parseFloat(getCSSValue(blockcontent, 'border-top-width')) 
-            - parseFloat(getCSSValue(blockcontent, 'border-bottom-width'))
-            - parseFloat(getCSSValue(blockcontent, 'padding-top'))
-            - parseFloat(getCSSValue(blockcontent, 'padding-bottom'))
-            - parseFloat(getCSSValue(blockcontent, 'margin-top'))
-            - parseFloat(getCSSValue(blockcontent, 'margin-bottom'));
-        
-        if (!blockcontent.childNodes.length) { continue; }
-        var last = blockcontent.childNodes[blockcontent.childNodes.length - 1];
-        
-        blockcontent.style.height = 'auto';
-        
-        if (last.nodeName == 'UL') {
-            var listItems = last.childNodes;
-            for (var j = 0; j < listItems.length; j++) {
-                listItems[j].style.display = 'list-item'; // make all list items visible
+    var portlets = getElementsByClassName('portlet-content');
+    if (portlets && portlets.length) {
+        for (var i = 0; i < portlets.length; i++) {
+            var portlet = portlets[i];
+            var clipHeight = getCSSHeight(portlet);
+            
+            if (hasClass(portlet, 'portlet-no-truncate')) {
+                continue;  // module handling this
             }
             
-            var k = listItems.length - 1;
-            while (getCSSHeight(blockcontent) > contentClipHeight) {
-                listItems[k].style.display = 'none';
-                if (--k < 0) { break; } // hid everything, stop
+            var lists = portlet.getElementsByTagName('ul');
+            if (!lists || !lists.length) {
+                continue; // no lists
+            }
+            
+            var done = false;
+            for (var j = lists.length - 1; j >= 0; j--) {
+                var list = lists[j];
+                
+                var items = list.getElementsByTagName('li');
+                
+                // make all list items visible
+                for (var k = 0; k < items.length; k++) {
+                    items[k].style.display = 'list-item';
+                }
+                
+                // hide items that are clipped by the portlet
+                for (var k = items.length - 1; k >= 0; k--) {
+                    var item = items[k];
+                    
+                    var bottomOffset = getPortletOffsetTop(item) + item.offsetHeight;
+                    if (bottomOffset > clipHeight) {
+                        item.style.display = 'none';
+                    } else {
+                        done = true; // to break us out of the next loop up
+                        break;
+                    }
+                }
+                
+                if (done) {
+                    break;
+                }
             }
         }
-    
-        blockcontent.style.height = contentClipHeight+'px'; // set block content height
     }
-  
-    callPaneResizeHandlers();
 }

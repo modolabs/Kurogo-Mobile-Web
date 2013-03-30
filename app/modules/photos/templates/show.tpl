@@ -1,5 +1,6 @@
 {include file="findInclude:common/templates/header.tpl"}
 
+<div class="photo">
 <div class="fullimage-wrapper">
 <img class="fullimage" src="{$photoURL}" />
 </div>
@@ -18,10 +19,19 @@
 <div class="nonfocal caption">
 	<h1 class="slugline">{$photoTitle}</h1>
 	<p class="fineprint">
-	{$photoAuthor}<br/>
-	{$photoDate}
-    </p>
-	{include file="findInclude:common/templates/share.tpl" shareURL={$storyURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
+	{if $showAuthor}
+	  {$photoAuthor}
+	  <br/>
+	{/if}
+	{if $showDate}
+	  {$photoDate}
+	  <br/>
+	{/if}
+  </p>
+	{if $showDescription}
+	  <div class="description">{$photoDescription}</div>
+	{/if}
 </div>
 {/block}
+</div>
 {include file="findInclude:common/templates/footer.tpl"}

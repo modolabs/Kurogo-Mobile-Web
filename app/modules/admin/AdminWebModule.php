@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -22,6 +22,10 @@ class AdminWebModule extends WebModule {
     protected $id = 'admin';
     protected $canBeRemoved = false;
     protected $canAllowRobots = false;
+
+  protected function includeCommonCSS() {
+    return $this->pagetype != 'tablet';
+  }
   
     private function getNavSections() {
         $navSections = array(
@@ -99,22 +103,32 @@ class AdminWebModule extends WebModule {
                     'url'=>$this->buildURL($section, array('section'=>'homescreen'))
                 );
                 $modules = array();
+                $homeModuleID = $this->getHomeModuleID();
+                if ($iconSet = $this->getOptionalThemeVar('navigation_icon_set')) {
+                    $iconSetSize = $this->getOptionalThemeVar('navigation_icon_size');
+                    $imgPrefix = "/common/images/iconsets/{$iconSet}/{$iconSetSize}/";
+                } else {
+                    $imgPrefix = "/modules/{$homeModuleID}/images/";
+                }
+
                 foreach ($this->getAllModules() as $module) {
+                    $icon = $module->getOptionalModuleVar('icon', $module->getConfigModule(), 'module');
                     $subNavSections[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
-                        'img'=>sprintf("/modules/home/images/%s%s", $module->getConfigModule(), $this->imageExt),
+                        'img'=> sprintf("%s%s%s", $imgPrefix, $icon, $this->imageExt),
                         'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     $modules[$module->getConfigModule()] = array(
+                        'icon'=>$icon,
                         'type'=>$module->getID(),
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
                         'home'=>$module->isOnHomeScreen(),
-                        'disabled'=>$module->getModuleVar('disabled'),
-                        'protected'=>$module->getModuleVar('protected'),
-                        'secure'=>$module->getModuleVar('secure'),
-                        'search'=>$module->getModuleVar('search'),
+                        'disabled'=>$module->getOptionalModuleVar('disabled', false, 'module'),
+                        'protected'=>$module->getOptionalModuleVar('protected', false, 'module'),
+                        'secure'=>$module->getOptionalModuleVar('secure', false, 'module'),
+                        'search'=>$module->getOptionalModuleVar('search', false, 'module'),
                         'canDisable'=>$module->canBeDisabled(), 
                         'canRemove'=>$module->canBeRemoved(), 
                         'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
@@ -129,18 +143,30 @@ class AdminWebModule extends WebModule {
     }
 
     private function getModules() {
-        $moduleNavConfig = $this->getModuleNavigationConfig();
+
+        $modulesNavData = $this->getAllModuleNavigationData();
         $modules = array(
-            'primary'=>$moduleNavConfig->getOptionalSection('primary_modules'), 
-            'secondary'=>$moduleNavConfig->getOptionalSection('secondary_modules'),
+            'primary'=>array(),
+            'secondary'=>array(),
             'unused'=>array()
-            
         );
         
-
+        foreach ($modulesNavData as $type=>$typeModules) {
+            foreach ($typeModules as $moduleID=>$moduleNavData) {
+                $modules[$type][$moduleID] = $moduleNavData['title'];
+            }
+        }
+        
         $usedModules = array_merge($modules['primary'], $modules['secondary']);
         $allModules = $this->getAllModules();
         $unusedModules = array_diff(array_keys($allModules), array_keys($usedModules));
+
+        if ($iconSet = $this->getOptionalThemeVar('navigation_icon_set')) {
+            $iconSetSize = $this->getOptionalThemeVar('navigation_icon_size');
+            $imgPrefix = "/common/images/iconsets/{$iconSet}/{$iconSetSize}/";
+        } else {
+            $imgPrefix = "/modules/{$homeModuleID}/images/";
+        }        
         
         foreach ($unusedModules as $moduleID) {
             $module = $allModules[$moduleID];
@@ -148,15 +174,18 @@ class AdminWebModule extends WebModule {
                 $modules['unused'][$moduleID] = $module->getModuleName();
             }
         }
-                
-        $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';
-
+        
         foreach ($modules as $type=>&$m) {
             foreach ($m as $id=>$title) {
-                $modules[$type][$id] = array(
-                    'title'       => $title,
-                    'img'         => "/modules/home/images/{$id}{$imgSuffix}".$this->imageExt,
-                );
+                if ($module = Kurogo::arrayVal($allModules, $id)) {
+                    $icon = $module->getOptionalModuleVar('icon', $module->getConfigModule(), 'module');
+                    $modules[$type][$id] = array(
+                        'title'       => $title,
+                        'img'=> sprintf("%s%s%s", $imgPrefix, $icon, $this->imageExt),
+                    );
+                } else {
+                    unset($modules[$type][$id]);
+                }
             }
         }
                 
@@ -196,6 +225,7 @@ class AdminWebModule extends WebModule {
                         if ($module = WebModule::factory($moduleID)) {
                             $this->assign('moduleName', $module->getModuleName());
                             $this->assign('moduleID', $module->getConfigModule());
+                            $this->assign('moduleIcon', $module->getOptionalModuleVar('icon', $module->getConfigModule(), 'module'));
                             $section = $moduleID;
                             $moduleSection = $this->getArg('section','general');
                             $this->assign('moduleSection',$moduleSection);

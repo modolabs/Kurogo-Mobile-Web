@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -21,8 +21,9 @@ class BasePlacemark implements Placemark
     protected $fields = array();
     protected $categories = array();
     protected $urlParams = array();
-    
-    public function __construct(MapGeometry $geometry) {
+
+    // args are for subclasses that need to do things based on configs
+    public function __construct($geometry, $args=null) {
         $this->geometry = $geometry;
         $this->style = new MapBaseStyle();
     }
@@ -43,7 +44,11 @@ class BasePlacemark implements Placemark
         foreach ($filters as $filter=>$value) {
             switch ($filter) {
                 case 'search':
-                    if (stripos($this->getTitle(), $value) === FALSE && stripos($this->getSubTitle(), $value) === FALSE) {
+                    $contents = array(
+                        'title' => $this->getTitle(),
+                        'subtitle' => $this->getSubTitle(),
+                    );
+                    if (!stringFilter($value, $contents)) {
                         return false;
                     }
                     break;
@@ -96,7 +101,8 @@ class BasePlacemark implements Placemark
     }
 
     public function addCategoryId($id) {
-        if ($id && !in_array($id, $this->categories)) {
+        $id = strval($id);
+        if (strlen($id) != 0 && !in_array($id, $this->categories)) {
             $this->categories[] = $id;
         }
     }
@@ -119,7 +125,7 @@ class BasePlacemark implements Placemark
 
         $categories = $this->getCategoryIds();
         $category = implode(MAP_CATEGORY_DELIMITER, $categories);
-        if ($category) {
+        if (strlen($category)) {
             $result['category'] = $category;
         }
         return $result;
@@ -143,6 +149,17 @@ class BasePlacemark implements Placemark
             return $this->fields[$fieldName];
         }
         return null;
+    }
+
+    public function getDescription($suppressFields=null) {
+        $htmlLines = array();
+        $separator = ':';
+        foreach ($this->fields as $field => $value) {
+            if (!in_array($field, $suppressFields)) {
+                $htmlLines[] = "<li><b>{$field}{$separator}</b> $value</li>";
+            }
+        }
+        return '<ul>'.implode("\n", $htmlLines).'</ul>';
     }
     
     public function setField($fieldName, $value) {

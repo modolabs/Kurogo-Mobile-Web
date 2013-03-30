@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -26,16 +26,18 @@ function getFileConfigForDirs($ext, $extFolder, $page, $pagetype, $platform, $br
     );
     
     foreach ($dirs as $dir) {
-        foreach ($subDirs as $subDir) {
-            $fullDir = "{$dir}{$subDir}/{$extFolder}/";
-            
-            if (!$pageOnly) {
-                $commonFiles = array_reverse(DeviceClassifier::buildFileSearchList($pagetype, $platform, $browser, '', $ext, $fullDir));
-                $config['files'] = array_merge($config['files'], $commonFiles);
+        if ($dir) {
+            foreach ($subDirs as $subDir) {
+                $fullDir = "{$dir}{$subDir}/{$extFolder}/";
+                
+                if (!$pageOnly) {
+                    $commonFiles = array_reverse(DeviceClassifier::buildFileSearchList($pagetype, $platform, $browser, '', $ext, $fullDir));
+                    $config['files'] = array_merge($config['files'], $commonFiles);
+                }
+                
+                $pageFiles = array_reverse(DeviceClassifier::buildFileSearchList($pagetype, $platform, $browser, $page, $ext, $fullDir));
+                $config['files'] = array_merge($config['files'], $pageFiles);
             }
-            
-            $pageFiles = array_reverse(DeviceClassifier::buildFileSearchList($pagetype, $platform, $browser, $page, $ext, $fullDir));
-            $config['files'] = array_merge($config['files'], $pageFiles);
         }
     }
     
@@ -64,30 +66,42 @@ function getMinifyGroupsConfig() {
     
     $key = $_GET['g'];
     
+    // javascript and css search directory order
+    $dirs = array(
+        APP_DIR,
+        SHARED_APP_DIR,
+        SITE_APP_DIR,
+        SHARED_THEME_DIR,
+        THEME_DIR
+    );
+
     //
     // Check for specific file request
     //
     if (strpos($key, MIN_FILE_PREFIX) === 0) {
         // file path relative to either templates or the theme (check theme first)
         $path = substr($key, strlen(MIN_FILE_PREFIX));
+
+        $files = array();
+        foreach ($dirs as $dir) {
+            if ($dir) {
+                $files[] = $dir . $path;
+            }
+        }
         
         $config = array(
             'include' => 'all',
-            'files' => array(
-                THEME_DIR.$path,
-                SITE_APP_DIR.$path,
-                SHARED_APP_DIR.$path,
-                APP_DIR.$path,
-            ),
+            'files' => $files
         );
-        
+                
         return array($key => buildFileList($config));
     }
-    
+
     //
     // Page request
     //
     $pageOnly = isset($_GET['pageOnly']) && $_GET['pageOnly'];
+    $noCommon = $pageOnly || isset($_GET['noCommon']) && $_GET['noCommon'];
     
     // if this is a copied module also pull in files from that module
     $configModule = isset($_GET['config']) ? $_GET['config'] : '';
@@ -96,7 +110,10 @@ function getMinifyGroupsConfig() {
   
     $cache = new DiskCache(CACHE_DIR.'/minify', Kurogo::getOptionalSiteVar('MINIFY_CACHE_TIMEOUT', 30), true);
     $cacheName = "group_$key";
+    $Kurogo = Kurogo::sharedInstance();
+    $Kurogo->setCurrentModuleID($module);
     if ($configModule) {
+        $Kurogo->setCurrentConfigModule($configModule);
         $cacheName .= "-$configModule";
     }
     if ($pageOnly) {
@@ -107,14 +124,7 @@ function getMinifyGroupsConfig() {
         $minifyConfig = $cache->read($cacheName);
       
     } else {
-        $dirs = array(
-            APP_DIR, 
-            SHARED_APP_DIR,
-            SITE_APP_DIR,
-            THEME_DIR,
-        );
-        
-        if ($pageOnly || (($pagetype=='tablet' || $platform=='computer') && in_array($module, array('info', 'admin')))) {
+        if ($noCommon) {
             // Info module does not inherit from common files
             $subDirs = array(
                 '/modules/'.$module
@@ -126,10 +136,10 @@ function getMinifyGroupsConfig() {
             );
         }
         
-        if ($configModule) {
+        if ($configModule && $configModule !== $module) {
             $subDirs[] = '/modules/' . $configModule;
         }
-    
+        
         $checkFiles = array(
             'css' => getFileConfigForDirs('css', 'css', 
                 $page, $pagetype, $platform, $browser, $dirs, $subDirs, $pageOnly),
@@ -144,16 +154,16 @@ function getMinifyGroupsConfig() {
         $cache->write($minifyConfig, $cacheName);
     }
     
-    // Add minify source object for the theme config.ini
+    // Add minify source object for the theme config
     if ($ext == 'css') {
-        $themeVarsFile = realpath_exists(THEME_DIR.'/config.ini');
-        if ($themeVarsFile) {
+        $themeConfig = Kurogo::getThemeConfig();
+        if ($themeConfig) {
             $minifyConfig[$key][] = new Minify_Source(array(
                 'id' => 'themeConfigModTimeChecker',
                 'getContentFunc' => 'minifyThemeConfigModTimeCheckerContent',
                 'minifier' => '', // don't compress
                 'contentType' => Minify::TYPE_CSS,
-                'lastModified' => filemtime($themeVarsFile),
+                'lastModified' => $themeConfig->getLastModified()
             ));
         }
     }
@@ -166,35 +176,8 @@ function minifyThemeConfigModTimeCheckerContent() {
     return '';
 }
 
-function minifyGetThemeVars() {
-    static $themeVars = null;
-    
-    if (!isset($themeVars)) {
-        $config = ConfigFile::factory('config', 'theme', ConfigFile::OPTION_CREATE_EMPTY);
-        
-        $pagetype = Kurogo::deviceClassifier()->getPagetype();
-        $platform = Kurogo::deviceClassifier()->getPlatform();
-        $browser  = Kurogo::deviceClassifier()->getBrowser();
-        $sections = array(
-            'common',
-            $pagetype,
-            "$pagetype-$platform",
-            "$pagetype-$platform-$browser",
-        );
-        
-        $themeVars = array();
-        foreach ($sections as $section) {
-            if ($sectionVars = $config->getOptionalSection($section)) {
-                $themeVars = array_merge($themeVars, $sectionVars);
-            }
-        }
-    }
-    
-    return $themeVars;
-}
-
 function minifyThemeVarReplace($matches) {
-    $themeVars = minifyGetThemeVars();
+    $themeVars = Kurogo::getThemeVars();
     if (isset($themeVars, $themeVars[$matches[1]])) {
         return $themeVars[$matches[1]];
     } else {
@@ -212,7 +195,7 @@ function minifyPostProcess($content, $type) {
           $urlPrefix .= 'device/'.Kurogo::deviceClassifier()->getDevice().'/';
       }
       // Theme variable replacement
-      $themeVars = minifyGetThemeVars();
+      $themeVars = Kurogo::getThemeVars();
       if ($themeVars) {
           $content = preg_replace_callback(';@@@([^@]+)@@@;', 'minifyThemeVarReplace', $content);
       }

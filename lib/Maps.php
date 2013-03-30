@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -15,6 +15,12 @@ define('GEOGRAPHIC_PROJECTION', 4326);
 define('EARTH_RADIUS_IN_METERS', 6378100);
 define('EARTH_METERS_PER_DEGREE', 111319); // very very rough
 define('MAP_CATEGORY_DELIMITER', ':');
+
+// from appendix E.4 of
+// http://portal.opengeospatial.org/files/?artifact_id=35326
+// this is the number of 256 pixel wide tiles at 0.28 mm per pixel
+// that would cover the equater.
+define('GOOGLE_COMPATIBLE_MAX_SCALE_DENOMINATOR', 559082264);
 
 Kurogo::includePackage('Maps', 'Abstract');
 Kurogo::includePackage('Maps', 'Base');
@@ -55,26 +61,20 @@ function euclideanDistance($fromLat, $fromLon, $toLat, $toLon)
 }
 
 function filterLatLon($testString) {
-    if (preg_match('/(-?\d+\.\d+),(-?\d+.\d+)/', $testString, $matches) == 1) {
+    if (preg_match('/(-?\d+\.\d+)\s*,\s*(-?\d+.\d+)/', $testString, $matches) == 1) {
         return array('lat' => $matches[1], 'lon' => $matches[2]);
     }
     return false;
 }
 
-// the following two functions are based on the scale, i.e. the number of 
-// ground inches represented per inch on the computer screen, using the old
-// pixel size of 0.28 millimeters.
-// the number 559082264 is this ratio at a zoom level of 0 (showing full map).
-// http://wiki.openstreetmap.org/wiki/MinScaleDenominator
-// it currently works for WMS and ArcGIS maps
 function oldPixelScaleForZoomLevel($zoomLevel)
 {
-    return 559082264 / pow(2, $zoomLevel);
+    return GOOGLE_COMPATIBLE_MAX_SCALE_DENOMINATOR / pow(2, $zoomLevel);
 }
 
 function oldPixelZoomLevelForScale($scale)
 {
-    return ceil(log(559082264 / $scale, 2));
+    return ceil(log(GOOGLE_COMPATIBLE_MAX_SCALE_DENOMINATOR / $scale, 2));
 }
 
 function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null)
@@ -111,21 +111,14 @@ function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null
 }
 
 function mapModelFromFeedData($feedData) {
-    if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
-        $modelClass = $feedData['CONTROLLER_CLASS'];
-    }
-    elseif (isset($feedData['MODEL_CLASS'])) {
+    if (isset($feedData['MODEL_CLASS'])) {
         $modelClass = $feedData['MODEL_CLASS'];
     }
     else {
         $modelClass = 'MapDataModel';
     }
 
-    try {
-        $model = MapDataModel::factory($modelClass, $feedData);
-    } catch (KurogoConfigurationException $e) {
-        $model = DataController::factory($modelClass, $feedData);
-    }
+    $model = MapDataModel::factory($modelClass, $feedData);
     return $model;
 }
 
@@ -201,13 +194,40 @@ function decodeBase64URLSafe($value) {
     return base64_decode(str_replace(array('-', '_'), array('+', '/'), $value));
 }
 
+function filterContent($search, $content) {
+    if(stripos(strval($content), strval($search)) === false) {
+        return false;
+    }else {
+        return true;
+    }
+}
+
+function stringFilter($search, $contents) {
+    $search = trim($search);
+    foreach($contents as $key => $content) {
+        switch($key) {
+            case "title":
+            case "subtitle":
+                // find content in search
+                // some cases, subtitle only contains 1 character
+                if(strlen($content) >= 3 && filterContent($content, $search)) {
+                    return true;
+                }
+            default:
+                // find current search
+                if(filterContent($search, $content)) {
+                    return true;
+                }
+        }
+    }
+
+    return false;
+}
+
 class MapsAdmin
 {
     public static function getMapControllerClasses() {
         return array(
-            //'MapDataController' => 'default',
-            //'MapDBDataController' => 'database',
-            //'ArcGISDataController'=>'ArcGIS',
             'MapDataModel' => 'default',
             'ArcGISDataModel' => 'ArcGIS Server',
         );
@@ -228,8 +248,3 @@ class MapsAdmin
         );
     }
 }
-
-$config = ConfigFile::factory('maps', 'site');
-Kurogo::siteConfig()->addConfig($config);
-
-

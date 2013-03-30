@@ -1,8 +1,9 @@
 <?php
 
-class PhotoObject implements KurogoObject {
-    protected $id;
-    protected $title;
+class PhotoObject extends KurogoDataObject
+{
+    protected $retriever;
+    
     /**
      * url 
      * alternate photo url
@@ -11,7 +12,6 @@ class PhotoObject implements KurogoObject {
      * @access protected
      */
     protected $url;
-    protected $description;
     /**
      * type 
      * privider type name
@@ -64,23 +64,15 @@ class PhotoObject implements KurogoObject {
 
         return true;
     }
+    
+    public function setRetriever($retriever) {
+        $this->retriever = $retriever;
+    }
+    
+    public function getRetriever() {
+        return $this->retriever;
+    }
 
- public function setID($id) {
-        $this->id = $id;
-    }
-
-    public function getID() {
-        return $this->id;
-    }
-    
-    public function setTitle($title) {
-        $this->title = $title;
-    }
-    
-    public function getTitle() {
-        return $this->title;
-    }
-    
     public function getAuthor() {
         return $this->author;
     }
@@ -89,14 +81,12 @@ class PhotoObject implements KurogoObject {
         $this->author = $author;
     }
     
-    public function setDescription($description) {
-        $this->description = $description;
+    public function setDescription($rawDescription) {
+    		// strip tags for consistent display between mobile and native
+    		$safeDescription = Sanitizer::sanitizeHTML($rawDescription, array());
+        $this->description = $safeDescription;
     }
     
-    public function getDescription() {
-        return $this->description;
-    }
-
     public function setPublished(DateTime $published) {
         $this->published = $published;
     }

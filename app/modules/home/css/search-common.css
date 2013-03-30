@@ -1,0 +1,21 @@
+body.HomeModule {
+	background-color: @@@body_background_color@@@;
+	background-image: @@@body_background_image@@@;
+	background-position: @@@body_background_position@@@;
+	background-repeat: @@@body_background_repeat@@@;
+	font: @@@base_font_size@@@/@@@base_font_line_height@@@ @@@primary_font_family@@@;
+}
+
+.nav .ellipsis {
+  height: 3.5em;
+  overflow: hidden;
+}
+
+.nav li a, .nav li.icon a {
+  padding-right: 24px;
+}
+
+#footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited, #footer a, #footer a:visited {
+	/* Color of actual text and text links in sitewide footers */
+	color: @@@nonfocal_text_color@@@;
+}

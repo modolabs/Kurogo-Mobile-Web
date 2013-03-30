@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -166,18 +166,22 @@ abstract class User
         return $this->getUserDataFolder() . "/" . $this->getUserHash();
     }
     
-    public function setCredentials($credentials) {
+    public function setCredentials($credentials, AuthenticationAuthority $authority) {
         try {
             $value = Kurogo::encrypt($credentials);
         } catch (KurogoException $e) {
             $value = $credentials;
         }
     
-        $this->setUserData('KurogoCredentialsCache', $value);
+        $_SESSION['KurogoCredentialsCache'][$authority->getAuthorityIndex()] = $value;
     }
     
-    public function getCredentials() {
-        $value = $this->getUserData('KurogoCredentialsCache');
+    public function getCredentials(AuthenticationAuthority $authority) {
+        $value = null;
+        if ($cache = Kurogo::arrayVal($_SESSION,'KurogoCredentialsCache')) {
+            $value = Kurogo::arrayVal($cache, $authority->getAuthorityIndex());
+        }
+
         try {
             $credentials = Kurogo::decrypt($value);
         } catch (KurogoException $e) {

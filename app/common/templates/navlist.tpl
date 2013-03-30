@@ -1,8 +1,9 @@
 {$defaultTemplateFile="findInclude:common/templates/listItem.tpl"}
 {$listItemTemplateFile=$listItemTemplateFile|default:$defaultTemplateFile}
 {if $navListHeading}
-<div class="nonfocal">
+<div class="nonfocal listhead">
   <h3>{$navListHeading}</h3>
+  {if $navListSubheading}<p class="smallprint">{$navListSubheading}</p>{/if}
 </div>
 {/if}
 <ul class="nav{if $secondary} secondary{/if}{if $nested} nested{/if}{if $navlistClass} {$navlistClass}{/if}"{if $navlistID} id="{$navlistID}"{/if}>

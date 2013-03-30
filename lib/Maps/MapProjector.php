@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -128,8 +128,31 @@ class MapProjector {
 
         return $result;
     }
+
+    public function reverseProject($point) {
+        $oldSrc = $this->srcProjSpec;
+        $oldDest = $this->dstProjSpec;
+        $this->srcProjSpec = $oldDest;
+        $this->dstProjSpec = $oldSrc;
+
+        // these may be set up already
+        $swap = $this->fromProjection;
+        $this->fromProjection = $this->toProjection;
+        $this->toProjection = $swap;
+
+        $result = $this->projectPoint($point);
+
+        $this->srcProjSpec = $oldSrc;
+        $this->dstProjSpec = $oldDest;
+
+        $swap = $this->fromProjection;
+        $this->fromProjection = $this->toProjection;
+        $this->toProjection = $swap;
+
+        return $result;
+    }
     
-    public function projectPoint($point) {
+    public function projectPoint($point, $format=NULL) {
         if ($this->srcProjSpec === $this->dstProjSpec) {
             return $point;
         }
@@ -203,14 +226,28 @@ class MapProjector {
         }
     }
     
+    protected static function getProjFile() {
+        $files = array(
+            DATA_DIR.'/maps/proj_list.txt',
+            SHARED_DATA_DIR.'/maps/proj_list.txt',
+            LIB_DIR.'/Maps/proj_list.txt'
+        );
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                return $file;
+            }
+        }
+    }
+    
     public static function getProjSpecs($wkid) {
         $contents = null;
-        $projCache = new DiskCache(Kurogo::getSiteVar('PROJ_CACHE','maps'), null, true);
+        $projCacheDir = CACHE_DIR.DIRECTORY_SEPARATOR.'MapProjection';
+        $projCache = new DiskCache($projCacheDir, null, true);
         $projCache->setSuffix('.proj4');
         $projCache->preserveFormat();
         $filename = $wkid;
         if (!$projCache->isFresh($filename)) {
-            $file = fopen(DATA_DIR.'/maps/proj_list.txt', 'r');
+            $file = fopen(self::getProjFile(), 'r');
             $wkidID = "<$wkid>";
             $strlen = strlen($wkidID);
             while ($line = fgets($file)) {

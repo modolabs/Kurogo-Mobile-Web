@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -19,6 +19,7 @@ class APIResponse
     public $warnings;
     public $response;
     public $context;
+    public $contexts=array();
     
     public function __construct($id=null, $tag=null, $command=null, $context=null) {
         if (isset($id)) {
@@ -36,7 +37,7 @@ class APIResponse
         if (isset($context)) {
             $this->context = $context;
         }
-
+        
         $this->response = new stdClass();
     }
     
@@ -68,6 +69,8 @@ class APIResponse
     }
     
     public function getJSONOutput() {
+        $contexts = Kurogo::sharedInstance()->getActiveContexts();
+        $this->contexts = array_keys($contexts);
         if (is_null($this->version)) {
             throw new KurogoException('APIResponse version must be set before display');
         }

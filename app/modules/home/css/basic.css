@@ -9,12 +9,37 @@
 #download a:hover {
 	color: #a00;
 }
-.banner-notice {
-  background-image: url('/common/images/alert.gif');
-  background-position: 5px center;
-  border: solid 1px #ccc;
-}
-.banner-notice .banner-message, .banner-notice a.banner-message { 
+.banner-notice-basic {
   background-image: none;
-  padding: 8px 8px 8px 36px;
+}
+.banner-message, a.banner-message { 
+  display: block;
+  color: #ccc;
+  text-decoration: none;
+  background-image: none; 
+  padding: 6px; 
+} 
+a.banner-message:hover { 
+  color: #fff;
+  text-decoration: underline!important;
+} 
+.banner-notice-basic .banner-icon { 
+  float: left;
+  padding: 2px; 
+  height: 28px; 
+  width: 28px; 
+}
+.userContextList ul {
+	background-color: @@@subfocal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
+	list-style-type: none;
+	margin: 0.25em 0 1em 0;
+	padding: .4em;
+	font-size: 95%;
+	line-height: 1.6em;
+}
+
+.userContextList ul li {
+    margin: 0;
+    padding: 0;
 }

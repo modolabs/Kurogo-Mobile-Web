@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -113,6 +113,10 @@ abstract class AuthenticationAuthority
      */
     protected function setUserClass($class) {
     	$this->userClass = $class;
+    }
+
+    public function getUserClass() {
+    	return $this->userClass;
     }
 
     /**
@@ -288,26 +292,12 @@ abstract class AuthenticationAuthority
     }
     
     /**
-     * Returns the authentication config file
-     * @return ConfigFile
-    */
-    private static function getAuthorityConfigFile()
-    {
-        return ConfigFile::factory('authentication', 'site');
-    }
-
-    /**
      * Parses the authentication config file and returns a list of authorities and their arguments
      * @return array
     */
     public static function getDefinedAuthenticationAuthorities()
     {
-        static $configFile;
-        if (!$configFile) {
-            $configFile = self::getAuthorityConfigFile();
-        }
-        
-        return $configFile->getSectionVars();
+        return Kurogo::getOptionalSiteSections('authentication');
     }
 
     public static function getDefinedAuthenticationAuthorityNames()
@@ -343,12 +333,7 @@ abstract class AuthenticationAuthority
             return false;
         }
         
-        static $configFile;
-        if (!$configFile) {
-            $configFile = self::getAuthorityConfigFile();
-        }
-        
-        $sections = $configFile->getSectionVars();
+        $sections = self::getDefinedAuthenticationAuthorities();
         
         //check and see if $index is a authority index
         if (isset($sections[$index])) {
@@ -357,6 +342,9 @@ abstract class AuthenticationAuthority
         
         // check and see if an authority that is a class or subclass of $index has been defined
         foreach ($sections as $sectionIndex=>$sectionData) {
+            if (isset($sectionData['PACKAGE'])) {
+                Kurogo::includePackage($sectionData['PACKAGE']);
+            }
             $className = $sectionData['CONTROLLER_CLASS'];
             $class = new ReflectionClass($className);
             if ($className==$index || $class->isSubclassOf($index)) {
@@ -460,6 +448,10 @@ abstract class AuthenticationAuthority
      */
     public static function factory($authorityClass, $args)
     {
+        if (isset($args['PACKAGE'])) {
+            Kurogo::includePackage($args['PACKAGE']);
+        }
+
         if (!class_exists($authorityClass) || !is_subclass_of($authorityClass, 'AuthenticationAuthority')) {
             throw new KurogoConfigurationException("Invalid authentication class $authorityClass");
         }
@@ -503,7 +495,7 @@ abstract class AuthenticationAuthority
         
         if ($result == AUTH_OK) {
             if ($this->saveCredentials) {
-                $user->setCredentials($password);
+                $user->setCredentials($password, $this);
             }
             $session->login($user);
         }

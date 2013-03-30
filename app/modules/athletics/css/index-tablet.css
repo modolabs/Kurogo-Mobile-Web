@@ -19,6 +19,7 @@ padding: 0px 8px;
     top: 10px;
     left: 6px;
 }
-#bookmarksTab {
-	padding-top: 8px;
+
+.bookmarks-tabbody p {
+    margin-top: 8px;
 }

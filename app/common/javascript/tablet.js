@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -11,66 +11,34 @@ var containerScroller = null;
 var navScroller = null;
 
 function onDOMChange() {
-  if (containerScroller) {
-    setContainerWrapperHeight();
-    setTimeout(function () {
-      containerScroller.refresh();
-    }, 0);
-  }
-}
-
-// Update the nav slide indicators
-function updateNavSlider() {
+    if (containerScroller) {
+        setTimeout(function () {
+            containerScroller.refresh();
+        }, 0);
+    }
     if (navScroller) {
-        var current = Math.abs(navScroller.x);
-        var max = Math.abs(navScroller.maxScrollX);
-      
-        var canScrollLeft = (current > 0);
-        var canScrollRight = (current < max-1);
-        
-        document.getElementById('slideleft').style.display  = canScrollLeft  ? 'block' : 'none';
-        document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
+        setTimeout(function () {
+            navScroller.refresh();
+        }, 0);
     }
 }
 
-function navSliderScrollLeft() {
-  if (navScroller) {
-    navScroller.scrollTo(0, navScroller.y, 500);
-  }
-}
-
-function navSliderScrollRight() {
-  if (navScroller) {
-    navScroller.scrollTo(navScroller.maxScrollX, navScroller.y, 500);
-  }
-}
-
-// Change wrapper height based on device orientation.
-function setContainerWrapperHeight() {
-  var footerNav = document.getElementById('footernav');
-  
-	var navbarHeight = document.getElementById('navbar').offsetHeight;
-  var footerNavHeight = footerNav ? footerNav.offsetHeight : 0;
-	var wrapperHeight = window.innerHeight - navbarHeight - footerNavHeight;
-	var containerHeight = document.getElementById('container').offsetHeight;
-	
-	document.getElementById('wrapper').style.height = wrapperHeight + 'px';
-	
-	// when this exists, make it fill the screen
-	var fillscreen = document.getElementById('fillscreen');
-	if (fillscreen) {
-	  fillscreen.style.height = wrapperHeight + 'px';
-	}
+function handleNavmenuButton(button) {
+    try {
+        toggleClass(button, 'selected');
+        toggleClass(document.getElementById('navmenu'), 'open');
+        if (navScroller) {
+            navScroller.refresh();
+        }
+    } catch(e) { }
+    return false;
 }
 
 function handleWindowResize(e) {
     if (!('orientation' in window)) {
         rotateScreen();
     }
-    setContainerWrapperHeight();
   
-    setTimeout(updateNavSlider, 0);
-    
     if (typeof moduleHandleWindowResize != 'undefined') {
         moduleHandleWindowResize(e);
     }
@@ -79,8 +47,6 @@ function handleWindowResize(e) {
         // before calling orientationchange or resize handlers.
         var self = this;
         setTimeout(function() {
-            setContainerWrapperHeight();
-            setTimeout(updateNavSlider, 0);
             if (typeof moduleHandleWindowResize != 'undefined') {
                 moduleHandleWindowResize(e);
             }
@@ -89,49 +55,173 @@ function handleWindowResize(e) {
 } 
 
 // form element-safe version of iScroll initialization
-function iScrollInit(id, options) {
-    options.useTransform = true;
-    options.onBeforeScrollStart = function (e) {
-        var target = e.target;
-        while (target.nodeType != 1) { target = target.parentNode; }
+function iScrollInit(element, options) {
+    if (typeof element == 'string') {
+        element = document.getElementById(element);
+        if (!element) { return };
+    }
+    if (supportsOverflowScroll()) {
+        // Used by devices which support overflow:scroll
+        // CSS will set overflow:auto where necessary
+        element.style['-webkit-overflow-scrolling'] = 'touch'; // bouncy webkit touch scroll
         
-        var tagName = target.tagName;
-        if (target.tagName != 'SELECT' && target.tagName != 'INPUT' && target.tagName != 'TEXTAREA') {
-            e.preventDefault();
+        // There is a bug in iOS 5 where position:relative elements inside an 
+        // element with webkit-overflow-scrolling set to touch don't draw 
+        // properly when they are initially scrolled offscreen. This hack works 
+        // around the problem but also degrades performance so we only do it on
+        // iPads running iOS 5:
+        // http://stackoverflow.com/questions/7808110/css3-property-webkit-overflow-scrollingtouch-error
+        if (isIOS5Browser() && element.childNodes && element.childNodes.length) {
+            for (var i = 0; i < element.childNodes.length; i++) {
+                setCSSValue(element.childNodes[i], '-webkit-transform', 'translate3d(0, 0, 0)');
+            }
         }
-    };
+        addScrollingElement(element);
+        return null;
+        
+    } else {
+        // override CSS specifying overflow:scroll for browsers which support it
+        setCSSValue(element, 'overflow', 'hidden');
+        setCSSValue(element, 'overflow-x', 'hidden');
+        setCSSValue(element, 'overflow-y', 'hidden');
+        
+        options.useTransform = true;
+        options.onBeforeScrollStart = function (e) {
+            var target = e.target;
+            while (target.nodeType != 1) { target = target.parentNode; }
+            
+            var tagName = target.tagName;
+            if (target.tagName != 'SELECT' && target.tagName != 'INPUT' && target.tagName != 'TEXTAREA') {
+                e.preventDefault();
+            }
+        };
+        
+        return new iScroll(element, options);
+    }
+}
 
-    return new iScroll(id, options);
+function isModernIPhoneBrowser() {
+    // iPhones running Safari on iOS 5 or later
+    return navigator.userAgent.match(/Safari/) && 
+           (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/iPad/)) && 
+           !navigator.userAgent.match(/OS [234]/);
+}
+
+function isIOS5Browser() {
+    // iPhones running Safari on iOS 5.x
+    return navigator.userAgent.match(/Safari/) && 
+           (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/iPad/)) && 
+           navigator.userAgent.match(/OS 5/);
+}
+
+function isModernAndroidBrowser() {
+    // Android default and Chrome browsers on Android 4.x
+    return navigator.userAgent.match(/Android 4/);
+}
+
+// Certain modern browsers support overflow:scroll
+function supportsOverflowScroll() {
+    // TODO: Add Androids running modern Chrome/default browser
+    return isModernIPhoneBrowser() || isModernAndroidBrowser();
 }
 
 var moduleProvidesScrollers = false;
 
-function tabletInit() {
-    setOrientation(getOrientation());
-    if (!document.getElementById('navbar')) {
-        // page has no footer so do not attempt
-        // to use fancy tablet container
-        return;
-    }
+var kgoScrollingElements = [];
 
-    setContainerWrapperHeight();
+function initHandleScrollingElements() {
+    // hacks only needed for iOS when using overflow scroll:
+    if (isModernIPhoneBrowser()) {
+        window.addEventListener('touchstart', function(event) {
+            for (var i = 0; i < kgoScrollingElements.length; i++) {
+                var element = kgoScrollingElements[i];
+                if (element.offsetHeight < element.scrollHeight) {
+                    // Trick Safari into bouncing the scroll view, not the whole page:
+                    if (element.scrollTop <= 0) {
+                        element.scrollTop = 1;
+                    }
+                    
+                    if (element.scrollTop + element.offsetHeight >= element.scrollHeight) {
+                        element.scrollTop = element.scrollHeight - element.offsetHeight - 1;
+                    }
+                }
+            }
+        }, false);
+        
+        // try to stop page bounce
+        window.addEventListener('touchmove', function(event) {
+            if (document.body) { document.body.scrollTop = 0; }
+        }, false);
+    }
     
-    // Adjust wrapper height on orientation change or resize
-    var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
-    window.addEventListener(resizeEvent, function() { setTimeout(handleWindowResize, 0) }, false);
-    
-    if (document.getElementById('navsliderwrapper')) {
-        navScroller = iScrollInit('navsliderwrapper', { 
-            hScrollbar: false,
-            vScrollbar: false,
-            bounce: false,
-            bounceLock: true,
-            onScrollStart: updateNavSlider,
-            onScrollEnd: updateNavSlider
+    if (supportsOverflowScroll() && KUROGO_PLATFORM != 'computer') {
+        addOnOrientationChangeCallback(function () {
+            // hack which forces the navmenu to redraw and reposition so 
+            // that it remains scrollable
+            var navmenu = document.getElementById('navmenu');
+            if (navmenu) {
+                navmenu.style.display = 'none';
+                navmenu.offsetHeight;
+                navmenu.style.display = 'block';
+            }
         });
     }
+}
+
+function addScrollingElement(element) {
+    if (typeof element == 'string') {
+        element = document.getElementById(element);
+    }
+    if (element) {
+        kgoScrollingElements.push(element);
+    }
+}
+
+function removeScrollingElement(element) {
+    if (typeof element == 'string') {
+        element = document.getElementById(element);
+    }
+    if (element) {
+        var newKGOScrollingElements = [];
+        for (var i = 0; i < kgoScrollingElements.length; i++) {
+            if (kgoScrollingElements[i] != element) {
+                newKGOScrollingElements.push(kgoScrollingElements[i]);
+            }
+        }
+        kgoScrollingElements = newKGOScrollingElements;
+    }
+}
+
+function tabletInit() {
+    initHandleScrollingElements();
+
+    // Add class to body when browser supports overflow: scroll
+    // This allows us to conditionally apply styles which might
+    // interfere with iScroll
+    if (supportsOverflowScroll()) {
+        addClass(document.body, 'kgo-supports-overflow-scroll');
+    }
+
+    setOrientation(getOrientation());
     
-    updateNavSlider();
+    // Adjust wrapper height on orientation change or resize
+    var resizeHandler = function() { setTimeout(handleWindowResize, 0) };
+    if (window.addEventListener) {
+      var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+      window.addEventListener(resizeEvent, resizeHandler, false);
+    } else if (window.attachEvent) {
+      window.attachEvent('onresize', resizeHandler);
+    }
+    
+    
+    if (document.getElementById('navmenu')) {
+        navScroller = iScrollInit('navmenu', { 
+            hScrollbar: false,
+            vScrollbar: true,
+            bounce: false,
+            bounceLock: true
+        });
+    }
     
     // run module init if present
     // module init can change value of moduleProvidesScrollers to
@@ -141,7 +231,7 @@ function tabletInit() {
     }
   
     if (!moduleProvidesScrollers) {
-        containerScroller = iScrollInit('wrapper', { 
+        containerScroller = iScrollInit('container-wrapper', { 
             hScrollbar: false,
             bounce: false,
             bounceLock: true
@@ -174,27 +264,36 @@ function scrollToTop() {
                 }
             }
         }
-      
+        
+        if (typeof this.options.list == 'string') {
+            this.options.list = document.getElementById(this.options.list);
+            if (!this.options.list) { return; }
+        }
+        if (typeof this.options.detail == 'string') {
+            this.options.detail = document.getElementById(this.options.detail);
+            if (!this.options.detail) { return; }
+        }
+        if (typeof this.options.content == 'string') {
+            this.options.content = document.getElementById(this.options.content);
+            if (!this.options.content) { return; }
+        }
+        
         if (window.addEventListener) {
           window.addEventListener(RESIZE_EVENT, this, false);
         } else if (window.attachEvent) {
           window.attachEvent(RESIZE_EVENT, this);
         }
         
-        if (!document.getElementById(this.options.list) || !document.getElementById(this.options.detail)) {
-            return;
-        }
-
         this.orientation = getOrientation();
-        this.list = document.getElementById(this.options.list);
-        this.detail = document.getElementById(this.options.detail);
+        this.list = this.options.list;
+        this.detail = this.options.detail;
         this.detailScroller = iScrollInit(this.options.detail, {
             hScrollbar : false,
             hScroll : false
         });
         
         if ('content' in this.options) {
-            this.content = document.getElementById(this.options.content);
+            this.content = this.options.content;
         } else {
             this.options.content = this.options.detail;
             this.content = this.detail;
@@ -222,7 +321,7 @@ function scrollToTop() {
         for (var i=0;i<links.length;i++) {
             links[i].onclick = function(e) {
                 var action = self.actionForLink(this);
-                self[action](e, this);
+                return self[action](e, this);
             }
 
             if (!linkInAnchor && first && this.options.selectFirst && this.actionForLink(links[i])=='linkSelect') {
@@ -265,7 +364,10 @@ function scrollToTop() {
                 removeClass(selected[j],'listSelected');
             }
             addClass(link,'listSelected');
-            this.detailScroller.scrollTo(0,0);
+            
+            if (this.detailScroller) {
+                this.detailScroller.scrollTo(0,0);
+            }
             
             ajaxContentIntoContainer({
                 url: link.href+'&ajax=1', 
@@ -276,9 +378,9 @@ function scrollToTop() {
                     if (window.history && window.history.pushState && window.history.replaceState && // Regexs from history js plugin
                       !((/ Mobile\/([1-7][a-z]|(8([abcde]|f(1[0-8]))))/i).test(navigator.userAgent) || // disable for versions of iOS < 4.3 (8F190)
                          (/AppleWebKit\/5([0-2]|3[0-3])/i).test(navigator.userAgent))) { // disable for the mercury iOS browser and older webkit/uiwebview
-                      window.history.pushState({}, document.title, hash);
+                        window.history.pushState({}, document.title, hash);
                     } else {
-                      location.hash = hash;
+                        location.hash = hash;
                     }
                     
                     if (typeof moduleHandleWindowResize != 'undefined') {
@@ -287,21 +389,31 @@ function scrollToTop() {
                     
                     var refreshOnLoad = function () {
                         setTimeout(function () {
-                            self.detailScroller.refresh();
-                        }, 0);
+                            splitviewHandleWindowResize();
+                            if (self.detailScroller) {
+                                self.detailScroller.refresh();
+                            }
+                        }, 100);
                     };
                     
                     // As images load the height of the detail view will change so
                     // refresh the scroller when each image loads:
                     var images = self.content.getElementsByTagName("img");
                     for (var i = 0; i < images.length; i++) {
-                        // ignore images with a height attribute since the DOM already knows their height
-                        if (images[i].getAttribute("height")) { continue; }
-                        
                         if (images[i].addEventListener) {
                             images[i].addEventListener("load", refreshOnLoad, false);
                         } else if (images[i].attachEvent) {
                             images[i].attachEvent("onload", refreshOnLoad);
+                        }
+                    }
+                    // As iframes load the height of the detail view may change so
+                    // refresh the scroller when each iframe loads:
+                    var iframes = self.content.getElementsByTagName("iframe");
+                    for (var i = 0; i < iframes.length; i++) {
+                        if (iframes[i].addEventListener) {
+                            iframes[i].addEventListener("load", refreshOnLoad, false);
+                        } else if (iframes[i].attachEvent) {
+                            iframes[i].attachEvent("onload", refreshOnLoad);
                         }
                     }
                     refreshOnLoad();
@@ -319,31 +431,33 @@ function scrollToTop() {
             switch (e.type) {
                 case 'orientationchange':
                 case 'resize':
-                    if (this.orientation != getOrientation()) {
-                        this.orientation = getOrientation();
-                        this.updateListScroller();
-                        if (typeof moduleHandleWindowResize != 'undefined') {
-                            moduleHandleWindowResize(e);
+                    // delay updating until after the main resize handlers have run
+                    var that = this;
+                    setTimeout(function () {
+                        if (that.orientation != getOrientation()) {
+                            that.orientation = getOrientation();
+                            that.updateListScroller();
+                            if (typeof moduleHandleWindowResize != 'undefined') {
+                                moduleHandleWindowResize(e);
+                            }
                         }
-                    }
+                    }, 0);
                     break;
             }
         },
         updateListScroller: function() {
             var self = this, options={};
-            switch (getOrientation()) {
-                case 'portrait':
-                    options.vScrollbar = false;
-                    options.hScrollbar = true;
-                    options.vScroll = false;
-                    options.hScroll = true;
-                    break;
-                case 'landscape':
-                    options.vScrollbar = true;
-                    options.hScrollbar = false;
-                    options.hScroll = false;
-                    options.vScroll = true;
-                    break;
+            if (this.detail.offsetTop > 0) {
+                options.vScrollbar = false;
+                options.hScrollbar = true;
+                options.vScroll = false;
+                options.hScroll = true;
+                
+            } else {
+                options.vScrollbar = true;
+                options.hScrollbar = false;
+                options.hScroll = false;
+                options.vScroll = true;
             }
 
             if (this.listScroller) {
@@ -354,12 +468,12 @@ function scrollToTop() {
                 setTimeout(function() {
                     self.listScroller.refresh();
                     var items = self.list.getElementsByTagName('a');
-                    for (var i=0;i<items.length; i++) {
-                        if (hasClass(items[i],'listSelected')) {
-                            self.listScroller.scrollToElement(items[i].parentNode,0);
+                    for (var i = 0; i < items.length; i++) {
+                        if (hasClass(items[i], 'listSelected')) {
+                            self.listScroller.scrollToElement(items[i].parentNode, 0);
                         }
                     }
-                },0);
+                }, 0);
                 return;
             } else {
               this.listScroller = iScrollInit(this.options.list, options);
@@ -374,7 +488,7 @@ function scrollToTop() {
                     self.listScroller.refresh();
                 }
             }, 0);
-        },
+        }
     }
     
     function removeBreadcrumbParameter(url) {
@@ -389,46 +503,63 @@ function scrollToTop() {
     
     window.splitView = splitView;
 
-})(window)
+})(window);
+
+// sets up css styles to size the container so it is 100% height and width
+function setModuleFillScreen() {
+    addClass(document.body, 'fillscreen');
+}
 
 // Used by news and video modules for news article listings
-function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId, detailId, options) {
+function setupSplitViewForListAndDetail(splitview, options) {
     var aSplitView = null;
-
+    
+    if (typeof splitview == 'string') {
+        splitview = document.getElementById(splitview);
+    }
+    if (!splitview) { return; } // safety check
+    
+    var listWrapper = getFirstElementByClassName('splitview-listwrapper', splitview); 
+    var list = getFirstElementByClassName('splitview-list', splitview); 
+    var detailWrapper = getFirstElementByClassName('splitview-detailwrapper', splitview); 
+    var detail = getFirstElementByClassName('splitview-detail', splitview); 
+    
+    if (!listWrapper || !list || !detailWrapper || !detail) { return; } // safety check
+    
     moduleHandleWindowResize = function () {
-        var listWrapper = document.getElementById(listWrapperId);
-        var detailWrapper = document.getElementById(detailWrapperId);
-        if (!detailWrapper) {
-          return;  // can happen for searches with no results or when feed is down
-        }
-        detailWrapper.style.height = 'auto';
-        
         var wrapperHeight = document.getElementById('wrapper').offsetHeight;
-        var headerHeight = document.getElementById(headerId).offsetHeight;
-        var contentHeight = wrapperHeight - headerHeight;
+        var offsetTop = splitview.offsetTop;
+        var splitviewHeight = wrapperHeight - offsetTop;
+        
+        // set the height of the splitview manually because there may be
+        // a variable sized header element above it
+        splitview.style.height = splitviewHeight + "px";
         
         switch (getOrientation()) {
             case 'landscape':
-                listWrapper.style.height = contentHeight + 'px';
-                detailWrapper.style.height = contentHeight + 'px';
-                var list = listWrapper.getElementsByTagName('li')[0].parentNode;
-                list.style.width = '';
+                if (hasClass(splitview, 'portrait')) {
+                    removeClass(splitview, 'portrait');
+                }
+                list.style['width'] = ''; // default to whatever is in CSS
                 break;
             
             case 'portrait':
-                listWrapper.style.height = '';
-                // this is a hack because for some reason the width isn't being properly set
-                var width = 0;
-                var listItems = listWrapper.getElementsByTagName('li');
-                var list;
-                for (var i = 0; i < listItems.length; i++) {
-                    list = listItems[i].parentNode;
-                    width+=listItems[i].offsetWidth;
+                if (!hasClass(splitview, 'portrait')) {
+                    addClass(splitview, 'portrait');
                 }
-                list.style.width = width+'px';
-                
-                var listWrapperHeight = listWrapper.offsetHeight;
-                detailWrapper.style.height = (contentHeight - listWrapperHeight) + 'px';
+                var lists = list.getElementsByTagName('ul');
+                if (lists.length) {
+                    // When in portrait mode the list elements are float:left
+                    // so the results list does not have a width.  Figure out its
+                    // width programmatically so that the browser/iScroll can tell 
+                    // if the content is wider than the container.
+                    var width = 0;
+                    var listItems = listWrapper.getElementsByTagName('li');
+                    for (var i = 0; i < listItems.length; i++) {
+                        width += listItems[i].offsetWidth;
+                    }
+                    list.style['width'] = width+'px';
+                }
                 break;
         }
         
@@ -438,14 +569,18 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
     }
     
     moduleProvidesScrollers = true;
-    document.getElementById('container').style.height = "100%";
     
+    setModuleFillScreen();
     moduleHandleWindowResize();
 
     options = options || {};
-    options["list"] = listWrapperId;
-    options["detail"] = detailWrapperId;
-    options["content"] = detailId;
+    options["list"] = listWrapper;
+    options["detail"] = detailWrapper;
+    options["content"] = detail;
     
     aSplitView = new splitView(options);
+}
+
+function splitviewHandleWindowResize() {
+    // used by tablet-computer
 }

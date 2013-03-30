@@ -1,4 +1,16 @@
-body.PhotosModule {
+body.PhotosModule .photo {
 	/* Background color for photo detail; should be white in most cases */
-	background-color: #fff;
+  background-color: @@@focal_background_color@@@;
+  padding: 6px 0 15px 0;
+}
+
+body.PhotosModule #navbar {
+	margin-bottom: 0;
+}
+
+.description {
+  margin: 1.5em 0;
+  font-size: 87.5%;
+  line-height: 1.4em;
+  color: @@@secondary_text_color@@@;
 }

@@ -7,14 +7,19 @@
   background-position: left 50%;
   background-repeat: no-repeat;
 }
-.banner-notice {
-  background-color: #fff;
-  border-bottom: solid 1px #ccc;
+.banner-notice, .banner-notice-basic {
+  background-color: #171717;
   font-size: 88.23%;
-  background-image: url('/common/images/alert.png');
-  background-repeat: no-repeat;
-  background-position: 5px center;
-  background-size: 28px 28px;
+  position: relative;
+  border-bottom: 1px solid #333333;
+}
+.banner-notice .banner-icon {
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  margin-top: -14px;
+  height: 28px;
+  width: 28px;
 }
 .banner-notice .banner-message, .banner-notice a.banner-message { 
   display: block;
@@ -26,4 +31,5 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #ccc;
 }

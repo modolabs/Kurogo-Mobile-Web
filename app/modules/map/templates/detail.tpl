@@ -9,11 +9,11 @@
     {block name="mapImage"}
       <a name="map"> </a>
       <!--<div id="mapwrapper" class="image">-->
-      <div id="mapimage" class="image">
+      <div id="{$mapImageElementId}" class="mapimage image">
         {include file="findInclude:modules/$moduleID/templates/mapscrollers.tpl"}
         <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
       </div>
-      <!--<div id="mapimage" style="display:none"></div>-->
+      <!--<div id="{$mapImageElementId}" class="mapimage" style="display:none"></div>-->
     {/block}
     {include file="findInclude:modules/$moduleID/templates/mapcontrols.tpl"}
   {/capture}
@@ -30,7 +30,7 @@
     {/block}
     {block name="detailPane"}
       {if $displayDetailsAsList}
-        {include file="findInclude:common/templates/navlist.tpl" navlistItems=$details boldLabels=true accessKey=false}
+        {include file="findInclude:common/templates/navlist.tpl" navlistItems=$details boldLabels=true accessKey=false nested=true}
       {else}
         {$details}
       {/if}
@@ -48,14 +48,14 @@
       </div>
       {/block}
     {/if}
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$nearbyResults boldLabels=true accessKey=false}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$nearbyResults boldLabels=true accessKey=false nested=true}
   {/capture}
   {$tabBodies['nearby'] = $nearbyPane}
 {/if}
 
 {if in_array('links', $tabKeys)}
   {capture name="linksPane" assign="linksPane"}
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/map/templates/listItemWithID.tpl"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/map/templates/listItemWithID.tpl" nested=true}
   {/capture}
   {$tabBodies['links'] = $linksPane}
 {/if}

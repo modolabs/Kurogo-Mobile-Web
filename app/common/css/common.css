@@ -1,0 +1,456 @@
+/* This CSS file contains most of the core theme CSS you'll need to customize your site's overall color scheme and fonts. */
+
+
+/* Overall colors and fonts */
+
+body {
+	/* Site-wide page background color, and base font family, size and line spacing */
+	background-color: @@@body_background_color@@@;
+	background-image: @@@body_background_image@@@;
+	background-position: @@@body_background_position@@@;
+	background-repeat: @@@body_background_repeat@@@;
+	font: @@@base_font_size@@@/@@@base_font_line_height@@@ @@@primary_font_family@@@;
+}
+
+body, th, td, li, option, select, input, textarea {
+	/* Primary text style and color */
+	font-family: @@@primary_font_family@@@;
+	color: @@@primary_text_color@@@;
+}
+
+a, a:visited, .focal a, .focal a:visited, .tabbody a, .tabbody a:visited {
+	/* Primary text link color */
+	color: @@@focal_link_color@@@;
+}
+
+.nonfocal a, .nonfocal a:visited {
+	/* Text link color on body background */
+	color: @@@nonfocal_link_color@@@;
+}
+
+h1 {
+	font-family: @@@heading_font_family@@@;
+	font-size: 170.6%;
+	line-height: 1.2em;
+	font-weight: normal;
+	color: @@@primary_heading_color@@@;
+}
+
+h2 {
+	font-family: @@@heading_font_family@@@;
+	font-size: 129.4%;
+	line-height: 1.2em;
+	font-weight: normal;
+	color: @@@primary_heading_color@@@;
+}
+
+h3 {
+	font-family: @@@primary_font_family@@@;
+	font-size: 100%;
+	font-weight: bold;
+	color: @@@secondary_heading_color@@@;
+}
+
+h4 {
+	font-family: @@@primary_font_family@@@;
+	font-size: 100%;
+	font-weight: normal;
+	color: @@@secondary_heading_color@@@;
+}
+
+dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
+	/* Accent text color for several types of secondary text that appears on white backgrounds */
+	/* e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
+	/* Often the same as the secondary text color defined in the next rule */
+	color: @@@secondary_text_color@@@;
+}
+
+.address, .smallprint, .fineprint, .dek {
+	/* Secondary text color for several types of secondary text */
+	color: @@@secondary_text_color@@@;
+}
+
+
+
+/* Text labels for springboards (grids of icons, e.g., homescreen) */
+
+.springboard a, .springboard a:visited {
+	color: @@@focal_link_color@@@;
+}
+
+
+
+/* Major content blocks */
+
+.focal {   
+	/* Focal content div */
+	background-color: @@@focal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
+}
+
+.nonfocal, .nonfocal .legend, .formlabel {
+	/* Text color for elements that sit on the overall body background */
+	color: @@@nonfocal_text_color@@@;
+}
+
+.nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4, h1.nonfocal, h2.nonfocal, h3.nonfocal, h4.nonfocal {
+	/* Color for headings that sit on the overall body background */
+	color: @@@nonfocal_heading_color@@@;
+}
+
+.shaded, .HomeModule .blockborder {
+	/* Shaded subclass of focal content - e.g., background for tabbed focal div, portlets in Tablet device class */
+	/* Typically very close to, but distinguishable from, body background */
+	background-color: @@@subfocal_background_color@@@;
+	color: @@@primary_text_color@@@;
+}
+
+.shaded h1, .shaded h2, .shaded h3, .shaded h4 {
+	/* Color for headings that sit on the shaded divs */
+	color: @@@nonfocal_heading_color@@@;
+}
+
+
+
+/* Nav bar at top of all screens other than home screen */
+
+#navbar {
+	height: 44px; 
+  position: relative;
+  overflow: hidden;
+	background-color: @@@navbar_background_color@@@;
+	background-image: @@@navbar_background_image@@@;
+	background-position: @@@navbar_background_position@@@;
+	background-repeat: @@@navbar_background_repeat@@@;
+	font-size: 94.1%;
+	line-height: 44px;
+  color: @@@navbar_text_color@@@;
+}
+
+.breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited, .pagetitle {
+ 	/* All breadcrumb links in nav bar */
+	color: @@@navbar_text_color@@@;
+}
+
+
+
+/* Navigation and results lists */
+
+.nav, .results {
+	/* Main navigation lists and search-results lists */
+	background-color: @@@focal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
+}
+
+.nav, .results, .nav a, .nav a:visited, .nav span.nolink, .results a, .results a:visited  {
+	/* Text color for all navigation and results lists */
+	color: @@@list_item_color@@@;
+}
+
+.nav li, .results li, ul.focal li  {
+	/* Color of border between list items */
+	border-color: @@@focal_border_color@@@;
+}
+
+.secondary {
+	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds, often the same as .shaded specified above */
+	font-size: 95%;
+	background-color: @@@subfocal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
+}
+
+.secondary, .secondary a, .secondary a:visited {
+	color: @@@secondary_text_color@@@;
+}
+
+.secondary .smallprint {
+	color: @@@tertiary_text_color@@@;
+}
+
+.secondary li {
+	border-color: @@@focal_border_color@@@;
+}
+
+.nav .badge {
+	/* Badge shown within a navigation list, e.g., unread count for messages */
+	color: #fff;
+	background-color: #c00;
+}
+
+.tabstrip a  {
+	/* Text color for horizontal tabstrips (segmented control - used in stats and rarely elsewhere) */
+	color: @@@primary_text_color@@@;
+}
+
+
+
+
+/* Sitewide footer */
+
+#footer {
+	font-size: 70.6%;
+	line-height: 1.167em;
+}
+
+#footer .copyright {
+	text-decoration: none;
+}
+
+#footerlinks {
+	/* Divider between footer links */
+	color: #fff;
+}
+
+#footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited {
+	/* Color of actual text and text links in sitewide footers */
+	color: @@@nonfocal_text_color@@@;
+}
+
+/* Device Detection Information - only shown when debugging */
+
+.footertable {
+  border: none;
+  width: auto;
+}
+.footertable th,
+.footertable td {
+  line-height: 1.2em;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  word-break: break-word;
+}
+.footertable th {
+  font-weight: bold;
+  text-align: right;
+  padding-right: .25em;
+  white-space: nowrap;
+  width: 70px;
+}
+
+
+/* Next/previous navigation (e.g., going from day to day in events calendar) and paging navigation (for content or lists spread across multiple pages) */
+
+.sidenav, .sidenav2, .paging {
+	font-size: 93%;
+	color: #fff;
+}
+
+.sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .sidenavlabel, .paging a, .paging a:visited {
+	color: @@@nonfocal_text_color@@@;
+}
+
+/* Accesibility - hide accessibility options visually but put them at the top of the DOM to help screen readers */
+#kgo_accessibility_links {
+  position: absolute;
+  left: 0;
+  top: -500px;
+}
+
+/* Tabs - for compliant and tablet */
+
+#tabs li {
+	border: 1px solid @@@focal_border_color@@@;
+	background-color: @@@subfocal_background_color@@@;
+}
+
+#tabs li.active {
+	border-bottom: 1px solid @@@focal_background_color@@@;	/* Should match #tabbodies background-color */
+	background-color: @@@focal_background_color@@@;
+}
+
+#tabs li a, .tabstrip a {
+	/* Text label of unselected tab */
+	color: @@@secondary_text_color@@@;
+}
+
+#tabs li.active a {
+	/* Text label of currently selected tab */
+	color: @@@strong_text_color@@@;
+}
+
+#tabs li.greyedout {
+	/* Text label of disabled tab */
+	color: @@@secondary_text_color@@@;
+}
+
+#tabbodies {
+	background-color: @@@focal_background_color@@@;
+	border-color: @@@focal_border_color@@@;
+}
+
+.tabbody .nested, .tabbody ul.nav {
+	/* Navigation list inside a tab body needs a bit of background color to contrast from tab body background */
+	background-color: @@@subfocal_background_color@@@;
+}
+
+
+
+
+/* Form elements */
+
+.forminput {
+  /* Should match the border color of image /common/images/compliant/search_button.png */
+	border-color: @@@search_border_color@@@;
+}
+
+.inputcombo .forminput {
+  /* Border color should match the border color of image /common/images/compliant/search_button.png */
+	border: 1px 0 1px 1px solid  @@@search_border_color@@@;
+	-webkit-border-radius: 8px;	
+	border-radius: 8px;	
+}
+
+.emphasized  .forminput {
+  /* Border color should match the border color of image /common/images/compliant/search_button.png */
+  /* Border weight should be 2px greater than border weight of .inputcombo .forminput */
+	border: 3px solid @@@search_border_color@@@;	
+	/* Corner radius should be 2px greater than corner radius of .inputcombo .forminput */
+	-webkit-border-radius: 10px;	
+	border-radius: 10px;	
+}
+
+.submitbutton {
+	/* Form submit buttons that have text labels on Basic and Touch. */
+	background-color: @@@search_border_color@@@;
+	color: #fff;
+	font-size: 93.75%;
+}
+
+
+
+/* Headlines and bylines */
+
+h1.slugline, h2.itemtitle {
+	/* Special headline style used in news, videos, and other modules with story-type content detail */
+	font-family: @@@heading_font_family@@@;
+    font-size: 129.4%;
+	line-height: 1.25em;
+	font-weight: normal;
+    color: @@@primary_heading_color@@@;
+	margin: 0 0 0.75em 0;
+}
+
+.byline {
+    min-height:40px;
+    font-size: 64.7%;
+    line-height: 1.25em;
+	padding-bottom: 0.33em;
+	margin-bottom: 1.33em;
+    border-bottom: 1px dotted @@@focal_border_color@@@;
+}
+
+
+/* Freeform content module - basic styles to format unstyled raw HTML */
+
+.staticContentBody {
+	background-color: @@@focal_background_color@@@;
+	color: @@@primary_text_color@@@;
+}
+
+.staticContentBody h1 {
+	color: @@@primary_heading_color@@@;
+}
+
+.staticContentBody h2 {
+	color: @@@secondary_heading_color@@@;
+}
+
+.staticContentBody h3 {
+	color: @@@secondary_heading_color@@@;
+}
+
+.staticContentBody h4 {
+	color: @@@secondary_heading_color@@@;
+}
+
+
+
+/* Data charts - compliant, tablet */
+
+.rowbar {
+	background: #333 url(/common/images/rowbar.png) repeat-x;
+}
+.colbar {
+	background: #333 url(/common/images/colbar.png) repeat-y;
+}
+.average {
+	border-color: #c00;
+}
+
+/* other text types */
+.required {
+	font-weight: bold;
+	color: @@@required_text_color@@@;
+}
+
+/* Video Players (videoPlayer.tpl) */
+
+/* 
+ * iframe/object/embed styling from 
+ * http://webdesignerwall.com/tutorials/css-elastic-videos
+ */
+.kgo-videoplayer {
+  width: 100%;
+	max-width: 800px;
+	margin: 1em 0;
+}
+.kgo-videoplayer-container {
+	position: relative;
+	padding-bottom: 56.25%; /* 9/16 for 16:9 videos */
+	padding-top: 30px;
+	height: 0;
+	overflow: hidden;
+}
+
+.kgo-videoplayer-container iframe,  
+.kgo-videoplayer-container object,  
+.kgo-videoplayer-container embed {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/* link styling */
+.kgo-videoplayer a.kgo-videoplayer-link, 
+.kgo-videoplayer a.kgo-videoplayer-link:visited {
+  position: relative;
+  display: block;
+  text-decoration: none;
+}
+.kgo-videoplayer .kgo-videoplayer-link img {
+  height: auto;
+  width: auto;
+  width: 100%;
+  max-height: 100%;
+}
+.kgo-videoplayer .kgo-videoplayer-link .playButton {
+  background: transparent url('/common/images/playvideo-button-bg.png') repeat 0% 0%;
+  border-bottom-left-radius: 5px 5px;
+  border-bottom-left-radius: 5px 5px;
+  border-bottom-right-radius: 5px 5px;
+  border-bottom-right-radius: 5px 5px;
+  border-top-left-radius: 5px 5px;
+  border-top-left-radius: 5px 5px;
+  border-top-right-radius: 5px 5px;
+  border-top-right-radius: 5px 5px;
+  color: white;
+  display: inline-block;
+  font-size: 30px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 60px;
+  height: 60px;
+  width: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -30px 0px 0px -50px;
+  z-index: 100;
+}
+.kgo-videoplayer .kgo-videoplayer-link .playButton div {
+  background: transparent url('/common/images/playvideo.png') no-repeat 50% 50%;
+  height: 60px;
+}

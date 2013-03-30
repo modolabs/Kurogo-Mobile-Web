@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -31,16 +31,31 @@ class Watchdog {
     protected function _getKurogoPathDirs() {
         if (!$this->kurogoPathDirs) {
             $rootDir = realpath(ROOT_DIR).DIRECTORY_SEPARATOR;
-            
-            if (!defined('SITE_DIR')) {
-                return array($rootDir); // SiteConfig has not initialized yet
+            $kurogoPathDirs = array($rootDir);
+
+            if (defined('SITES_DIR')) {
+                $kurogoPathDirs[] = SITES_DIR . DIRECTORY_SEPARATOR;
             }
             
-            $this->kurogoPathDirs = array($rootDir);
+            if (!defined('SITE_DIR')) {
+                return $kurogoPathDirs;
+            }
             
+            $this->kurogoPathDirs = $kurogoPathDirs;
+
+            
+            //site dir is ok
             $siteDir = realpath(SITE_DIR).DIRECTORY_SEPARATOR;
             if (strncmp($siteDir, $rootDir, strlen($rootDir)) != 0) {
                 $this->kurogoPathDirs[] = $siteDir;
+            }
+
+            //shared dir is also ok            
+            if (defined('SHARED_DIR')) {
+                $sharedDir = SHARED_DIR . DIRECTORY_SEPARATOR;
+                if (strncmp($sharedDir, $rootDir, strlen($rootDir)) != 0) {
+                    $this->kurogoPathDirs[] = $sharedDir;
+                }
             }
             
             // support for future feature to allow cache to be moved to a fast disk
@@ -65,14 +80,20 @@ class Watchdog {
         
         return $this->safePathDirs;
     }
+    
+    // these files may be anywhere
+    protected function _getSafeFileNames() {
+        return array(
+            DIRECTORY_SEPARATOR . 'kurogo.ini',
+        );
+    }
 
     protected function _getSafePathREs() {
-        if (!$this->safePathREs && defined('SITE_DIR') && defined('THEME_DIR')) {
+        if (!$this->safePathREs && defined('SITE_DIR')) {
             $delimiter = ';';
             $this->safePathREs = array(
                 $delimiter.
-                '^('.preg_quote(realpath(THEME_DIR), $delimiter).'|'.
-                      preg_quote(realpath(SITE_DIR).DIRECTORY_SEPARATOR, $delimiter).'app|'.
+                '^('. preg_quote(realpath(SITE_DIR).DIRECTORY_SEPARATOR, $delimiter).'app|'.
                       preg_quote(realpath(SHARED_DIR).DIRECTORY_SEPARATOR, $delimiter).'app|'.
                       preg_quote(realpath(ROOT_DIR).DIRECTORY_SEPARATOR, $delimiter).'app)'.
                   preg_quote(DIRECTORY_SEPARATOR, $delimiter).
@@ -83,8 +104,20 @@ class Watchdog {
                 $delimiter,
             );
             //error_log('Safe REs: '.print_r($this->safePathREs, true));
-        }
         
+            if (defined('THEME_DIR') && strlen(THEME_DIR)) {
+                $this->safePathREs[] =
+                    $delimiter.
+                    '^('. preg_quote(realpath(THEME_DIR), $delimiter).'|'.
+                          preg_quote(realpath(SHARED_THEME_DIR), $delimiter).')'.        
+                      preg_quote(DIRECTORY_SEPARATOR, $delimiter).
+                      '(common|modules'.preg_quote(DIRECTORY_SEPARATOR, $delimiter).'[^'.preg_quote(DIRECTORY_SEPARATOR, $delimiter).']+)'.
+                      preg_quote(DIRECTORY_SEPARATOR, $delimiter).
+                      '(css|images|javascript)'.
+                      preg_quote(DIRECTORY_SEPARATOR, $delimiter).
+                    $delimiter;
+			}
+		}
         return $this->safePathREs;
     }
 
@@ -119,6 +152,13 @@ class Watchdog {
         // realpath_exists calls Watchdog::kurogoPath()
         $test = realpath($path);
         if ($test && ($this->workingRealpath || file_exists($test))) {
+
+            foreach ($this->_getSafeFileNames() as $file) {
+                if (substr($test, 0-strlen($file))==$file) {
+                    return $test;
+                }
+            }
+            
             foreach ($this->_getKurogoPathDirs() as $dir) {
                 if (strncmp($test, $dir, strlen($dir)) == 0) {
                     return $test;

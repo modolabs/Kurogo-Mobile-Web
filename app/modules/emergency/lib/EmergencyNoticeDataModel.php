@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -57,8 +57,10 @@ class EmergencyNoticeDataModel extends DataModel
                 
                 $this->emergencyNotices[] = array(
                    'title' => $item->getTitle(),
-                   'text' => $item->getDescription(),
-                   'date' => DateFormatter::formatDate($item->getPubDate(), DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE),
+                   'text' => Sanitizer::htmlStripTags2UTF8($item->getDescription()),
+                   'body' => $item->getContent(false),
+                   'link' => $item->getLink(),
+                   'date' => $item->getPubDate() ? DateFormatter::formatDate($item->getPubDate(), DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE) : '',
                    'unixtime' => $item->getPubTimestamp(),
                 );
                 

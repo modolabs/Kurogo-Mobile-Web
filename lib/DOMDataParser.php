@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -39,7 +39,9 @@ class DOMDataParser extends DataParser
 
         if (isset($args['BASE_URL']) && $args['BASE_URL']) {
             $urlArray = parse_url($args['BASE_URL']);
-            $this->baseUrl = $urlArray['scheme'] . "://" . $urlArray['host'];
+            if (isset($urlArray['scheme'])) {
+				$this->baseUrl = $urlArray['scheme'] . "://" . $urlArray['host'];
+			}
             $this->relativeUrl = dirname($args['BASE_URL']);
         }
     }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -57,30 +57,43 @@ function _outputSiteFile($matches) {
 
 function _outputTypeFile($matches) { 
   $file = $matches[3];
+  $prefix = '';
+  $bits = explode("/", $file);
+  if (count($bits)>1) {
+    $file = array_pop($bits);
+    $prefix = trim(implode("/", $bits), "/") . '/';
+  }
 
   $platform = Kurogo::deviceClassifier()->getPlatform();
   $pagetype = Kurogo::deviceClassifier()->getPagetype();
   $browser  = Kurogo::deviceClassifier()->getBrowser();
   
   $testDirs = array(
-    THEME_DIR.'/'.$matches[1].$matches[2],
-    SITE_APP_DIR.'/'.$matches[1].$matches[2],
-    SHARED_APP_DIR.'/'.$matches[1].$matches[2],
-    APP_DIR.'/'.$matches[1].$matches[2],
+    THEME_DIR,
+    SHARED_THEME_DIR,
+  	SITE_APP_DIR,
+  	SHARED_APP_DIR,
+  	APP_DIR
   );
   
   $testFiles = array(
-    "$pagetype-$platform-$browser/$file",
-    "$pagetype-$platform/$file",
-    "$pagetype/$file",
-    "$file",
+    "$prefix$pagetype-$platform-$browser/$file",
+    "$prefix$pagetype-$platform/$file",
+    "$prefix$pagetype/$file",
+    "$prefix$file",
   );
   
   foreach ($testDirs as $dir) {
-    foreach ($testFiles as $file) {
-      if ($file = realpath_exists("$dir/$file")) {
-          _outputFile($file);
-      }
+    //do not assume dirs have value set
+    if ($dir) {
+        $dir .= '/' . $matches[1] . $matches[2];
+    
+        foreach ($testFiles as $file) {
+            Kurogo::log(LOG_DEBUG, "Looking for $dir/$file", 'index');
+            if ($file = realpath_exists("$dir/$file")) {
+                _outputFile($file);
+            }
+        }
     }
   }
 
@@ -160,8 +173,8 @@ $url_patterns = array(
   ),
   array(
     'pattern' => ';^.*favicon.ico$;', 
-    'func'    => '_outputFile',
-    'params'  => array(THEME_DIR.'/common/images/favicon.ico'),
+    'func'    => '_outputTypeFile',
+    'params'  => array(array(null,'common','/images','favicon.ico'))
   ),
   array(
     'pattern' => ';^.*ga.php$;',
@@ -201,7 +214,9 @@ if (get_magic_quotes_gpc()) {
       return is_array($v) ? array_map('deepStripSlashes', $v) : stripslashes($v);
     }
     $args = deepStripslashes($args);
+    $_COOKIE = deepStripSlashes($_COOKIE);
 }
+$Kurogo->setArgs($args);
 
 /* if the path is "empty" route to the default page. Will search the config file in order:
  * DEFAULT-PAGETYPE-PLATFORM
@@ -236,9 +251,10 @@ if ($parts[0]==API_URL_PREFIX) {
             throw new KurogoUserException("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
 
         case 2: 
-            $id = 'core';
+            $id = 'kurogo';
             $command = $parts[1];
-            if (!$module = CoreAPIModule::factory($id, $command, $args)) {
+		    $Kurogo->setRequest($id, $command, $args);
+            if (!$module = KurogoAPIModule::factory($id, $command, $args)) {
                 throw new KurogoException("Module $id cannot be loaded");
             }
             break;
@@ -246,6 +262,7 @@ if ($parts[0]==API_URL_PREFIX) {
         case 3:
             $id = isset($parts[1]) ? $parts[1] : '';
             $command = isset($parts[2]) ? $parts[2] : '';
+		    $Kurogo->setRequest($id, $command, $args);
             if (!$module = APIModule::factory($id, $command, $args)) {
                 throw new KurogoException("Module $id cannot be loaded");
             }

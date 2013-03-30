@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -9,21 +9,21 @@
  *
  */
 
+includePackage('Video');
+
 class VideoAPIModule extends APIModule {    
     protected $id='video';  // this affects which .ini is loaded
     protected $vmin = 1;
     protected $vmax = 2;
     protected $feeds = array();
-    protected $legacyController = false;
     protected static $defaultModel = 'VideoDataModel';
-    protected static $defaultController = 'VideoDataController';
 
-    protected function arrayFromVideo($video) {
+    protected function arrayFromVideo($video, $section) {
         $videoArray = array(
             "id"              => $video->getID(),
             "type"            => $video->getType(),
             "title"           => $video->getTitle(),
-            "description"     => strip_tags($video->getDescription()),
+            "description"     => Sanitizer::htmlStripTags2UTF8($video->getDescription()),
             "author"          => $video->getAuthor(),
             "published"       => array(
                 'date'          => $video->getPublished()->format('Y-m-d H:i:s'),
@@ -35,11 +35,13 @@ class VideoAPIModule extends APIModule {
             "image"           => $video->getImage(),
             "width"           => $video->getWidth(),
             "height"          => $video->getHeight(),
+            "aspect"          => $video->getAspectRatio(),
             "duration"        => $video->getDuration(),
             "tags"            => $video->getTags(),
             "mobileURL"       => $video->getMobileURL(),
             "streamingURL"    => $video->getStreamingURL(),
             "stillFrameImage" => $video->getStillFrameImage(),
+            "playerURL"       => FULL_URL_BASE . $this->configModule . '/player?' . http_build_query(array('section'=>$section,'videoid'=>$video->getID())),
             );
         
         if ($this->requestedVersion >= 2) {
@@ -54,18 +56,8 @@ class VideoAPIModule extends APIModule {
         $feed = isset($this->feeds[$feed]) ? $feed : $this->getDefaultSection();
         $feedData = $this->feeds[$feed];
 
-        try {
-            if (isset($feedData['CONTROLLER_CLASS'])) {
-                $modelClass = $feedData['CONTROLLER_CLASS'];
-            } else {
-                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
-            }
-            
-            $controller = VideoDataModel::factory($modelClass, $feedData);
-        } catch (KurogoException $e) { 
-            $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $this->legacyController = true;
-        }
+        $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+        $controller = VideoDataModel::factory($modelClass, $feedData);
 
         return $controller;
     }
@@ -86,7 +78,7 @@ class VideoAPIModule extends APIModule {
         case 'search':            
             // videos commands requires one argument: section.
             // search requires two arguments: section and q (query).
-            $section = $this->getArg('section');
+            $section = $this->getArg(array('feed', 'section'));
 
             $controller = $this->getFeed($section);
             $videos = array();
@@ -95,26 +87,19 @@ class VideoAPIModule extends APIModule {
 
             if ($this->command == 'search') {
                 $limit = 20;
-                $query = $this->getArg('q');                
-                if ($this->legacyController) {
-                    $items = $controller->search($query, 0, $limit);
-                } else {
-                    $controller->setLimit($limit);
-                    $items = $controller->search($query);
-                }
+                $query = $this->getArg(array('filter','q'));                
+	            $this->setLogData($query);
+                $controller->setLimit($limit);
+                $items = $controller->search($query);
             }
             else {
                 $limit = 50;
-                if ($this->legacyController) {
-                    $items = $controller->items(0, 50);
-                } else {
-                    $controller->setLimit($limit);
-                    $items = $controller->items();
-                }
+                $controller->setLimit($limit);
+                $items = $controller->items();
             }
 
             foreach ($items as $video) {
-                $videos[] = $this->arrayFromVideo($video);
+                $videos[] = $this->arrayFromVideo($video, $section);
             }
 
             $this->setResponse($videos);
@@ -122,12 +107,12 @@ class VideoAPIModule extends APIModule {
             break; 
                 
         case 'detail':
-            $section = $this->getArg('section');
+            $section = $this->getArg(array('feed', 'section'));
             $controller = $this->getFeed($section);
-            $videoid = $this->getArg('videoid');
+            $videoid = $this->getArg(array('id', 'videoid'));
 
             if ($video = $controller->getItem($videoid)) {
-                $result = $this->arrayFromVideo($video);
+                $result = $this->arrayFromVideo($video, $section);
                 $this->setResponse($result);
                 $this->setResponseVersion($this->requestedVersion);
             } else {

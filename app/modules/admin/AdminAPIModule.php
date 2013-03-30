@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -26,6 +26,8 @@ class AdminAPIModule extends APIModule
             'LOG_DIR'=>LOG_DIR,
             'LIB_DIR'=>LIB_DIR,
             'CACHE_DIR'=>CACHE_DIR,
+            'SHARED_DIR'=>SHARED_DIR,
+            'SHARED_DATA_DIR'=>SHARED_DATA_DIR,
             'DATA_DIR'=>DATA_DIR,
             'SITE_DIR'=>SITE_DIR,
             'ROOT_DIR'=>ROOT_DIR
@@ -244,7 +246,7 @@ class AdminAPIModule extends APIModule
                     throw new KurogoConfigurationException(__LINE__ . ": Getting sections for $type is not written yet");
                 } else {
                     $configMode = isset($sectionData['configMode']) ? $sectionData['configMode'] : 0;
-                    $sectionData['sections'] = $module->getModuleSections($sectionData['config'], Config::NO_EXPAND_VALUE, $configMode);
+                    $sectionData['sections'] = $module->getModuleSections($sectionData['config']);
                 }
                 
                 if (isset($sectionData['sectionsnoneKey'])) {
@@ -338,27 +340,22 @@ class AdminAPIModule extends APIModule
     
     private function getAdminConfig($type, $config, $opts=0) {
 
-        $opts = $opts | ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_MODE;
+        $opts = $opts | Config::OPTION_IGNORE_LOCAL | Config::OPTION_IGNORE_MODE | Config::OPTION_IGNORE_DEFAULT;
 
         if ($config=='kurogo') {
-            $configKey = "kurogo";
-            if (isset($this->loadedConfigs[$configKey])) {
-                $config = $this->loadedConfigs[$configKey];
-            } elseif ($config = ConfigFile::factory('kurogo', 'project', $opts)) {
-                $this->loadedConfigs[$configKey] = $config;
-            }
+            throw new KurogoExecption("Kuroog.ini changes no longer handled");
         } elseif (in_array($type, array('site'))) {
             $configKey = "site-$config";
             if (isset($this->loadedConfigs[$configKey])) {
                 $config = $this->loadedConfigs[$configKey];
-            } elseif ($config = ConfigFile::factory($config, 'site', $opts)) {
+            } elseif ($config = Kurogo::getSiteConfig($config, $opts)) {
                 $this->loadedConfigs[$configKey] = $config;
             }
         } elseif ($type instanceOf Module) {
             $configKey = 'module-' . $type->getConfigModule() . '-' . $config;
             if (isset($this->loadedConfigs[$configKey])) {
                 $config = $this->loadedConfigs[$configKey];
-            } elseif ($config = $type->getConfig($config, $opts)) {
+            } elseif ($config = Kurogo::getModuleConfig($config, $type->getConfigModule(), $opts)) {
                 $this->loadedConfigs[$configKey] = $config;
             }
         } else {
@@ -375,7 +372,7 @@ class AdminAPIModule extends APIModule
             throw new KurogoConfigurationException(__LINE__ . ": Cannot set the order of $section $subsection");
         }
         
-        $config = $this->getAdminConfig($type, $sectionData['config'], ConfigFile::OPTION_CREATE_EMPTY);
+        $config = $this->getAdminConfig($type, $sectionData['config'], Config::OPTION_CREATE_EMPTY);
         if (!$config->setSectionOrder($order, $changed)) {
             throw new KurogoConfigurationException(__LINE__ . ": Error setting the order of " . $sectionData['config']);
         }
@@ -435,7 +432,7 @@ class AdminAPIModule extends APIModule
             return;            
         }
         
-        $config = $this->getAdminConfig($type, $fieldData['config'], ConfigFile::OPTION_CREATE_EMPTY);
+        $config = $this->getAdminConfig($type, $fieldData['config'], Config::OPTION_CREATE_EMPTY);
 
         //remove blank values before validation
         if (is_array($value)) {
@@ -529,7 +526,7 @@ class AdminAPIModule extends APIModule
             throw new KurogoConfigurationException("Module " . $moduleData['config'] . " already exists");
         }
         
-        $config = ModuleConfigFile::factory($moduleData['config'], 'module', ModuleConfigFile::OPTION_CREATE_WITH_DEFAULT);
+        $config = Kurogo::getModuleConfig('module', $moduleData['config'], Config::OPTION_CREATE_WITH_DEFAULT);
 
         $valid_props = array('id','title','protected','secure','disabled','search');
         foreach ($valid_props as $key) {
@@ -538,7 +535,7 @@ class AdminAPIModule extends APIModule
             }
         }
 
-        $config->saveFile();
+        Kurogo::sharedInstance()->saveConfig($config);
     }    
     
     private function uploadFile($type, $section, $subsection, $key, $value) {
@@ -790,7 +787,7 @@ class AdminAPIModule extends APIModule
                             }
                             
                             foreach ($this->changedConfigs as $config) {
-                                $config->saveFile();
+                                Kurogo::sharedInstance()->saveConfig($config);
                             }
                             
                             $this->setResponse(true);
@@ -823,7 +820,7 @@ class AdminAPIModule extends APIModule
                     foreach ($fields as $key=>$value) {
                         
                         if ($adminData['sectiontype']=='section' && isset($adminData['sectionclearvalues']) && $adminData['sectionclearvalues']) {
-                            if ($config = $this->getAdminConfig($type, $adminData['config'], ConfigFile::OPTION_DO_NOT_CREATE)) {
+                            if ($config = $this->getAdminConfig($type, $adminData['config'], Config::OPTION_DO_NOT_CREATE)) {
                                 $config->removeSection($key);
                             }
                         }
@@ -850,7 +847,7 @@ class AdminAPIModule extends APIModule
                 }
                 
                 foreach ($this->changedConfigs as $config) {
-                    $config->saveFile();
+                    Kurogo::sharedInstance()->saveConfig($config);
                 }
                 
                 $this->setResponse(true);
@@ -868,13 +865,13 @@ class AdminAPIModule extends APIModule
                     case 'site':
                         $subsection = $this->getArg('subsection',null);
                         $sectionData = $this->getAdminData($type, $section, $subsection);
-                        $config = ConfigFile::factory($sectionData['config'],'site');
+                        $config = Kurogo::getSiteConfig($sectionData['config'],'site');
                         break;
                     case 'module':
                         $moduleID = $this->getArg('module','');
                         $module = WebModule::factory($moduleID);
                         $sectionData = $this->getAdminData($module, $section);
-                        $config = $module->getConfig($sectionData['config']);
+                        $config = Kurogo::getModuleConfig($sectionData['config'], $moduleID);
                         $subsection = $moduleID;
                         break;
                     default:
@@ -893,7 +890,7 @@ class AdminAPIModule extends APIModule
                 if (!$result = $config->removeSection($key)) {
                     throw new KurogoException(__LINE__ . ": Error removing item $key from config '" . $sectionData['config'] ."'");
                 } else {
-                    $config->saveFile();
+                    Kurogo::sharedInstance()->saveConfig($config);
                 }
                 
                 $this->setResponse(true);
@@ -925,21 +922,28 @@ class AdminAPIModule extends APIModule
                 
                 Kurogo::log(LOG_NOTICE, "Updating module layout", 'admin');
                 $data = $this->getArg('data', array());
-                $config = ModuleConfigFile::factory($this->getHomeModuleID(), 'module');
+
                 if (!isset($data['primary_modules'])) {
                     $data['primary_modules'] = array();
                 }
                 
-                $config->setSection('primary_modules', $data['primary_modules']);
-
                 if (!isset($data['secondary_modules'])) {
                     $data['secondary_modules'] = array();
                 }
+                
+                $config = Kurogo::getSiteConfig('navigation', 'site');
+                $sections = array();
 
-                $config->setSection('secondary_modules', $data['secondary_modules']);
+                foreach ($data['primary_modules'] as $moduleID=>$title) {
+                    $sections[$moduleID] = array('title'=>$title);
+                }
+                foreach ($data['secondary_modules'] as $moduleID=>$title) {
+                    $sections[$moduleID] = array('type'=>'secondary', 'title'=>$title);
+                }
+                $config->setSectionVars($sections);
+                $result = Kurogo::sharedInstance()->saveConfig($config);
 
-                $config->saveFile();
-                $this->setResponse(true);
+                $this->setResponse($result);
                 $this->setResponseVersion(1);
                 
                 break;

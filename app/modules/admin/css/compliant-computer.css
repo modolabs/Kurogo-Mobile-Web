@@ -18,10 +18,11 @@ a:hover {
 }
 #pagewrap {
 	position: relative;
-	width: 960px;
+	min-width: 960px;
 	margin: 0 auto;
 	text-align: left;
 }
+
 header {
 	padding: 15px 0 30px 0;
 	float: left;

@@ -1,6 +1,6 @@
 {extends file="findExtends:common/templates/footer.tpl"}
 
-{block name="footerNavLinks"}
+{block name="kgoFooterLinks"}
   {if $hasHelp}
     <p class="secondary">
       <a href="{$helpLink}">{$helpLinkText}</a>
@@ -33,46 +33,27 @@
       {/foreach}
     </p>
   {/if}
-
 {/block}
 
-  {block name="loginHTML"}
-    {if $showLogin}
-	<div class="loginstatus">
-		<p{if $footerLoginClass} class="{$footerLoginClass}"{/if}><a href="{$footerLoginLink}">{$footerLoginText}</a></p>
-	</div>
-	{/if}
-  {/block}
+{block name="kgoFooterLogin"}
+  {if $showLogin}
+    <div class="loginstatus">
+      <p{if $footerLoginClass} class="{$footerLoginClass}"{/if}><a href="{$footerLoginLink}">{$footerLoginText}</a></p>
+    </div>
+  {/if}
+{/block}
 
-{block name="footer"}
+{block name="kgoFooterFontSizeSelection"}
   <div class="nonfocal">
-    <p class="fontsize">
-      {"FONT_SIZE_SELECTION_TITLE"|getLocalizedString}&nbsp;
-      {foreach $fontsizes as $size}
-        {if $size == $fontsize}
-          <span class="font{$fontsize}">A</span>
-        {else}
-          <a href="{$fontSizeURLs[$size]}" class="font{$size}">A</a>
-        {/if}
-        {if !$size@last}&nbsp;|&nbsp;{/if}
-      {/foreach}
-    </p>
-
+    {include file="findInclude:common/templates/page/fontsize.tpl"}
     <p class="bb"> </p>
-    
-    <p id="footer">
-      {$footerHTML}
-    </p>
   </div>
 {/block}
 
-{block name="footerJavascript"}
+{block name="kgoFooterJavascript"}
   {if strlen($gaImageURL)}
     <img src="{$gaImageURL}" />
   {/if}
-  {if strlen($pmImageURL)}
-    <img src="{$pmImageURL}" width="2" height="2" alt="" />
-  {/if}
 {/block}
 
-{block name="ajaxContentFooter"}{/block}
+{block name="kgoFooterAJAXContent"}{/block}

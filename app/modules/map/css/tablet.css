@@ -1,10 +1,17 @@
 #navbar {
-	height: 45px;
+	height: 44px;
 	margin-bottom: 0
+	-webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 #toolbar {
 	margin-top: 0;
+}
+
+#toolbar .inputcombo {
+  overflow-x: visible;
 }
 
 h2 {
@@ -23,7 +30,7 @@ h2 {
 	margin-bottom: 8px
 }
 
-#mapTab {
+.map-tabbody {
   text-align: center;
 }
 
@@ -45,8 +52,11 @@ h2 {
 
 .tabbody #mapscrollers {
 	height: 352px;
-	top: 8px;
-	left: 8px;
+}
+
+.tabbody .nav {
+	margin: 0;
+	border: 1px solid @@@focal_border_color@@@;
 }
 
 #mapzoom {
@@ -75,12 +85,16 @@ h2 {
 	opacity: 0.75;
 }
 
-#containerinset #mapimage {
+#container .mapimage {
     position: absolute;
     top: 52px; /* toolbar height plus top margin */
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+#tabbodies .mapimage {
+    position: static;
 }
 
 #search-form input[type="text"] {

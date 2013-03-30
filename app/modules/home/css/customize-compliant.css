@@ -1,0 +1,79 @@
+.nav a {
+  background-image: none;
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+
+.nav a img {
+	padding: 7px;
+}
+
+ul.iconic li {
+  position: relative;
+  background-color: #fff;
+}
+
+img.homeicon {
+  vertical-align: middle;
+  margin: -5px 5px 0 0;
+}
+
+ul.iconic li:first-child {
+  -webkit-border-top-left-radius: 9px;	
+  -webkit-border-top-right-radius: 9px;	
+}
+
+ul.iconic li:last-child {
+  -webkit-border-bottom-left-radius: 9px;	
+  -webkit-border-bottom-right-radius: 9px;	
+}
+
+ul.iconic li:first-child .moveup {
+  opacity: 0.33;
+}
+
+ul.iconic li:last-child .movedown {
+  opacity: 0.33;
+}
+
+ul.iconic span.nolink { 
+  padding-left: 37px;
+  background-position: 3px 3px;
+  font-size: 94.112%;
+  margin-right: 85px; /* don't overlap buttons */
+}
+
+ul.iconic span.nolinkbuttons {
+  float: right;
+  width: 85px;
+  height: 38px;
+  margin: -8px;
+  position: relative;
+  z-index: 1000;
+}
+
+ul.iconic span.nolinkbuttons a {
+  background-image: none;
+  float: left;
+}
+
+ul.iconic input {
+  width: 21px; 
+  height: 21px;
+  position: absolute;
+  left: 6px;
+  top: 8px;
+}
+
+*:first-child+html span.nolinkbuttons {
+	/* WP7 hack */
+	float: none;
+	position: absolute;
+	right: 15px;
+}
+
+*:first-child+html ul.iconic li {
+	/* WP7 hack */
+	border-bottom: 1px solid #ccc;
+}

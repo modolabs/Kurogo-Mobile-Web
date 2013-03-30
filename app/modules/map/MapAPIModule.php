@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -39,7 +39,7 @@ class MapAPIModule extends APIModule
             $categoryArg = isset($urlArgs['category']) ? $urlArgs['category'] : null;
 			$categories = explode(MAP_CATEGORY_DELIMITER, $categoryArg);
 			$category = current($categories);
-			if ($category) {
+			if (strlen($category)) {
 				$urlArgs['feed'] = $category;
 			}
         }
@@ -189,6 +189,15 @@ class MapAPIModule extends APIModule
         return $this->feeds;
     }
 
+    private function getModuleDisplayType() {
+        if ( $this->getOptionalModuleVar('SHOW_LISTVIEW_BY_DEFAULT') ) {
+            return 'list';
+        } else {
+            return 'map';
+        }
+
+    }
+
     private function getDataModel($feedId=null)
     {
         if (!$this->feeds) {
@@ -224,7 +233,7 @@ class MapAPIModule extends APIModule
         if (isset($categoryId)) {
             $category = $this->dataModel->findCategory($categoryId);
             $categoryArg = $this->getArg('category');
-            if ($categoryArg) {
+            if (strlen($categoryArg)) {
                 $this->dataModel->findCategory($categoryArg);
             }
         }
@@ -238,7 +247,7 @@ class MapAPIModule extends APIModule
             $category = $this->getArg('category');
         }
 
-        if ($category) {
+        if (strlen($category)) {
             $groups = array_keys($this->getFeedGroups());
             if (count($groups) <= 1) {
                 $groups = array(null);
@@ -365,6 +374,7 @@ class MapAPIModule extends APIModule
         switch ($this->command) {
             case 'index':
                 $categories = array();
+                $response = array('displayType' => $this->getModuleDisplayType());
                 $groups = $this->getFeedGroups();
                 if ($groups) {
                     foreach ($groups as $id => &$groupData) {
@@ -376,7 +386,7 @@ class MapAPIModule extends APIModule
                         $groupData['id'] = $id;
                         $categories[] = $groupData;
                     }
-                    $response = array('categories' => $categories);
+                    $response['categories'] = $categories;
                 } else {
                     $feeds = $this->loadFeedData();
                     foreach ($feeds as $id => $feedData) {
@@ -420,30 +430,37 @@ class MapAPIModule extends APIModule
                     $this->setResponseVersion(1);
 
                 } else {
-                    $dataController = $this->getDataModel();
+                    $controller = $this->getDataModel();
 
-                    if ($dataController) {
+                    if ($controller) {
                         //if ($categoryId) {
-                        //    $category = $dataController->findCategory($categoryId);
+                        //    $category = $controller->findCategory($categoryId);
                         //    $placemarks = $category->placemarks();
                         //    $categories = $category->categories();
                         //} else {
-                            $placemarks = $dataController->placemarks();
-                            $categories = $dataController->categories();
+                            $placemarks = $controller->placemarks();
+                            $categories = $controller->categories();
                         //}
 
-                        $response = array();
                         if ($placemarks) {
                             $response['placemarks'] = array();
                             foreach ($placemarks as $placemark) {
                                 $response['placemarks'][] = $this->arrayFromPlacemark($placemark);
                             }
                         }
+
                         if ($categories) {
-                            $response['categories'] = array();
                             foreach ($categories as $aCategory) {
                                 $response['categories'][] = $this->arrayFromCategory($aCategory);
                             }
+                        }
+
+                        if (!$placemarks && !$categories) {
+                            // need something in the response so that it will be
+                            // output as a JSON object rather than a JSON array
+                            $response = array(
+                                'categories' => array(),
+                                );
                         }
 
                         $this->setResponse($response);
@@ -458,10 +475,12 @@ class MapAPIModule extends APIModule
 
             case 'detail':
 
-                $dataController = $this->getDataModel();
+                $suppress = $this->getOptionalModuleVar('suppress', array(), 'details', 'page-detail');
+
+                $controller = $this->getDataModel();
                 $placemarkId = $this->getArg('id', null);
-                if ($dataController && $placemarkId !== null) {
-                    $placemarks = $dataController->selectPlacemark($placemarkId);
+                if ($controller && $placemarkId !== null) {
+                    $placemarks = $controller->selectPlacemark($placemarkId);
                     $placemark = current($placemarks);
 
                     $fields = $placemark->getFields();
@@ -472,8 +491,19 @@ class MapAPIModule extends APIModule
                         'title'    => $placemark->getTitle(),
                         'subtitle' => $placemark->getSubtitle(),
                         'address'  => $placemark->getAddress(),
-                        'details'  => $placemark->getFields(),
                     );
+
+                    if ($this->requestedVersion >= 2) {
+                        $response['description'] = $placemark->getDescription($suppress);
+                        $responseVersion = 2;
+                    } else {
+                        $response['details'] = array('description' => $placemark->getDescription($suppress));
+                        $photoURL = $placemark->getField('PhotoURL');
+                        if ($photoURL) {
+                            $response['photoURL'] = $photoURL;
+                        }
+                        $responseVersion = 1;
+                    }
 
                     if ($geometry) {
                         $center = $geometry->getCenterCoordinate();
@@ -484,7 +514,7 @@ class MapAPIModule extends APIModule
                     }
 
                     $this->setResponse($response);                                                              
-                    $this->setResponseVersion(1);                                                               
+                    $this->setResponseVersion($responseVersion);
                 }
 
                 break;
@@ -525,13 +555,45 @@ class MapAPIModule extends APIModule
 
                 } else {
                     if ($searchTerms = $this->getArg(array('filter', 'q'))) {
+						$this->setLogData($searchTerms);
                         $searchResults = $mapSearch->searchCampusMap($searchTerms);
                     }
                 }
-                
+
+                $provider = null;
+                if ($this->requestedVersion >= 2 && $this->getArg('provider', null)) {
+                    $providerId = $this->getArg('provider');
+                    switch ($providerId) {
+                        case 'google':
+                            $provider = new GoogleJSMap();
+                            break;
+                        case 'esri':
+                            $provider = new ArcGISJSMap();
+                            break;
+                    }
+                    if ($provider && $projection) {
+                        $provider->setMapProjection($projection);
+                    }
+                }
+
                 $places = array();
                 foreach ($searchResults as $result) {
-                    $places[] = $this->shortArrayFromPlacemark($result);
+                    if ($this->requestedVersion >= 2) {
+                        $place = array('attribs' => $this->shortArrayFromPlacemark($result));
+                    } else {
+                        $place = $this->shortArrayFromPlacemark($result);
+                    }
+
+                    if ($provider) {
+                        if ($result instanceof MapPolygon) {
+                            $place['placemark'] = $provider->jsObjectForPolygon($result);
+                        } elseif ($result instanceof MapPolyline) {
+                            $place['placemark'] = $provider->jsObjectForPath($result);
+                        } else {
+                            $place['placemark'] = $provider->jsObjectForMarker($result);
+                        }
+                    }
+                    $places[] = $place;
                 }
 
                 $response = array(
@@ -646,7 +708,7 @@ class MapAPIModule extends APIModule
 
                 $locationSearchTerms = $this->getArg('q');
                 
-                $geocodingDataControllerClass = $this->getOptionalModuleVar('GEOCODING_DATA_CONTROLLER_CLASS');
+                $geocodingDataRetrieverClass = $this->getOptionalModuleVar('GEOCODING_DATA_RETRIEVER_CLASS');
                 $geocodingDataParserClass = $this->getOptionalModuleVar('GEOCODING_DATA_PARSER_CLASS');
                 $geocoding_base_url = $this->getOptionalModuleVar('GEOCODING_BASE_URL');
 
@@ -654,7 +716,7 @@ class MapAPIModule extends APIModule
                               'CACHE_LIFETIME' => 86400,
                               'PARSER_CLASS' => $geocodingDataParserClass);
 
-                $controller = DataController::factory($geocodingDataControllerClass, $arguments);
+                $controller = DataRetriever::factory($geocodingDataRetrieverClass, $arguments);
                 $controller->addCustomFilters($locationSearchTerms);
                 $response = $controller->getParsedData();
 

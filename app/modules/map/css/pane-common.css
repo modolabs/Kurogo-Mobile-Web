@@ -1,6 +1,6 @@
-#mapimage {
+.mapimage {
   position: absolute;
-  top: 44px;
+  top: 2px;
   bottom: 2px;
   left: 2px;
   right: 2px;

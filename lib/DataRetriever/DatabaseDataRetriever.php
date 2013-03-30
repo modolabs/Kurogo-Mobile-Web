@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -14,6 +14,7 @@ class DatabaseDataRetriever extends DataRetriever
     protected $connection;
     protected $sql;
     protected $parameters=array();
+    protected $errorMsg;
     
     protected function init($args) {
         parent::init($args);
@@ -61,6 +62,7 @@ class DatabaseDataRetriever extends DataRetriever
 
         $this->initRequestIfNeeded();
         $response = $this->initResponse();
+        $response->setResponseError($this->errorMsg);
         $response->setStartTime(microtime(true));
 
         if ($sql = $this->sql()) {

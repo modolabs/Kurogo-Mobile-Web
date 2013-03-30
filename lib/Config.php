@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -9,8 +9,6 @@
  *
  */
 
-require('Config/ConfigFile.php');
-require('Config/ConfigGroup.php');
 /**
  * Config
  * @package Config
@@ -23,11 +21,39 @@ require('Config/ConfigGroup.php');
 abstract class Config {
     const NO_EXPAND_VALUE = 0;
     const EXPAND_VALUE = 1;
+    const IGNORE_CONTEXTS = 0;
+    const APPLY_CONTEXTS_NAVIGATION = 1;
+    const OPTION_CREATE_EMPTY=1;
+    const OPTION_DO_NOT_CREATE=4;
+    const OPTION_IGNORE_LOCAL=8;
+    const OPTION_IGNORE_MODE=16;
+    const OPTION_IGNORE_SHARED=32;
+    const OPTION_IGNORE_DEFAULT=64;
+    const OPTION_IGNORE_WATCHDOG=128;
+    const NOT_FOUND = -1;
+    
+    protected $area;
+    protected $type;
     protected $vars = array();
     protected $sectionVars = array();
-  
-    abstract protected function replaceCallback($matches);
+    
+    public function saveConfig() {
+        throw new KurogoException("saveConfig() must be subclasses for " . get_class($this));
+    }    
+    
+    public function __construct($area, $type) {
+        $this->area = $area;
+        $this->type = $type;
+    }
+    
+    public function getType() {
+        return $this->type;
+    }
 
+    public function getArea() {
+        return $this->area;
+    }
+    
     public function addVars($vars) {
         $this->vars = array_merge($this->vars, $vars);
     }
@@ -81,6 +107,12 @@ abstract class Config {
         }
         
         return false;
+    }
+
+    public function addSection($section, $vars=array()) {
+        
+        $this->sectionVars[$section] = $vars;
+        return true;
     }
 
     public function removeSection($section) {
@@ -157,22 +189,12 @@ abstract class Config {
         }
     }
 
-    public function getSectionVars($opts = Config::NO_EXPAND_VALUE) {
-
-        if ($opts & Config::EXPAND_VALUE) {
-            $sectionVars = $this->sectionVars;
-            return array_map(array($this, 'replaceVariable'), $sectionVars);
-        } else {
-            return $this->sectionVars;
-        }
+    public function getSectionVars() {
+        return $this->sectionVars;
     }
 
-    public function getVars($opts = Config::NO_EXPAND_VALUE) {
-        if ($opts & Config::EXPAND_VALUE) {
-            return array_map(array($this, 'replaceVariable'), $this->vars);
-        } else {
-            return $this->vars;
-        }
+    public function getVars() {
+        return $this->vars;
     }
 
     public function getSection($key) {
@@ -193,31 +215,19 @@ abstract class Config {
         }
     }
 
-    /* values with {XXX} in the config are replaced with other config values */
-    protected function replaceVariable($value) {
-    
-        if (is_scalar($value)) {
-            $value = preg_replace_callback('/\{([A-Za-z_]+)\}/', array($this, 'replaceCallback'), $value);
-        } else {
-            $value = array_map(array($this, 'replaceVariable'), $value);
-        }
-    
-        return $value;
-    }
-
-    public function getOptionalVar($key, $default='', $section=null, $opts = Config::EXPAND_VALUE) {
+    public function getOptionalVar($key, $default='', $section=null) {
 
         try {
-            $value = $this->getVar($key, $section, $opts);
+            $value = $this->getVar($key, $section);
             return $value;
         } catch (KurogoKeyNotFoundException $e) {
             return $default;
         }
     }
   
-    public function getVar($key, $section=null, $opts = Config::EXPAND_VALUE) {
+    public function getVar($key, $section=null) {
   
-        if (!is_null($section)) {
+        if (isset($section)) {
             if (isset($this->sectionVars[$section][$key])) {
                 $value = $this->sectionVars[$section][$key];
             } else {
@@ -229,10 +239,6 @@ abstract class Config {
             throw new KurogoKeyNotFoundException("Config variable '$key' not set");
         }
 
-        if ($opts & Config::EXPAND_VALUE) {
-           $value = preg_replace_callback('/\{([A-Za-z_]+)\}/', array($this, 'replaceCallback'), $value);
-        }
-        
         return $value;
     }
 }

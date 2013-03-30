@@ -12,11 +12,11 @@
     <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget || $item['linkTarget']} target="{if $item['linkTarget']}{$item['linkTarget']}{else}{$linkTarget}{/if}"{/if}>
   {/if}
     {if $item['img']}
-      <img src="{$item['img']}" class="thumbnail" alt="{$item['title']}" />
+      <img src="{$item['img']}" class="thumbnail" alt="{'VIDEO_THUMBNAIL_ALT_TEXT'|getLocalizedString}" />
     {/if}
 	    <div class="ellipsis" id="ellipsis_{$ellipsisId}">
 	          <div class="title">{$item['title']}</div>
-	          {$item['subtitle']|strip_tags}
+	          <div class="smallprint">{$item['subtitle']|strip_tags}</div>
 	    </div>
     {if $item['badge']}
       <span class="badge">{$item['badge']}</span>

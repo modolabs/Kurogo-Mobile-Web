@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -21,10 +21,12 @@ class FileLoader {
     }
     
     protected static function filePath($file, $subdirectory=null) {
-        if (!$subdirectory || strpos($file, $subdirectory) !== false) {
-            return AUTOLOAD_FILE_DIR."/$file";
+        $parts = array(AUTOLOAD_FILE_DIR);
+        if ($subdirectory && strpos($file, $subdirectory) === false) {
+            $parts[] = $subdirectory;
         }
-        return AUTOLOAD_FILE_DIR."/$subdirectory/$file";
+        $parts[] = $file;
+        return implode(DIRECTORY_SEPARATOR, $parts);
     }
     
     protected static function fullURL($file, $subdirectory=null) {
@@ -46,7 +48,12 @@ class FileLoader {
                 // e.g. image width/height
                 
                 if (isset($loaderInfo, $loaderInfo['url'])) {
-                    $data = file_get_contents($loaderInfo['url']);
+                    $args = array(
+                        'BASE_URL' => $loaderInfo['url'],
+                        'CACHE_LIFETIME' => 0,
+                    );
+                    $retriever = DataRetriever::factory("URLDataRetriever", $args);
+                    $data = $retriever->getData();
                     if ($data) {
                         //use a temp file to prevent race conditions
                         $tempFile = $filePath . '.' . uniqid();
@@ -99,7 +106,7 @@ class FileLoader {
                 return;
             }
         }
-        $subPath = $path."/$subdirectory";
+        $subPath = $path.DIRECTORY_SEPARATOR.$subdirectory;
         if (!realpath_exists($subPath)) {
             if (!mkdir($subPath, 0755, true)) {
                 Kurogo::log(LOG_WARNING,"could not create $subPath",'data');

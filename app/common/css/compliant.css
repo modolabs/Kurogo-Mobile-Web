@@ -17,7 +17,6 @@ body {
 h1, h2, h3 {
 	margin: 0 0 0.5em 0;
 	line-height: 1.2em;
-	color: #000;
 }
 
 h3.nonfocal {
@@ -51,7 +50,6 @@ th, td {
 th {
 	font-weight: normal;
 	text-align: left;
-	color: #666;
 }
 
 ol, ul {
@@ -88,21 +86,21 @@ strong {
 
 /* Major layout blocks */
 
-#container {
-	min-height: 550px;
+body {
+	min-height: 600px;
 }
 
 #footer {
 	clear: both;
 	min-height: 22px;
 	padding-top: 10px;
-	margin: 20px 12px 14px 12px;
+	margin: 1.5em 10px 1.5em 10px;
 	font-weight: normal;
 }
 
 #footerlinks {
 	clear: both;
-	margin: 3em 6px 2em 6px; 
+	margin: 3em 6px 1.5em 6px; 
 	font-size: 70.589%;
 }
 
@@ -136,7 +134,6 @@ fieldset {
 }
 
 input, textarea, select {
-	color: #333;
 	font-size: 100%;
 	line-height: 30px;
 }
@@ -171,7 +168,7 @@ select {
 .searchwrapper {
     position: absolute;
     left: 0;
-    right: 51px;
+    right: 48px;
 }
 .searchwrapper input {
     width: 100%;
@@ -185,6 +182,17 @@ select {
 .inputcombo {
 	height: 38px;
 	position: relative;
+	
+	/* The following hack works around what appears to be a resize bug in some 
+	   versions of webkit.  The issue is that our search bar styles can prevent 
+	   the browser width from shrinking after resizing to a narrower width. 
+	   This causes a horizontal scroll bar to appear and a blank space to be 
+	   added to the right side of the page. 
+	   
+	   The bug is a little harder to reproduce on orientation change (which is 
+	   why we hadn't noticed it beforehand).  However when the search bar and the 
+	   context selection box are present the bug becomes very reproducible. */
+	overflow-x: hidden;
 }
 
 .inputcombo .forminput {
@@ -239,6 +247,10 @@ select {
   padding-right: .25em;
   line-height: 26px;
 }
+.formlist .formelement input[type=radio],
+.formlist .formelement input[type=checkbox] {
+  width: auto;
+}
 .formlist .formelement select {
   width: 10em;
   line-height: 26px;
@@ -284,7 +296,7 @@ input.formbutton {
 	font-size: 94.12%;
 	line-height: 26px;  /* height minus padding */
 	text-decoration: none;
-	padding: 5px 12px 5px 12px;
+	padding: 5px 14px 5px 12px;
 	margin-right: -7px;
 	border: none;
 	height: 36px;
@@ -319,17 +331,31 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 	border-radius: 12px;
 }
 
-.required {
-	font-weight: bold;
-	color: #900;
+.detailhtml {
+  margin: 9px 12px;
+}
+
+
+.tabbody .detailhtml {
+  margin: 9px 0;
+}
+
+.detailimage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 9px;
+    margin-bottom: 9px;
 }
 
 /* Top navigation/titlebar */
 
 #navbar {
 	margin: 0 0 9px 0;
-	line-height: 44px;
-	overflow: hidden;
+	-webkit-box-shadow: 0 0 4px #000;
+	-moz-box-shadow: 0 0 4px #000;
+	-o-box-shadow: 0 0 4px #000;
+	box-shadow: 0 0 4px #000;
 }
 
 .breadcrumbs {
@@ -345,7 +371,7 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 	line-height: 44px;
 	vertical-align: top;
   margin-left: -4px; /* overlap by the width of the drillup art */
-  padding: 0 18px 0 2px; 
+  padding: 0 16px 0 2px; 
   background-image: url(/common/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: right top;
@@ -363,9 +389,8 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 a.homelink {
     background-image: none;
     margin-left: 0;
-    margin-right: -5px;
+    margin-right: 0;
     padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
-    width: 62px;
 }
 
 .breadcrumbs a.homelink img {
@@ -377,7 +402,7 @@ a.module img {
 }
 
 .homepage .moduleicon {
-    padding: 8px 5px 8px 6px;
+    padding: 8px 2px 8px 6px;
     vertical-align: top; /* for firefox */
 }
 
@@ -415,7 +440,7 @@ a.module img {
 .pagetitle {
 	display: inline-block;
 	font-weight: bold;
-	margin-left: -4px;	
+	margin-left: -2px;	
 	vertical-align: top;
 	line-height: 44px;
 	height: 44px;
@@ -423,7 +448,7 @@ a.module img {
 
 *:first-child+html .pagetitle {
 	/* The return of IE CSS hacks makes me cry */
-	margin-left: -3px;	
+	margin-left: -2px;	
 }
 
 .homelink + .pagetitle {
@@ -460,6 +485,13 @@ a.module img {
 	overflow: hidden;
 }
 
+.springboard:after {
+  content: ""; 
+  display: block; 
+  clear: both; 
+  visibility: hidden; 
+}
+
 .springboard div {
 	position: relative;
 	margin: 0;
@@ -468,6 +500,10 @@ a.module img {
 	float: left;
 	text-align: center;		
 	vertical-align: top;
+	font-size: 76.5%;	/* Font size of text label below icon */
+	line-height: 1.1em;
+	width: 25%;	/* For springboard grid that is 4 icons wide */
+	height: 100px;	
 }
 
 .springboard a {
@@ -478,15 +514,15 @@ a.module img {
 }
 
 .springboard a img {
-	height: 60px;
 	width: 60px;
-	margin-bottom: 1px;
+	height: 60px;
+	margin-bottom: 0;
 }
 
 .springboard .separator {
 	display: block;
 	width: 100%;
-	height: 18px;
+	height: 10px;
 	clear:both;
 	margin: 0;
 	padding: 0;
@@ -518,16 +554,76 @@ a.module img {
 }
 
 .springboard .utility .secured {
-	top: 28px;
-	right: 14px;
+	top: 26px;
+	right: 12px;
 }
+
+/* Overall size of one cell in the springboard's utility-type items */
+/* Utility-class modules are typically shown smaller and at the bottom of the springboard */
+.springboard div.utility {
+	/* width: 33%; */ /* For a 3-wide row of utility icons */
+	width: 25%; /* For a 4-wide row of utility icons */
+	/* width: 20%; */ /* For a 5-wide row of utility icons */
+	height: 86px;
+	font-size: 70.6%;
+	line-height: 1.1em;
+}
+
+.springboard div.utility a img {
+	/* Size of each utility-class icon in a springboard */
+	width: 30px;
+	height: 30px;
+}
+
+/* Responsive springboard spacing adjustments for larger screens */
+
+@media only screen and (min-width: 480px) {
+	.springboard div {	
+		/* width: 25%; */	/* For springboard grid that is 4 icons wide */
+		width: 20%;	/* For springboard grid that is 5 icons wide */
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	.springboard div {	
+		/* width: 20%; */	/* For springboard grid that is 5 icons wide */
+		width: 16.6%;	/* For springboard grid that is 6 icons wide */
+	}
+}
+
+/* On taller screens, increase vertical spacing */
+
+@media only screen and (min-height: 480px) {
+	.springboard div {	
+		height: 100px;
+	}
+}
+
+@media only screen and (min-height: 540px) {
+	#searchformcontainer {
+		margin: 20px 12px;
+	}
+	.springboard div {	
+		height: 110px;
+	}
+}
+
+@media only screen and (min-height: 600px) {
+	#searchformcontainer {
+		margin: 24px 12px;
+	}
+	.springboard div {	
+		height: 120px;
+	}
+}
+
 
 /* Navigation and results listings */
 
 .nav {	   
 	padding: 0;	   
 	margin: 9px; 
-	border: 1px solid #ccc;
+	border: 1px solid @@@focal_border_color@@@;
 	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
 	position: relative;
@@ -535,7 +631,7 @@ a.module img {
 
 .nav li {	
 	list-style-type: none;	
-	border-top: 1px solid #ccc;
+	border-top: 1px solid @@@focal_border_color@@@;
 	padding: 11px;
 	position: relative;
 }
@@ -576,6 +672,16 @@ a.module img {
 	-webkit-border-radius: 5px;	
 	border-radius: 5px;	
 }
+
+.nav a.inline  {
+	display: inline;
+	padding: 0;
+	margin: 0;
+	background-image: none;
+	border-radius: 0
+	-webkit-border-radius: 0;
+}
+
 .nav li.icon {
   padding: 0 11px;
   min-height: 72px;
@@ -590,7 +696,7 @@ a.module img {
 .nav li.icon a {
   position: relative;
   margin: 0 -7px 0 0;
-  padding: 11px 4px 11px 57px;
+  padding-left: 57px;
   min-height: 50px;
 }
 .nav li.icon a img {
@@ -616,7 +722,7 @@ ul.focal li {
 	list-style-type: none;
 	padding: 11px;
 	position: relative;
-	border-top: 1px solid #ccc; 
+	border-top: 1px solid @@@focal_border_color@@@;
 }
 
 ul.focal li:first-child {
@@ -643,7 +749,7 @@ ul.focal li:first-child {
 
 .tabbody .nested {
 	margin: 0px;
-	border: 1px solid #ccc;
+	border: 1px solid @@@focal_border_color@@@;
 }
 
 .tabbody .nested li {
@@ -653,14 +759,14 @@ ul.focal li:first-child {
 .results {	   
 	padding: 0;	   
 	margin: 10px 0; 
-	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
+	border-top: 1px solid @@@focal_border_color@@@;
+	border-bottom: 1px solid @@@focal_border_color@@@;
 	position: relative;
 }
 
 .results li {	
 	list-style-type: none;		
-	border-top: 1px solid #ccc;
+	border-top: 1px solid @@@focal_border_color@@@;
 	padding: 10px;
 	position: relative;
 }
@@ -679,12 +785,6 @@ ul.focal li:first-child {
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	-webkit-border-radius: 5px;	
-	border-radius: 5px;	
-}
-
-.results a:visited {
-	color: #333;
 }
 
 .results li ul {
@@ -727,14 +827,14 @@ ul.focal li:first-child {
 .secondary {
 	margin: 10px; 
 	padding: 0;	   
-	border: 1px solid #ccc;
+	border: 1px solid @@@focal_border_color@@@;
 	-webkit-border-radius: 8px;	
 	border-radius: 8px;	
 }
 
 .secondary li {
 	list-style-type: none;		
-	border-top: 1px solid #ccc;
+	border-top: 1px solid @@@focal_border_color@@@;
 	position: relative;
 	padding: 9px;
 }
@@ -757,9 +857,11 @@ ul.focal li:first-child {
 	border-radius: 5px;	
 }
 
-.secondary a:visited {
-	color: #333;
+.nonfocal.listhead {
+  margin-bottom: -0.2em;
 }
+
+
 
 .bottomnav {
 	clear: both;
@@ -867,7 +969,7 @@ a.sidenav-next {
 	margin: 10px; 
 	font-weight:normal;
 	line-height: 1.33em;
-	border: 1px solid #ccc;
+	border: 1px solid @@@focal_border_color@@@;
 	border-radius: 9px;	
 }
 
@@ -941,7 +1043,7 @@ a.sidenav-next {
 .email .value {
     -webkit-hyphens: none;
     -moz-hyphens: none;
-    hyphens: noen;
+    hyphens: none;
 }
 
 .longlabel {
@@ -1028,6 +1130,22 @@ p.foundat {
 	background-position: right; 
 	padding-right: 38px;
 	padding-left: 0;
+}
+
+a.add {  
+	background-image: url(/common/images/action-add.png); 
+	padding-right: 68px;
+	min-height: 30px;
+}
+
+a.delete {  
+	background-image: url(/common/images/action-delete.png); 
+	padding-right: 40px;
+}
+
+a.remove {  
+	background-image: url(/common/images/action-remove.png); 
+	padding-right: 40px;
 }
 
 a.arrow {  
@@ -1203,25 +1321,21 @@ h2.icon {
 }
 
 #tabs.smalltabs li {
-	font-size: 88.26%;
+	font-size: 85%;
 	margin-right: 2px;
 }
 
 #tabs.smalltabs li a {
-	padding-right: 5px;
-	padding-left: 5px;
+	padding-right: 4px;
+	padding-left: 4px;
 }
 
 #tabscontainer {
-	padding: 0 12px;
-}
-
-#tabscontainer {
-	padding: 0 12px;
+	padding: 0 10px;
 }
 
 #tabbodies {
-	margin: 0 -12px 0 -12px;
+	margin: 0 -10px 0 -10px;
 	clear: both;
 	border-top: 1px solid #bbb;
 	border-bottom: 1px solid #bbb;
@@ -1250,60 +1364,60 @@ h2.icon {
 	margin-top: 2px;
 }
 
-.tabstrip ,
-#tabstrip {
+.tabstrip {
 	list-style-type: none;
-	height: 32px;
-	-webkit-border-radius: 10px;	
-	border-radius: 10px;	
+	height: 36px;
+	-webkit-border-radius: 7px;	
+	border-radius: 7px;	
 	margin: 0;
 	padding: 0;
 	left: 0;
 	overflow: hidden;
-	font-size: 88.23%;
+	font-size: 88.24%;
 }
 
-.tabstrip li ,
-#tabstrip li {
+.tabstrip li  {
 	float: left;
 	margin: 0;
 	text-align: center;
-	height: 33px;
+	height: 34px;
 }
 
-.tabstrip a,
-#tabstrip a {
+.tabstrip a, .tabstrip a:visited {
 	display: block;
-	height: 32px;
+	height: 34px;
 	line-height: 32px;
 	text-decoration: none;
-	color: #fff !important;
-	background: url(/common/images/tabstrip.jpg) repeat-x;
-	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
-	border-right: 1px solid #999;
-	-webkit-border-radius: 1px;	
-	border-radius: 1px;	
+	background-color: transparent;
+	border: 1px solid @@@focal_border_color@@@;
+	border-right: none
 }	
 
-.tabstrip li.active a ,
-#tabstrip li.active a {
-	background-image: url(/common/images/tabstrip-active.jpg);
+.tabstrip li:last-child a {
+    border-right: 1px solid #999;;
 }
 
-.tabstrip li:first-child a ,
-#tabstrip li:first-child a {
-	-webkit-border-bottom-left-radius: 10px;	
-	-webkit-border-top-left-radius: 10px;	
-	border-bottom-left-radius: 10px;	
-	border-top-left-radius: 10px;	
+.focal .tabstrip a, .tabbody .tabstrip a {
+	color: #505050;
 }
 
-.tabstrip li:last-child a ,
-#tabstrip li:last-child a {
-	-webkit-border-bottom-right-radius: 10px;	
-	-webkit-border-top-right-radius: 10px;	
-	border-bottom-right-radius: 10px;	
-	border-top-right-radius: 10px;	
+.tabstrip li.active a {
+	background-color: #444;
+	color: #fff;
+}
+
+.tabstrip li:first-child a {
+	-webkit-border-bottom-left-radius: 6px;	
+	-webkit-border-top-left-radius: 6px;	
+	border-bottom-left-radius: 6px;	
+	border-top-left-radius: 6px;	
+}
+
+.tabstrip li:last-child a {
+	-webkit-border-bottom-right-radius: 6px;	
+	-webkit-border-top-right-radius: 6px;	
+	border-bottom-right-radius: 6px;	
+	border-top-right-radius: 6px;	
 }
 
 .twotabs li {
@@ -1375,24 +1489,15 @@ h2.icon {
 	bottom: 0px;
 }
 
+/* Device Detection Information - only shown when debugging */
 
-.devicedetection {
-  border: none;
+.footertable + .footertable {
+    margin: 0;
+}
+
+.footertable {
   margin: 1.5em .5em;
-  width: auto;
-}
-.devicedetection th,
-.devicedetection td {
   font-size: 65.71%;
-  line-height: 1.2em;
-  padding: 0 .25em;
-  margin: 0;
-  text-align: left;
-}
-.devicedetection th {
-  font-weight: bold;
-  text-align: right;
-  white-space: nowrap;
 }
 
 #share {
@@ -1461,8 +1566,11 @@ h2.icon {
 }
 
 #bookmarkContainer {
-    float: right;
+  float: right;
 	margin: -44px 0 0 8px;
+}
+#bookmarkContainer a {
+  -webkit-tap-highlight-color: rgba(0,0,0,0)!important;
 }
 #bookmark {
     width: 44px;
@@ -1521,6 +1629,9 @@ h2.icon {
     padding-top: 5px;
 }
 
+.loginstatus .loginbuttons a {
+    border: none;
+}
 
 /* Login-related buttons */
 
@@ -1586,4 +1697,106 @@ h2.icon {
 	line-height: inherit !important;
 	text-decoration: none !important;
 	font-size: inherit !important;
+}
+
+
+
+@media only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+  /* Pixel-doubled versions to take advantage of Retina Displays and XHDPI displays */
+  
+  
+  /* Bookmark button */
+  
+  #bookmark {
+    background-image: url(/common/images/bookmark@2x.png);
+    background-size: 88px 76px;
+  }
+
+
+  /* Paging arrows */
+  
+  .sidenav2 a {
+    background-image: url(/common/images/sidenav-arrows@2x.png);
+    background-size: 48px 58px;
+  }
+
+
+  /* Login-related buttons */
+  
+  .loginbuttons li.facebook {
+    background-image: url(/common/images/button-facebook.png);
+  }
+  
+  .loginbuttons li.google {
+    background-image: url(/common/images/button-google.png);
+  }
+  
+  .loginbuttons li.oauth {
+    background-image: url(/common/images/button-oauth.png);
+  }
+  
+  .loginbuttons li.openid {
+    background-image: url(/common/images/button-openid.png);
+  }
+  
+  .loginbuttons li.twitter {
+    background-image: url(/common/images/button-twitter.png);
+  }
+  
+  .loginbuttons li.windows {
+    background-image: url(/common/images/button-windows.png);
+  }
+  
+  
+  /* Pixel-doubled action arrows */
+  
+  .nav a, .results a, .secondary a, a.arrow {  
+    background-image: url(/common/images/action-arrow@2x.png); 
+    background-size: 14px 17px;
+  }
+  
+  a.add {  
+    background-image: url(/common/images/action-add@2x.png); 
+    background-size: 50px 38px;
+  }
+  
+  a.delete {  
+    background-image: url(/common/images/action-delete@2x.png); 
+    background-size: 26px 20px;
+  }
+
+  a.remove {  
+    background-image: url(/common/images/action-remove@2x.png); 
+    background-size: 26px 20px;
+  }
+
+  a.phone {  
+    background-image: url(/common/images/action-phone@2x.png); 
+    background-size: 26px 19px;
+  }
+  
+  a.email {  
+    background-image: url(/common/images/action-email@2x.png); 
+    background-size: 26px 19px;
+  }
+  
+  a.map {  
+    background-image: url(/common/images/action-map@2x.png); 
+    background-size: 26px 19px;
+  }
+  
+  a.people {  
+    background-image: url(/common/images/action-people@2x.png); 
+    background-size: 19px 19px;
+  }
+  
+  a.external {
+    background-image: url(/common/images/action-external.png); 
+    background-size: 26px 19px;
+  }
+  
+  a.placemark {
+    background-image: url(/common/images/action-placemark@2x.png);
+    background-size: 16px 19px;
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -84,6 +84,8 @@ function onResize() {
             onResize.callbackFunctions[i]();
         }
     }
+
+    setOrientation(getOrientation());
 }
 
 function addOnOrientationChangeCallback(callback) {
@@ -112,56 +114,20 @@ function setupOrientationChangeHandlers() {
 }
 
 function rotateScreen() {
-  setOrientation(getOrientation());
-  setTimeout(scrollToTop, 500);
+    setTimeout(scrollToTop, 500);
 }
 
 function getOrientation() {
-    if (typeof getOrientation.orientationIsFlipped == 'undefined') {
-        // detect how we are detecting orientation
-        getOrientation.orientationIsFlipped = false;
-        
-        if (!('orientation' in window)) {
-            getOrientation.orientationMethod = 'size';
-        } else {
-            getOrientation.orientationMethod = 'orientation';
-            var width = document.documentElement.clientWidth || document.body.clientWidth;
-            var height = document.documentElement.clientHeight || document.body.clientHeight;
-            
-            /* at this point the method of orientation detection is not perfect */
-            if (navigator.userAgent.match(/(PlayBook.+RIM Tablet|Xoom|Android 3\.\d)/)) {
-                getOrientation.orientationIsFlipped = true;
-            }
-        }
-    }
+    var width = document.documentElement.clientWidth || document.body.clientWidth;
+    var height = document.documentElement.clientHeight || document.body.clientHeight;
 
-    switch (getOrientation.orientationMethod) {
-        case 'size':
-            var width = document.documentElement.clientWidth || document.body.clientWidth;
-            var height = document.documentElement.clientHeight || document.body.clientHeight;
-
-            return (width > height) ? 'landscape' : 'portrait';
-            break;
-
-        case 'orientation':
-            switch (window.orientation) {
-                case 0:
-                case 180:
-                    return getOrientation.orientationIsFlipped ? 'landscape' : 'portrait';
-                    break;
-                
-                case 90:
-                case -90:
-                    return getOrientation.orientationIsFlipped ? 'portrait': 'landscape';
-                    break;
-            }
-    }
+    return (width > height) ? 'landscape' : 'portrait';
 }
 
 function setOrientation(orientation) {
     var body = document.getElementsByTagName("body")[0];
  
- //remove existing portrait/landscape class if there
+    // remove existing portrait/landscape class if there
     removeClass(body, 'portrait');
     removeClass(body, 'landscape');
     addClass(body, orientation);
@@ -173,60 +139,58 @@ function showAjaxLoadingMsg(e) {
     if (typeof e == 'string') {
         e = document.getElementById(element);
     }
-	if (e) {
-		e.innerHTML = AJAX_CONTENT_LOADING_HTML;
-	}
-	onDOMChange();
+    if (e) {
+      e.innerHTML = AJAX_CONTENT_LOADING_HTML;
+    }
+    onDOMChange();
 }
 
 function showAjaxErrorMsg(e) {
     if (typeof e == 'string') {
         e = document.getElementById(element);
     }
-	if (e) {
-		e.innerHTML = AJAX_CONTENT_ERROR_HTML;
-	}
-	onDOMChange();
+    if (e) {
+      e.innerHTML = AJAX_CONTENT_ERROR_HTML;
+    }
+    onDOMChange();
 }
 
 function hide(strID) {
-// Hides the object with ID strID 
-	var objToHide = document.getElementById(strID);
-	if(objToHide) {
-		objToHide.style.display = "none";
-	}
-	
-	onDOMChange();
+    // Hides the object with ID strID 
+    var objToHide = document.getElementById(strID);
+    if (objToHide) {
+        objToHide.style.display = "none";
+    }
+    onDOMChange();
 }
 
 function show(strID) {
-// Displays the object with ID strID 
-	var objToHide = document.getElementById(strID);
-	if(objToHide) {
-		objToHide.style.display = "block";
-	}
-	
-	onDOMChange();
+    // Displays the object with ID strID 
+    var objToHide = document.getElementById(strID);
+    if (objToHide) {
+        objToHide.style.display = "block";
+    }
+    onDOMChange();
 }
 
 function showHideFull(objContainer) {
-	var strClass = objContainer.className;
-	if(strClass.indexOf("collapsed") > -1) {
-		strClass = strClass.replace("collapsed","expanded");
-	} else {
-		strClass = strClass.replace("expanded","collapsed");
-	}
-	objContainer.className = strClass;
-	objContainer.blur();
-	
-	onDOMChange();
+    var strClass = objContainer.className;
+    if (strClass.indexOf("collapsed") > -1) {
+        strClass = strClass.replace("collapsed","expanded");
+    } else {
+        strClass = strClass.replace("expanded","collapsed");
+    }
+    objContainer.className = strClass;
+    objContainer.blur();
+    
+    onDOMChange();
 }
 
 function clearField(objField,strDefault) {
-// Clears the placeholder text in an input field if it matches the default string - fixes a bug in Android
-	if((objField.value==strDefault) || (objField.value=="")) {
-		objField.value="";
-	}
+    // Clears the placeholder text in an input field if it matches the default string - fixes a bug in Android
+	  if ((objField.value == strDefault) || (objField.value == "")) {
+		    objField.value = "";
+	  }
 }
 
 // Android doesn't respond to onfocus="clearField(...)" until the 
@@ -240,43 +204,51 @@ function androidPlaceholderFix(searchbox) {
 }
 
 function getCookie(name) {
-  var cookie = document.cookie;
-  var result = "";
-  var start = cookie.indexOf(name + "=");
-  if (start > -1) {
-    start += name.length + 1;
-    var end = cookie.indexOf(";", start);
-    if (end < 0) {
-      end = cookie.length;
+    var cookie = document.cookie;
+    var result = "";
+    var start = cookie.indexOf(name + "=");
+    if (start > -1) {
+        start += name.length + 1;
+        var end = cookie.indexOf(";", start);
+        if (end < 0) {
+            end = cookie.length;
+        }
+        result = unescape(cookie.substring(start, end));
     }
-    result = unescape(cookie.substring(start, end));
-  }
-  return result;
+    return result;
+}
+
+function clearCookie(name, path) {
+    var value = 'deleted';
+    var exdate = new Date(0);
+    var exdateclause = "; expires=" + exdate.toGMTString();
+    var pathclause = (path == null) ? "" : "; path=" + path;
+    document.cookie = name + "=" + escape(value) + exdateclause + pathclause;
 }
 
 function setCookie(name, value, expireseconds, path) {
-  var exdate = new Date();
-  exdate.setTime(exdate.getTime() + (expireseconds * 1000));
-  var exdateclause = (expireseconds == 0) ? "" : "; expires=" + exdate.toGMTString();
-  var pathclause = (path == null) ? "" : "; path=" + path;
-  document.cookie = name + "=" + escape(value) + exdateclause + pathclause;
+    var exdate = new Date();
+    exdate.setTime(exdate.getTime() + (expireseconds * 1000));
+    var exdateclause = (expireseconds == 0) ? "" : "; expires=" + exdate.toGMTString();
+    var pathclause = (path == null) ? "" : "; path=" + path;
+    document.cookie = name + "=" + escape(value) + exdateclause + pathclause;
 }
 
 function getCookieArrayValue(name) {
-  var value = getCookie(name);
-  if (value && value.length) {
-    return value.split('@@');
-  } else {
-    return new Array();
-  }
+    var value = getCookie(name);
+    if (value && value.length) {
+        return value.split('@@');
+    } else {
+        return new Array();
+    }
 }
 
 function setCookieArrayValue(name, values, expireseconds, path) {
-  var value = '';
-  if (values && values.length) {
-    value = values.join('@@');
-  }
-  setCookie(name, value, expireseconds, path);
+    var value = '';
+    if (values && values.length) {
+        value = values.join('@@');
+    }
+    setCookie(name, value, expireseconds, path);
 }
 
 function hasClass(ele,cls) {
@@ -317,7 +289,7 @@ function showShare() {
     }
     sharesheet.style.display="block";
     var iframes = document.getElementsByTagName('iframe');
-    for (var i=0; i<iframes.length; i++) {
+    for (var i = 0; i < iframes.length; i++) {
         iframes[i].style.visibility = 'hidden';
         iframes[i].style.height = '0';
     }
@@ -327,90 +299,90 @@ function hideShare() {
     if (!document.getElementById("sharesheet")) {
         return;
     }
-	document.getElementById("sharesheet").style.display="none";
-	var iframes = document.getElementsByTagName('iframe');
-	for (var i=0; i<iframes.length; i++) {
-	    iframes[i].style.visibility = 'visible';
-	    iframes[i].style.height = '';
-	}
+    document.getElementById("sharesheet").style.display="none";
+    var iframes = document.getElementsByTagName('iframe');
+    for (var i = 0; i < iframes.length; i++) {
+        iframes[i].style.visibility = 'visible';
+        iframes[i].style.height = '';
+    }
 }
 
 // Bookmarks
 function toggleBookmark(name, item, expireseconds, path, bookmarkId) {
-  // facility for module to respond to bookmark state change
-  if (typeof moduleBookmarkWillToggle != 'undefined') {
-    $result = moduleBookmarkWillToggle(name, item, expireseconds, path);
-    if ($result === false) { return; }
-  }
-
-  if (!bookmarkId) {
-    bookmarkId = "bookmark";
-  }
-  var bookmark = document.getElementById(bookmarkId);
-  toggleClass(bookmark, "on");
-  var items = getCookieArrayValue(name);
-  var newItems = new Array();
-  if (items.length == 0) {
-    newItems[0] = item;
-  } else {
-    var found = false;
-    for (var i = 0; i < items.length; i++) {
-      if (items[i] == item) {
-        found = true;
-      } else {
-        newItems.push(items[i]);
-      }
+    // facility for module to respond to bookmark state change
+    if (typeof moduleBookmarkWillToggle != 'undefined') {
+        $result = moduleBookmarkWillToggle(name, item, expireseconds, path);
+        if ($result === false) { return; }
     }
-    if (!found) {
-      newItems.push(item);
-    }
-  }
-  setCookieArrayValue(name, newItems, expireseconds, path);
   
-  // facility for module to respond to bookmark state change
-  if (typeof moduleBookmarkToggled != 'undefined') {
-    moduleBookmarkToggled(name, item, expireseconds, path);
-  }
+    if (!bookmarkId) {
+        bookmarkId = "bookmark";
+    }
+    var bookmark = document.getElementById(bookmarkId);
+    toggleClass(bookmark, "on");
+    var items = getCookieArrayValue(name);
+    var newItems = new Array();
+    if (items.length == 0) {
+        newItems[0] = item;
+    } else {
+        var found = false;
+        for (var i = 0; i < items.length; i++) {
+            if (items[i] == item) {
+                found = true;
+            } else {
+                newItems.push(items[i]);
+            }
+        }
+        if (!found) {
+            newItems.push(item);
+        }
+    }
+    setCookieArrayValue(name, newItems, expireseconds, path);
+    
+    // facility for module to respond to bookmark state change
+    if (typeof moduleBookmarkToggled != 'undefined') {
+        moduleBookmarkToggled(name, item, expireseconds, path);
+    }
 }
 
 // TODO this needs to handle encoded strings and parameter separators (&amp;)
 if (typeof makeAPICall === 'undefined' && typeof jQuery === 'undefined') {
-  function makeAPICall(type, module, command, data, callback) {
-    var urlParts = [];
-    for (var param in data) {
-      urlParts.push(param + "=" + data[param]);
-    }
-    url = URL_BASE + API_URL_PREFIX + '/' + module + '/' + command + '?' + urlParts.join('&');
-    var handleError = function(errorObj) {}
-
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open("GET", url, true);
-    httpRequest.onreadystatechange = function() {
-      if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-        var obj;
-        if (window.JSON) {
-            obj = JSON.parse(httpRequest.responseText);
-            // TODO: catch SyntaxError
-        } else {
-            obj = eval('(' + httpRequest.responseText + ')');
+    function makeAPICall(type, module, command, data, callback) {
+        var urlParts = [];
+        for (var param in data) {
+            urlParts.push(param + "=" + data[param]);
         }
-        if (obj !== undefined) {
-          if ("response" in obj) {
-            callback(obj["response"]);
-          }
-
-          if ("error" in obj && obj["error"] !== null) {
-            handleError(obj["error"]);
-          } else {
-            handleError("response not found");
-          }
-        } else {
-          handleError("failed to parse response");
+        url = URL_BASE + API_URL_PREFIX + '/' + module + '/' + command + '?' + urlParts.join('&');
+        var handleError = function(errorObj) {}
+    
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open("GET", url, true);
+        httpRequest.onreadystatechange = function() {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                var obj;
+                if (window.JSON) {
+                    obj = JSON.parse(httpRequest.responseText);
+                    // TODO: catch SyntaxError
+                } else {
+                    obj = eval('(' + httpRequest.responseText + ')');
+                }
+                if (obj !== undefined) {
+                    if ("response" in obj) {
+                      callback(obj["response"]);
+                    }
+          
+                    if ("error" in obj && obj["error"] !== null) {
+                      handleError(obj["error"]);
+                    } else {
+                      handleError("response not found");
+                    }
+                } else {
+                    handleError("failed to parse response");
+                }
+            }
         }
-      }
+        httpRequest.send(null);
     }
-    httpRequest.send(null);
-  }
 }
 
 function ajaxContentIntoContainer(options) {
@@ -517,7 +489,7 @@ function insertContentIntoContainer(options) {
 
     var defaults = {
         html: null, 
-        container: null, 
+        container: null
     };
     for (var i in defaults) {
         if (typeof options[i] == 'undefined') {
@@ -525,38 +497,60 @@ function insertContentIntoContainer(options) {
         }
     }
     if (!options.html || !options.container) { return; } // safety
-
-    // innerHTML outside of DOM hierarchy to avoid drawing issues
-    var div = document.createElement("div");
-    div.innerHTML = options.html;
     
-    // copy elements so we can move them without the list changing
-    var children = [];
-    for (var i = 0; i < div.childNodes.length; i++) {
-        children.push(div.childNodes[i]);
-    }
+    // If there are no non-empty non-script nodes before scripts then IE8 will 
+    // remove all the scripts when innerHTML is used.  So temporarily add a 
+    // non-empty div to the beginning of the HTML.
+    var ie8HackId = '__insertContentIntoContainer_ie8Hack';
+    options.container.innerHTML = '<div id="'+ie8HackId+'" style="display:none;">&nbsp;</div>'+options.html;
     
-    // Manually appendChild elements so scripts get evaluated
-    for (var i = 0; i < children.length; i++) {
-        if (children[i].nodeName == "SCRIPT") {
-            // must clone script tags or they won't get executed
-            document.body.appendChild(children[i].cloneNode(true));
-            
-        } else if (children[i].nodeName == "STYLE") {
-            // clone styles in case some browsers treat them like scripts
-            document.getElementsByTagName("head")[0].appendChild(children[i].cloneNode(true));
-            
-        } else {
-            // don't clone anything else because browser may have already started 
-            // loading assets associated with this element (e.g. img src)
-            options.container.appendChild(children[i]);
+    var scripts = options.container.getElementsByTagName('script');
+    for (var i = 0; i < scripts.length; i++) {
+        var script = scripts[i];
+        
+        // Manually execute scripts
+        var src = (script.text || script.textContent || script.innerHTML || "");
+        if (src.length) {
+            try {
+                if (window.execScript) {
+                    window.execScript(src);
+                } else {
+                    (function(src) {
+                        window.eval.call(window, src);
+                    })(src);
+                }
+            } catch (e) {
+            }
+        } else if (script.src && script.src.length) {
+            // create new javascript include and add to head
+            // which is the only cross-browser way to ensure it executes
+            var copy = document.createElement("script");
+            if (script.type && script.type.length) {
+                copy.type = script.type;
+            }
+            copy.src = script.src;
+            document.getElementsByTagName("head")[0].appendChild(copy);
         }
     }
+    
+    // move styles to head tag
+    var styles = options.container.getElementsByTagName('style');
+    for (var i = 0; i < styles.length; i++) {
+        document.getElementsByTagName("head")[0].appendChild(styles[i]);
+    }
+    
+    // remove IE8 hack
+    var ie8Hack = document.getElementById(ie8HackId);
+    if (ie8Hack) {
+        ie8Hack.parentNode.removeChild(ie8Hack);
+    }
+    
+    onDOMChange();
 }
 
 function getCSSValue(element, key) {
     if (window.getComputedStyle) {
-        return document.defaultView.getComputedStyle(element, null).getPropertyValue(key);
+      return document.defaultView.getComputedStyle(element, null).getPropertyValue(key);
         
     } else if (element.currentStyle) {
         if (key == 'float') { 
@@ -569,17 +563,63 @@ function getCSSValue(element, key) {
                 });
             }
         }
-        return element.currentStyle[key] ? element.currentStyle[key] : null;
+        var style = element.currentStyle[key] ? element.currentStyle[key] : '';
+        
+        // Fix IE8 border width and margins so that parseFloat doesn't return NaN on them
+        var parts = [ 'Top', 'Left', 'Bottom', 'Right' ];
+        for (var i = 0; i < parts.length; i++) {
+            if (key == "border"+parts[i]+"Width" && element.currentStyle["border"+parts[i]+"Style"] == "none") {
+                style = "0px";
+                break;
+            }
+        }
+        for (var i = 0; i < parts.length; i++) {
+            if (key == "margin"+parts[i] && style == "auto") {
+                style = "0px";
+                break;
+            }
+        }
+        return style;
     }
     return '';
 }
 
+function setCSSValue(element, key, value) {
+    if (key == 'float') { 
+        key = 'styleFloat'; 
+    } else {
+        var re = /(\-([a-z]){1})/g; // hyphens to camel case
+        if (re.test(key)) {
+            key = key.replace(re, function () {
+                return arguments[2].toUpperCase();
+            });
+        }
+    }
+    
+    try {
+        element.style[key] = value; // IE will go kaboom here if the style is bad
+    } catch (e) {}
+}
+
+function getCSSValueNumber(element, key) {
+    var number = parseFloat(getCSSValue(element, key));
+    return isNaN(number) ? 0 : number;
+}
+
 function getCSSHeight(element) {
     return element.offsetHeight
-        - parseFloat(getCSSValue(element, 'border-top-width')) 
-        - parseFloat(getCSSValue(element, 'border-bottom-width'))
-        - parseFloat(getCSSValue(element, 'padding-top'))
-        - parseFloat(getCSSValue(element, 'padding-bottom'));
+        - getCSSValueNumber(element, 'border-top-width')
+        - getCSSValueNumber(element, 'border-bottom-width')
+        - getCSSValueNumber(element, 'padding-top')
+        - getCSSValueNumber(element, 'padding-bottom');
+}
+
+function getCSSWidth(element) {
+    return element.offsetWidth
+        - getCSSValueNumber(element, 'border-left-width') 
+        - getCSSValueNumber(element, 'border-right-width')
+        - getCSSValueNumber(element, 'padding-left')
+        - getCSSValueNumber(element, 'padding-right');
 }
 
 function _getStringForArgs(args) {
@@ -601,4 +641,155 @@ function redirectTo(page, args) {
 
 function redirectToModule(module, page, args) {
     window.location = "../" + module + "/" + page + _getStringForArgs(args);
+}
+
+/*
+	Developed by Robert Nyman, http://www.robertnyman.com
+	Code/licensing: http://code.google.com/p/getelementsbyclassname/
+	
+	Reversed element and tag arguments for convenience
+*/	
+var getElementsByClassName = function (className, elm, tag) {
+    if (document.getElementsByClassName) {
+        getElementsByClassName = function (className, elm, tag) {
+            elm = elm || document;
+            var elements = elm.getElementsByClassName(className),
+                nodeName = (tag)? new RegExp("\\b" + tag + "\\b", "i") : null,
+                returnElements = [],
+                current;
+            for (var i=0, il=elements.length; i<il; i+=1){
+                current = elements[i];
+                if (!nodeName || nodeName.test(current.nodeName)) {
+                    returnElements.push(current);
+                }
+            }
+            return returnElements;
+        };
+    }
+    else if (document.evaluate) {
+        getElementsByClassName = function (className, elm, tag) {
+          tag = tag || "*";
+          elm = elm || document;
+          var classes = className.split(" "),
+              classesToCheck = "",
+              xhtmlNamespace = "http://www.w3.org/1999/xhtml",
+              namespaceResolver = (document.documentElement.namespaceURI === xhtmlNamespace)? xhtmlNamespace : null,
+              returnElements = [],
+              elements,
+              node;
+          for (var j=0, jl=classes.length; j<jl; j+=1){
+              classesToCheck += "[contains(concat(' ', @class, ' '), ' " + classes[j] + " ')]";
+          }
+          try	{
+              elements = document.evaluate(".//" + tag + classesToCheck, elm, namespaceResolver, 0, null);
+          }
+          catch (e) {
+              elements = document.evaluate(".//" + tag + classesToCheck, elm, null, 0, null);
+          }
+          while ((node = elements.iterateNext())) {
+              returnElements.push(node);
+          }
+          return returnElements;
+        };
+    }
+    else {
+        getElementsByClassName = function (className, elm, tag) {
+            tag = tag || "*";
+            elm = elm || document;
+            var classes = className.split(" "),
+                classesToCheck = [],
+                elements = (tag === "*" && elm.all)? elm.all : elm.getElementsByTagName(tag),
+                current,
+                returnElements = [],
+                match;
+            for (var k=0, kl=classes.length; k<kl; k+=1){
+                classesToCheck.push(new RegExp("(^|\\s)" + classes[k] + "(\\s|$)"));
+            }
+            for (var l=0, ll=elements.length; l<ll; l+=1){
+                current = elements[l];
+                match = false;
+                for(var m=0, ml=classesToCheck.length; m<ml; m+=1){
+                    match = classesToCheck[m].test(current.className);
+                    if (!match) {
+                        break;
+                    }
+                }
+                if (match) {
+                    returnElements.push(current);
+                }
+            }
+            return returnElements;
+        };
+    }
+    return getElementsByClassName(className, elm, tag);
+};
+
+function getFirstElementByClassName(className, elem, tag) {
+    var elements = getElementsByClassName(className, elem, tag);
+    return elements.length ? elements[0] : null;
+}
+
+function setUserContext(context, container, url, ajax, success) {
+    if (!url) {
+        return;
+    }
+    
+    if (!ajax) {
+        if (url.charAt(0)=='/') {
+            url = URL_BASE + url.substr(1);
+        }
+
+        window.location = url;
+        return;
+    }
+    
+    if (!document.getElementById(container)) {
+        return;
+    }
+    
+    var opts = {
+     url: url,
+     container: document.getElementById(container),
+     loadMessage: false,
+     success: success
+    }
+    
+    var userData = getCookie(MODULE_NAV_COOKIE);
+    if (userData) {
+        if (!confirm('Changing the home screen layout will reset your customized module order preferences. Are you sure you wish to update the layout?')) {
+            return;
+        }
+        clearCookie(MODULE_NAV_COOKIE, COOKIE_PATH);
+    }
+
+    ajaxContentIntoContainer(opts);
+    scrollToTop();
+    return false;
+}
+
+function updateUserContextSelect(select, container) {
+    var option = select.options[select.selectedIndex];
+    var context = option.value;
+    var url = option.getAttribute('url');
+    var ajax = option.getAttribute('ajax');
+    setUserContext(context, container, url, ajax);
+}
+
+function updateUserContextLink(link, container) {
+    var li = link.parentNode;
+    var list = li.parentNode;
+    var context = li.getAttribute('context');
+    var url = li.getAttribute('url');
+    var ajax = li.getAttribute('ajax');
+    var result = setUserContext(context, container, url, ajax);
+    if (typeof result == 'undefined') {
+        return;
+    }
+    var lis = list.children;
+    for (var i=0; i<lis.length; i++) {
+        lis[i].className = '';
+        if (context == lis[i].getAttribute('context')) {
+            lis[i].className = 'contextSelected';
+        }
+    }
 }

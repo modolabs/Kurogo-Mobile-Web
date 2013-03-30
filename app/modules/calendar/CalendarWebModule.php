@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -27,9 +27,7 @@ class CalendarWebModule extends WebModule {
   protected $id = 'calendar';
   protected $feeds = array();
   protected $timezone;
-  protected $legacyController = false;
   protected static $defaultModel = 'CalendarDataModel';
-  protected static $defaultController = 'CalendarDataController'; // legacy
 
   protected function getTitleForSearchOptions($intervalType, $offset, $forward=true) {
     if ($offset < 0) {
@@ -136,7 +134,7 @@ class CalendarWebModule extends WebModule {
 
       case 'url':
         $valueForType = str_replace("http://http://", "http://", $value);
-        if (strlen($valueForType) && !preg_match('/^http\:\/\//', $valueForType)) {
+        if (strlen($valueForType) && !preg_match('/^https?\:\/\//', $valueForType)) {
           $valueForType = 'http://'.$valueForType;
         }
         break;
@@ -164,7 +162,7 @@ class CalendarWebModule extends WebModule {
     switch ($type) {
       case 'url':
         $urlForType = str_replace("http://http://", "http://", $value);
-        if (strlen($urlForType) && !preg_match('/^http\:\/\//', $urlForType)) {
+        if (strlen($urlForType) && !preg_match('/^https?\:\/\//', $urlForType)) {
           $urlForType = 'http://'.$urlForType;
         }
         break;
@@ -252,15 +250,7 @@ class CalendarWebModule extends WebModule {
             $feed->setEndDate($options['end']);
         }
         
-        if ($this->legacyController) {
-            if ($searchTerms) {
-                $feed->addFilter('search', $searchTerms);
-            }
-    
-            return $feed->items();
-        } else {
-            return $feed->search($searchTerms);
-        }
+        return $feed->search($searchTerms);
     }
 
     public function linkForCategory($category, $data=null) {
@@ -321,8 +311,11 @@ class CalendarWebModule extends WebModule {
         foreach (array('user','resource','static') as $type) {
             $typeFeeds = $this->getFeeds($type);
             foreach ($typeFeeds as $feed=>$feedData) {
-                $totalFeeds++;
-                $feeds[$type][$type . '|' . $feed] = $feedData['TITLE'];
+                $enableSearch = Kurogo::arrayVal($feedData,'ENABLE_SEARCH', true);
+                if($enableSearch) {
+                    $totalFeeds++;
+                    $feeds[$type][$type . '|' . $feed] = $feedData['TITLE'];
+                }
             }
         }
         return $feeds;
@@ -402,18 +395,8 @@ class CalendarWebModule extends WebModule {
         if (isset($feeds[$index])) {
             $feedData = $feeds[$index];
 
-            try {
-                if (isset($feedData['CONTROLLER_CLASS'])) {
-                    $modelClass = $feedData['CONTROLLER_CLASS'];
-                } else {
-                    $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
-                }
-                
-                $controller = CalendarDataModel::factory($modelClass, $feedData);
-            } catch (KurogoException $e) { 
-                $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-                $this->legacyController = true;
-            }
+            $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            $controller = CalendarDataModel::factory($modelClass, $feedData);
 
             return $controller;
         } else {
@@ -570,7 +553,7 @@ class CalendarWebModule extends WebModule {
             $this->assign('categoryHeading', $this->getLocalizedString('CATEGORY_HEADING'));
         }
 
-        $this->loadPageConfigFile('index','calendarPages');
+        $this->loadPageConfigArea('index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
         $this->assign('dateFormat', $this->getLocalizedString("LONG_DATE_FORMAT"));
         $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
@@ -664,21 +647,16 @@ class CalendarWebModule extends WebModule {
         $this->setLogData($type . ':' . $calendar, $title);
 
         //paging settings
-        $startEvent = $this->getArg('start', 0);
-        $limit    = $this->getArg('limit', 20);
+        $startEvent = $this->getArg('start', 0, FILTER_VALIDATE_INT);
+        $limit    = $this->getArg('limit', 20, FILTER_VALIDATE_INT);
         
         $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $start->setTime(0,0,0);
 
         $feed->setStartDate($start);
-        
-        if ($this->legacyController) {
-            $iCalEvents = $feed->items($startEvent, $limit);
-        } else {
-        	$feed->setStart($startEvent);
-            $feed->setLimit($limit);
-            $iCalEvents = $feed->items();
-        } 
+        $feed->setStart($startEvent);
+        $feed->setLimit($limit);
+        $iCalEvents = $feed->items();
 
         $totalItems = $feed->getTotalItems();
         $previousEventsURL = null;
@@ -910,7 +888,13 @@ class CalendarWebModule extends WebModule {
         $defaultStartDay   = $this->getOptionalModuleVar(strtoupper($calendar).'_CALENDAR_START_DAY', 1);
 
         $month = intval($this->getArg('month', $defaultStartMonth));
+        if (!Validator::isValidMonth($month)) {
+            $month = $defaultStartMonth;
+        }
         $day   = intval($this->getArg('day', $defaultStartDay));
+        if (!Validator::isValidDay($day, $month)) {
+            $day = $defaultStartDay;
+        }
 
         // Figure out which year we are currently in based on year start month and day:
         $currentYear = intval(date('Y'));
@@ -940,9 +924,9 @@ class CalendarWebModule extends WebModule {
           );
         }
 
-        $current =  $year   .'&nbsp;-&nbsp;'.($year+1);
-        $next    = ($year+1).'&nbsp;-&nbsp;'.($year+2);
-        $prev    = ($year-1).'&nbsp;-&nbsp;'. $year;
+        $current =  $year   .' - '.($year+1);
+        $next    = ($year+1).' - '.($year+2);
+        $prev    = ($year-1).' - '. $year;
 
         // How many years into the future and past to page:
         $maxNextYears = $this->getOptionalModuleVar(strtoupper($calendar).'_CALENDAR_MAX_NEXT_YEARS', 1);

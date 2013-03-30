@@ -18,10 +18,11 @@ a:hover {
 }
 #pagewrap {
 	position: relative;
-	width: 960px;
+	min-width: 960px;
 	margin: 0 auto;
 	text-align: left;
 }
+
 header {
 	padding: 15px 0 30px 0;
 	float: left;
@@ -176,6 +177,11 @@ input[type="text"], input[type="email"], input[type="url"], input[type="password
 	width: 440px;
 	color: #333;
 }
+
+#newModuleID {
+    width: auto;
+}
+
 input#adminCancel {
 	background-color: #a22;
 	float: right;

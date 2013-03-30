@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -31,15 +31,15 @@ class LinksAPIModule extends APIModule {
 
         if (isset($this->linkGroups[$group])) {
             if (!isset($this->linkGroups[$group]['links'])) {
-                $this->linkGroups[$group]['links'] = $this->getModuleSections('links-' . $group);
+                $this->linkGroups[$group]['links'] = $this->getLinkData($group);
             }
 
             if (!isset($this->linkGroups[$group]['description'])) {
-                $this->linkGroups[$group]['description'] = $this->getOptionalModuleVar('description','', 'strings');
+                $this->linkGroups[$group]['description'] = $this->getOptionalModuleVar('description', '', 'strings');
             }
 
             if (!isset($this->linkGroups[$group]['description_footer'])) {
-                $this->linkGroups[$group]['description_footer'] = $this->getModuleVar('description_footer','', 'strings');
+                $this->linkGroups[$group]['description_footer'] = $this->getModuleVar('description_footer', '', 'strings');
             }
 
             return $this->linkGroups[$group];
@@ -48,16 +48,19 @@ class LinksAPIModule extends APIModule {
         }
     }
 
-    public function getLinks() {
-        return $this->getModuleSections('links');
+    public function getLinks($group=null) {
+        if (isset($group) && $group) {
+            return $this->getModuleSections('links-' . $group);
+        } else {
+            return $this->getModuleSections('links');
+        }
     }
 
-    protected function getLinkData() {
-        $links = $this->getLinks();
+    protected function getLinkData($group=null) {
+        $links = $this->getLinks($group);
 
         foreach ($links as &$link) {
             if (isset($link['icon']) && strlen($link['icon'])) {
-                
                 $link['iconURL'] = FULL_URL_BASE . "modules/{$this->configModule}/images/{$link['icon']}.png";
             }
 
@@ -72,8 +75,7 @@ class LinksAPIModule extends APIModule {
         return $links;
     }
 
-
-       public function initializeForCommand() {
+    public function initializeForCommand() {
 
         switch ($this->command) {
             case 'group':

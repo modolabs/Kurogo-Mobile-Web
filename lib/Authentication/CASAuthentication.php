@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -79,6 +79,9 @@ class CASAuthentication
         else
             require_once($args['CAS_PHPCAS_PATH'].'/CAS.php');
     
+        if (!empty($args['CAS_DEBUG_LOG']))
+            phpCAS::setDebug($args['CAS_DEBUG_LOG']);
+        
         if (empty($args['CAS_PROTOCOL']))
             throw new KurogoConfigurationException('CAS_PROTOCOL value not set for ' . $this->AuthorityTitle);
     
@@ -96,8 +99,29 @@ class CASAuthentication
         } else {
             phpCAS::proxy($args['CAS_PROTOCOL'], $args['CAS_HOST'], intval($args['CAS_PORT']), $args['CAS_PATH'], false);
             
-            if (!empty($args['CAS_PROXY_TICKET_PATH']))
-                phpCAS::setPGTStorageFile('', $args['CAS_PROXY_TICKET_PATH']);
+            if (!empty($args['CAS_PROXY_TICKET_PATH']) && !empty($args['CAS_PROXY_TICKET_DB_DSN']))
+            	throw new KurogoConfigurationException('Only one of CAS_PROXY_TICKET_PATH or CAS_PROXY_TICKET_DB_DSN may be set for ' . $this->AuthorityTitle);
+             
+            if (!empty($args['CAS_PROXY_TICKET_PATH'])) {
+                if (version_compare(PHPCAS_VERSION, '1.3', '>=')) {
+                    phpCAS::setPGTStorageFile($args['CAS_PROXY_TICKET_PATH']);
+                } else {
+                    phpCAS::setPGTStorageFile('', $args['CAS_PROXY_TICKET_PATH']);
+                }
+            }
+            
+            if (!empty($args['CAS_PROXY_TICKET_DB_DSN'])) {
+                $user = $pass = $table = $driver_opts = '';
+                if (!empty($args['CAS_PROXY_TICKET_DB_USER']))
+                    $user = $args['CAS_PROXY_TICKET_DB_USER'];
+                if (!empty($args['CAS_PROXY_TICKET_DB_PASS']))
+                    $pass = $args['CAS_PROXY_TICKET_DB_PASS'];
+                if (!empty($args['CAS_PROXY_TICKET_DB_TABLE']))
+                    $table = $args['CAS_PROXY_TICKET_DB_TABLE'];
+                if (!empty($args['CAS_PROXY_TICKET_DB_DRIVER_OPTS']))
+                    $driver_opts = $args['CAS_PROXY_TICKET_DB_DRIVER_OPTS'];
+                phpCAS::setPGTStorageDb($args['CAS_PROXY_TICKET_DB_DSN'], $user, $pass, $table, $driver_opts);
+            }
             
             if (!empty($args['CAS_PROXY_FIXED_CALLBACK_URL']))
                 phpCAS::setFixedCallbackURL($args['CAS_PROXY_FIXED_CALLBACK_URL']);

@@ -2,13 +2,13 @@ body.fullscreen #navbar {
 	margin-bottom: 1px;
 }
 
-#toolbar {
-	  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.2)), to(rgba(0,0,0,0.1)));
-}
-
 #bookmarkContainer {
 	margin-top: -2px;
 	margin-right: -6px;
+}
+
+#toolbar .inputcombo {
+  overflow-x: visible;
 }
 
 #tabs li a {
@@ -22,13 +22,22 @@ body.fullscreen #navbar {
 	min-height: none;
 	padding-bottom: 2em;
 }
+.tabbody .nav {
+	margin: 0;
+	border: 1px solid @@@focal_border_color@@@;
+}
 
-#photoTab {
+.photo-tabbody {
 	text-align: center;
 }
-#mapTab {
+.map-tabbody {
 	padding-bottom: 0;
 	height: 100%;
+}
+
+.mapimage {
+  min-height: 500px;
+  position: relative;
 }
 
 .fullmap {
@@ -49,8 +58,6 @@ body.fullscreen #navbar {
 
 .tabbody #mapscrollers {
 	height: 294px;
-	top: 8px;
-	left: 8px;
 }
 
 #mapzoom {
@@ -70,7 +77,7 @@ body.fullscreen #navbar {
 
 /* copying the fullscreen style for now */
 
-body.portrait #mapimage, body.landscape #mapimage {
+body.portrait .mapimage, body.landscape .mapimage {
 	top: 0;
 	right: 0;
 	bottom: 0;

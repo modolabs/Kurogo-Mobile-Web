@@ -4,8 +4,8 @@
         "descriptionKey":"ADMIN_SITE_SETUP_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "SITE_NAME":{"labelKey":"ADMIN_SITE_SETUP_SITE_NAME_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_SETUP_SITE_NAME_DESCRIPTION","section":"strings"},
-            "ORGANIZATION_NAME":{"labelKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_TITLE","type":"text","config":"strings", "descriptionKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_DESCRIPTION","section":"strings"},
+            "SITE_NAME":{"labelKey":"ADMIN_SITE_SETUP_SITE_NAME_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SETUP_SITE_NAME_DESCRIPTION","section":"strings"},
+            "ORGANIZATION_NAME":{"labelKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_TITLE","type":"text","config":"site", "descriptionKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_DESCRIPTION","section":"strings"},
             "LANGUAGES":{"labelKey":"ADMIN_SITE_SETUP_LANGUAGE_TITLE","type":"select","config":"site","optionsMethod":["Kurogo","getAvailableLanguages"],"descriptionKey":"ADMIN_SITE_SETUP_LANGUAGE_DESCRIPTION","section":"site settings","placeholder":"en_US","optionsFirst":"-- Choose --"},
             "LOCAL_TIMEZONE":{"labelKey":"ADMIN_SITE_SETUP_LOCAL_TIMEZONE_TITLE","type":"select","config":"site","optionsMethod":["Calendar","getTimeZones"],"descriptionKey":"ADMIN_SITE_SETUP_LOCAL_TIMEZONE_DESCRIPTION","section":"site settings"},
             "LOCAL_AREA_CODE":{"labelKey":"ADMIN_SITE_SETUP_LOCAL_AREA_CODE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SETUP_LOCAL_AREA_CODE_DESCRIPTION","section":"site settings"},
@@ -17,10 +17,7 @@
         "descriptionKey":"ADMIN_SITE_MODULES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "DEFAULT":{"labelKey":"ADMIN_SITE_MODULES_DEFAULT_TITLE","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","descriptionKey":"ADMIN_SITE_MODULES_DEFAULT_DESCRIPTION","section":"urls"},
-            "DEFAULT-COMPLIANT-COMPUTER":{"labelKey":"ADMIN_SITE_MODULES_DEFAULT_COMPUTER_TITLE","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","descriptionKey":"ADMIN_SITE_MODULES_DEFAULT_COMPUTER_DESCRIPTION","section":"urls"},
-            "DYNAMIC_MODULE_NAV_DATA":{"labelKey":"ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_DESCRIPTION","section":"modules"},
-            "CREATE_DEFAULT_CONFIG":{"labelKey":"ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_DESCRIPTION","section":"modules"}
+            "DEFAULT":{"labelKey":"ADMIN_SITE_MODULES_DEFAULT_TITLE","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","descriptionKey":"ADMIN_SITE_MODULES_DEFAULT_DESCRIPTION","section":"urls"}
         }
     },
     "security":{
@@ -38,7 +35,6 @@
         "descriptionKey":"ADMIN_SITE_THEME_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "ACTIVE_THEME":{"labelKey":"ADMIN_SITE_THEME_ACTIVE_TITLE","type":"select","config":"site","optionsMethod":["WebModule","getAllThemes"],"descriptionKey":"ADMIN_SITE_THEME_ACTIVE_DESCRIPTION","section":"themes"},
             "TABLET_ENABLED":{"labelKey":"ADMIN_SITE_THEME_TABLET_ENABLED_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_THEME_TABLET_ENABLED_DESCRIPTION","section":"themes"}
         }
     },
@@ -47,7 +43,7 @@
         "descriptionKey":"ADMIN_SITE_DETECTION_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MOBI_SERVICE_VERSION":{"labelKey":"ADMIN_SITE_DETECTION_VERSION_TITLE","type":"select","config":"site","options":{"1":"1","2":"2"},"descriptionKey":"ADMIN_SITE_DETECTION_VERSION_DESCRIPTION","section":"device_detection"},
+            "MOBI_SERVICE_VERSION":{"labelKey":"ADMIN_SITE_DETECTION_VERSION_TITLE","type":"select","config":"site","options":{"1":"1","2":"2","3":"3"},"descriptionKey":"ADMIN_SITE_DETECTION_VERSION_DESCRIPTION","section":"device_detection"},
             "MOBI_SERVICE_USE_EXTERNAL":{"labelKey":"ADMIN_SITE_DETECTION_EXTERNAL_TITLE","type":"select","optionsMethod":["DeviceClassifier","getDeviceDetectionTypes"],"config":"site","descriptionKey":"ADMIN_SITE_DETECTION_EXTERNAL_DESCRIPTION","section":"device_detection"},
             "MOBI_SERVICE_FILE":{"labelKey":"ADMIN_SITE_DETECTION_FILE_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_DETECTION_FILE_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","0"]},
             "MOBI_SERVICE_URL":{"labelKey":"ADMIN_SITE_DETECTION_URL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DETECTION_URL_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]},
@@ -59,7 +55,6 @@
         "descriptionKey":"ADMIN_SITE_ERROR_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "KUROGO_LOG_FILE":{"labelKey":"ADMIN_SITE_ERROR_LOGFILE_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_ERROR_LOGFILE_DESCRIPTION","section":"log_files"},
             "DEFAULT_LOGGING_LEVEL":{"labelKey":"ADMIN_SITE_ERROR_LOGGING_LEVEL_TITLE","type":"select","optionsMethod":["KurogoLog","getPriorities"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_LOGGING_LEVEL_DESCRIPTION","section":"error_handling_and_debugging"},
             "DISPLAY_ERRORS":{"labelKey":"ADMIN_SITE_ERROR_DISPLAY_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DISPLAY_DESCRIPTION","section":"error_handling_and_debugging"},
             "DEVICE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DEVICE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DEVICE_DESCRIPTION","section":"error_handling_and_debugging"},
@@ -90,7 +85,8 @@
         "fields":{
             "MODULE_ORDER_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_MODULE_ORDER_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_MODULE_ORDER_DESCRIPTION","section":"cookies"},
             "LAYOUT_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_LAYOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_LAYOUT_DESCRIPTION","section":"cookies"},
-            "BOOKMARK_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_BOOKMARK_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_BOOKMARK_DESCRIPTION","section":"cookies"}
+            "BOOKMARK_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_BOOKMARK_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_BOOKMARK_DESCRIPTION","section":"cookies"},
+            "DEVICE_DETECTION_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_DEVICE_DETECTION_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_DEVICE_DETECTION_DESCRIPTION","section":"cookies"}
         }
     },
     "authentication": {
@@ -213,15 +209,7 @@
         "descriptionKey":"ADMIN_SITE_CACHE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MINIFY_CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_DESCRIPTION","section":"cache"},
-            "CACHE_CLASS":{"labelKey":"ADMIN_SITE_CACHE_CLASS_TITLE","type":"select","optionsMethod":["Kurogo","getCacheClasses"],"optionsFirst":"None","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_CLASS_DESCRIPTION","section":"cache"},
-            "CACHE_TTL":{"labelKey":"ADMIN_SITE_CACHE_TTL_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_TTL_DESCRIPTION","section":"cache","placeholder":60},
-            "CACHE_HOST":{"labelKey":"ADMIN_SITE_CACHE_HOST_TITLE","type":"text","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_HOST_DESCRIPTION","section":"cache","placeholder":"localhost","showIf":["CACHE_CLASS","MemcacheCache"]},
-            "CACHE_PORT":{"labelKey":"ADMIN_SITE_CACHE_PORT_TITLE","type":"text","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_PORT_DESCRIPTION","section":"cache","placeholder":"11211","showIf":["CACHE_CLASS","MemcacheCache"]},
-            "CACHE_PERSISTENT":{"labelKey":"ADMIN_SITE_CACHE_PERSISTENT_TITLE","type":"checkbox","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_PERSISTENT_DESCRIPTION","section":"cache","placeholder":"localhost","showIf":["CACHE_CLASS","MemcacheCache"]},
-            "CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_CACHE_TIMEOUT_TITLE","type":"text","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_TIMEOUT_DESCRIPTION","section":"cache","placeholder":"1","showIf":["CACHE_CLASS","MemcacheCache"]},
-            "CACHE_COMPRESSED":{"labelKey":"ADMIN_SITE_CACHE_COMPRESSED_TITLE","type":"checkbox","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_COMPRESSED_DESCRIPTION","section":"cache","placeholder":"1","showIf":["CACHE_CLASS","MemcacheCache"]},
-            "CACHE_DEBUG":{"labelKey":"ADMIN_SITE_CACHE_DEBUG_TITLE","type":"checkbox","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_DEBUG_DESCRIPTION","section":"cache","placeholder":"0","showIf":["CACHE_CLASS","MemcacheCache"]}
+            "MINIFY_CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_DESCRIPTION","section":"cache"}
         }
     },
     
@@ -251,9 +239,9 @@
         "descriptionKey":"ADMIN_SITE_STRINGS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "COPYRIGHT_LINK":{"labelKey":"ADMIN_SITE_STRINGS_COPYRIGHT_LINK_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_COPYRIGHT_LINK_DESCRIPTION","section":"strings"},
-            "COPYRIGHT_NOTICE":{"labelKey":"ADMIN_SITE_STRINGS_COPYRIGHT_NOTICE_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_COPYRIGHT_NOTICE_DESCRIPTION","section":"strings"},
-            "FEEDBACK_EMAIL":{"labelKey":"ADMIN_SITE_STRINGS_FEEDBACK_EMAIL_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_FEEDBACK_EMAIL_DESCRIPTION","section":"strings"}
+            "COPYRIGHT_LINK":{"labelKey":"ADMIN_SITE_STRINGS_COPYRIGHT_LINK_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_STRINGS_COPYRIGHT_LINK_DESCRIPTION","section":"strings"},
+            "COPYRIGHT_NOTICE":{"labelKey":"ADMIN_SITE_STRINGS_COPYRIGHT_NOTICE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_STRINGS_COPYRIGHT_NOTICE_DESCRIPTION","section":"strings"},
+            "FEEDBACK_EMAIL":{"labelKey":"ADMIN_SITE_STRINGS_FEEDBACK_EMAIL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_STRINGS_FEEDBACK_EMAIL_DESCRIPTION","section":"strings"}
         }
     },
     "maintenance":{

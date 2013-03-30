@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -14,6 +14,7 @@ class KurogoError
 	public $code;
 	public $title;
 	public $message;
+	public $data;
 	
 	public function __toString() {
 	    return $this->message;
@@ -80,6 +81,14 @@ class KurogoError
      */
     public function getTitle() {
         return $this->title;
+    }
+    
+    public function setData($data) {
+    	$this->data = $data;
+    }
+
+    public function getData() {
+    	return $this->data;
     }
     
     public static function errorFromException(Exception $exception) {

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -32,7 +32,6 @@ class KurogoStats {
 	static $pagetypes = Array(
         'tablet'=> 'Tablet',
         'compliant' => 'Compliant',
-        'touch' => 'Touch',
         'basic' => 'Basic',
     );
 	
@@ -392,56 +391,69 @@ class KurogoStats {
      * export the stats data to the database
      */
     public static function exportStatsData($startTimestamp = null) {
-        $statsLogFile = Kurogo::getOptionalSiteVar('KUROGO_STATS_LOG_FILE', LOG_DIR . "/kurogo_stats_log_v1");
+
+        $site = Kurogo::sharedInstance()->getSite();
+        $baseLogDir = $site->getBaseLogDir();
+        $logDir = $site->getLogDir();
+        $statsLogFileName = Kurogo::getOptionalSiteVar('KUROGO_STATS_LOG_FILENAME', 'kurogo_stats_log_v1');
+
+        //if the base dir is different then the log dir then get all files with the log file name
+        if ($baseLogDir != $logDir) {
+            $logFiles = glob($baseLogDir . DIRECTORY_SEPARATOR . "*".  DIRECTORY_SEPARATOR . $statsLogFileName);
+        } else {
+            $logFiles = array($logDir . DIRECTORY_SEPARATOR . $statsLogFileName);
+        }
         
-        if (!file_exists($statsLogFile)) {
-            Kurogo::log(LOG_DEBUG, "the stats log file not exists", 'kurogostats');
-            return false;
-        }
-        /* need an condition for export the stats data */
-        $today = date('Ymd', time());
-
-        //copy the log file
-		$tempLogFolder = Kurogo::tempDirectory();
-        $statsLogFileCopy = rtrim($tempLogFolder,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . "stats_log_copy.$today";
-
-        if (!is_writable($tempLogFolder)) {
-            throw new Exception("Unable to write to Temporary Directory $tempLogFolder");
-        }
-
-        if (!rename($statsLogFile, $statsLogFileCopy)) {
-            Kurogo::log(LOG_DEBUG, "failed to rename $statsLogFile to $statsLogFileCopy", 'kurogostats');
-            return; 
-        }
-
-        $handle = fopen($statsLogFileCopy, 'r');
-        $startDate = '';
-        while (!feof($handle)) {
-            $line = trim(fgets($handle, 1024));
-            $value = explode("\t", $line);
-            if ((count($value) != count(self::validFields())) || !isset($value[0]) || intval($value[0]) <= 0) {
+        //cycle through all log files
+        foreach ($logFiles as $statsLogFile) {
+            if (!file_exists($statsLogFile)) {
                 continue;
             }
+            
+            $today = date('Ymd', time());
 
-            if(!$startDate){
-                $startTimestamp = $value[0];
-                $startDate = date('Y-m-d', $startTimestamp);
-                // If startTimestamp is during today
-                // Set startTimestamp to the beginning of today
-                if($startDate == date('Y-m-d')){
-                    list($year, $month, $day) = explode('-', $startDate);
-                    $startTimestamp = mktime(0, 0, 0, $month, $day, $year);
-                }
+            //copy the log file
+            $tempLogFolder = Kurogo::tempDirectory();
+            $statsLogFileCopy = rtrim($tempLogFolder,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . "stats_log_copy.$today";
+
+            if (!is_writable($tempLogFolder)) {
+                throw new Exception("Unable to write to Temporary Directory $tempLogFolder");
             }
 
-            //insert the raw data to the database
-            $logData = array_combine(self::validFields(), $value);
-            self::insertStatsToMainTable($logData);
-        }
-        fclose($handle);
-        unlink($statsLogFileCopy);
+            if (!rename($statsLogFile, $statsLogFileCopy)) {
+                Kurogo::log(LOG_DEBUG, "Failed to rename $statsLogFile to $statsLogFileCopy", 'kurogostats');
+                return; 
+            }
+
+            $handle = fopen($statsLogFileCopy, 'r');
+            $startDate = '';
+            while (!feof($handle)) {
+                $line = trim(fgets($handle, 1024));
+                $value = explode("\t", $line);
+                if ((count($value) != count(self::validFields())) || !isset($value[0]) || intval($value[0]) <= 0) {
+                    continue;
+                }
+
+                if(!$startDate){
+                    $startTimestamp = $value[0];
+                    $startDate = date('Y-m-d', $startTimestamp);
+                    // If startTimestamp is during today
+                    // Set startTimestamp to the beginning of today
+                    if($startDate == date('Y-m-d')){
+                        list($year, $month, $day) = explode('-', $startDate);
+                        $startTimestamp = mktime(0, 0, 0, $month, $day, $year);
+                    }
+                }
+
+                //insert the raw data to the database
+                $logData = array_combine(self::validFields(), $value);
+                self::insertStatsToMainTable($logData);
+            }
+            fclose($handle);
+            unlink($statsLogFileCopy);
         
-        self::updateSummaryFromShards($startTimestamp);
+            self::updateSummaryFromShards($startTimestamp);
+        }
     }
 
     public static function updateSummaryFromShards($startTimestamp){
@@ -679,11 +691,8 @@ class KurogoStats {
             $user = false;
         }
 
-        $statsLogFile = Kurogo::getOptionalSiteVar('KUROGO_STATS_LOG_FILE', LOG_DIR . "/kurogo_stats_log_v1");
-        if (empty($statsLogFile)) {
-            //Kurogo::log(LOG_DEBUG, "Stats log file not configured for statistics", 'stats');
-            throw new KurogoConfigurationException("Stats log file not configured for statistics. To disable stats, set STATS_ENABLED=0 in site.ini");
-        }
+        $statsLogFilename = Kurogo::getOptionalSiteVar('KUROGO_STATS_LOG_FILENAME', "kurogo_stats_log_v1");
+        $statsLogFile = LOG_DIR . DIRECTORY_SEPARATOR . $statsLogFilename;
         
         $current = time();
         $logData = array(
@@ -730,7 +739,7 @@ class KurogoStats {
                 referredSite bool,
                 referredModule bool,
                 userAgent varchar(256),
-                ip varchar(16),
+                ip varchar(39),
                 user varchar(64),
                 authority varchar(32),
                 visitID char(32),
@@ -765,7 +774,7 @@ class KurogoStats {
                 referredSite bool,
                 referredModule bool,
                 userAgent varchar(256),
-                ip varchar(16),
+                ip varchar(39),
                 user varchar(64),
                 authority varchar(32),
                 visitID char(32),
@@ -1177,14 +1186,17 @@ class KurogoStats {
         if ($file) {
             $dir = dirname($file);
             if (!file_exists($dir)) {
-                if (!mkdir($dir, 0755, true)) {
+                if (!@mkdir($dir, 0755, true)) {
                     throw new KurogoConfigurationException("could not create ".$dir);
                     return false;
                 }
             }
-            $handle = fopen($file, 'a+');
-            fwrite($handle, $data);
-            fclose($handle);
+            if ($handle = @fopen($file, 'a+')) {
+                fwrite($handle, $data);
+                fclose($handle);
+            } else {
+                Kurogo::log(LOG_ALERT, "Unable to write to $file", 'kurogostats');
+            }
         }
     }
 }

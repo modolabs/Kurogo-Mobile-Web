@@ -1,0 +1,39 @@
+.portlet-module-social .pane-stories .source-info {
+    margin-top: 10px;
+}
+.portlet-module-social .pane-stories .source-info img,
+.portlet-module-social .pane-stories .source-info .author-created
+{
+  float: left;
+}
+
+.portlet-module-social .pane-stories .source-info .author-created
+{
+    padding: 4px 0 4px 6px;
+}
+
+.portlet-module-social .pane-stories .source-info .author-created .author,
+.portlet-module-social .pane-stories .source-info .author-created .post-date
+{
+    display: block;
+    padding: 2px;
+}
+
+.portlet-module-social .pane-stories .twitter .source-info .post-date
+{
+    background-image: url('common/images/button-twitter-24.png');
+}
+.portlet-module-social .pane-stories .facebook .source-info .post-date
+{
+    background-image: url('common/images/button-facebook-24.png');
+}
+.portlet-module-social .pane-stories .twitter .source-info .post-date,
+.portlet-module-social .pane-stories .facebook .source-info .post-date
+{
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    background-position: left;
+    display: inline-block;
+
+}

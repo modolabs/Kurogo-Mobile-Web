@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -9,7 +9,7 @@
  *
  */
 
-class GoogleOAuthProvider extends OAuthProvider
+class GoogleOAuthProvider extends KurogoOAuthProvider
 {
     protected $scope = array();
     protected $realm;
@@ -41,7 +41,7 @@ class GoogleOAuthProvider extends OAuthProvider
             
                 if ($ns = $this->getOpenIDNamespace('http://specs.openid.net/extensions/oauth/1.0', $_REQUEST)) {
                     if ($request_token = $this->getOpenIDValue('request_token', $ns, $_REQUEST)) {
-                        $this->setToken(OAuthProvider::TOKEN_TYPE_REQUEST, $request_token);
+                        $this->setToken(KurogoOAuthProvider::TOKEN_TYPE_REQUEST, $request_token);
                         if (!$this->getAccessToken($options)) {
                             throw new KurogoDataServerException("Error getting OAuth Access token");
                         }

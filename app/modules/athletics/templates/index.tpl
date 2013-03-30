@@ -1,13 +1,11 @@
 {include file="findInclude:common/templates/header.tpl"}
 
 {$tabBodies = array()}
-{if $topNews}
-  {capture name="topnewsTab" assign="topnewsTab"}
-    {include file="findInclude:common/templates/search.tpl"}
-     
-    {include file="findInclude:modules/athletics/templates/stories.tpl" stories=$topNews}  
+{if $latestSubTabLinks}
+  {capture name="latestTab" assign="latestTab"}
+    {include file="findInclude:modules/athletics/templates/index-latest.tpl"}
   {/capture}
-  {$tabBodies['topnews'] = $topnewsTab}
+  {$tabBodies['topnews'] = $latestTab}
 {/if}
 
 {if $menSports}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -18,31 +18,13 @@
 function paneStories (elementID) {
     this.element = document.getElementById(elementID);
     
-    // find the elements in the pane DOM structure
-    // currently not using getElementsByClassName for IE support
-    for (var i = 0; i < this.element.childNodes.length; i++) {
-        var elementChild = this.element.childNodes[i];
-        
-        if (hasClass(elementChild, 'pane-stories')) {
-            this.stories = elementChild.childNodes;
-            
-        } else if (hasClass(elementChild, 'pane-stories-pager')) {
-            this.pager = elementChild;
-            
-            for (var j = 0; j < this.pager.childNodes.length; j++) {
-                var pagerChild = this.pager.childNodes[j];
-                
-                if (hasClass(pagerChild, 'pane-stories-pager-dots')) {
-                    this.dots = pagerChild.childNodes;
-                    
-                } else if (hasClass(pagerChild, 'pane-stories-pager-prev')) {
-                    this.prev = pagerChild;
-                    
-                } else if (hasClass(pagerChild, 'pane-stories-pager-next')) {
-                    this.next = pagerChild;
-                }
-            }
-        }
+    this.stories = getElementsByClassName('pane-story', this.element);
+    
+    this.pager = getFirstElementByClassName('pane-stories-pager', this.element);
+    if (this.pager) {
+        this.dots = getElementsByClassName('pane-stories-pager-dot', this.pager);
+        this.prev = getFirstElementByClassName('pane-stories-pager-prev', this.pager);
+        this.next = getFirstElementByClassName('pane-stories-pager-next', this.pager);
     }
     
     // set caller options
@@ -64,26 +46,11 @@ paneStories.prototype = {
     options: {
     },
 	
-	resizeHandler: function () {
-        // set the size on the stories
-        if (this.stories.length) {
-            var storyClipHeight = getCSSHeight(this.element)
-                - this.pager.offsetHeight
-                - parseFloat(getCSSValue(this.stories[0], 'border-top-width')) 
-                - parseFloat(getCSSValue(this.stories[0], 'border-bottom-width'))
-                - parseFloat(getCSSValue(this.stories[0], 'padding-top'))
-                - parseFloat(getCSSValue(this.stories[0], 'padding-bottom'))
-                - parseFloat(getCSSValue(this.stories[0], 'margin-top'))
-                - parseFloat(getCSSValue(this.stories[0], 'margin-bottom'));
-              
-            for (var i = 0; i < this.stories.length; i++) {
-                this.stories[i].style.height = storyClipHeight+'px';
-            }
-        }
-        
+	  resizeHandler: function () {
         if (!this.ellipsizer) {
+            var elements = getElementsByClassName('ellipsis', this.element);
             this.ellipsizer = new ellipsizer({refreshOnResize: false});
-            this.ellipsizer.addElements(this.stories);
+            this.ellipsizer.addElements(elements);
         } else {
             var that = this;
             setTimeout(function () {

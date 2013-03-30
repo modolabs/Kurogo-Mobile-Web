@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -11,8 +11,6 @@
 
 abstract class StaticMapImageController extends MapImageController
 {
-    protected $bbox;
-
     protected $imageFormat = 'png';
     protected $supportedImageFormats = array('png', 'jpg');
 
@@ -25,14 +23,14 @@ abstract class StaticMapImageController extends MapImageController
     public function getJavascriptControlOptions() {
     }
 
-    public function getHorizontalRange()
-    {
-        return $this->bbox['xmax'] - $this->bbox['xmin'];
+    public function getLongitudeRange() {
+        // at zoom level 0 the whole earth is shown, i.e. 360 degrees
+        return 360 / pow(2, $this->zoomLevel);
     }
 
-    public function getVerticalRange()
-    {
-        return $this->bbox['ymax'] - $this->bbox['ymin'];
+    public function getLatitudeRange() {
+        // this should be 180 at zoom level 0, though may vary with latitude
+        return 180 / pow(2, $this->zoomLevel);
     }
 
     // n, s, e, w, ne, nw, se, sw
@@ -48,19 +46,17 @@ abstract class StaticMapImageController extends MapImageController
         }
 
         $center = $this->center;
-
         if ($horizontal == 'e') {
-            $center['lon'] += $this->getHorizontalRange() / 2;
+            $center['lon'] += $this->getLongitudeRange() / 2;
         } else if ($horizontal == 'w') {
-            $center['lon'] -= $this->getHorizontalRange() / 2;
+            $center['lon'] -= $this->getLongitudeRange() / 2;
         }
 
         if ($vertical == 'n') {
-            $center['lat'] += $this->getVerticalRange() / 2;
+            $center['lat'] += $this->getLatitudeRange() / 2;
         } else if ($vertical == 's') {
-            $center['lat'] -= $this->getVerticalRange() / 2;
+            $center['lat'] -= $this->getLatitudeRange() / 2;
         }
-
         return $center;
     }
 
@@ -76,70 +72,38 @@ abstract class StaticMapImageController extends MapImageController
         return $zoomLevel;
     }
 
-    // setters
-    
-    // use only for static maps that are don't use geographic coordinates
-    public function setBoundingBox($bbox)
-    {
-        if (!is_array($bbox)) {
-            list($xmin, $ymin, $xmax, $ymax) = explode(',', $bbox);
+    public function setBoundingBox($xmin, $ymin, $xmax, $ymax) {
+        if ($xmax - $xmin > 0 && $ymax - $ymin > 0) {
             $this->bbox = array(
                 'xmin' => $xmin, 'ymin' => $ymin,
                 'xmax' => $xmax, 'ymax' => $ymax,
                 );
-
+            $this->center = array(
+                'lat' => ($ymin + $ymax) / 2,
+                'lon' => ($xmin + $xmax) / 2,
+                );
+            $this->zoomLevel = log(360 / ($xmax - $xmin), 2);
         } else {
-            $this->bbox = $bbox;
+            Kurogo::log(LOG_WARNING, "invalid bounding box {xmin=$xmin, ymin=$ymin, xmax=$xmax, ymax=$ymax}", "maps");
         }
     }
-    
-    public function setCenter($center)
-    {
-        if (is_array($center) && isset($center['lat'], $center['lon'])) {
-            if (isset($this->mapProjector)) {
-                $center = $this->mapProjector->projectPoint($center);
-            }
-            $xrange = $this->getHorizontalRange();
-            $yrange = $this->getVerticalRange();
-            $this->center = $center;
-            $this->bbox['xmin'] = $center['lon'] - $xrange / 2;
-            $this->bbox['xmax'] = $center['lon'] + $xrange / 2;
-            $this->bbox['ymin'] = $center['lat'] - $xrange / 2;
-            $this->bbox['ymax'] = $center['lat'] + $xrange / 2;
+
+    public function getBoundingBox() {
+        if (!$this->bbox || ($this->bbox['xmax'] <= $this->bbox['xmin'])
+            || $this->bbox['ymax'] < $this->bbox['ymin'])
+        {
+            $xrange = $this->getLongitudeRange();
+            $yrange = $this->getLatitudeRange();
+            $this->bbox = array(
+                'xmin' => $this->center['lon'] - $xrange / 2,
+                'xmax' => $this->center['lon'] + $xrange / 2,
+                'ymin' => $this->center['lat'] - $xrange / 2,
+                'ymax' => $this->center['lat'] + $xrange / 2,
+                );
         }
-    }
-    
-    public function setZoomLevel($zoomLevel)
-    {
-        $dZoom = $zoomLevel - $this->zoomLevel;
-        $this->zoomLevel = $zoomLevel;
-        // dZoom > 0 means decrease range
-        $newXRange = $this->getHorizontalRange() / pow(2, $dZoom);
-        $newYRange = $this->getVerticalRange() / pow(2, $dZoom);
-        $this->bbox['xmin'] = $this->center['lon'] - $newXRange / 2;
-        $this->bbox['xmax'] = $this->center['lon'] + $newXRange / 2;
-        $this->bbox['ymin'] = $this->center['lat'] - $newYRange / 2;
-        $this->bbox['ymax'] = $this->center['lat'] + $newYRange / 2;
+        return $this->bbox;
     }
 
-    public function setImageWidth($width) {
-        $ratio = $width / $this->imageWidth;
-        $range = $this->getHorizontalRange();
-        $this->imageWidth = $width;
-        $newRange = $range * $ratio;
-        $this->bbox['xmin'] = $this->center['lon'] - $newRange / 2;
-        $this->bbox['xmax'] = $this->center['lon'] + $newRange / 2;
-    }
-
-    public function setImageHeight($height) {
-        $ratio = $height / $this->imageHeight;
-        $range = $this->getVerticalRange();
-        $this->imageHeight = $height;
-        $newRange = $range * $ratio;
-        $this->bbox['ymin'] = $this->center['lat'] - $newRange / 2;
-        $this->bbox['ymax'] = $this->center['lat'] + $newRange / 2;
-    }
-    
     public function setImageFormat($format) {
         if (in_array($format, $this->supportedImageFormats)) {
             $this->imageFormat = $format;

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -26,8 +26,9 @@ class DeviceClassifier {
         'browser'  => 'unknown',
     );
     protected $version = 1;
+    protected $override = false; //whether the device detection has been overridden via setdevice
     
-    protected function cookieKey() {
+    protected static function cookieKey() {
         return KUROGO_IS_API ? 'apiDeviceClassification': 'deviceClassification';
     }
     
@@ -37,6 +38,10 @@ class DeviceClassifier {
             'platform' => 'unknown',
             'browser'  => 'unknown',
         );
+    }
+    
+    public function getOverride() {
+        return $this->override;
     }
     
     protected function classificationForString($string, &$stringIsJSON=null) {
@@ -98,11 +103,11 @@ class DeviceClassifier {
         return $this->stringForClassification($this->classification);
     }
     
-    protected function setDeviceFromCookieString($string) {
+    protected function setDeviceFromCookieString($string, $deviceCacheTimeout) {
         $this->classification = $this->classificationForString($string, $stringIsJSON);
         if (!$stringIsJSON) {
             // old cookie format, overwrite
-            $this->setDeviceCookie();
+            $this->setDeviceCookie($deviceCacheTimeout);
         }
     }
     
@@ -110,7 +115,7 @@ class DeviceClassifier {
         return $this->stringForClassification($this->classification, false);
     }
     
-    protected function setDevice($device) {
+    public function setDevice($device) {
         $this->classification = $this->classificationForString($device);
     }
     
@@ -122,8 +127,14 @@ class DeviceClassifier {
         return Kurogo::getSiteVar('MOBI_SERVICE_CACHE_LIFETIME');
     }
     
-    function __construct($device = null) {
+    function __construct($device = null, $deviceCacheTimeout = null, $override = null) {
         $this->version = intval(Kurogo::getSiteVar('MOBI_SERVICE_VERSION'));
+        if (isset($override)) {
+            $this->override = $override;
+            $this->setOverrideCookie($override);
+        } elseif (isset($_COOKIE['deviceClassificationOverride'])) {
+            $this->override = $_COOKIE['deviceClassificationOverride'];
+        }
         
         $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
         
@@ -133,31 +144,44 @@ class DeviceClassifier {
         } else if ($device && strlen($device)) {
             Kurogo::log(LOG_DEBUG, "Setting device to $device (override)", "deviceDetection");
             $this->setDevice($device); // user override of device detection
+            $this->setDeviceCookie($deviceCacheTimeout);
           
-        } else if (isset($_COOKIE[$this->cookieKey()])) {
-            $cookie = $_COOKIE[$this->cookieKey()];
+        } else if (isset($_COOKIE[self::cookieKey()])) {
+            $cookie = $_COOKIE[self::cookieKey()];
             if (get_magic_quotes_gpc()) {
                 $cookie = stripslashes($cookie);
             } 
             
-            $this->setDeviceFromCookieString($cookie);
+            $this->setDeviceFromCookieString($cookie, $deviceCacheTimeout);
             Kurogo::log(LOG_DEBUG, "Setting device to ".$this->getDevice()." (cookie)", "deviceDetection");
           
         } else if (isset($_SERVER['HTTP_USER_AGENT'])) {
             $this->classification = $this->detectDevice($this->userAgent);
-            $this->setDeviceCookie();
+            $this->setDeviceCookie($deviceCacheTimeout);
         }
         
-        // Do this after caching and setting cookies or the value of TABLET_ENABLED would be effectively cached
-        if ($this->classification['pagetype'] == 'tablet' && !Kurogo::getOptionalSiteVar('TABLET_ENABLED', 1)) {
-            $this->classification['pagetype'] = 'compliant';
-            
-            if ($this->classification['platform'] == 'ipad') {
-                $this->classification['platform'] = 'iphone'; // currently not used but just in case
+        // Do this after caching and setting cookies or the values
+        // of TABLET_ENABLED and COMPUTER_TABLET_ENABLED would be effectively cached
+        if (Kurogo::getOptionalSiteVar('TABLET_ENABLED', 1)) {
+            if ($this->classification['platform'] == 'computer') {
+                if (Kurogo::getOptionalSiteVar('COMPUTER_TABLET_ENABLED', 1)) {
+                    $this->classification['pagetype'] = 'tablet';
+                } else {
+                    $this->classification['pagetype'] = 'compliant';
+                }
+            }
+        } else {
+            if ($this->classification['pagetype'] == 'tablet') {
+                $this->classification['pagetype'] = 'compliant';
+                
+                // platform ipad is currently not used but just in case:
+                if ($this->classification['platform'] == 'ipad') {
+                    $this->classification['platform'] = 'iphone';
+                }
             }
         }
-        // Do this after caching and setting cookies or the value of TOUCH_ENABLED would be effectively cached
-        if ($this->classification['pagetype'] == 'touch' && !Kurogo::getOptionalSiteVar('TOUCH_ENABLED', 1)) {
+        // Touch pagetype is no longer supported.  Remap to basic:
+        if ($this->classification['pagetype'] == 'touch') {
             $this->classification['pagetype'] = 'basic';
         }
     }
@@ -182,8 +206,10 @@ class DeviceClassifier {
                     case 'android':
                     case 'bbplus':
                     case 'blackberry':
+                    case 'blackberry6':
                     case 'iphone':
                     case 'winphone7':
+                    case 'winphone8':
                     case 'winmo':
                     case 'webos':
                         $isMobile = true;
@@ -196,7 +222,9 @@ class DeviceClassifier {
                     $isMobile = true;
                 }
                 break;
-                
+        }
+        if ($classification['platform'] == "computer") {
+            $isMobile = false; // except computers
         }
         
         return array(
@@ -213,10 +241,24 @@ class DeviceClassifier {
     public function getUserAgent() {
       return $this->userAgent;
     }
+    
+    public static function clearDeviceCookie() {
+        setCookie(self::cookieKey(), false, 1225344860, COOKIE_PATH);
+        setCookie('deviceClassificationOverride', false, 1225344860, COOKIE_PATH);
+    }
+    
+    protected function setOverrideCookie($value) {
+        setCookie('deviceClassificationOverride', $value, 0, COOKIE_PATH);
+    }
       
-    protected function setDeviceCookie() {
-      setcookie($this->cookieKey(), $this->getDeviceCookieString(), 
-        time() + Kurogo::getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
+    protected function setDeviceCookie($life=null) {
+        if (!isset($life)) {
+            return;
+        }
+        //if life = 0 then use that as the expiration (session based) otherwise use life as an offset from the current time
+        $time = $life !== 0 ? time() + $life : $life;
+      setcookie(self::cookieKey(), $this->getDeviceCookieString(), 
+        $time, COOKIE_PATH);
     }
     
     protected function detectDevice($userAgent) {
@@ -231,6 +273,9 @@ class DeviceClassifier {
             // Looked up device data with configured device detection method
             $classification['pagetype'] = $data['pagetype'];
             $classification['platform'] = $data['platform'];
+            if (isset($data['browser'])) {
+                $classification['browser'] = $data['browser'];
+            }
             Kurogo::setCache($this->cacheKey($userAgent), $this->stringForClassification($classification));
             
         }
@@ -383,10 +428,15 @@ class DeviceClassifier {
     }
     
     protected function translateDevice($device) {
-        $newDevice = array();
-        $newDevice['pagetype'] = $device['classification'][strval($this->version)]['pagetype'];
-        $newDevice['platform'] = $device['classification'][strval($this->version)]['platform'];;
-        return $newDevice;
+        $classificationFilter = array_flip(array('pagetype', 'platform', 'browser'));
+        for ($i = $this->version; $i > 0; $i--) {
+            if (isset($device['classification'][strval($i)],
+                      $device['classification'][strval($i)]['pagetype'],
+                      $device['classification'][strval($i)]['platform'])) {
+                return array_intersect_key($device['classification'][strval($i)], $classificationFilter);
+            }
+        }
+        throw new KurogoConfigurationException("Invalid internal device classification for '{$device['description']}'");
     }
   
     protected function detectDeviceExternal($user_agent) {
@@ -395,10 +445,14 @@ class DeviceClassifier {
       }
               
       // see if the server has cached the results from the the device detection server
-      $cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime(), TRUE);
-      $cacheFilename = md5($user_agent);
+      try {
+        $cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime(), TRUE);
+      } catch (KurogoDataException $e) {
+        $cache = null;
+      }
+          $cacheFilename = md5($user_agent);
   
-      if ($cache->isFresh($cacheFilename)) {
+      if ($cache && $cache->isFresh($cacheFilename)) {
           $json = $cache->read($cacheFilename);
           Kurogo::log(LOG_INFO, "Using cached data for external device detection" , 'deviceDetection');
   
@@ -410,17 +464,29 @@ class DeviceClassifier {
           
           $url = Kurogo::getSiteVar('MOBI_SERVICE_URL').'?'.$query;
           Kurogo::log(LOG_INFO, "Detecting device using external device detection: $url", 'deviceDetection');
-          $json = file_get_contents($url);
-    
+          $timeout = Kurogo::getOptionalSiteVar('MOBI_SERVICE_EXTERNAL_TIMEOUT',5);
+          $context = stream_context_create(array(
+          	'http'=>array(
+          	  'timeout'=>$timeout,
+          	  'user_agent'=>Kurogo::KurogoUserAgent(),
+          	)
+          ));
+          $json = @file_get_contents($url, false, $context);
+          if(false === $json) {
+              return $this->detectDeviceInternal($user_agent);
+          }
+
           $test = json_decode($json, true); // make sure the response is valid
           
-          if ($json && isset($test['pagetype'], $test['platform'])) {
-              $cache->write($json, $cacheFilename);
+          if ($cache) {
+              if ($json && isset($test['pagetype'], $test['platform'])) {
+                  $cache->write($json, $cacheFilename);
             
-          } else {
-              Kurogo::log(LOG_WARNING, "Error receiving device detection data from $url.  Reading expired cache.", 'deviceDetection');
-              $json = $cache->read($cacheFilename);
-          }
+              } else {
+                  Kurogo::log(LOG_WARNING, "Error receiving device detection data from $url.  Reading expired cache.", 'deviceDetection');
+                  $json = $cache->read($cacheFilename);
+              }
+            }
       }            
   
       $data = json_decode($json, true);
@@ -485,6 +551,18 @@ class DeviceClassifier {
     
     public function getBrowser() {
         return $this->classification['browser'];
+    }
+
+    public function setPagetype($pagetype) {
+        $this->classification['pagetype'] = $pagetype;
+    }
+    
+    public function setPlatform($platform) {
+        $this->classification['platform'] = $platform;
+    }
+    
+    public function setBrowser($browser) {
+        $this->classification['browser'] = $browser;
     }
     
     public function mailToLinkNeedsAtInToField() {

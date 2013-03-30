@@ -11,14 +11,18 @@ Developers
 Pete Akins (Lead Developer, Mobile Web)
 Muhammad Amjad
 Dario Baldoni
+Dylan Conger
+James Daniello
 Alexis Ellwood
+Austin Emmons 
 Ian Gavalakis
 Wesley Hirsch
 Sonya Huang (Lead Developer, iOS)
 Jim Kang
-Edward Liu
+KeFei Liu
 Newstar Liu
 Ebrahim Kobeissi
+Satyender Mahajan 
 David Ormsbee
 Brian Patt (Lead Developer, Android)
 Brent Wang
@@ -34,6 +38,7 @@ Ilona Moreland
 Brian Tepfenhart
 
 Project Management & QA: 
+Kevin Murphy
 Yuki Nagatoshi
 Marshall Vale
 Andrew Yu
@@ -78,5 +83,3 @@ JSON
 License: BSD
 Copyright: Stig Brautaset
 Link: http://stig.github.com/json-framework
-
-Third Party Libraries (Android)

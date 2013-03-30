@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -17,15 +17,13 @@ class PeopleAPIModule extends APIModule
     protected $vmin = 1;
     protected $vmax = 2;
     protected static $defaultModel = 'PeopleDataModel';
-    protected static $defaultController = 'LDAPPeopleController'; //legacy
-    private $fieldConfig;
-    private $detailAttributes = array();
+    protected $fieldConfig;
+    protected $detailAttributes = array();
     protected $contactGroups = array();
-    protected $legacyController;
     
     protected function getContactGroup($group) {
         if (!$this->contactGroups) {
-            $this->contactGroups = $this->getAPIConfigData('contacts-groups');
+            $this->contactGroups = $this->getModuleSections('api-contacts-groups');
         }
         
         if (isset($this->contactGroups[$group])) {
@@ -38,11 +36,11 @@ class PeopleAPIModule extends APIModule
 
     protected function getContactsForGroup($group) {
         if (!$this->contactGroups) {
-            $this->contactGroups = $this->getAPIConfigData('contacts-groups');
+            $this->contactGroups = $this->getModuleSections('api-contacts-groups');
         }
         
         if (isset($this->contactGroups[$group])) {
-            return $this->getAPIConfigData('contacts-' . $group);
+            return $this->getModuleSections('api-contacts-' . $group);
 
         } else {
             throw new KurogoConfigurationException("Unable to find contact group information for $group");
@@ -153,19 +151,8 @@ class PeopleAPIModule extends APIModule
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
 
-            try {
-                if (isset($feedData['CONTROLLER_CLASS'])) {
-                    $modelClass = $feedData['CONTROLLER_CLASS'];
-                } else {
-                    $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
-                }
-                
-                $controller = PeopleDataModel::factory($modelClass, $feedData);
-            } catch (KurogoException $e) { 
-                $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-                $this->legacyController = true;
-            }
-            
+            $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            $controller = PeopleDataModel::factory($modelClass, $feedData);
             $controller->setAttributes($this->detailAttributes);
             $this->controllers[$index] = $controller;
             return $controller;
@@ -185,11 +172,11 @@ class PeopleAPIModule extends APIModule
         if($this->feeds){
             if(count($this->feeds) == 1){
                 # Load detail fields from api-detail.ini
-                $this->fieldConfig = $this->getAPIConfigData('detail');
+                $this->fieldConfig = $this->getModuleSections('api-detail');
             }else{
                 # Load detail fields from page-detail-[feed].ini
-                $detailConfig = "detail-$feed";
-                $this->fieldConfig = $this->getAPIConfigData($detailConfig);
+                $detailConfig = "api-detail-$feed";
+                $this->fieldConfig = $this->getModuleSections($detailConfig);
             }
             foreach($this->fieldConfig as $field => $info) {
                 $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
@@ -210,17 +197,18 @@ class PeopleAPIModule extends APIModule
             case 'search':
                 if ($filter = $this->getArg(array('filter', 'q'))) {
 
+		            $this->setLogData($filter);
                     $people = $peopleController->search($filter);
                     if(!$people)
                     	$people = array();
                     	
-                    $errorCode = $peopleController->getResponseCode();
-                    if ($errorCode) {
+                    $hasError = $peopleController->getResponseError();
+                    if ($hasError) {
                         // TODO decide on error title
                         $errorTitle = 'Warning';
                         $errorMsg = $peopleController->getResponseError();
+                        $errorCode = $peopleController->getResponseCode();
                         $error = new KurogoError($errorCode, $errorTitle, $errorMsg);
-                        $this->setResponseError($error);
                     }
                     
                     $response[] = null;
@@ -236,6 +224,8 @@ class PeopleAPIModule extends APIModule
                             'feed'         => $feed,
                             'displayField' => 'name',
                             'results'      => $results,
+                            'requiresDetail'=> (bool) $this->getOptionalModuleVar('API_REQUIRES_DETAIL'),
+                            'error'        => isset($error) ? $error : null
                             );
                     }
                     
@@ -261,11 +251,12 @@ class PeopleAPIModule extends APIModule
                         $this->setResponse($response);
                         $this->setResponseVersion(1);
                     }else{
-                        $errorCode = $peopleController->getResponseCode();
-                        if ($errorCode) {
+                        $hasError = $peopleController->getResponseError();
+                        if ($hasError) {
                             // TODO decide on error title
                             $errorTitle = 'Warning';
                             $errorMsg = $peopleController->getResponseError();
+                            $errorCode = $peopleController->getResponseCode();
                             $error = new KurogoError($errorCode, $errorTitle, $errorMsg);
                             $this->setResponseError($error);
                         }
@@ -287,7 +278,7 @@ class PeopleAPIModule extends APIModule
                 if ($group) {
                     $results = $this->getContactsForGroup($group);
                 } else {
-                    $results = $this->getAPIConfigData('contacts');
+                    $results = $this->getModuleSections('api-contacts');
                 }
 
                 foreach ($results as &$aResult) {

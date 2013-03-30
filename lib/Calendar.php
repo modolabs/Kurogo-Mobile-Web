@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -18,6 +18,12 @@ interface CalendarInterface {
     public function getEventsInRange(TimeRange $range=null, $limit=null);
     public function set_attribute($contentname, $value, $params=null);
     public function add_event(CalendarEvent $event);
+    public function setTimezone(CalendarTimeZone $timeZone);
+    public function getTimezone();
+}
+
+interface CalendarTimeZone {
+    public function getTZID();
 }
 
 interface CalendarEvent {

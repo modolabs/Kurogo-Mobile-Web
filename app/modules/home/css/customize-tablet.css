@@ -1,0 +1,145 @@
+.pagetitle {
+  margin-left: 8px;
+}
+
+.nav a {
+  background-image: none;
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+
+.nav a img {
+	padding: 7px;
+}
+
+ul.iconic li {
+  position: relative;
+  background-color: #fff;
+  padding-left: 44px;
+}
+
+img.homeicon {
+  vertical-align: middle;
+  margin: -5px 5px 0 0;
+}
+
+ul.iconic li:first-child {
+  -webkit-border-top-left-radius: 9px;	
+  -webkit-border-top-right-radius: 9px;	
+}
+
+ul.iconic li:last-child {
+  -webkit-border-bottom-left-radius: 9px;	
+  -webkit-border-bottom-right-radius: 9px;	
+}
+
+ul.iconic li:first-child .moveup {
+  opacity: 0.33;
+}
+
+ul.iconic li:last-child .movedown {
+  opacity: 0.33;
+}
+
+ul.iconic span.nolink { 
+  position: relative;
+  background-position: 3px 3px;
+  font-size: 94.112%;
+  margin-right: 85px; /* don't overlap buttons */
+}
+
+ul.iconic span.nolinkbuttons {
+  float: right;
+  width: 85px;
+  height: 38px;
+  margin: -11px;
+  position: relative;
+  z-index: 1000;
+}
+
+ul.iconic span.nolinkbuttons a {
+  background-image: none;
+  float: left;
+}
+
+ul.iconic input {
+  width: 21px; 
+  height: 21px;
+  position: absolute;
+  left: 6px;
+  top: 8px;
+}
+
+*:first-child+html span.nolinkbuttons {
+	/* WP7 hack */
+	float: none;
+	position: absolute;
+	right: 15px;
+}
+
+*:first-child+html ul.iconic li {
+	/* WP7 hack */
+	border-bottom: 1px solid #ccc;
+}
+
+#customizeUserContextList {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+}
+
+#customizeUserContextList ul {
+    list-style-type: none;
+    margin: 5px 0;
+    padding: 0;
+    font-size: 13px;
+}
+
+#customizeUserContextList ul li {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+#customizeUserContextList a {
+  display: block;
+  padding: 0.5em;
+  background-color: rgba(255,255,255,0.07);
+  border: solid @@@focal_border_color@@@;
+  border-width: 1px 1px 1px 0;
+  text-align: center;
+  text-decoration: none;
+  color: @@@nonfocal_text_color@@@;
+}
+
+#customizeUserContextList ul li:first-child a {
+  -webkit-border-top-left-radius: 6px;
+  -moz-border-top-left-radius: 6px;
+  -border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -moz-border-bottom-left-radius: 6px;
+  -border-bottom-left-radius: 6px;
+  border-left-width: 1px;
+}
+
+#customizeUserContextList ul li:last-child a {
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-top-right-radius: 6px;
+  -border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  -moz-border-bottom-right-radius: 6px;
+  -border-bottom-right-radius: 6px;
+}
+
+#customizeUserContextList li.contextSelected a {
+    text-decoration: none;
+    color: #fff;
+    background-color: @@@focal_link_color@@@;
+    background-color: rgba(0,0,0,0.75);
+    -webkit-box-shadow: inset 0 2px 5px #000;
+    box-shadow: inset 0 2px 5px #000;
+    -webkit-text-shadow: 0 1px 1px #000;
+    text-shadow: 0 1px 1px #000;
+}

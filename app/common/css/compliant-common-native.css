@@ -3,3 +3,9 @@
 #nonfooternav, #container {
     overflow: hidden;
 }
+body {
+	min-height: 480px;
+}
+#container {
+  min-height: 435px;
+}

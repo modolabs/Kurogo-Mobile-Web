@@ -1,0 +1,9 @@
+h1.slugline {
+    font-size: 120%;
+    line-height: 1.1em;
+	color: @@@nonfocal_heading_color@@@;
+}
+
+.caption .fineprint {
+    color: @@@nonfocal_text_color@@@;
+}

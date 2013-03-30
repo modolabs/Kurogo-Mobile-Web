@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -12,6 +12,8 @@
 /**
   * @package People
   */
+
+Kurogo::includePackage('LDAP');
 
 if (!function_exists('ldap_connect')) {
     throw new KurogoException('LDAP PHP extension is not installed');
@@ -47,6 +49,8 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $readTimelimit=30;
     protected $baseAttributes = array();
     protected $searchFields = array();
+    protected $additionalFilters = array();
+    protected $useSurroundWildcard;
     
     protected function retrieveResponse() {
         $response = $this->initResponse();
@@ -175,9 +179,10 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
 
     protected function buildSearchFilter($searchString) {
 
-        $this->errorNo = $this->errorMsg = null;
+        $filter = $this->errorNo = $this->errorMsg = null;
 
         $objectClassQuery = new LDAPFilter('objectClass', 'person');
+        $searchString = trim($searchString);
 
         if (empty($searchString)) {
             $this->errorMsg = "Query was blank";
@@ -200,9 +205,11 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             {
                 case 1:
                     //try first name, last name and email
-                    $snFilter = new LDAPFilter($this->getField('lastname'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_TRAILING); 
-                    $givenNameFilter = new LDAPFilter($this->getField('firstname'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_TRAILING); 
-                    $mailFilter = new LDAPFilter($this->getField('email'), $searchString, LDAPFilter::FILTER_OPTION_WILDCARD_TRAILING); 
+                    // Use surround wildcard if specified in config
+                    $filterWildCardOption = $this->useSurroundWildcard ? LDAPFilter::FILTER_OPTION_WILDCARD_SURROUND : LDAPFilter::FILTER_OPTION_WILDCARD_TRAILING;
+                    $snFilter = new LDAPFilter($this->getField('lastname'), $searchString, $filterWildCardOption); 
+                    $givenNameFilter = new LDAPFilter($this->getField('firstname'), $searchString, $filterWildCardOption); 
+                    $mailFilter = new LDAPFilter($this->getField('email'), $searchString, $filterWildCardOption); 
 
                     $filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_OR, $givenNameFilter, $snFilter, $mailFilter);
                     break;
@@ -245,8 +252,12 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             }
             
         } else {
-            $filter = null;
             $this->errorMsg = "Invalid query";
+        }
+        
+        if ($this->additionalFilters) {
+        	$filters = array_merge(array($filter), $this->additionalFilters);
+			$filter = new LDAPCompoundFilter(LDAPCompoundFilter::JOIN_TYPE_AND, $filters);
         }
 
         return $filter;
@@ -307,6 +318,17 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $this->searchFields = $args['SEARCH_FIELDS'];
         }
         
+        if (isset($args['LDAP_FILTER'])) {
+        	if (!is_array($args['LDAP_FILTER'])) {
+        		throw new KurogoConfigurationException("LDAP_FILTER expected to be an array");
+        	}
+        	foreach ($args['LDAP_FILTER'] as $filterString) {
+        		$this->additionalFilters[] = new LDAPFilter($filterString, null, LDAPFilter::FILTER_OPTION_CUSTOM);
+        	}
+        }
+
+        $this->useSurroundWildcard = Kurogo::arrayVal($args,'SURROUND_WILDCARD', false);
+        
         $this->fieldMap = array(
             'userid'=>isset($args['LDAP_USERID_FIELD']) ? $args['LDAP_USERID_FIELD'] : 'uid',
             'email'=>isset($args['LDAP_EMAIL_FIELD']) ? $args['LDAP_EMAIL_FIELD'] : 'mail',
@@ -317,120 +339,6 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             'phone'=>isset($args['LDAP_PHONE_FIELD']) ? $args['LDAP_PHONE_FIELD'] : 'telephonenumber'
         );
         $this->setContext('fieldMap', $this->fieldMap);
-    }
-}
-
-/**
-* @package People
-*/
-class LDAPFilter
-{
-    const FILTER_OPTION_WILDCARD_TRAILING=1;
-    const FILTER_OPTION_WILDCARD_LEADING=2;
-    const FILTER_OPTION_NO_ESCAPE=4;
-    const FILTER_OPTION_WILDCARD_SURROUND=8;
-    protected $field;
-    protected $value;
-    protected $options;
-
-    public function __construct($field, $value, $options=0)
-    {
-        $this->field = $field;
-        $this->value = $value;
-        $this->options = intval($options);
-    }
-    
-    public static function ldapEscape($str) 
-    { 
-        // see RFC2254 
-        // http://msdn.microsoft.com/en-us/library/ms675768(VS.85).aspx 
-        // http://www-03.ibm.com/systems/i/software/ldap/underdn.html        
-        
-        $metaChars = array('*', '(', ')', '\\', chr(0));
-        $quotedMetaChars = array(); 
-        foreach ($metaChars as $key => $value) {
-            $quotedMetaChars[$key] = '\\'.str_pad(dechex(ord($value)), 2, '0'); 
-        }
-        $str = str_replace($metaChars, $quotedMetaChars, $str); 
-        return ($str); 
-    }
-    
-    public function __toString()
-    {
-        if ($this->options & self::FILTER_OPTION_NO_ESCAPE) {
-            $value = $this->value;
-        } else {
-            $value = self::ldapEscape($this->value);
-        }
-    
-        if ($this->options & self::FILTER_OPTION_WILDCARD_LEADING) {
-            $value  = '*' . $value;
-        }
-    
-        if ($this->options & self::FILTER_OPTION_WILDCARD_TRAILING) {
-            $value  .= '*';
-        }
-    
-        if ($this->options & self::FILTER_OPTION_WILDCARD_SURROUND) {
-            $value  = '*' . $value . "*";
-        }
-    
-        return sprintf("(%s=%s)", $this->field, $value);
-    }
-}
-    
-/**
-* @package People
-*/
-class LDAPCompoundFilter extends LDAPFilter
-{
-    const JOIN_TYPE_AND = '&';
-    const JOIN_TYPE_OR = '|';
-    protected $joinType;
-    protected $filters=array();
-    
-    public function __construct($joinType, $filter1, $filter2=null) {
-
-        switch ($joinType)
-        {
-            case self::JOIN_TYPE_AND:
-            case self::JOIN_TYPE_OR:
-                $this->joinType = $joinType;
-                break;
-            default:
-                throw new KurogoConfigurationException("Invalid join type $joinType");                
-        }
-    
-        for ($i = 1; $i < func_num_args(); $i++) {
-            $filter = func_get_arg($i);
-            if ($filter instanceOF LDAPFilter) { 
-                $this->filters[] = $filter;
-            } elseif (is_array($filter)) {
-                foreach ($filter as $_filter) {
-                    if (!($_filter instanceOf LDAPFilter)) {
-                        throw new KurogoConfigurationException("Invalid filter for in array");
-                    }
-                }
-                $this->filters = $filter;
-            } else {
-                throw new KurogoConfigurationException("Invalid filter for argument $i");
-            }
-        }
-    
-        if (count($this->filters)<2) {
-            throw new KurogoConfigurationException(sprintf("Only %d filters found (2 minimum)", count($filters)));
-        }
-    
-    }
-    
-    public function addFilter(LDAPFilter $filter) {
-        $this->filters[] = $filter;
-    }
-    
-    function __toString() {
-
-        $stringValue = sprintf("(%s%s)", $this->joinType, implode("", $this->filters));
-        return $stringValue;
     }
 }
 
@@ -452,13 +360,24 @@ class LDAPPeopleParser extends PeopleDataParser
         
         $results = array();
         $person = new $this->personClass($ds, $entry, $fieldMap);
-        $results[] = $person;
+        $results[$person->getID()] = $person;
 
         while ($entry = ldap_next_entry($ds, $entry)) {
-			$person = new $this->personClass($ds, $entry, $fieldMap);
-			$results[] = $person;
+            $person = new $this->personClass($ds, $entry, $fieldMap);
+
+            if(isset($results[$person->getID()])){
+                $existingPerson = $results[$person->getID()];
+                $existingPerson->addFields($ds, $entry, $fieldMap);
+                $results[$person->getID()] = $existingPerson;
+            }else{
+                $results[$person->getID()] = $person;
+            }
         }
 
+        return $this->sortResults($results);
+    }
+
+    protected function sortResults($results){
         //sort results by sort fields        
         if (count($results)>1) {
             $sprintf = implode(" ", array_fill(0, count($this->sortFields), '%s'));
@@ -478,8 +397,9 @@ class LDAPPeopleParser extends PeopleDataParser
                 $return[] = $results[$key];
             }
             $results = $return;
+        } else {
+            $results = array_values($results);
         }
-                    
         return $results;
     }
         
@@ -497,7 +417,8 @@ class LDAPPeopleParser extends PeopleDataParser
         
         $parsedData = $this->parseSearch($data, $ds, $fieldMap);
         if ($this->getOption('action') == 'user') {
-            $parsedData = isset($parsedData[0]) ? $parsedData[0] : false;
+
+            $parsedData = current($parsedData);
             $this->setTotalItems($parsedData ? 1 : 0);
         } else {
             $this->setTotalItems(count($parsedData));
@@ -556,25 +477,30 @@ class LDAPPerson extends Person {
     }
 
     public function __construct($ldap, $entry, array $fieldMap) {
+        $this->addFields($ldap, $entry, $fieldMap);
+    }
+
+    public function addFields($ldap, $entry, array $fieldMap){
         $ldapEntry = ldap_get_attributes($ldap, $entry);
         $this->dn = ldap_get_dn($ldap, $entry);
         $this->fieldMap = $fieldMap;
-        $this->attributes = array();
     
         for ($i = 0; $i < $ldapEntry['count']; $i++) {
             $attribute = $ldapEntry[$i];
             $attrib = strtolower($attribute);
             $count = $ldapEntry[$attribute]['count'];
-            
+
             if ($attrib == $this->fieldMap['photodata']) {
                 if ($data = @ldap_get_values_len($ldap, $entry, $attribute)) {
-                    $this->attributes[$attrib] = $data; // Get binary photo data
+                    $this->setField($attrib, $data); // Get binary photo data
                 }
             } else {
-                $this->attributes[$attrib] = array();
+                $this->setField($attrib, array());
                 for ($j = 0; $j < $count; $j++) {
                     if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attrib])) {
-                        $this->attributes[$attrib][] = str_replace('$', "\n", $ldapEntry[$attribute][$j]);
+                        if(strlen($ldapEntry[$attribute][$j])){
+                            $this->setFieldArray($attrib,str_replace('$', "\n", $ldapEntry[$attribute][$j]));
+                        }
                     }
                 }
             }

@@ -1,6 +1,9 @@
 <?php
 
 class FlickrAPIRetriever extends URLDataRetriever {
+    
+    protected $api_key;
+    
     protected $DEFAULT_PARSER_CLASS = 'FlickrDataParser';
     protected $extraFields = array(
         'description', 'date_upload', 'date_taken', 'owner_name', 'original_format', 
@@ -30,7 +33,8 @@ class FlickrAPIRetriever extends URLDataRetriever {
         if (!isset($args['API_KEY'])) {
             throw new KurogoConfigurationException("Flickr API_KEY required");
         }
-        $this->addFilter('api_key', $args['API_KEY']);
+        $this->api_key = $args['API_KEY'];
+        $this->addFilter('api_key', $this->api_key);
 
         if (isset($args['USER'])) {
             $this->setContext('type', 'photos');
@@ -44,6 +48,12 @@ class FlickrAPIRetriever extends URLDataRetriever {
             $this->addFilter('photoset_id', $args['PHOTOSET']);
         }
         
+        if (isset($args['GALLERY'])) {
+            $this->setContext('type', 'photos');
+            $this->addFilter('method','flickr.galleries.getPhotos');
+            $this->addFilter('gallery_id', $args['GALLERY']);
+        }
+        
         if (isset($args['GROUP'])) {
             $this->setContext('type', 'photos');
             $this->addFilter('method','flickr.photos.search');
@@ -52,5 +62,18 @@ class FlickrAPIRetriever extends URLDataRetriever {
 
         $this->addFilter('extras', implode(',', $this->extraFields));
         $this->addFilter('format', 'php_serial');
+    }
+    
+    public function getUserData($id){
+      
+      $this->setBaseUrl('http://api.flickr.com/services/rest/', true);
+      
+      $this->setOption('action', 'getUserData');
+      $this->addFilter('api_key', $this->api_key);
+      $this->addFilter('method','flickr.people.getInfo');
+      $this->addFilter('user_id', $id);
+      $this->addFilter('format', 'php_serial');
+      
+      return $this->getData();
     }
 }

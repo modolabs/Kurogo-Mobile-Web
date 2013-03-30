@@ -30,7 +30,7 @@
   <div id="tabbodies">
     {foreach $tabbedView['tabs'] as $tabKey => $tabInfo}
       {if isset($tabbedView['tabs'][$tabKey])}
-        <div class="tabbody" id="{$tabInfo['id']}-tabbody" {if count($tabBodies) > 1}style="display:none"{/if}>
+        <div class="tabbody {$tabKey}-tabbody" id="{$tabInfo['id']}-tabbody" {if count($tabBodies) > 1}style="display:none"{/if}>
           {$tabBodies[$tabKey]}
         </div>
       {/if}

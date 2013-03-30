@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -76,7 +76,7 @@ class LoginAPIModule extends APIModule
                 	$users = $session->getUsers();
                 	foreach ($users as $user) {
                 		$authority = $user->getAuthenticationAuthority();
-                		$response['users'][$authority->getAuthorityIndex()] = array(
+                		$response['users'][] = array(
 							'authority'=>$authority->getAuthorityIndex(),
 							'authorityTitle'=>$authority->getAuthorityTitle(),
 							'userID'=>$user->getUserID(),

@@ -2,6 +2,10 @@
   padding: 0;
   margin: 0;
 }
+#searchformcontainer, #searchformcontainer form {
+  min-height: 40px;
+}
+
 #searchformcontainer + ul {
   margin-top: 0;
 }
@@ -13,25 +17,49 @@
 #searchformcontainer form p {
   margin: 0.75em 0 0 0;
 }
-#searchformcontainer fieldset + fieldset {
-  margin: 0 4px;
-}
-#searchformcontainer fieldset select {
+
+
+/* portrait, 1 select box, all on one line */
+.select-count-1 #searchformcontainer fieldset {
+  width: 50%;
+  margin: 0px;
   float: left;
+}
+.select-count-1 #searchformcontainer .inputcombo .forminput {
+  float: left;
+  width: 95%;
+}
+.select-count-1 #searchformcontainer fieldset select {
+  float: left;
+  margin-left: 10px;
+}
+
+/* portrait, 2 select boxes, select boxes on separate line */
+.select-count-2 #searchformcontainer fieldset {
+  margin-bottom: 0;
+}
+.select-count-2 #searchformcontainer fieldset select {
+  float: left;
+  margin-left: 5px;
   width: 49%;
 }
-#searchformcontainer fieldset select + select {
-  float: right;
+.select-count-2 #searchformcontainer fieldset select:first-child {
+  margin-left: 0;
 }
-#searchformcontainer .inputcombo  {
-  margin-bottom: 6px;
-}
-#searchformcontainer .inputcombo .forminput {
-  width: auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+
+@media only screen and (min-width: 900px) {
+    /* Wider screens e.g., desktop, tablets in landscape orientation.
+     * In landscape we have enough room to put all inputs on the same line. */
+    /* landscape, 2 select boxes, all on one line */
+    .select-count-2 #searchformcontainer fieldset {
+      width: 50%;
+      margin: 0px;
+      float: left;
+    }
+    .select-count-2  #searchformcontainer .inputcombo .forminput {
+      float: left;
+      width: 95%;
+    }
 }
 
 .sidenavHeader {

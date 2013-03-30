@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -130,8 +130,8 @@ class ICSDataParser extends DataParser
                 case 'VEVENT':
                     $addEvent = true;
                     $event = $this->initEvent();
-                    if ($calendar->timezone) {
-                        $event->set_attribute('TZID', $calendar->timezone->tzid);
+                    if ($timezone = $calendar->getTimezone()) {
+                        $event->set_attribute('TZID', $timezone->getTZID());
                     }
                     $nesting[] = $event;
                     break;
@@ -189,7 +189,7 @@ class ICSDataParser extends DataParser
                         }
                         break;
                     case 'VTIMEZONE':
-                        $calendar->timezone = $last_object;
+                        $calendar->setTimezone($last_object);
                         break;
                     case 'VCALENDAR':
                         break 3;

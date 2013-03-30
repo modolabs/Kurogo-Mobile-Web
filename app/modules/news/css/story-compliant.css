@@ -1,16 +1,16 @@
 body.NewsModule .news {
 	/* Background color for news listing and story; should be white in most cases */
-	background-color: #fff;
+    background-color: @@@focal_background_color@@@;
 }
 body.NewsModule #navbar {
-	margin-bottom: 5px;
+	margin-bottom: 0;
 }
 
 .news {
     padding: 10px;
 }
 
-#storybody div img {
+#storybody img {
   width: auto !important;
   height: auto !important;
   max-width: 100% !important;
@@ -27,17 +27,31 @@ body.NewsModule #navbar {
 
 .dek:empty { margin: 0; } /* CSS 3: shrink if no content */
 
-#image {float:right;margin: 4px 0 6px 8px;}
+#image {
+  background-color: #333;
+  text-align: center;
+  margin-bottom: 10px;
+}
 
-#image img.thumbnail {border: 1px solid #505050; /* scale to width respecting aspect */}
+#image img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
 
-#image img.enlarge { float:right; margin-left: 4px; }
+#thumbnail {float:right;margin: 4px 0 6px 8px;}
 
-#image div { float:right; margin-top: 2px; margin-right:-2px; }
+#thumbnail img.thumbnail { width: auto; max-width: 100%; height: auto }
 
-#image a { text-align:right; font-size:64.7%; line-height: 2.72em; text-decoration:none; color:#777;}
+#thumbnail img.enlarge { float:right; margin-left: 4px; }
 
-#image a div { margin-top: -4px; }
+#thumbnail div { float:right; margin-top: 2px; margin-right:-2px; }
+
+#thumbnail a { text-align:right; font-size:64.7%; line-height: 2.72em; text-decoration:none; color:#777;}
+
+#thumbnail a div { margin-top: -4px; }
 
 .wp-caption {
     width: auto !important;

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -31,6 +31,9 @@ abstract class Session
     protected $maxIdleTime=0;
     protected $remainLoggedIn = false;
     protected $remainLoggedInTime=0;
+    protected $saveUsername = false;
+    protected $saveUsernameTime = 0;
+    protected $authorityIndex;
     protected $loginCookiePath;
     protected $apiCookiePath;
     protected $debugMode = false;
@@ -80,6 +83,7 @@ abstract class Session
             $this->remainLoggedIn = true;
             $this->setLoginCookie();
         }
+        $this->setSessionVars();
     }
     
     protected function getUserFromLoginCookie() {
@@ -97,6 +101,7 @@ abstract class Session
             // see if max idle time has been reached
             if ( $this->maxIdleTime && ($diff > $this->maxIdleTime)) {
                 Kurogo::log(LOG_NOTICE, "User was logged off after $diff seconds", 'session');
+                $this->logoutAllUsers();
                 // right now the user is just logged off, but we could show and error if necessary.
             } else {
                 $ok = false;
@@ -123,6 +128,7 @@ abstract class Session
         //load arguments
         $this->maxIdleTime = isset($args['AUTHENTICATION_IDLE_TIMEOUT']) ? intval($args['AUTHENTICATION_IDLE_TIMEOUT']) : 0;
         $this->remainLoggedInTime = isset($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) ? intval($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) : 0;
+        $this->saveUsernameTime = isset($args['AUTHENTICATION_SAVE_USERNAME']) ? intval($args['AUTHENTICATION_SAVE_USERNAME']) : 0;
         $loginModuleID = isset($args['LOGIN_MODULE']) ? $args['LOGIN_MODULE'] : 'login';
         $this->loginCookiePath = URL_BASE . $loginModuleID;
         $this->apiCookiePath = URL_BASE . API_URL_PREFIX . '/' . $loginModuleID;
@@ -171,6 +177,14 @@ abstract class Session
     
     public function setRemainLoggedIn($remainLoggedIn) {
         $this->remainLoggedIn = $remainLoggedIn ? true : false;
+    }
+    
+    public function setSaveUsername($saveUsername) {
+        $this->saveUsername = $saveUsername ? true : false;
+    }
+
+    public function setAuthorityIndex($authorityIndex) {
+        $this->authorityIndex = $authorityIndex;
     }
     
     protected function setSessionVars() {
@@ -269,8 +283,20 @@ abstract class Session
         unset($this->users[$authority->getAuthorityIndex()]);
         $this->setSessionVars();
         $this->setLoginCookie();
+        if (count($this->users) == 0) {
+            $_SESSION = array();
+        }
         session_regenerate_id(true);
         return true;
+    }
+    
+    protected function logoutAllUsers() {
+        foreach ($_SESSION['users'] as $userData) {
+            if ($authority = AuthenticationAuthority::getAuthenticationAuthority($userData['auth'])) {
+                $authority->logout($this, false);
+            }
+        }
+        $this->setSessionVars();
     }
 
     private function getSessionData() {
@@ -302,7 +328,6 @@ abstract class Session
       * creates a login token that can be used for login later
       */
     private function setLoginCookie() {
-
     	if ($this->isLoggedIn()) {
 
     	    //generate a random value
@@ -312,6 +337,18 @@ abstract class Session
                 $expires = time() + $this->remainLoggedInTime;
             } else {
                 $expires = 0;
+            }
+
+            // set save username cookie
+			if ($this->saveUsername) {
+                $saveUsernameExpires = time() + $this->saveUsernameTime;
+            }else {
+                $saveUsernameExpires = time() - 1;
+            }
+            if ($this->authorityIndex) {
+                $user = $this->getUser();
+                $userID = $user->getUserID();
+                setCookie($this->authorityIndex . "_username", $userID, $saveUsernameExpires, $this->loginCookiePath);
             }
             
             $data = $this->getSessionData();
@@ -323,6 +360,7 @@ abstract class Session
 			Kurogo::log(LOG_DEBUG, "Setting login token to $new_login_token", 'session');
 			setCookie(self::TOKEN_COOKIE, $this->login_token, $expires, $this->loginCookiePath);
 			setCookie(self::USERHASH_COOKIE, $this->getUserHash($data), $expires, $this->loginCookiePath);
+
 		} else {
 		    //clean up just in case
 		    $this->clearLoginToken();

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -21,6 +21,8 @@ class PasswdAuthentication extends AuthenticationAuthority
 {
     protected $userClass='PasswdUser';
     protected $groupClass='PasswdUserGroup';
+    protected $hmac = false;
+    protected $hashAlgo='md5';
     private $userFile;
     private $groupFile;
     private $users = array();
@@ -70,8 +72,8 @@ class PasswdAuthentication extends AuthenticationAuthority
         $fields = explode(":", $line);
         $user = array(
             'userID'=>'',
+            'hash'=>'',
             'email'=>'',
-            'md5'=>'',
             'fullname'=>''
         );
         switch (count($fields))
@@ -82,14 +84,14 @@ class PasswdAuthentication extends AuthenticationAuthority
                 $user['email']=Validator::isValidEmail(trim($fields[2])) ? trim($fields[2]) : '';
             case 2:
                 $user['userID']=trim($fields[0]);
-                $user['md5']=trim($fields[1]);
+                $user['hash']=trim($fields[1]);
                 break;
             default:
                 return false;
         }        
 
         /* some quick validation */        
-        if (strlen($user['userID'])==0 || !preg_match("/^[a-f0-9]{32}$/", $user['md5'])) {
+        if (strlen($user['userID'])==0) {
             Kurogo::log(LOG_WARNING,"Invalid user line: $line",'auth');
             $user = false;
         }
@@ -136,15 +138,23 @@ class PasswdAuthentication extends AuthenticationAuthority
         $group = array(
             'group'=>trim($fields[0]),
             'gid'=>trim($fields[1]),
-            'members'=>array_map('trim', explode(",",trim($fields[2])))
+            'members'=>array(),
         );
         
+        if (strlen(trim($fields[2]))>0) {
+            $group['members']= array_map('trim', explode(",",trim($fields[2])));
+        }
+                
         if (strlen($group['group'])==0 || strlen($group['gid'])==0) {
             Kurogo::log(LOG_WARNING,"Invalid group line: $line",'auth');
             $group = false;
         }
 
         return $group;
+    }
+
+    protected function hashPassword($password, $salt) {
+        return $this->hmac ? hash_hmac($this->hashAlgo, $salt.$password, $this->hashKey) : hash($this->hashAlgo, $password);
     }
     
     public function auth($login, $password, &$user)
@@ -154,7 +164,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         }
         
         if ($userData = $this->getPasswdUserData($login)) {
-            if (md5($password) == $userData['md5']) {
+            if ($this->hashPassword($password, $login) == $userData['hash']) {
                 $user = $this->getUser($login);
                 return AUTH_OK;
             } else {
@@ -272,6 +282,33 @@ class PasswdAuthentication extends AuthenticationAuthority
         $args = is_array($args) ? $args : array();
         $this->userFile = isset($args['PASSWD_USER_FILE']) ? $args['PASSWD_USER_FILE'] : null;
         $this->groupFile = isset($args['PASSWD_GROUP_FILE']) ? $args['PASSWD_GROUP_FILE'] : null;
+        
+        if (isset($args['PASSWD_HASH'])) {
+            $hashAlgo = $args['PASSWD_HASH'];
+            if ($hashAlgo == 'site') {
+                $hashAlgo = 'hmac_sha1';
+                $args['PASSWD_KEY'] = SITE_KEY;
+            }
+
+            if ($hashAlgo == 'server') {
+                $hashAlgo = 'hmac_sha1';
+                $args['PASSWD_KEY'] = SERVER_KEY;
+            }
+            
+            if (preg_match("/^hmac_(.+)$/", $hashAlgo, $bits)) {
+                if (!isset($args['PASSWD_KEY'])) {
+                    throw new KurogoConfigurationException ("HMAC hash requires PASSWD_KEY");
+                }
+                $this->hmac = true;
+                $this->hashKey = $args['PASSWD_KEY'];
+                $hashAlgo = $bits[1];
+            }
+
+            if (!in_array($hashAlgo, hash_algos())) {
+                throw new KurogoConfigurationException ("Hashing algorithm $hashAlgo not available");
+            }
+            $this->hashAlgo = $hashAlgo;
+        }
         
         if ($this->userLogin != 'NONE') {        
             if (!is_readable($this->userFile)) {

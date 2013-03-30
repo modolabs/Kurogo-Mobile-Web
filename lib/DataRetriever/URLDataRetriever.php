@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -32,6 +32,9 @@ class URLDataRetriever extends DataRetriever {
     protected $streamContext = null;
     protected $saveToFile = false;
     protected $useCurl = false;
+    protected $authUser;
+    protected $authPassword;
+    protected $authType = 'basic';
     
     public function __wakeup() {
     	if ($this->useCurl) {
@@ -185,12 +188,25 @@ class URLDataRetriever extends DataRetriever {
         if (isset($args['DATA'])) {
             $this->setData($args['DATA']);
         }
+
+        if (isset($args['AUTH_TYPE'])) {
+            $this->setAuthType($args['AUTH_TYPE']);            
+        }
         
+        if (isset($args['AUTH_USER'])) {
+            $this->setAuthUser($args['AUTH_USER']);
+        }
+
+        if (isset($args['AUTH_PASSWORD'])) {
+            $this->setAuthPassword($args['AUTH_PASSWORD']);
+        }
+
         if ($this->useCurl) {
 			$this->initCurl($args);
 		} else {
 			$this->initStreamContext($args);
 		}
+		$this->setCredentials($this->authUser, $this->authPassword);
     }
     
     public function setHeaders($headers) {
@@ -257,9 +273,21 @@ class URLDataRetriever extends DataRetriever {
     }
 
     public function setTimeout($timeout) {
-        stream_context_set_option($this->streamContext, 'http', 'timeout', $timeout);
+        if ($this->useCurl) {
+            $this->setCurlOption(CURLOPT_TIMEOUT, $timeout);
+        } else {
+            stream_context_set_option($this->streamContext, 'http', 'timeout', $timeout);
+        }
     }
     
+    public function setFollowLocation($follow) {
+        if ($this->useCurl) {
+            $this->setCurlOption(CURLOPT_FOLLOWLOCATION, $follow);
+        } else {
+            stream_context_set_option($this->streamContext, 'http', 'follow_location', $follow ? 1 : 0);
+        }
+    }
+
     protected function streamContextOpts($args) {
         $streamContextOpts = array(
             'http'=>array(
@@ -303,6 +331,61 @@ class URLDataRetriever extends DataRetriever {
         }
         
         return $url;
+    }
+    
+    protected function setAuthUser($user) {
+        $this->authUser = $user;
+    }
+
+    protected function setAuthPassword($password) {
+        $this->authPassword = $password;
+    }
+
+    protected function setAuthType($authType) {
+        switch ($authType)
+        {
+            case 'basic':
+
+            case 'digest':
+            case 'ntlm':
+                $this->authType = $authType;
+                break;
+            default:
+                throw new KurogoConfigurationException("Invalid auth type $authType");
+        }
+    }
+    
+    protected function setCredentials($user, $password) {
+        if (!strlen($user) || !strlen($password)) {
+            return false;
+        }
+        $this->authUser = $user;
+        $this->authPassword = $password;
+        $cred = $this->authUser . ':' . $this->authPassword;
+        
+        switch ($this->authType)
+        {
+            case 'basic':
+                if ($this->useCurl) {
+                    $this->setCurlOption(CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($this->authType)));
+                    $this->setCurlOption(CURLOPT_USERPWD, $cred);
+                } else {
+                    $this->addHeader('Authorization', 'Basic ' . base64_encode($cred));
+                }
+                break;
+            case 'digest':
+            case 'ntlm':
+                if ($this->useCurl) {
+                    $this->setCurlOption(CURLOPT_USERPWD, $cred);
+                    $this->setCurlOption(CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($this->authType)));
+                    
+                } else {
+                    throw new KurogoException("Digest and NTLM authentication require cURL");
+                }
+                break;
+            default:
+                throw new KurogoConfigurationException("Invalid auth type $this->authType");
+        }
     }
     
     protected function baseURL() {
@@ -389,7 +472,6 @@ class URLDataRetriever extends DataRetriever {
 				$result = curl_exec($this->curl);
 			} else {
 				$data = curl_exec($this->curl);
-				$response->setResponseError(curl_error($this->curl));
 			}
 		} else {
 			if ($file = $this->saveToFile()) {
@@ -408,11 +490,14 @@ class URLDataRetriever extends DataRetriever {
             $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders, $this->requestData);
         	if ($this->useCurl) {
 	            $response->setResponseHeaders($this->responseHeaders);
+				if ($error = curl_error($this->curl)) {
+					$response->setResponseError($error);
+				}
         	} else {
 				$http_response_header = isset($http_response_header) ? $http_response_header : array();
 	            $response->setResponseHeaders($http_response_header);
 			}
-            Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
+            Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes in %.4f seconds", $response->getCode(), strlen($data), $response->getTimeElapsed()), 'url_retriever');
         } elseif ($response instanceOf FileDataResponse) {
             $response->setRequest($this->requestURL);
         }

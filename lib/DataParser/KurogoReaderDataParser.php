@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
+ *
+ * The license governing the contents of this file is located in the LICENSE
+ * file located at the root directory of this distribution. If the LICENSE file
+ * is missing, please contact sales@modolabs.com.
+ *
+ */
+
 includePackage('readability');
 
 class KurogoReaderDataParser extends DataParser {
@@ -8,6 +17,9 @@ class KurogoReaderDataParser extends DataParser {
     private $basePath;
     
     public function parseData($html) {
+        if (strlen($html)==0) {
+            return null;
+        }
 
         // check tidy function available
         if(function_exists('tidy_parse_string')) {
@@ -29,33 +41,41 @@ class KurogoReaderDataParser extends DataParser {
 
     	$html = $this->tidyClean($html);
         $readability = new Readability($html, $url);
-        $readability->init();
-        $title = $readability->getTitle()->textContent;
-        $content = $readability->getContent()->innerHTML;
-        /**
-         * still need one more tidy clean, otherwise domdocument will not work properly
-         */
-        $content = $this->tidyClean($content);
-        /**
-         * use domdocument to fix relative urls
-         */
-        $content = $this->fixRelativeUrls($content);
-        /**
-         * if there is tidy support, then detect target source code from meta content
-         */
-        if($this->tidyAvailable) {
-            $tidy = tidy_parse_string($content, array(), 'utf8');
-            $head = $tidy->head();
-            $charset = $this->findCharset($head->value);
-            if(!empty($charset) && $charset != "utf-8") {
-                $content = mb_convert_encoding($content, "utf-8", $charset);
+        $article = null;
+        if ($readability->init()) {
+            $title = $readability->getTitle()->textContent;
+            $content = $readability->getContent()->innerHTML;
+            /**
+             * still need one more tidy clean, otherwise domdocument will not work properly
+             */
+            $content = $this->tidyClean($content);
+
+            $content = $this->removeEmptyTags($content);
+            /**
+             * use domdocument to fix relative urls
+             */
+            $content = $this->fixRelativeUrls($content);
+            /**
+             * if there is tidy support, then detect target source code from meta content
+             */
+            if($this->tidyAvailable) {
+                $tidy = tidy_parse_string($content, array(), 'utf8');
+                $head = $tidy->head();
+                $charset = $this->findCharset($head->value);
+                if(!empty($charset) && $charset != "utf-8") {
+                    $content = mb_convert_encoding($content, "utf-8", $charset);
+                }
             }
+            $article = array(
+                'title' => $title,
+                'content' => $content
+            );
         }
-        $article = array(
-            'title' => $title,
-            'content' => $content
-        );
         return $article;
+    }
+    
+    protected function removeEmptyTags($html) {
+        return preg_replace("#<(p|div)[^>]*>\s*(&nbsp;)?\s*</(p|div)[^>]*>#", '', $html);
     }
     
     /**

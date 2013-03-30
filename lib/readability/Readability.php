@@ -180,9 +180,7 @@ class Readability
 
 		if (!$articleContent) {
 			$this->success = false;
-			$articleContent = $this->dom->createElement('div');
-			$articleContent->setAttribute('id', 'readability-content');
-			$articleContent->innerHTML = '<p>Sorry, Readability was unable to parse this page for content.</p>';		
+			return $this->success;
 		}
 		
 		$overlay->setAttribute('id', 'readOverlay');

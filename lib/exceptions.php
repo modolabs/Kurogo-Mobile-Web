@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -40,6 +40,10 @@ class KurogoDataException extends KurogoException {
 }
 
 class KurogoConfigurationException extends KurogoException {
+    protected $code = 'config';
+}
+
+class KurogoConfigurationNotFoundException extends KurogoConfigurationException {
     protected $code = 'config';
 }
 
@@ -91,7 +95,7 @@ function getErrorURL($exception, $devError = false) {
     $args['error'] = $devError;
   }
 
-  return URL_PREFIX.'error/?'.http_build_query($args);
+  return URL_PREFIX.'kurogo/error?'.http_build_query($args);
 }
 
 /**
@@ -100,7 +104,7 @@ function getErrorURL($exception, $devError = false) {
 function developmentErrorLog($exception){
   $path =  CACHE_DIR . "/errors/";
   if (!file_exists($path)) {
-    if (!mkdir($path, 0755, true)){
+    if (!@mkdir($path, 0755, true)){
       Kurogo::log(LOG_WARNING, "DEV Error: could not create $path", "exception");
       return false;
     }
@@ -195,7 +199,9 @@ function exceptionHandlerForDevelopment(Exception $exception) {
     $errtime = developmentErrorLog($exception);
     $error = print_r($exception, TRUE);
 
-	if ($url = getErrorURL($exception, $errtime)) {
+    $redirect = defined('REDIRECT_ON_EXCEPTIONS') ? REDIRECT_ON_EXCEPTIONS : false;
+
+	if ($redirect && $url = getErrorURL($exception, $errtime)) {
 	    Kurogo::redirectToURL($url);
     } else {
     	header('Content-type: text/plain; charset=' . Kurogo::getCharset());
@@ -230,8 +236,10 @@ function exceptionHandlerForProduction(Exception $exception) {
             );
         }
     }
+    
+    $redirect = defined('REDIRECT_ON_EXCEPTIONS') ? REDIRECT_ON_EXCEPTIONS : false;
 
-    if ($url = getErrorURL($exception)) {
+    if ($redirect && $url = getErrorURL($exception)) {
         Kurogo::redirectToURL($url);
 	} else {
 		die("A serious error has occurred");

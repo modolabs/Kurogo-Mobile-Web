@@ -22,9 +22,9 @@
   
   <div id="story">
     {if $pager['pageNumber'] == 0}
-        {if isset($image)}
-          <div id="image">
-            <img class="thumbnail" src="{$image['src']}" />
+        {if $thumbnail && $showBodyThumbnail}
+          <div id="thumbnail">
+            <img class="thumbnail" src="{$thumbnail['src']}" alt="" />
           </div>
         {/if}
     {/if}

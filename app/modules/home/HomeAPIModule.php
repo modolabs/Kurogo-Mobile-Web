@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -13,7 +13,7 @@ class HomeAPIModule extends APIModule
 {
     protected $id = 'home';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 2;
 
     public function initializeForCommand() {
         switch ($this->command)
@@ -54,6 +54,39 @@ class HomeAPIModule extends APIModule
                     }
                 }
 
+                $this->setResponse($response);
+                $this->setResponseVersion($responseVersion);
+                break;
+            case 'modules':
+            
+                if ($setcontext = $this->getArg('setcontext')) {
+                    Kurogo::sharedInstance()->setUserContext($setcontext);
+                }
+            
+                $responseVersion = 2;
+                $response = array(
+                    'primary'=>array(),
+                    'secondary'=>array(),
+                    'customize'=>$this->getOptionalModuleVar('ALLOW_CUSTOMIZE', true),
+                    'displayType'=>$this->getOptionalModuleVar('display_type','springboard'),
+                );
+                
+                $allmodules = $this->getAllModules();
+                $navModules = Kurogo::getSiteSections('navigation', Config::APPLY_CONTEXTS_NAVIGATION);
+                
+                foreach ($navModules as $moduleID=>$moduleData) {
+                    if ($module = Kurogo::arrayVal($allmodules, $moduleID)) {
+                        $title = Kurogo::arrayVal($moduleData,'title', $module->getModuleVar('title'));
+                        $type = Kurogo::arrayVal($moduleData, 'type', 'primary');
+                        $visible = Kurogo::arrayVal($moduleData, 'visible', 1);
+                        $response[$type][] = array(
+                            'tag'=>$moduleID,
+                            'title'=>$title,
+                            'visible'=>(bool)$visible,
+                        );
+                    }
+                }
+                
                 $this->setResponse($response);
                 $this->setResponseVersion($responseVersion);
                 break;

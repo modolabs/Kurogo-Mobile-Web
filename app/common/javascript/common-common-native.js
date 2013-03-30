@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -52,11 +52,25 @@ function redirectToModule(module, page, args) {
         for (var name in this.config.cookies) {
             this.config.cookies[name] = unescape(this.config.cookies[name]);
         }
+        
+        if (this.config.geolocation) {
+            var that = this; // makes sure that "this" is the kgoBridge object inside the functions below
+            navigator.geolocation.getCurrentPosition = function (successCallback, errorCallback, options) {
+                that.geolocationGetCurrentPosition(successCallback, errorCallback, options);
+            };
+            navigator.geolocation.watchPosition = function (successCallback, errorCallback, options) {
+                return that.geolocationWatchPosition(successCallback, errorCallback, options);
+            };
+            navigator.geolocation.clearWatch = function (watchId) {
+                that.geolocationClearWatch(watchId);
+            };
+        }
     }
     
     kgoBridgeHandler.prototype = {
         config: {
             events: false,  // desktop browser simulation mode
+            geolocation: false, // use native bridge for geolocation, not supported in all clients
             urlPrefix: "",
             ajaxArgs: "",
             module: "",
@@ -64,7 +78,7 @@ function redirectToModule(module, page, args) {
             pageArgs: "",
             ajaxContent: "", // if provided, use instead of ajax request
             timeout: 60,
-            cookiePath: "",
+            cookiePath: "/",
             cookies: {},
             localizedStrings: {}
         },
@@ -93,6 +107,14 @@ function redirectToModule(module, page, args) {
         //
         // Page load
         //
+        
+        setConfig: function (config) {
+            if (typeof config == 'object') {
+                for (var i in config) {
+                    this.config[i] = config[i];
+                }
+            }
+        },
         
         initPage: function (params, statusCallback) {
             if (typeof statusCallback == "undefined") { statusCallback = null; }
@@ -269,6 +291,94 @@ function redirectToModule(module, page, args) {
             this.nativeAPI("dialog", "action", params, statusCallback, additionalCallbacks);
         },
 
+        //
+        // Geolocation
+        //
+        
+        // Supported params for getCurrentPosition and watchPosition:
+        // enableHighAccuracy – A boolean which indicates to the device 
+        //           that you wish to obtain it’s most accurate readings 
+        //           (this parameter may or may not make a difference, 
+        //           depending on your hardware)
+        // maximumAge – The maximum age (in milliseconds) of the reading 
+        //           (this is appropriate as the device may cache readings 
+        //           to save power and/or bandwidth)
+        // timeout – The maximum time (in milliseconds) for which you are 
+        //           prepared to allow the device to try to obtain a Geo 
+        //           location
+        _geolocationRegisterForPosition: function (type, successCallback, errorCallback, params) {
+            var that = this;
+            
+            // Make sure all params are set
+            var defaults = {
+                enableHighAccuracy : false,
+                maximumAge : 0,
+                timeout : Infinity,
+            };
+            if (typeof params == "undefined") {
+                params = {};
+            }
+            for (defaultParam in defaults) {
+                if (typeof params[defaultParam] == "undefined") {
+                    params[defaultParam] = defaults[defaultParam];
+                }
+            }
+            
+            var statusCallback = function (error, params) {
+                if (error !== null && typeof errorCallback != "undefined") {
+                    errorCallback(new PositionError(null, "Unable to initialize geolocation"));
+                }
+            };
+            
+            var eventHandlerCallback = function (error, params) {
+                if (error === null && params && params.coords && params.timestamp) {
+                    var timestamp = params.timestamp;
+                    if (typeof timestamp == "string") {
+                        timestamp = parseInt(timestamp);
+                    }
+                    successCallback(new Position(params.coords, timestamp));
+                    
+                } else if (typeof errorCallback != "undefined") {
+                    if (error !== null) {
+                        errorCallback(new PositionError(error.title, error.message));
+                    } else {
+                        errorCallback(new PositionError(null, "Invalid response from native bridge"));
+                    }
+                }
+            };
+            
+            this.nativeAPI("geolocation", type, params, statusCallback, [{
+                "param"     : "eventHandlerCallback",
+                "callback"  : eventHandlerCallback,
+                "repeating" : type == "watch" ? true : false
+            }]);
+            
+            return this.callbackIdForCallback(eventHandlerCallback);
+        },
+        
+        geolocationGetCurrentPosition: function (successCallback, errorCallback, params) {
+            this._geolocationRegisterForPosition("get", successCallback, errorCallback, params);
+        },
+        
+        geolocationWatchPosition: function (successCallback, errorCallback, params) {
+            return this._geolocationRegisterForPosition("watch", successCallback, errorCallback, params);
+        },
+        
+        geolocationClearWatch: function (watchID) {
+            var params = {};
+            
+            if (typeof this.callbacks[watchID] !== "undefined") {
+                var statusCallback = function (error, params) { }; // ignore errors
+            
+                this.nativeAPI("geolocation", "unwatch", params, statusCallback, [{
+                    "param"     : "eventHandlerCallback",
+                    "callback"  : this.callbacks[watchID]["callback"],
+                    "repeating" : true,
+                    "remove"    : true
+                }]);
+            }
+        },
+        
         //
         // Events
         //
@@ -510,11 +620,12 @@ function redirectToModule(module, page, args) {
                             var iframe = document.createElement("iframe");
                             iframe.name = iframeName;
                             iframe.id = iframeId;
-                            iframe.frameborder = 0;
+                            iframe.setAttribute('frameborder', '0');
                             iframe.width = 0;
                             iframe.height = 0;
-                            iframe.style.width = "0px";
-                            iframe.style.height = "0px";
+                            setCSSValue(iframe, 'border', 'none');
+                            setCSSValue(iframe, 'width', '0px');
+                            setCSSValue(iframe, 'height', '0px');
                             
                             forms[i].action = url;
                             forms[i].target = iframeName;
@@ -652,6 +763,37 @@ function redirectToModule(module, page, args) {
                          .replace(/&amp;/g, '&');
         }
     };
+    
+    
+    //
+    // Fake geolocation Position object
+    //
+    function Coordinates(coords) {
+        for (var d in coords) {
+            this[d] = coords[d];
+        }
+    }
+    Coordinates.prototype = {
+        latitude         : 0,
+        longitude        : 0,
+        altitude         : null,
+        accuracy         : 0,
+        altitudeAccuracy : null,
+        heading          : null,
+        speed            : null
+    };
+    function Position(coords, timestamp) {
+        this.coords = new Coordinates(coords);
+        this.timestamp = timestamp ? new Date(timestamp) : new Date();
+    };
+    function PositionError(codeString, message) {
+        this.code = (codeString == "PERMISSION_DENIED") ? 1 : 2;
+        this.message = message || "";
+    };
+    PositionError.PERMISSION_DENIED = 1;
+    PositionError.POSITION_UNAVAILABLE = 2;
+    PositionError.TIMEOUT = 3;
+
     
     window.kgoBridgeHandler = kgoBridgeHandler;
 })(window);

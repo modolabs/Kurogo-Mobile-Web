@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -14,6 +14,8 @@ class EmergencyNotice
     protected $pubDate;
     protected $title;
     protected $description;
+    protected $content;
+    protected $link;
 
     public function getPubDate()
     {
@@ -33,6 +35,10 @@ class EmergencyNotice
     public function getDescription() {
         return $this->description;
     }
+
+    public function getLink() {
+        return $this->link;
+    }
     
     public function setTitle($title) {
         $this->title = $title;
@@ -42,7 +48,19 @@ class EmergencyNotice
         $this->description = $description;
     }
 
+    public function setContent($content) {
+        $this->content = $content;
+    }
+
+    public function getContent() { 
+        return $this->content; 
+    }
+
     public function setPubDate(DateTime $pubDate) {
         $this->pubDate = $pubDate;
+    }
+
+    public function setLink($link) {
+        $this->link = $link;
     }
 }

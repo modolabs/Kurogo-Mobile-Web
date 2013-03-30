@@ -1,0 +1,202 @@
+
+.feedlinks {
+  font-size: 82.35%;
+}
+
+.feedlinks span {
+  display: block;
+  font-size: 82.35%;
+  color: #969390;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-bottom: 2px;
+}
+
+.feedlinks a {
+  display: inline-block;
+  padding-left: 28px;
+  margin-right: 10px;
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: 24px 24px;
+  text-decoration: none;
+  line-height: 26px;
+  color: #333;
+  height: 24px;
+  text-align: middle;
+}
+
+.feedlinks a:visited, .feedlinks a:hover, .feedlinks a:active {
+  color: #333;
+}
+
+.feedlinks a.twitter {
+  background-image: url(/common/images/button-twitter.png);
+}
+.feedlinks a.facebook {
+  background-image: url(/common/images/button-facebook.png);
+}
+.feedlinks a.youtube {
+  background-image: url(/common/images/button-youtube.png);
+}
+
+.featured a    {
+    width: 80%;
+    display: block;
+    position: relative;
+    padding-left: 60px;
+    text-decoration: none;
+}
+
+.featured a img    {
+    float: left;
+    padding-right: 10px;
+    position: absolute;
+    left: 0;
+    top: 5px;
+}
+
+.featured h3 {
+  text-transform: uppercase;
+  font-size: 76.47%;
+
+}
+
+.featured .message {
+	font-family: Georgia, serif;
+	font-size: 120%;
+	line-height: 1.2em;
+}
+
+.featured.twitter .author,
+.results .twitter .author,
+.featured.facebook .author,
+.results .facebook .author
+{
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    background-position: 0px -1px;
+    display: inline-block;
+}
+
+.featured.twitter .author, .results .twitter .author
+{
+    background-image: url(/common/images/button-twitter-24.png);
+}
+
+.featured.facebook .author, .results .facebook .author
+{
+    background-image: url(/common/images/button-facebook-24.png);
+}
+
+.actionbuttons {
+    margin: 10px -1% 10px -1%;
+}	
+.actionbutton {
+    margin: 0 .7%;
+    width: 10em;
+    text-align: center;
+    float: left;
+}
+.actionbutton a {
+    display: block;
+    padding: 4px 4px 3px 6px;
+    background: #f6f6f6;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,.15)), to(rgba(128,128,128,0.15)));
+    border: 1px solid #eee;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-top-color: #f3f3f3;
+    border-bottom-color: #e9e9e9;
+    border-top-color: rgba(0,0,0,0.08);
+    border-bottom-color: rgba(0,0,0,0.22);
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -o-border-radius: 6px;
+    border-radius: 6px;
+    color: #444;
+    font-size: 70%;
+    line-height: 20px;
+    text-transform: uppercase;
+    text-decoration: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.actionbutton a:active, .actionbutton a.pressedaction {
+    background: #aaa;
+    background: rgba(0,0,0,0.33);
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.18)), to(rgba(0,0,0,0.12)));
+    border-color: rgba(0,0,0,0.65);
+    border-top-color: rgba(0,0,0,0.75);
+    border-bottom-color: rgba(0,0,0,0.5);
+    color: #000;
+    box-shadow: inset 0 1px 3px #000;
+}
+
+.social-avatar {
+	width: 32px;
+	height: 32px;
+	float: left;
+	margin-right: 4px;
+	position: relative;
+	top: -2px;
+}
+
+.postbody a, .byline a {
+	text-decoration: none;
+}	
+
+.byline {
+	min-height: 0;
+	padding: 0.5em 0 0.5em 0;
+	border-bottom: none;
+	margin-bottom: 0;
+}
+
+
+div#nonfooternav div#navbar {
+    margin-bottom: 0px;
+}
+
+ul.results {
+    margin-top: 0;
+}
+
+ul.results li.icon {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    }
+
+ul.results li.icon a {
+    padding-top: 0;
+    line-height: 1.2em;
+    color: #403f3d;
+    padding-bottom: 0;
+}
+
+ul.results li.icon a div.smallprint {
+    padding-top: 10px;
+}
+
+div.focal.author {
+    min-height: 45px;
+}
+
+div.focal.author img {
+    float: left;
+    position: absolute;
+
+}
+
+.featured h3 {
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.featured a div.smallprint {
+    padding-top: 10px;
+    
+}
+
+.byline {
+	border-bottom: none;
+}

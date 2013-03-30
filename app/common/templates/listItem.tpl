@@ -11,7 +11,7 @@
 {/capture}
 {block name="itemLink"}
   {if $item['url']}
-    <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget || $item['linkTarget']} target="{if $item['linkTarget']}{$item['linkTarget']}{else}{$linkTarget}{/if}"{/if}>
+    <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget || $item['linkTarget']} target="{if $item['linkTarget']}{$item['linkTarget']}{else}{$linkTarget}{/if}"{/if}{if $item['onclick']}onclick="{$item['onclick']}"{/if}>
   {else}
     <span class="nolink">
   {/if}

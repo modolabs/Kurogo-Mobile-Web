@@ -8,6 +8,14 @@ class PhotosDataModel extends ItemListDataModel {
         return $this->items();
     }
     
+    public function items(){
+    	$items = parent::items();
+    	foreach ($items as $item) {
+    		$item->setRetriever($this->retriever);
+    	}
+    	return $items;
+    }
+    
     public function getDefaultPhoto(){
     	$this->setStart(0);
     	$this->setLimit(1);

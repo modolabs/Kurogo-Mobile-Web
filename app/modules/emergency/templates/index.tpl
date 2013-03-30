@@ -7,6 +7,7 @@
       {capture name="title" assign="title"}
         {block name="title"}
           <div class="emergency-notice{if $emergencyNotice@first} emergency-featured{/if}">
+          {if $notice['url']}<a href="{$notice['url']}"{if $notice['external']} class="external"{/if}>{/if}
             <div class="title">{$emergencyNotice['title']}</div>
             {if $emergencyNotice['date']}
               <div class="pubdate">{$emergencyNotice['date']|date_format:$dateFormat} {$emergencyNotice['date']|date_format:$timeFormat}</div>
@@ -14,6 +15,7 @@
             {if $emergencyNotice['text']}
               <div class="content">{$emergencyNotice['text']}</div>
             {/if}
+          {if $notice['url']}</a>{/if}
           </div>
         {/block}
       {/capture}
@@ -21,10 +23,12 @@
   {/foreach}
   
   {block name="featuredNotice"}
-    <div class="focal">
+    <div class="focal nav">
       {if count($emergencyNotices)}
         {$featuredNotice = array_shift($emergencyNotices)}
+        {if $featuredNotice['url']}<a href="{$featuredNotice['url']}"{if $featuredNotice['external']} class="external"{/if}>{/if}
         {$featuredNotice['title']}
+        {if $featuredNotice['url']}</a>{/if}
       {else}
         {$moduleStrings.NO_EMERGENCY}
       {/if}
@@ -37,7 +41,7 @@
     {include file="findInclude:common/templates/navlist.tpl"
        navlistItems=$contactNavListItems
        accessKey=false
-       subtitleNewLine=false}
+       subTitleNewline=$subTitleNewline}
   {/block}
 {/if}
 

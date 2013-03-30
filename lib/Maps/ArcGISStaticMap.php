@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -9,20 +9,11 @@
  *
  */
 
-// TODO reduce duplication between this class and WMSStaticMap/ArcGISJSMap
-// by moving some methods to config, utility, or superclass
-
 // http://resources.esri.com/help/9.3/arcgisserver/apis/rest/index.html
 class ArcGISStaticMap extends StaticMapImageController {
 
-    const LIFE_SIZE_METERS_PER_PIXEL = 0.00028; // standard definition at 1:1 scale
-    const NO_PROJECTION = -1;
-    
     private $layerFilters = array();
-
     protected $availableLayers = null;
-    protected $unitsPerMeter = null;
-    
     private $transparent = false;
 
     public function setTransparent($tranparent) {
@@ -42,8 +33,6 @@ class ArcGISStaticMap extends StaticMapImageController {
             $this->setMapProjection($data['spatialReference']['wkid']);
         }
 
-        $this->unitsPerMeter = self::getScaleForEsriUnits($data['units']);
-
         if (isset($data['supportedImageFormatTypes'])) {
             $this->supportedImageFormats = $data['supportedImageFormatTypes'];
         }
@@ -53,79 +42,6 @@ class ArcGISStaticMap extends StaticMapImageController {
             $this->availableLayers[] = $id;
         }
         $this->enableAllLayers();
-
-        $bbox = $data['initialExtent'];
-        unset($bbox['spatialReference']);
-
-        $xrange = $bbox['xmax'] - $bbox['xmin'];
-        $yrange = $bbox['ymax'] - $bbox['ymin'];
-        $bbox['xmin'] += 0.4 * $xrange;
-        $bbox['xmax'] -= 0.4 * $xrange;
-        $bbox['ymin'] += 0.4 * $yrange;
-        $bbox['ymax'] -= 0.4 * $yrange;
-        $this->bbox = $bbox;
-        $this->zoomLevel = $this->zoomLevelForScale($this->getCurrentScale());
-        $this->center = array(
-            'lat' => ($this->bbox['ymin'] + $this->bbox['ymax']) / 2,
-            'lon' => ($this->bbox['xmin'] + $this->bbox['xmax']) / 2,
-            );
-    }
-
-    public function setCenter($center)
-    {
-        if ($center['lon'] < 180 && $center['lon'] > -180
-            && $center['lat'] < 90 && $center['lat'] > -90 && $this->mapProjector)
-        {
-            $this->center = $this->mapProjector->projectPoint($center);
-        }
-    }
-
-    public static function getScaleForEsriUnits($units) {
-        switch ($units) {
-            case 'esriCentimeters':
-                return 100;
-            case 'esriDecimeters':
-                return 0.1;
-            case 'esriFeet':
-                return 3.2808399;
-            case 'esriInches':
-                return 39.3700787;
-            case 'esriKilometers':
-                return 0.001;
-            case 'esriMeters':
-                return 1;
-            case 'esriMiles':
-                return 0.000621371192;
-            case 'esriMillimeters':
-                return 1000;
-            case 'esriNauticalMiles':
-                return 0.000539956803;
-            case 'esriYards':
-                return 1.0936133;
-            default:
-                return self::NO_PROJECTION;
-        }
-    }
-
-    // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
-    protected function getCurrentScale()
-    {
-        if ($this->unitsPerMeter != self::NO_PROJECTION) {
-            $metersPerPixel = $this->getHorizontalRange() / $this->imageWidth / $this->unitsPerMeter;
-            return $metersPerPixel / self::LIFE_SIZE_METERS_PER_PIXEL;
-        }
-        return null;
-    }
-    
-    protected function zoomLevelForScale($scale)
-    {
-        // not sure if ceil is the right rounding in both cases
-        if ($scale == self::NO_PROJECTION) {
-            $range = $this->getHorizontalRange();
-            return ceil(log(360 / $range, 2));
-        } else {
-            return oldPixelZoomLevelForScale($scale);
-        }
     }
 
     ////////////// overlays ///////////////
@@ -146,23 +62,8 @@ class ArcGISStaticMap extends StaticMapImageController {
 
     public function parseQuery($query) {
         parse_str($query, $args);
-
-        if (isset($args['bbox'])) {
-            $bboxParts = explode(',', $args['bbox']);
-            $this->bbox = array(
-                'xmin' => $bboxParts[0],
-                'ymin' => $bboxParts[1],
-                'xmax' => $bboxParts[2],
-                'ymax' => $bboxParts[3],
-                );
-        }
-
         if (isset($args['transparent'])) {
             $this->transparent = $args['transparent'] == 'true';
-        }
-
-        if (isset($args['imageSR'])) {
-            $this->mapProjection = $args['imageSR'];
         }
 
         if (isset($args['format'])) {
@@ -175,13 +76,44 @@ class ArcGISStaticMap extends StaticMapImageController {
             $this->imageHeight = $sizeParts[1];
         }
 
+        if (isset($args['imageSR'])) {
+            $this->setMapProjection($args['imageSR']);
+        }
+
+        if (isset($args['bbox'])) {
+            list($xmin, $ymin, $xmax, $ymax) = explode(',', $args['bbox']);
+            $zoom = log($this->globeWidth() / ($xmax - $xmin), 2);
+
+            $northeast = array('lat' => $ymax, 'lon' => $xmax);
+            $southwest = array('lat' => $ymin, 'lon' => $xmin);
+            if ($this->mapProjector) {
+                $northeast = $this->mapProjector->reverseProject($northeast);
+                $southwest = $this->mapProjector->reverseProject($southwest);
+            }
+            $this->setBoundingBox(
+                $southwest['lon'], $southwest['lat'],
+                $northeast['lon'], $northeast['lat']);
+        }
         // TODO read layerDefs and layers
     }
 
+    private function getProjectedBBox() {
+        $bbox = $this->getBoundingBox();
+        $northeast = array('lat' => $bbox['ymax'], 'lon' => $bbox['xmax']);
+        $southwest = array('lat' => $bbox['ymin'], 'lon' => $bbox['xmin']);
+        if ($this->mapProjector) {
+            $northeast = $this->mapProjector->projectPoint($northeast, MapProjector::FORMAT_LATLON);
+            $southwest = $this->mapProjector->projectPoint($southwest, MapProjector::FORMAT_LATLON);
+        }
+        list($bbox['xmin'], $bbox['ymin'], $fmt) = MapProjector::getXYFromPoint($southwest);
+        list($bbox['xmax'], $bbox['ymax'], $fmt) = MapProjector::getXYFromPoint($northeast);
+        return $bbox;
+    }
+
     public function getImageURL() {
-        $bboxStr = $this->bbox['xmin'].','.$this->bbox['ymin'].','
-                  .$this->bbox['xmax'].','.$this->bbox['ymax'];
-        
+        $bbox = $this->getProjectedBBox();
+        $bboxStr = $bbox['xmin'].','.$bbox['ymin'].','
+                  .$bbox['xmax'].','.$bbox['ymax'];
         $params = array(
             'f' => 'image',
             'bbox' => $bboxStr,
@@ -202,7 +134,7 @@ class ArcGISStaticMap extends StaticMapImageController {
 
     public function getJavascriptControlOptions() {
         return json_encode(array(
-            'bbox' => $this->bbox,
+            'bbox' => $this->getProjectedBBox(),
             'mapClass' => get_class($this),
             'baseURL' => $this->baseURL,
             ));

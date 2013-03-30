@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -18,7 +18,9 @@ class AthleticsWebModule extends WebModule {
     protected $feeds = array();
     protected $navFeeds = array();
     protected $maxPerPage = 10;
+    protected $maxPerPane = 5;
     protected $showImages = true;
+    protected $showBodyThumbnail = true;
     protected $showPubDate = false;
     protected $showAuthor = false;
     protected $showLink = false;
@@ -27,10 +29,9 @@ class AthleticsWebModule extends WebModule {
     
     public function loadScheduleData() {
         $scheduleFeeds = $this->getModuleSections('schedule');
+        $default = $this->getOptionalModuleSection('schedule','module');
         foreach ($scheduleFeeds as $index=>&$feedData) {
-            if (isset($this->feeds[$index])) {
-                $feedData = array_merge($this->feeds[$index], $feedData);
-            }
+            $feedData = array_merge($default, $feedData);
         }
         return $scheduleFeeds;
     }
@@ -64,22 +65,34 @@ class AthleticsWebModule extends WebModule {
     }
     
     protected function getImageForStory($story) {
-        if ($this->showImages) {
-            if ($image = $story->getImage()) {
-                return array(
-                    'src'    => $image->getURL(),
-                    'width'  => $image->getWidth(),
-                    'height' => $image->getHeight()
-                );
-            } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
-                return array(
-                    'src'    => $image->getAttrib('URL'),
-                    'width'  => $image->getAttrib('WIDTH'),
-                    'height' => $image->getAttrib('HEIGHT'),
-                );
-            }
-        }
-        return null;
+      if ($this->showImages) {
+          $image = $story->getImage();
+          
+          if ($image) {
+            return array(
+              'src'    => $image->getURL(),
+              'width'  => $image->getWidth(),
+              'height' => $image->getHeight()
+            );
+          }
+      }
+      
+      return null;
+    }
+    
+    protected function getThumbnailForStory($story) {
+      if ($this->showImages) {
+          $thumbnail = $story->getThumbnail();
+          if ($thumbnail) {
+            return array(
+              'src'    => $thumbnail->getURL(),
+              'width'  => $thumbnail->getWidth(),
+              'height' => $thumbnail->getHeight()
+            );
+          }
+      }
+      
+      return null;
     }
     
     protected function linkForNewsItem($story, $data = array()) {
@@ -89,14 +102,30 @@ class AthleticsWebModule extends WebModule {
             $date = "";
         }              
 
-        $image = $this->getImageForStory($story);
+        $image = false;
+        $large = false;
+        if ($this->showImages) {
+            if ($this->page == 'pane' && $image = $story->getImage()) {
+                $large = true;
+            } elseif ($image = $story->getThumbnail()) {
+                $large = false;
+            }
+        }
+
+        $subtitle = $this->htmlEncodeFeedString($story->getDescription());
+        if ($this->getOptionalModuleVar('STRIP_TAGS_IN_DESCRIPTION', 1)) {
+            $subtitle = Sanitizer::sanitizeHTML($subtitle, array());
+        } else {
+            $subtitle = Sanitizer::sanitizeHTML($subtitle, 'inline');
+        }
 
         $link = array(
             'title'   => $this->htmlEncodeFeedString($story->getTitle()),
             'pubDate' => $date,
             'author'  => $this->htmlEncodeFeedString($story->getAuthor()),
-            'subtitle'=> $this->htmlEncodeFeedString($story->getDescription()),
-            'img'     => $image && isset($image['src']) && $image['src'] ? $image['src'] : '',
+            'subtitle'=> $subtitle,
+            'img'     => $image ? $image->getURL() : '',
+            'large'   => $large
         );
         
         if ($storyID = $story->getGUID()) {
@@ -110,7 +139,8 @@ class AthleticsWebModule extends WebModule {
                 }
             }
     
-            $link['url'] = $this->buildBreadcrumbURL('news_detail', $options, true);
+            $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
+            $link['url'] = $this->buildBreadcrumbURL('news_detail', $options, $addBreadcrumb);
         } elseif ($url = $story->getLink()) {
             $link['url'] = $url;
         }
@@ -191,7 +221,7 @@ class AthleticsWebModule extends WebModule {
     }
     
     protected function formatScheduleDetail(AthleticEvent $event) {
-        $allFieldsValue  = $this->getFieldsForSechedule($event);
+        $allFieldsValue  = $this->getFieldsForSchedule($event);
         $showFields = $this->getModuleSections('schedule-detail');
         $fields = array();
 
@@ -221,7 +251,7 @@ class AthleticsWebModule extends WebModule {
         return $fields;
     }
 
-    protected function getFieldsForSechedule(AthleticEvent $event) {
+    protected function getFieldsForSchedule(AthleticEvent $event) {
         return array(
             'title'         => $event->getTitle(),
             'id'            => $event->getID(),
@@ -231,7 +261,8 @@ class AthleticsWebModule extends WebModule {
             'start'         => $this->timeText($event),
             'pastStatus'    => $event->getStartTime() > time() ? false : true,
             'location'      => $event->getLocation(),
-            'link'          => $event->getLink()
+            'link'          => $event->getLink(),
+            'description'   => $event->getDescription(),
         );
     }
     
@@ -274,9 +305,19 @@ class AthleticsWebModule extends WebModule {
     }
 
     protected function getScheduleFeed($sport) {
-    
-        if ($feedData = $this->getOptionalModuleSection($sport, 'schedule')) {
-            $dataModel = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : 'AthleticEventsDataModel';
+        
+        if ($sport=='allschedule'){ 
+            $scheduleData = $this->getNavData('allschedule');
+            $dataModel = Kurogo::arrayVal($scheduleData, 'MODEL_CLASS', self::$defaultEventModel);
+            $scheduleFeed = AthleticEventsDataModel::factory($dataModel, $scheduleData);
+            return $scheduleFeed;
+
+        } else {
+            $scheduleData = $this->loadScheduleData();
+        }
+        
+        if ($feedData = Kurogo::arrayVal($scheduleData, $sport)) {
+            $dataModel = Kurogo::arrayVal($feedData, 'MODEL_CLASS', self::$defaultEventModel);
             $this->scheduleFeed = AthleticEventsDataModel::factory($dataModel, $feedData);
             return $this->scheduleFeed;
         }
@@ -294,7 +335,7 @@ class AthleticsWebModule extends WebModule {
         }
         
         if (isset($feedData['DATA_RETRIEVER']) || isset($feedData['BASE_URL'])) {
-            $dataModel = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : 'NewsDataModel';
+            $dataModel = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : 'AthleticNewsDataModel';
             $this->newsFeed = DataModel::factory($dataModel, $feedData);
             return $this->newsFeed;
         }
@@ -333,6 +374,7 @@ class AthleticsWebModule extends WebModule {
 
         $this->feeds = $this->loadFeedData();
         $this->navFeeds = $this->getModuleSections('page-index');
+        $this->showBodyThumbnail = $this->getOptionalModuleVar('SHOW_BODY_THUMBNAIL', 1);
         
     }    
         
@@ -395,6 +437,7 @@ class AthleticsWebModule extends WebModule {
                 $storyPage = $this->getArg('storyPage', '0');
                 
                 $feed = $this->getNewsFeed($section, $gender);
+                $showBodyThumbnail = $this->getOptionalModuleVar('SHOW_BODY_THUMBNAIL', $this->showBodyThumbnail, $section, 'feeds');          
                 
                 if (!$story = $feed->getItem($storyID)) {
                     throw new KurogoUserException($this->getLocalizedString('ERROR_STORY_NOT_FOUND', $storyID));
@@ -410,7 +453,12 @@ class AthleticsWebModule extends WebModule {
                 }
 
                 if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
-                    $body = $story->getDescription()."\n\n".$story->getLink();
+                    $body = Sanitizer::sanitizeAndTruncateHTML($story->getDescription(), $truncated,
+                        $this->getOptionalModuleVar('SHARE_EMAIL_DESC_MAX_LENGTH', 500),
+                        $this->getOptionalModuleVar('SHARE_EMAIL_DESC_MAX_LENGTH_MARGIN', 50),
+                        $this->getOptionalModuleVar('SHARE_EMAIL_DESC_MIN_LINE_LENGTH', 50),
+                        '')."\n\n".$story->getLink();
+                    
                     $shareEmailURL = $this->buildMailToLink("", $story->getTitle(), $body);
                     $this->assign('shareTitle', $this->getLocalizedString('SHARE_THIS_STORY'));
                     $this->assign('shareEmailURL', $shareEmailURL);
@@ -422,21 +470,23 @@ class AthleticsWebModule extends WebModule {
                     $date = DateFormatter::formatDate($pubDate, DateFormatter::MEDIUM_STYLE, DateFormatter::NO_STYLE);
                 } else {
                     $date = "";
-                }              
+                }
 
                 $this->enablePager($content, $this->newsFeed->getEncoding(), $storyPage);
                 $this->assign('date',   $date);
                 $this->assign('title',  $this->htmlEncodeFeedString($story->getTitle()));
                 $this->assign('author', $this->htmlEncodeFeedString($story->getAuthor()));
                 $this->assign('image',  $this->getImageForStory($story));
+                $this->assign('thumbnail', $this->getThumbnailForStory($story));
+                $this->assign('showBodyThumbnail', $showBodyThumbnail);
                 $this->assign('link',   $story->getLink());
-                $this->assign('showLink', $this->showLink);
+                $this->assign('showLink', $this->showLink);                
                 break;
             
             case 'search':
                 $searchTerms = $this->getArg('filter');
                 $start       = $this->getArg('start', 0);
-                $section = $this->getArg('section');
+                $section = $this->getArg('section', 'topnews');
                 
                 if ($searchTerms) {
                     $newsFeed = $this->getNewsFeed($section);
@@ -520,8 +570,12 @@ class AthleticsWebModule extends WebModule {
              
             case 'schedule_detail':
                 $sport = $this->getArg('sport', '');
+                if ($sport == '') {
+                    $sport = 'allschedule';
+                }
+
                 $id = $this->getArg('id', '');
-                $sportData = $this->getSportData($sport);
+                // $sportData = $this->getSportData($sport);
                 
                 $scheduleFeed = $this->getScheduleFeed($sport);
                 if ($schedule = $scheduleFeed->getItem($id)) {
@@ -532,7 +586,7 @@ class AthleticsWebModule extends WebModule {
                 $this->setLogData($sport . ':' . $schedule->getID(), $schedule->getSport());
                 
                 $fields = $this->formatScheduleDetail($schedule);
-                $schedule = $this->getFieldsForSechedule($schedule);
+                $schedule = $this->getFieldsForSchedule($schedule);
                 $this->assign('schedule', $schedule);
                 $this->assign('fields', $fields);
                 break;
@@ -628,15 +682,23 @@ class AthleticsWebModule extends WebModule {
             case "index":
                 $tabs = array();
                 
+                $latestSubTab = $this->getArg('newsTab', 'topnews');        // used to distinguish between top news and schedule
+                $latestSubTabLinks = array();                               // will add 'Latest' subTab items to this array
+
                 //get top news
                 if ($newsFeedData = $this->getNavData('topnews')) {
                     $start = $this->getArg('start', 0);
-                    
                     $newsFeed = $this->getNewsFeed('topnews');
                     $newsFeed->setStart($start);
                     $newsFeed->setLimit($this->maxPerPage);
+
+                    $newsTab = array(   'id' => 'topnews',
+                                        'title' => $this->getLocalizedString('TOP_NEWS'),
+                                        'url' => $this->buildBreadcrumbURL('index', array('newsTab' => 'topnews'), false),
+                                        'ajaxUrl' => $this->buildAjaxBreadcrumbURL('index', array('newsTab' => 'topnews'), false));
+                    $latestSubTabLinks[] = $newsTab;
                 
-                    $items = $newsFeed->items();
+                    $newsItems = $newsFeed->items();
                     $totalItems = $newsFeed->getTotalItems();
                     $this->setLogData('topnews', $newsFeed->getTitle());
                 
@@ -662,7 +724,7 @@ class AthleticsWebModule extends WebModule {
                     $options = array(
                         'section'=>'topnews'
                     );
-                    foreach ($items as $story) {
+                    foreach ($newsItems as $story) {
                         $topNews[] = $this->linkForNewsItem($story, $options);
                     }
                     
@@ -672,8 +734,7 @@ class AthleticsWebModule extends WebModule {
                     
                     $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                     $this->addOnLoad('setupNewsListing();');
-                    
-                    $tabs[] = 'topnews';
+                    // KurogoDebug::debug($newsFeedData['TITLE'], true);
                     $this->assign('topNewsTitle', $newsFeedData['TITLE']);
                     $this->assign('topNews', $topNews);
                     $this->assign('extraArgs', $extraArgs);
@@ -684,6 +745,41 @@ class AthleticsWebModule extends WebModule {
                     $this->assign('showPubDate',    $this->showPubDate);
                     $this->assign('showAuthor',     $this->showAuthor);
                 }
+
+                // get all sports schedule
+                if ($scheduleFeedData = $this->getNavData('allschedule')) {
+                    // KurogoDebug::debug($scheduleFeed, true);
+                    $scheduleFeed = $this->getScheduleFeed('allschedule');
+                    $athleticEvents = $scheduleFeed->items();
+
+                    $scheduleItems = array();
+                    foreach ($athleticEvents as $event ) {
+                        $scheduleItems[] = $this->linkForScheduleItem($event);
+                    }
+                    if ($limit = Kurogo::arrayVal($scheduleFeedData,'LIMIT')) {
+                        $scheduleItems = array_slice($scheduleItems, 0, $limit);
+                    }
+                    
+                    $scheduleTab = array(   'id' => 'allschedule',
+                                            'title' => $this->getLocalizedString('ALL_SCHEDULE'),
+                                            'url' => $this->buildBreadcrumbURL('index', array('newsTab' => 'allschedule'), false),
+                                            'ajaxUrl' => $this->buildAjaxBreadcrumbURL('index', array('newsTab' => 'allschedule'), false));
+                    $latestSubTabLinks[] = $scheduleTab;
+
+                    $this->assign('scheduleItems', $scheduleItems);
+                }
+
+                // make sure we are displaying tabs correctly
+                if (count($latestSubTabLinks) > 0) {
+                    // if we have topnews to show
+                    $tabs[] = 'topnews';
+                    if (count($latestSubTabLinks) == 1) {
+                        $latestSubTab = $latestSubTabLinks[0]['id'];
+                    }
+                }
+
+                $this->assign('latestSubTabLinks', $latestSubTabLinks);
+                $this->assign('latestSubTab', $latestSubTab);
                 
                 //get sports for each gender
                 foreach (array('men','women','coed') as $gender) {
@@ -692,7 +788,7 @@ class AthleticsWebModule extends WebModule {
                         if ($sportsConfig = $this->getSportsForGender($gender)) {
                             $sports = array();
                             foreach ($sportsConfig as $key => $sportData) {
-                                $image = "modules/{$this->configModule}/images/".
+                                $image = "modules/{$this->id}/images/".
                                     (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])).
                                     $this->imageExt;
                                 $sport = array(
@@ -719,8 +815,12 @@ class AthleticsWebModule extends WebModule {
                     foreach ($bookmarksData as $bookmark) {
                         parse_str(stripslashes($bookmark), $params);
                         if (isset($params['sport']) && ($sportData = $this->getSportData($params['sport']))) {
+                            $image = "modules/{$this->id}/images/".
+                                (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])).
+                                $this->imageExt;
                             $bookmarks[] = array(
                                 'title' => $sportData['GENDER_TITLE'],
+                                'img'   => $image,
                                 'url'   => $this->buildURL('sport', array('sport' => $params['sport']))
                             );
                         }
@@ -728,7 +828,6 @@ class AthleticsWebModule extends WebModule {
 
                     $tabs[] = 'bookmarks';
                 }
-                
                 
                 $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
                 $this->assign('bookmarksTitle', $bookmarkData['TITLE']);
@@ -743,15 +842,18 @@ class AthleticsWebModule extends WebModule {
                     
                     $newsFeed = $this->getNewsFeed($section);
                     $newsFeed->setStart(0);
-                    $newsFeed->setLimit($this->maxPerPage);
+                    $newsFeed->setLimit($this->maxPerPane);
                     
                     $items = $newsFeed->items();
                     $this->setLogData($section, $newsFeed->getTitle());
                     
                     $stories = array();
-                    foreach ($items as $item) {
-                        $stories[] = $this->linkForNewsItem($item, array('section' => $section));
+                    $options = array('section' => $section, 'addBreadcrumb'=>false);
+
+                    foreach ($items as $story) {
+                        $stories[] = $this->linkForItem($story, $options);
                     }
+                    $this->assign('showImages', $this->showImages);
                     $this->assign('stories', $stories);
                 }
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');

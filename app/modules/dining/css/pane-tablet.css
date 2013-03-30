@@ -1,0 +1,50 @@
+#locations li {
+    background-position: 8px 10px;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+}
+
+#locations li.open {
+    background-image: url("/common/images/locations-status-open.png");
+}
+
+#locations li.closed {
+    background-image: url("/common/images/locations-status-closed.png");
+}
+
+#locations li.restricted {
+    background-image: url("/common/images/locations-status-restricted.png");
+}
+
+#locations li.unknown {
+    background-image: url("/common/images/locations-status-unknown.png");
+}
+
+@media only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+  /* Pixel-doubled versions to take advantage of Retina Displays and XHDPI displays */
+ 
+  #locations li.open {
+      background-image: url("/common/images/locations-status-open@2x.png");
+  }
+
+  #locations li.closed {
+      background-image: url("/common/images/locations-status-closed@2x.png");
+  }
+
+  #locations li.restricted {
+      background-image: url("/common/images/locations-status-restricted@2x.png");
+  }
+
+  #locations li.unknown {
+      background-image: url("/common/images/locations-status-unknown@2x.png");
+  }
+
+  #locations li {
+      -o-background-size: 22px;
+      -moz-background-size: 22px;
+      -khtml-background-size: 22px;
+      -webkit-background-size: 22px;
+      background-size: 22px;
+  }
+
+}

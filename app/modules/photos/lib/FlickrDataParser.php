@@ -19,6 +19,7 @@ class FlickrDataParser extends DataParser {
                 break;
             case 'api':
                 $photo = new FlickrAPIPhotoObject();
+                $photo->setUserID(Kurogo::arrayVal($entry,'owner'));
                 $photo->setID($entry['id']);
                 $photo->setFarm($entry['farm']);
                 $photo->setServer($entry['server']);
@@ -40,7 +41,24 @@ class FlickrDataParser extends DataParser {
     }
 
     public function parseData($data) {
-        if ($data = unserialize($data)) {
+        $action = $this->getOption('action');
+        if ($action == 'getUserData') {
+          return $this->parseUserData($data);
+        } else {
+          return $this->parsePhotoData($data);
+        }
+    }
+    
+    public function parseUserData($data) {
+      if ($data = unserialize($data)) {
+        return $data['person'];
+      } else {
+        return array();
+      }
+    }
+    
+    public function parsePhotoData($data) {
+      if ($data = unserialize($data)) {
             $items = array();
             //api and feed return data in different formats
             switch ($this->response->getContext('retriever')) {
@@ -65,7 +83,6 @@ class FlickrDataParser extends DataParser {
                 return $photos;
             }
         }
-
         return array();
     }
 }
@@ -75,16 +92,21 @@ class FlickrPhotoObject extends PhotoObject {
     
     //http://www.flickr.com/services/api/misc.urls.html
     public function getFlickrUrl($type) {
-        return sprintf("http://farm%s.staticflickr.com/%s/%s_%s_%s.jpg", $this->farm, $this->server, $this->id, $this->secret, $type);
+        return sprintf("%s://farm%s.staticflickr.com/%s/%s_%s_%s.jpg", HTTP_PROTOCOL, $this->farm, $this->server, $this->id, $this->secret, $type);
 
     }
 }
 
 class FlickrAPIPhotoObject extends FlickrPhotoObject {
 
+    protected $uid;
     protected $secret;
     protected $farm;
     protected $server;
+    
+    public function setUserID($uid) {
+      $this->uid = $uid;
+    }
 
     public function setFarm($farm) {
         $this->farm = $farm;
@@ -107,6 +129,22 @@ class FlickrAPIPhotoObject extends FlickrPhotoObject {
                 return $this->getFlickrUrl('s');
                 break;
         }
+    }
+    
+    /* 
+     * Override for PhotoObject::getAuthor to attempt to get the real name of the
+     * the Flickr user if available. Otherwise fall back to using the username.
+     */
+    public function getAuthor() {
+      // only attempt to get real name if the user id is set
+      if (strlen($this->uid)) {
+        $userData = $this->retriever->getUserData($this->uid);
+        if ((isset($userData['realname'])) && (trim($userData['realname']['_content']) != '')) {
+          $author = $userData['realname']['_content'];
+          $this->setAuthor($author);
+        }
+      }
+      return $this->author;
     }
 }
 

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -124,6 +124,22 @@ class MapProjection
         return pow((1 - $eSinPhi) / (1 + $eSinPhi), $this->eccentricity / 2);
     }
 
+    // called unit meridional arc because meridional arc is this times
+    // semi major axis
+    // $e2 is eccentricity squared, $phi is latitude in radians
+    private static function getUnitMeridionalArc($e2, $phi) {
+        if ($phi == 0) {
+            return 0;
+        }
+
+        $e4 = $e2*$e2;
+        $e6 = $e2*$e4;
+        return (1 - $e2/4 - 3*$e4/64 - 5*$e6/ 256) * $phi
+             - (3*$e2/8 + 3*$e4/32 + 45*$e6/1024) * sin(2 * $phi)
+             + (15*$e4/256 + 45*$e6/1024) * sin(4 * $phi)
+             - (35*$e6/3072) * sin(6 * $phi);
+    }
+
     private function forwardProject()
     {
         switch ($this->proj) {
@@ -153,27 +169,44 @@ class MapProjection
                 break;
 
             case 'utm': // http://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system
-                // better explanation at http://www.uwgb.edu/dutchs/usefuldata/utmformulas.htm
+                // ellipsoid formulae at http://www.uwgb.edu/dutchs/usefuldata/utmformulas.htm
+            case 'tmerc': // http://en.wikipedia.org/wiki/Transverse_Mercator_projection
                 $sin_phi = sin($this->phi);
                 $cos_phi = cos($this->phi);
                 $e2 = $this->eccentricity * $this->eccentricity;
-                $v = 1 / (sqrt(1 - $e2 * $sin_phi * $sin_phi));
+
+                // the doc actually has nu as semimajor axis times this
+                // we just multiply $a at the end
+                $nu = 1 / (sqrt(1 - $e2 * $sin_phi * $sin_phi));
+
                 $A = ($this->lambda - $this->centralMeridian) * $cos_phi;
-                $e4 = $e2*$e2;
-                $e6 = $e2*$e4;
-                $s = (1 - $e2/4 - 3*$e4/64 - 5*$e6/ 256) * $this->phi
-                     - (3*$e2/8 + 3*$e4/32 + 45*$e6/1024) * sin(2 * $this->phi)
-                     + (15*$e4/256 + 45*$e6/1024) * sin(4 * $this->phi)
-                     - (35*$e6/3072) * sin(6 * $this->phi);
+
+                $s = self::getUnitMeridionalArc($e2, $this->phi);
+                // info for handling origin latitude from 
+                // http://www.linz.govt.nz/geodetic/conversion-coordinates/projection-conversions/transverse-mercator-preliminary-computations/index.aspx
+                $s_0 = self::getUnitMeridionalArc($e2, $this->originLatitude);
+
                 $T = pow($sin_phi/$cos_phi, 2);
                 $C = $e2 * $cos_phi * $cos_phi / (1 - $e2);
 
                 $ka = $this->scaleFactor * $this->semiMajorAxis;
-                $this->x = $ka * $v * ($A + (1 - $T + $C)*pow($A,6)/6 + (5 - 18*$T + $T*$T)*pow($A,5)/120);
-                $this->y = $ka * ($s + $v * tan($A*$A/2 + (5 - $T + 9*$C + 4*$C*$C)*pow($A,4)/24 + (61 - 58*$T + $T*$T)*pow($A,6)/720));
+                $this->x = $ka * $nu * ($A + (1 - $T + $C)*pow($A,6)/6 + (5 - 18*$T + $T*$T)*pow($A,5)/120);
+
+                $omega = $this->lambda - $this->centralMeridian;
+                $o2 = $omega*$omega;
+                $cos2phi = $cos_phi * $cos_phi;
+                $psi = (1 - $e2 * $sin_phi * $sin_phi);
+                $psi2 = $psi * $psi;
+                $this->y = $ka * ($s - $s_0 +
+                    $nu * $sin_phi * $cos_phi * (
+                        $o2 / 2
+                        + $cos2phi * (4 * $psi*$psi + $psi - $T) * $o2*$o2 / 24
+                        + $cos2phi * $cos2phi * (8*$psi2*$psi2 * (11 - 24*$T) - 28*$psi2*$psi * (1 - 6*$T) + $psi2*(1 - 32*$T) - $psi*2*$T + $T*$T) * $o2*$o2*$o2 / 720
+                        )
+                    );
+
                 break;
 
-            case 'tmerc': // 1501 SRIDs; http://en.wikipedia.org/wiki/Transverse_Mercator_projection
             case 'stere': // 29
             case 'cass': // 20
             case 'aea': // 20 SRIDs; http://en.wikipedia.org/wiki/Albers_projection
@@ -229,13 +262,34 @@ class MapProjection
                 break;
 
             case 'utm': // http://www.uwgb.edu/dutchs/usefuldata/utmformulas.htm
+            case 'tmerc':
                 $M = $this->y / $this->scaleFactor;  // meridional arc
                 $e2 = $this->eccentricity * $this->eccentricity;
                 $mu = $M / ($this->semiMajorAxis * (1 - $e2/4 - 3*$e2*$e2/64 - 5*pow($e2,6)/256));
                 $e_1 = (1 - sqrt(1 - $e2)) / (1 + sqrt(1 - $e2));
-                $fp = $mu + (3*$e_1/2 - 27*pow($e_1,3)/32) * sin(2 * $mu)
-                          + (21*$e_1*$e_1/16 - 55*pow($e_1,4)/32) * sin(4 * $mu)
-                          + (151*pow($e_1,3)/96) * sin(6 * $mu); // footprint latitude
+
+                if ($this->originLatitude == 0) {
+                    $fp = $mu + (3*$e_1/2 - 27*pow($e_1,3)/32) * sin(2 * $mu)
+                              + (21*$e_1*$e_1/16 - 55*pow($e_1,4)/32) * sin(4 * $mu)
+                              + (151*pow($e_1,3)/96) * sin(6 * $mu); // footprint latitude
+                } else {
+                    // http://badc.nerc.ac.uk/help/coordinates/OSGB.pdf
+                    $fp = $this->originLatitude;
+                    $M = 0; // iterate until this matches northing
+
+                    $iterations = 10; // prevent infinite loops in case we screwed up
+                    while ($this->y - $M > 0.01) {
+                        $fp += ($this->y - $M) / ($this->semiMajorAxis * $this->scaleFactor);
+                        $M = self::getLatitudeCorrection(
+                            $this->semiMajorAxis,
+                            $this->semiMinorAxis,
+                            $this->scaleFactor,
+                            $this->originLatitude, $fp);
+
+                        if ($iterations-- <= 0) break;
+                    }
+                }
+
                 $e2_ = $e2 / (1 - $e2);
                 $cos_fp = cos($fp);
                 $sin_fp = sin($fp);
@@ -245,9 +299,11 @@ class MapProjection
                 $R1 = $this->semiMajorAxis * (1 - $e2) / pow(1 - $e2*$sin_fp*$sin_fp, 1.5);
                 $N1 = $this->semiMajorAxis / sqrt(1 - $e2*$sin_fp*$sin_fp);
                 $D = $this->x / ($N1 * $this->scaleFactor);
-                $this->phi = $fp - $N1*$tan_fp/$R1 * ($D*$D/2
-                                                    - (5 + 3*$T1 + 10*$C1 - 4*$C1*$C1 - 9*$e2_)*pow($D,4)/24
-                                                    + (61 + 90*$T1 + 298*$C1 + 45*$T1*$T1 - 3*$C1*$C1 - 252*$e2_)*pow($D,6)/720);
+                $this->phi = $fp - $N1*$tan_fp/$R1
+                           * ($D*$D/2
+                             - (5 + 3*$T1 + 10*$C1 - 4*$C1*$C1 - 9*$e2_)*pow($D,4)/24
+                             + (61 + 90*$T1 + 298*$C1 + 45*$T1*$T1 - 3*$C1*$C1 - 252*$e2_)*pow($D,6)/720
+                             );
                 $this->lambda = $this->centralMeridian
                               + ($D 
                                 -(1 + 2*$T1 + $C1)*pow($D,3)/6
@@ -255,7 +311,6 @@ class MapProjection
                                /$cos_fp;
                 break;
 
-            case 'tmerc': // 1501 SRIDs; http://en.wikipedia.org/wiki/Transverse_Mercator_projection
             case 'stere': // 29
             case 'cass': // 20
             case 'aea': // 20 SRIDs; http://en.wikipedia.org/wiki/Albers_projection
@@ -271,6 +326,20 @@ class MapProjection
                 throw new KurogoConfigurationException("reverse projection not implemented for {$this->proj}");
                 break;
         }
+    }
+
+    private static function getLatitudeCorrection($semiMajorAxis, $semiMinorAxis, $scaleFactor, $originLatitude, $phi) {
+        $n = ($semiMajorAxis - $semiMinorAxis) / ($semiMajorAxis + $semiMinorAxis);
+        $n2 = $n * $n;
+        $n3 = $n2 * $n;
+        $phi_sum = $phi + $originLatitude;
+        $phi_diff = $phi - $originLatitude;
+        return $semiMinorAxis * $scaleFactor * (
+            (1 + $n + 1.25 * $n2 + 1.25 * $n3) * $phi_diff
+            - (3 * $n + 3 * $n2 + 21 / 8 * $n3) * sin($phi_diff) * cos($phi_sum)
+            + (15 / 8 * $n2 + 15 / 8 * $n3) * sin(2 * $phi_diff) * cos(2 * $phi_sum)
+            - 35 * $n3 * sin(3 * $phi_diff) * cos(3 * $phi_sum)
+            );
     }
 
     public function getXY()
@@ -300,7 +369,6 @@ class MapProjection
             $this->y = $this->adjustedY / $this->unitsPerMeter - $this->falseNorthing;
             $this->reverseProject();
         }
-
         return array(
             'lat' => $this->phi * 180 / M_PI,
             'lon' => $this->lambda * 180 / M_PI,

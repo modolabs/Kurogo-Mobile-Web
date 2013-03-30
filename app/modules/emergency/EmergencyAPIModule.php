@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -16,25 +16,33 @@ class EmergencyAPIModule extends APIModule {
     protected $vmax = 2;
     
     protected function initializeForCommand() {
-        $config = $this->getConfig('feeds');
-
         switch($this->command) {
             case 'notice':
-                if ($noticeConfig = $config->getOptionalSection('notice')) {
+                if ($noticeConfig = $this->getOptionalModuleSection('notice','feeds')) {
 
-                    try {
-                        if (isset($noticeConfig['CONTROLLER_CLASS'])) {
-                            $modelClass = $noticeConfig['CONTROLLER_CLASS'];
-                        } else {
-                            $modelClass = isset($noticeConfig['MODEL_CLASS']) ? $noticeConfig['MODEL_CLASS'] : 'EmergencyNoticeDataModel';
-                        }
-
-                        $emergencyNoticeController = EmergencyNoticeDataModel::factory($modelClass, $noticeConfig);
-                    } catch (KurogoException $e) { 
-                        $emergencyNoticeController = DataController::factory($noticeConfig['CONTROLLER_CLASS'], $noticeConfig);
-                    }
+                    $modelClass = isset($noticeConfig['MODEL_CLASS']) ? $noticeConfig['MODEL_CLASS'] : 'EmergencyNoticeDataModel';
+                    $emergencyNoticeController = EmergencyNoticeDataModel::factory($modelClass, $noticeConfig);
 
                     $emergencyNotice = $emergencyNoticeController->getFeaturedEmergencyNotice();
+                    
+                    if (isset($emergencyNotice['text'])) {
+                        $emergencyNotice['text'] = Sanitizer::htmlStripTags2UTF8($emergencyNotice['text']);
+                    }
+                    if (isset($emergencyNotice['body'])) {
+                        $emergencyNotice['body'] = Sanitizer::htmlStripTags2UTF8($emergencyNotice['body']);
+                    }
+                    
+                    // if there is no emergency notice and a no-notice section
+                    // is set, use it as a feed
+                    if (!isset($emergencyNotice) && ($noEmergencyConfig = $this->getOptionalModuleSection('no-notice', 'feeds'))) {
+                      $modelClass = isset($noEmergencyConfig['MODEL_CLASS']) ? $noEmergencyConfig['MODEL_CLASS'] : 'EmergencyNoticeDataModel';
+                        if (!isset($noEmergencyConfig['NOTICE_EXPIRATION'])) {
+                            $noEmergencyConfig['NOTICE_EXPIRATION'] = 0;
+                        }
+                      $noEmergencyNoticeController = EmergencyNoticeDataModel::factory($modelClass, $noEmergencyConfig);
+                      $emergencyNotice = $noEmergencyNoticeController->getFeaturedEmergencyNotice();
+                    }
+                    
                     $noticeEnabled = true;
                 } else {
                     // Config section 'notice' not set, there is not notice
@@ -47,18 +55,9 @@ class EmergencyAPIModule extends APIModule {
                 break;
 
             case 'contacts':
-                if($contactsConfig = $config->getOptionalSection('contacts')) {
-                    try {
-                        if (isset($contactsConfig['CONTROLLER_CLASS'])) {
-                            $modelClass = $contactsConfig['CONTROLLER_CLASS'];
-                        } else {
-                            $modelClass = isset($contactsConfig['MODEL_CLASS']) ? $contactsConfig['MODEL_CLASS'] : 'EmergencyContactsDataModel';
-                        }
-
-                        $contactsController = EmergencyContactsDataModel::factory($modelClass, $contactsConfig);
-                    } catch (KurogoException $e) { 
-                        $contactsController = DataController::factory($contactsConfig['CONTROLLER_CLASS'], $contactsConfig);
-                    }
+                if($contactsConfig = $this->getOptionalModuleSection('contacts', 'feeds')) {
+                    $modelClass = isset($contactsConfig['MODEL_CLASS']) ? $contactsConfig['MODEL_CLASS'] : 'EmergencyContactsDataModel';
+                    $contactsController = EmergencyContactsDataModel::factory($modelClass, $contactsConfig);
 
                     $response = array(
                         'primary' => self::formatContacts($contactsController->getPrimaryContacts()),
@@ -80,9 +79,7 @@ class EmergencyAPIModule extends APIModule {
         foreach($contacts as $contact) {
             $value = $contact->getPhoneDelimitedByPeriods();
             $subtitle = $contact->getSubtitle();
-            if ($subtitle) {
-                $subtitle = $contact->getSubtitle().' ('.$value.')';
-            } else {
+            if (!$subtitle) {
                 $subtitle = '('.$value.')';
             }
 
@@ -90,7 +87,7 @@ class EmergencyAPIModule extends APIModule {
                 'title' => $contact->getTitle(),
                 'subtitle' => $subtitle,
                 'type' => 'phone',
-                'url' => 'tel:'.$contact->getPhoneDialable(),
+                'url' => $contact->getPhoneDialable(),
              );
         }
         return $formattedContacts;

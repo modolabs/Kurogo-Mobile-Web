@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -46,20 +46,7 @@ class db {
      */
     public function __construct($config=null) {
         if (!is_array($config) || empty($config)) {
-            if (!$config instanceOf Config) {
-                $config = Kurogo::siteConfig();
-            }
-    
-            $config = array(
-                'DB_TYPE'=>$config->getVar('DB_TYPE', 'database'),
-                'DB_HOST'=>$config->getVar('DB_HOST', 'database'),
-                'DB_USER'=>$config->getVar('DB_USER', 'database'),
-                'DB_PASS'=>$config->getVar('DB_PASS', 'database'),
-                'DB_DBNAME'=>$config->getVar('DB_DBNAME', 'database'),   
-                'DB_FILE'=>$config->getVar('DB_FILE', 'database'),
-                'DB_CREATE'=>$config->getOptionalVar('DB_CREATE', 'database'),
-                'DB_PORT'=>$config->getOptionalVar('DB_PORT', 'database')
-            );
+			$config = Kurogo::getSiteSection('database');
         }
     
         $this->init($config);

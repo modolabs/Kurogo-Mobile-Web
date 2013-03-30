@@ -1,4 +1,9 @@
 {$resultsList = $federatedSearchResults['items']}
+{foreach $resultsList as $i => $item}
+  {if $item['subtitle'] || $item['img']}
+    {$resultsList[$i]['class'] = $item['class']|cat:" ellipsis"}
+  {/if}
+{/foreach}
 {if !count($federatedSearchResults['items'])}
   {$noResults = array()}
   {$noResults['title'] = "NO_RESULTS"|getLocalizedString}

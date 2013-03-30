@@ -1,6 +1,14 @@
 {include file="findInclude:common/templates/header.tpl"}
 
 <div class="news">
+    {block name="image"}
+    {if $image && $showBodyImage}
+      <div id="image">
+        <img class="image" src="{$image['src']}" alt="" />
+      </div>
+    {/if}
+    {/block}
+
     {block name="slugline"}
   <h1 class="slugline">{if $showLink}<a href="{$link}">{/if}{$title}{if $showLink}</a>{/if}</h1>
   {/block}
@@ -12,22 +20,24 @@
         <p class="byline">
           {block name="byline"}
               
-            {if $author}
+            {if $author && $showBodyAuthor}
               <span class="credit author">{"AUTHOR_CREDIT"|getLocalizedString:$author}</span><br />
             {/if}
     
-            <span class="postdate">{$date}</span>
+            {if $showBodyPubDate}
+              <span class="postdate">{$date}</span>
+            {/if}
           {/block}
         </p>    
     {/if}        
   </div><!--storysubhead-->
   
   <div id="story">
-    {block name="image"}
+    {block name="thumbnail"}
     {if $pager['pageNumber'] == 0}
-        {if $image && $showBodyThumbnail}
-          <div id="image">
-            <img class="thumbnail" src="{$image['src']}" />
+        {if $thumbnail && $showBodyThumbnail}
+          <div id="thumbnail">
+            <img class="thumbnail" src="{$thumbnail['src']}" alt="" />
           </div>
         {/if}
     {/if}

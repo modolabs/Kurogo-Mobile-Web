@@ -1,0 +1,52 @@
+#loginForm {
+	margin: 0;
+}
+
+#loginForm label {
+    float: left;
+	width: 120px;
+	line-height: 38px;
+	margin-right: 5px;
+	text-align: right;
+}
+
+#loginForm input[type=text],
+#loginForm input[type=password],
+#loginForm input[type=radio],
+#loginForm input[type=checkbox] {
+  width: 40%;
+  min-width: 300px;
+	border: 1px solid #999;
+	padding: 2px 5px;
+	height: 28px;
+}
+
+#loginForm .formbuttons {
+  text-align: left;
+  margin-left: 125px;
+}
+
+#rememberme {
+	margin-top: 1em;
+	margin-bottom: 1.5em;
+}
+
+#rememberme label {
+    float: none;
+    width: auto;
+}
+
+#loginForm input[type=checkbox] {
+	width: auto;
+}
+
+#loginForm .checkitem input[type="checkbox"] {
+	width: auto;
+	padding: 0;
+	margin-left: 100px;
+}
+
+#loginForm .checkitem label {
+	float: none;
+	width: auto;
+}

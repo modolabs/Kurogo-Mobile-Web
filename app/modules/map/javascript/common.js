@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -60,7 +60,7 @@ function submitMapSearch(form) {
         form.filter.blur();
         mapLoader.clearMarkers();
         hideSearchFormButtons();
-        params = {'q': form.filter.value};
+        params = {'q': form.filter.value, 'v': 2, 'provider': mapLoader.provider};
         if (form.group.value) {
             params['group'] = form.group.value;
         }
@@ -77,12 +77,13 @@ function submitMapSearch(form) {
                     var maxLon = -10000000;
                     for (var i = 0; i < response.results.length; i++) {
                         var markerData = response.results[i];
-                        // TODO: mark markerData contain style info
-                        mapLoader.createMarker(i, markerData.lat, markerData.lon, markerData);
-                        minLat = Math.min(minLat, markerData.lat);
-                        minLon = Math.min(minLon, markerData.lon);
-                        maxLat = Math.max(maxLat, markerData.lat);
-                        maxLon = Math.max(maxLon, markerData.lon);
+                        var attribs = markerData.attribs;
+                        mapLoader.addPlacemark(attribs.url, eval(markerData.placemark), attribs);
+
+                        minLat = Math.min(minLat, attribs.lat);
+                        minLon = Math.min(minLon, attribs.lon);
+                        maxLat = Math.max(maxLat, attribs.lat);
+                        maxLon = Math.max(maxLon, attribs.lon);
                     }
                     if (maxLon - minLon < MIN_LON_SPAN) {
                         maxLon += MIN_LON_SPAN / 2;
@@ -98,12 +99,16 @@ function submitMapSearch(form) {
                 }
             }
         });
+        
         var addFilterToHref = function(link) {
             var reg = new RegExp('&?filter=.+(&|$)');
             if (link.href.match(reg)) {
                 link.href = link.href.replace(reg, '&filter='+form.filter.value);
             } else {
                 link.href = link.href + '&filter='+form.filter.value;
+            }
+            if (form.group.value) {
+                link.href = link.href + '&group=' + form.group.value;
             }
         }
         var mapButton = document.getElementById("mapLink");

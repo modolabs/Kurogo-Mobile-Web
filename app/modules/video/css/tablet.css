@@ -1,10 +1,16 @@
-body.VideoModule #navbar, #videoDetailWrapper {
+#tabletVideos .splitview-detailwrapper {
 	/* Background color for video listing and detail; should be white in most cases */
-    background-color: #fff;
+    background-color: @@@focal_background_color@@@;
 }
 
 .video {
     padding: 12px;
+}
+
+.videoplayer {
+    text-align: center;
+    padding: 0;
+    margin: 2px 0 12px 0;
 }
 
 .splitview ul.results li.video .thumbnail {
@@ -23,4 +29,13 @@ li.noimage {
 .videobuttons #bookmarkContainer, .videobuttons #share {
 	float: right;
 	margin: 0 0 0 12px;
+}
+
+.byline {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.kgo-videoplayer {
+	margin-top: 0;
 }

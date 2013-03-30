@@ -1,0 +1,39 @@
+#footer {
+  display: none;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.watch-position-button {
+  padding: 5px;
+  cursor: pointer;
+}
+.watch-position-button div {
+  direction: ltr;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+  color: rgb(0, 0, 0);
+  font-family: Arial, sans-serif;
+  -webkit-user-select: none;
+  font-size: 13px;
+  background-color: rgb(255, 255, 255);
+  padding: 2px 6px;
+  border: 1px solid rgb(113, 123, 135);
+  -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
+  font-weight: bold;
+  min-width: 28px;
+  background-position: initial initial;
+  background-repeat: initial initial;
+}
+.watch-position-button.watching div {
+  background-color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -245,9 +245,11 @@ function doUpdateMapDimensions() {
     // TODO google static maps does not generate maps
     // larger than 1000px in either direction
     // need to set caps on mapWidth and mapHeight
-    var mapImage = document.getElementById("mapimage");
-    var mapTab = document.getElementById("mapTab");
-    if (mapImage && mapTab) { // not fullscreen
+    var mapImage = getFirstElementByClassName("mapimage");
+    if (!mapImage) { return; } // using basic UI (bbplus)
+    
+    var mapTab = getFirstElementByClassName("map-tabbody");
+    if (mapTab) { // not fullscreen
         mapTab.style.height="auto";
 
         var topoffset = findPosY(document.getElementById("tabbodies"));
@@ -255,19 +257,15 @@ function doUpdateMapDimensions() {
         
         document.getElementById("mapzoom").style.height = bottomoffset + "px";
 
-        // tablets need to account for bottom nav
-        var tabletFoot = document.getElementById("footernav");
-        if (tabletFoot) {
-            bottomoffset += tabletFoot.clientHeight;
-        }
-
         // 16 is top + bottom padding of mapimage
         // TODO don't hard code these numbers
         var testHeight = (getWindowHeight() - topoffset - bottomoffset - 16);
         if (testHeight > 80) { // if they can't get a useful map without scrolling, then let them scroll
             mapHeight = testHeight;
         }
-        mapWidth = getWindowWidth() - 30;
+
+        var s = window.getComputedStyle(mapImage.parentNode, null);
+        mapWidth = parseInt(s.getPropertyValue('width'));
 
         mapImage.style.width = (mapWidth + 2) + "px"; // border
 
@@ -283,6 +281,7 @@ function doUpdateMapDimensions() {
         }
     }
     mapImage.style.height = mapHeight + "px";
+    setCSSValue(mapImage, 'min-height', '0');
 
     var objScrollers = document.getElementById("mapscrollers");
     if (objScrollers) {

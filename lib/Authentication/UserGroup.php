@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -60,6 +60,14 @@ abstract class UserGroup
                 $this->members[] = $member;
             }
         }
+    }
+    
+    public function addMember(User $member) {
+        if (in_array($member, $this->getMembers())) {
+            return false;
+        }
+        
+        $this->members[] = $member;
     }
 
     public function setAuthenticationAuthority(AuthenticationAuthority $AuthenticationAuthority)

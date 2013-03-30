@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -37,6 +37,10 @@ class HTTPDataResponse extends DataResponse
         );
     }
     
+    public function getRequestMethod() {
+        return $this->requestMethod;
+    }
+    
     public function setResponseHeaders($http_response_header) {
         if (is_array($http_response_header)) {
             $this->parseHTTPResponseHeaders($http_response_header);
@@ -53,6 +57,8 @@ class HTTPDataResponse extends DataResponse
                 $this->responseStatus = $bits[3];
                 if ($this->responseCode>=400) {
                     $this->responseError = $bits[3];
+                } else {
+                    $this->responseError = null;
                 }
             }
         }

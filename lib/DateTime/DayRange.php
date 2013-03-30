@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -33,8 +33,8 @@ class DayRange extends TimeRange {
         }
     }
     
-    $this->start = mktime(0, 0, 0, date('m', $start), date('d', $start), date('Y', $start));
-    $this->end = mktime(23, 59, 59, date('m', $end), date('d', $end), date('Y', $end));
+    $this->set_start(mktime(0, 0, 0, date('m', $start), date('d', $start), date('Y', $start)));
+    $this->set_end(mktime(23, 59, 59, date('m', $end), date('d', $end), date('Y', $end)));
     
     if ($tzid) {
         // restore the old timezone

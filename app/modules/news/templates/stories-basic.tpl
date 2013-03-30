@@ -2,7 +2,7 @@
   {foreach $stories as $story}
     <p>
       {if $story@first && $story['image']}
-        <img class="thumbnail" src="{$story['image']['src']}" width="{$story['image']['width']}" height="{$story['image']['height']}" />
+        <img class="thumbnail" src="{$story['image']['src']}" width="{$story['image']['width']}" height="{$story['image']['height']}" alt="" />
       {/if}
       <a class="story-link" href="{$story['url']}">{$story["title"]}</a>
       <br />

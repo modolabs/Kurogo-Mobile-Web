@@ -3,7 +3,7 @@
 <head>
 	<meta charset="{$charset}" />
 <!--[if lt IE 9]>
-<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<script src="{$http_protocol}://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
   {if $session_max_idle}
     <meta http-equiv="refresh" content="{$session_max_idle+2}" />

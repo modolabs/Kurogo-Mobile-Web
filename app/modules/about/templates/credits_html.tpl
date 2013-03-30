@@ -12,7 +12,10 @@ Cambridge, MA 02140<br />
     <li>Pete Akins (Lead Developer, Mobile Web)</li>
     <li>Muhammad Amjad</li>
     <li>Dario Baldoni</li>
+    <li>Dylan Conger</li>
+    <li>James Daniello</li>
     <li>Alexis Ellwood</li>
+    <li>Austin Emmons</li>
     <li>Ian Gavalakis</li>
     <li>Wesley Hirsch</li>
     <li>Sonya Huang (Lead Developer, iOS)</li>
@@ -20,6 +23,7 @@ Cambridge, MA 02140<br />
     <li>KeFei Liu</li>
     <li>Newstar Liu</li>
     <li>Ebrahim Kobeissi</li>
+    <li>Satyender Mahajan</li>
     <li>David Ormsbee</li>
     <li>Brian Patt (Lead Developer, Android)</li>
     <li>Brent Wang</li>
@@ -39,6 +43,7 @@ Cambridge, MA 02140<br />
 
 <h3>Project Management & QA:</h3>
 <ul>
+    <li>Kevin Murphy</li>
     <li>Yuki Nagatoshi</li>
     <li>Marshall Vale</li>
     <li>Andrew Yu</li>
@@ -92,5 +97,3 @@ Cambridge, MA 02140<br />
     <li>Copyright: Stig Brautaset</li>
     <li><a href="http://stig.github.com/json-framework">http://stig.github.com/json-framework</a>
 </ul>    
-   
-<h2>Third Party Libraries (Android)</h2>

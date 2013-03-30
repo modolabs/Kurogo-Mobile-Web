@@ -1,10 +1,7 @@
 <?php
 
-class AthleticEvent implements KurogoObject {
+class AthleticEvent extends KurogoDataObject {
 
-    protected $id;
-    protected $title;
-    protected $description;
     protected $sport;
     protected $sportName;
     protected $startDate;
@@ -54,30 +51,6 @@ class AthleticEvent implements KurogoObject {
     }
     
    
-    public function getID() {
-        return $this->id;
-    }
-
-    public function setID($id) {
-        $this->id = $id;
-    }
-    
-    public function setTitle($title) {
-        $this->title = $title;
-    }
-
-    public function getTitle() {
-        return $this->title;
-    }
-
-    public function setDescription($description) {
-        $this->description = $description;
-    }
-    
-    public function getDescription() {
-        return $this->description;
-    }
-    
     public function setLocation($location) {
         $this->location = $location;
     }

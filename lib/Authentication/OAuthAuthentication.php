@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -46,7 +46,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 
     public function getOAuthProvider() {
         if (!$this->OAuthProvider) {
-            $this->OAuthProvider = OAuthProvider::factory($this->OAuthProviderClass, $this->initArgs);
+            $this->OAuthProvider = KurogoOAuthProvider::factory($this->OAuthProviderClass, $this->initArgs);
         }
         return $this->OAuthProvider;
     }

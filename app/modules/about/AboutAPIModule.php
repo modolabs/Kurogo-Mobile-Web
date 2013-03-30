@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -34,9 +34,20 @@ class AboutAPIModule extends APIModule {
         return $paragraphs;
     }
 
-    protected function getCreditsHTML() {
+    protected function getCreditsHTML() {   
+        //get original device
+        $device = Kurogo::deviceClassifier()->getDevice();
+
+        //set browser to unknown so we don't get AppQ HTML
+        Kurogo::deviceClassifier()->setBrowser('unknown');
+
         $module = WebModule::factory($this->configModule, 'credits_html');
-        return $module->fetchPage();
+        $html = $module->fetchPage();
+
+        //restore device    
+        Kurogo::deviceClassifier()->setDevice($device);
+        
+        return $html;
     }
 
     protected function initializeForCommand()  {
@@ -54,7 +65,7 @@ class AboutAPIModule extends APIModule {
         switch ($this->command) {
 
             case 'index':
-                $dictionaryOfSections = $this->getModuleSections('api-index');
+                $dictionaryOfSections = $this->getOptionalModuleSections('api-index');
                 $response = array();
                 foreach ($dictionaryOfSections as $key => $value){
                     $response[] = $value;

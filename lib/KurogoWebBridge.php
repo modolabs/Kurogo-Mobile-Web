@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -339,15 +339,18 @@ class KurogoWebBridge
     // Config URL for setting native navbar options
     //
 
-    public static function getOnPageLoadParams($pageTitle, $backTitle, $hasRefresh) {
+    public static function getOnPageLoadParams($pageTitle, $backTitle, $hasRefresh, $hasAutoRefresh=false) {
         $params = array(
-          'pagetitle' => $pageTitle,
+            'pagetitle' => $pageTitle,
         );
         if ($backTitle) {
-          $params['backtitle'] = $backTitle;
+            $params['backtitle'] = $backTitle;
         }
         if ($hasRefresh) {
-          $params['refresh'] = 1;
+            $params['refresh'] = 1;
+        }
+        if ($hasAutoRefresh) {
+            $params['autorefresh'] = 1;
         }
         
         return json_encode($params);
@@ -365,7 +368,6 @@ class KurogoWebBridge
             'page'       => $page,
             'ajaxArgs'   => WebModule::AJAX_PARAMETER."=1",
             'timeout'    => Kurogo::getOptionalSiteVar('WEB_BRIDGE_AJAX_TIMEOUT', 60),
-            'cookiePath' => COOKIE_PATH,
             'events'     => $isNative,
         );
         if (self::forceNativePlatform($pagetype, $platform, $browser)) {
@@ -380,6 +382,7 @@ class KurogoWebBridge
             'KGO_WEB_BRIDGE_PAGE_ARGS'    => 'pageArgs',
             'KGO_WEB_BRIDGE_COOKIES'      => 'cookies',
             'KGO_WEB_BRIDGE_AJAX_CONTENT' => 'ajaxContent',
+            'KGO_WEB_BRIDGE_GEOLOCATION'  => 'geolocation',
         ));
         
         // native bridge variables
@@ -401,6 +404,14 @@ class KurogoWebBridge
             'staticConfig'   => json_encode($staticConfig),
             'bridgeConfig'   => $bridgeConfig,
         );
+    }
+    
+    public static function getOnPageLoadConfig() {
+        // These config variables come from the real server
+        $config = array(
+            'cookiePath' => COOKIE_PATH,
+        );
+        return json_encode($config);
     }
 
 
@@ -597,7 +608,7 @@ class KurogoWebBridge
         return count(self::getAvailableMediaInfoForModule($id)) > 0;
     }
     
-    public static function getHelloMessageForModule($id) {
+    public static function getHelloMessageForModule($id, $platform=null) {
         $bridgeConfig = array();
         
         $mediaInfo = KurogoWebBridge::getAvailableMediaInfoForModule($id);
@@ -607,33 +618,11 @@ class KurogoWebBridge
                 'url' => $mediaItem['url'],
             );
         }
-        
+
+        if ($bridgeConfig && $platform) {
+            $bridgeConfig = isset($bridgeConfig[$platform]) ? array($platform=>$bridgeConfig[$platform]) : null;
+        }
         return $bridgeConfig ? $bridgeConfig : null;
     }
 }
 
-//
-// This class is instantiated for modules with WebBridge support
-// but which do not have an API.
-//
-class KurogoWebBridgeAPIModule extends APIModule {
-    protected $id = '';
-    protected $vmin = 1;
-    protected $vmax = 1;
-    
-    // web bridge modules do not know their ids
-    public function setID($id) {
-        $this->id = $id;
-        if (!$this->configModule) {
-            $this->configModule = $this->id;
-        }
-    }
-    
-    protected function initializeForCommand() {
-        switch ($this->command) {
-            default:
-                $this->invalidCommand();
-                break;
-        }
-    }
-}

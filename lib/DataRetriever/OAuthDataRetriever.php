@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -18,11 +18,12 @@ class OAuthDataRetriever extends URLDataRetriever
     protected $consumerSecret;
     protected $signatureMethod = 'HMAC-SHA1';
     protected $requiresToken = false;
+    protected $requiresExpect = true;
     protected $cert;
     protected $OAuthProvider;
     protected $OAuthProviderClass;
     
-    protected function initOAuthProvider(OAuthProvider $provider) {
+    protected function initOAuthProvider(KurogoOAuthProvider $provider) {
         $this->oauthVersion = $provider->getOAuthVersion();
         $this->consumerKey = $provider->getConsumerKey();
         $this->consumerSecret = $provider->getConsumerSecret();
@@ -35,7 +36,7 @@ class OAuthDataRetriever extends URLDataRetriever
     public function getOAuthProvider() {
         if (!$this->OAuthProvider) {
             if ($this->OAuthProviderClass) {
-                $this->OAuthProvider = OAuthProvider::factory($this->OAuthProviderClass, $this->initArgs);
+                $this->OAuthProvider = KurogoOAuthProvider::factory($this->OAuthProviderClass, $this->initArgs);
             }
         }
         return $this->OAuthProvider;
@@ -313,7 +314,9 @@ class OAuthDataRetriever extends URLDataRetriever
         }
         
 	    $headers['Authorization'] = $this->getAuthorizationHeader();
-	    $headers['Expect'] = '';
+	    if ($this->requiresExpect) {
+            $headers['Expect'] = '';
+        }
         return $headers;        
     }
     

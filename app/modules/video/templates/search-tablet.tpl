@@ -8,13 +8,12 @@
 
 
 {block name="videos"}
-  <div id="tabletVideos" class="splitview">
-    <div id="videos" class="listcontainer">
-      {include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
-    </div>
-    <div id="videoDetailWrapper" class="splitview-detailwrapper">
-      <div id="videoDetail">
-      </div><!-- videoDetail -->
-    </div><!-- videoDetailWrapper -->
-  </div><!-- tabletVideos -->
+  {capture name="splitviewList" assign="splitviewList"}
+    {include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
+  {/capture}
+  {$splitview = array()}
+  {$splitview['id'] = "tabletVideos"}
+  {$splitview['class'] = "splitview-stories"}
+  {$splitview['list'] = $splitviewList}
+  {include file="findInclude:common/templates/splitview.tpl" splitview=$splitview}
 {/block}

@@ -7,10 +7,12 @@
     {else}
       <div {if $item['class']} class="{$item['class']}"{/if}>
         {if $item['url']}
-          <a href="{$item['url']}">
+          <a href="{$item['url']}"{if $item['linkTarget']} target="{$item['linkTarget']}"{/if}>
         {/if}
-            <img src="{$item['img']}" alt="{$item['title']}" />
-            <br/>{$item['title']}
+            {if $item['img']}
+              <img src="{$item['img']}" alt="" />
+            {/if}
+            {if $item['img']}<br/>{/if}{$item['title']}
             {if isset($item['subTitle'])}
               <br/><span class="fineprint">{$item['subTitle']}</span>
             {/if}

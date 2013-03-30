@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -55,10 +55,12 @@ class TemplateEngine extends Smarty {
         
         foreach ($searchFiles as $file) {
             foreach ($checkDirs as $type => $dir) {
-                $test = realpath_exists("$dir/$subDir$file");
-                if ($test) {
-                    Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform-$browser) choosing '$type/$file' for '$name'", 'template');
-                    return addslashes($test);
+                if ($dir) {
+                    $test = realpath_exists("$dir/$subDir$file");
+                    if ($test) {
+                        Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform-$browser) choosing '$type/$file' for '$name'", 'template');
+                        return addslashes($test);
+                    }
                 }
             }
         }
@@ -163,11 +165,13 @@ class TemplateEngine extends Smarty {
         );
                 
         foreach ($checkDirs as $type => $dir) {
-            $test = realpath_exists("$dir/$name");
-            if ($test && !$this->extendsTrackerSeenFile($test)) {
-                Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform-$browser) choosing     '$type/$name' for '$name'", 'template');
-                $this->extendsTrackerAddFile($test);
-                return addslashes($test);
+            if ($dir) {
+                $test = realpath_exists("$dir/$name");
+                if ($test && !$this->extendsTrackerSeenFile($test)) {
+                    Kurogo::log(LOG_DEBUG, __FUNCTION__."($pagetype-$platform-$browser) choosing     '$type/$name' for '$name'", 'template');
+                    $this->extendsTrackerAddFile($test);
+                    return addslashes($test);
+                }
             }
         }
         return false;
@@ -287,7 +291,7 @@ class TemplateEngine extends Smarty {
         $source = trim(preg_replace('/((?<!\?>)\n)[\s]+/m', '\1', $source));
         
         // remove all newlines before and after tags.
-        $source = preg_replace('/\n*(<[^>]+>)\n*/m', '\1', $source);
+        $source = preg_replace('/[\r\n]*(<[^>]+>)[\r\n]*/m', '\1', $source);
         
         // collapse whitespace before and after tags.
         $source = preg_replace(array('/\s+(<)/m', '/(>)\s+/s'), array(' \1', '\1 '), $source);
@@ -409,6 +413,7 @@ class TemplateEngine extends Smarty {
         $this->assign('pagetype', $pagetype);
         $this->assign('platform', $platform);
         $this->assign('browser',  $browser);
+        $this->assign('deviceOverride', Kurogo::deviceClassifier()->getOverride());
         $this->assign('showDeviceDetection', Kurogo::getSiteVar('DEVICE_DETECTION_DEBUG'));
         $this->assign('moduleDebug', Kurogo::getSiteVar('MODULE_DEBUG'));
     }

@@ -1,0 +1,38 @@
+.emergency-module-link-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+a.emergency-module-link,
+a.emergency-module-link:visited,
+a.emergency-module-link:active {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  color: @@@primary_text_color@@@;
+}
+
+.emergency-notice-wrapper {
+  margin: 12px;
+  padding: 0;
+}
+.emergency-notice {
+  margin: .4em 0;
+  font-size: 82.35%;
+  line-height: 1.36em;
+}
+.emergency-notice .title {
+  font-size: 114.29%;
+  padding: 0 0 .25em 0;
+}
+.emergency-notice .pubdate {
+  font-size: 90%;
+}
+.emergency-featured {
+  font-size: 100%;
+}

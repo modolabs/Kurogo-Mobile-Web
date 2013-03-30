@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -35,6 +35,18 @@ abstract class XMLDataParser extends DataParser
     abstract protected function shouldHandleStartElement($name);
     abstract protected function handleStartElement($name, $attribs);
 
+    // added after 1.6.1. XMLDataParser previously expected subclasses
+    // to append custom elements to $this->elementStack[] in handleStartElement
+    // but this is inconvenient for classes that don't want to generate
+    // XMLElement subclasses for tags that just need to be processed for
+    // attribute values.
+    // returning false here will make XMLDataParser behave as before,
+    // returning true will allow subclasses to optionally return an XMLElement
+    // subclass if it needs to be subclassed, or nothing otherwise.
+    protected function shouldAddDefaultElement() {
+        return false;
+    }
+
     protected function startElement($xml_parser, $name, $attribs)
     {
         if (!is_null($this->data) && $this->data !== '' && count($this->elementStack) > 0) {
@@ -43,7 +55,14 @@ abstract class XMLDataParser extends DataParser
         }
         $this->data = '';
         if ($this->shouldHandleStartElement($name)) {
-            $this->handleStartElement($name, $attribs);
+
+            $element = $this->handleStartElement($name, $attribs);
+            if ($element) {
+                $this->elementStack[] = $element;
+            } elseif ($this->shouldAddDefaultElement()) {
+                $this->elementStack[] = new XMLElement($name, $attribs, $this->getEncoding());
+            }
+
         } else {
             $this->elementStack[] = new XMLElement($name, $attribs, $this->getEncoding());
         }

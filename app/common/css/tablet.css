@@ -84,27 +84,65 @@ strong {
 
 /* Major layout blocks */
 
-#container {
-	min-height: 100%;
+#wrapper {
+  border: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  overflow: hidden;
 }
 
-#containerinset {
-  overflow: hidden;
-  margin: 0;
+.kgo-has-navbar #wrapper {
+  top: 44px;  
+}
+
+#container-wrapper {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto; /* overridden by iScrollInit() */
   border: none;
+  padding: 0;
+  margin: 0;
   height: 100%;
 }
+#container {
+  overflow: hidden;
+  min-height: 600px;
+  width: 100%;
+  min-height: 600px;
+}
 
-#scroller {
-    /* 'Active' (pressed) color of the scrolling tablet nav bar. Set to alpha zero to suppress this state */
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
+.kgo-site-homepage.kgo-has-navmenu #container-wrapper {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  bottom: 0px;
+  right: 200px;
+}
+.kgo-site-homepage.kgo-has-navmenu #container {
+  height: 100%;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+
+.fillscreen #container-wrapper {
+  overflow: hidden;
+}
+.fillscreen #container {
+  height: 100%;
 }
 
 #footer {
 	clear: both;
 	min-height: 22px;
-	padding-top: 10px;
-	margin: 20px 12px 14px 12px;
+	margin: 20px 8px 10px 8px;
 	font-weight: normal;
 }
 
@@ -114,9 +152,9 @@ strong {
 	font-size: 70.589%;
 }
 
-#footerlinks a {
+#footer a, #footerlinks a {
 	text-decoration: none;
-	padding: 4px;
+	padding: 10px 0;
 }
 
 .leftfoot {
@@ -125,6 +163,361 @@ strong {
 
 .rightfoot {
 	float: right;
+}
+
+.detailhtml {
+  margin: 9px 12px;  
+}
+
+.tabbody .detailhtml {
+  margin: 9px 0;
+}
+
+.detailimage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 9px;
+    margin-bottom: 9px;
+}
+
+/* Top navigation/titlebar */
+
+#navbar {
+  font-size: 105.9%;
+  font-weight: bold;
+  border-bottom: solid 1px #333;
+  border-color: rgba(0,0,0,0.6);
+}
+#navbar .navmenu-button {
+  width: 55px;  /* for visual balance, should match width of homelink */
+  height: 44px;
+  display: inline-block;
+  float: right;
+}
+.kgo-site-homepage #navbar {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+}
+.kgo-site-homepage #navbar .pagetitle {
+  vertical-align: top;
+  margin-left: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.kgo-site-homepage #navbar .moduleicon {
+    display: none;
+}
+.kgo-site-homepage #navmenu {
+  display: block;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.kgo-site-homepage.kgo-supports-overflow-scroll #navmenu {
+  display: block;
+  right: 0;
+}
+.kgo-site-homepage.kgo-supports-overflow-scroll #navmenu.open {
+  right: 0;
+}
+
+.breadcrumbs {
+    position: relative;
+    display: block;
+	line-height: 44px;
+	height: 44px;
+}
+
+.pagetitle {
+    position: relative;
+	display: inline-block;
+	font-weight: bold;
+	vertical-align: top;
+	line-height: 44px;
+	text-decoration: none;
+}
+
+.homepage .pagetitle {
+	display: inline;
+	margin-left: 0;	
+}
+
+img.moduleicon {
+    padding: 8px 10px;
+    float: left;
+}
+
+.homepage img.moduleicon {
+    padding-right: 5px;
+}
+
+.help { 
+    position: absolute;
+    top: 0px;
+    right: 0;
+}
+.kgo-has-navmenu .help {
+	  right: 55px;  /* MUST match width of .navmenu-button */
+}
+
+.breadcrumbs {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+	  height: 100%;
+}
+
+.breadcrumbs a {
+    display: inline-block;
+    height: 100%;
+    line-height: 44px;
+    vertical-align: top;
+    padding: 0 18px 0 0;
+    background-image: url(/common/images/drillup-r.png);
+    background-repeat: no-repeat;
+    background-position: right top;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.breadcrumbs a.homelink {
+    display: block;
+    float: left;
+    height: 44px;
+    margin-left: 0;
+    margin-right: 0;
+    overflow: hidden;
+    background-image: none;
+    padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
+}
+
+.breadcrumbs a.module {
+    display: inline-block;
+    padding: 0 10px 0 0;
+}
+
+.breadcrumbs a.homelink img {
+    padding: 0;
+}
+
+a.module img, .homepage .moduleicon {
+    padding: 7px 12px 8px 13px;     /* left padding + right padding + module icon image width (default 30px) = width of homelink and navmenu button (default 55px) */
+    vertical-align: top; /* for firefox */
+}
+.crumb1 {
+    max-width: 120px;
+}
+
+.crumb2a  {
+    max-width: 60px;
+}
+
+.crumb2b  {
+    max-width: 70px;
+}
+
+.crumb3a {
+    max-width: 40px;
+    display: none !important; /* hidden for now because it doesn't fit */
+}
+
+.crumb3b {
+    max-width: 50px;
+}
+
+.crumb3c {
+    max-width: 60px;
+}
+
+
+
+/* Login status in navbar */
+
+.loginstatus {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    font-size: 72.3%;
+    line-height: 44px;
+    font-weight: normal;
+}
+.helpon .loginstatus {
+    right: 65px;
+}
+.kgo-has-navmenu .loginstatus {
+    right: 65px;
+}
+.kgo-has-navmenu .helpon .loginstatus {
+    right: 120px;
+}
+.loginstatus a {
+    text-decoration: none;
+    color: @@@navbar_text_color@@@;
+}
+
+#userContextList {
+    margin: 0 0;
+}
+
+.userContextListDescription {
+    margin: 5px 0 3px 0;
+}
+
+#userContextList select {
+  margin: 3px 0 5px 0;
+}
+
+#userContextList select {
+}
+
+/* Navigation Menu */
+
+#navmenu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 100%;
+  display: none;
+  -ms-overflow-x: hidden;
+  -ms-overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  -webkit-box-shadow: 1px 0 12px #000;  
+  -moz-box-shadow: 1px 0 12px #000;  
+  box-shadow: 1px 0 12px #000;  
+  z-index: 1000;
+  background-color: @@@navmenu_background_color@@@;
+  background-image: @@@navmenu_background_image@@@;
+  color: @@@navmenu_text_color@@@;
+}
+#navmenu.open {
+  display: block;
+}
+.kgo-supports-overflow-scroll #navmenu {
+  display: block;
+  right: -212px;
+  -webkit-transition: all 0.25s;
+  -moz-transition: all 0.25s;
+  transition: all 0.25s;
+}
+.kgo-supports-overflow-scroll #navmenu.open {
+  right: 0;
+}
+#navmenu .navmenu-items {
+  list-style-type: none;
+  margin: 0;
+  padding: 4px 0 0 0;
+  font: 88.2%/1em Helvetica, Arial, sans-serif;
+  overflow: hidden;
+}
+#navmenu .navmenu-items .navmenu-item {
+  border-bottom: 1px solid @@@navmenu_border_color@@@;
+  overflow: hidden;
+  padding: 1px;
+}
+#navmenu .navmenu-items .navmenu-module a {
+  display: block;  
+  position: relative;
+  color: @@@navmenu_link_color@@@;
+  text-decoration: none;
+  line-height: 24px;
+  padding: 6px 6px 6px 38px;
+}
+#navmenu .navmenu-items .navmenu-item.selected a {
+  font-weight: bold;
+  color: @@@navmenu_link_selected_color@@@;
+}
+#navmenu .navmenu-items .navmenu-module a .navmenu-icon {
+  position: absolute;
+  top: 2px;
+  left: 5px;
+}
+#navmenu #searchformcontainer form {
+  margin: 0;
+  padding:  0 4px 4px 4px;
+}
+#navmenu .inputcombo {
+  margin: 0;
+  padding: 0;
+  height: auto;
+  text-align: center;
+  height: 28px;
+  position: relative;
+}
+#navmenu .inputcombo .forminput {
+  border-width: 1px;
+	height: 28px;
+	width: auto;
+	margin: 0;
+	line-height: 18px;
+	font-size: 90%;
+	width: 100%;
+	padding-left: 24px;
+}
+
+#navmenu .nonfocal,
+#navmenu .emphasized {
+  margin: 0;
+  padding: 0;
+}
+#navmenu .forminput {
+  padding: 3px 0 3px 3px;
+}
+#navmenu .navmenu-footer,
+#navmenu #footer {
+  text-align: left;
+}
+#navmenu #footerlinks a, 
+#navmenu #footerlinks a:visited, 
+#navmenu .copyright a, 
+#navmenu .copyright a:visited {
+  display: block;
+}
+#navmenu .navmenu-items .navmenu-footer {
+  border-bottom: none;
+}
+
+#navmenu a, #navmenu .navmenu-items .navmenu-module a {
+	color: @@@navmenu_link_color@@@;
+}
+#navmenu .navmenu-items .navmenu-item.selected a {
+    font-weight: bold;
+    color: @@@navmenu_link_selected_color@@@;
+}
+#navmenu .navmenu-items .navmenu-item {
+	border-color: @@@navmenu_border_color@@@;
+}
+#footer, #footerlinks, #footer a, #footer a:visited, #footerlinks a, #footer a:visited {
+	color: @@@navmenu_text_color@@@;
+}
+#navbar .navmenu-button, #navbar .navmenu-button.selected {
+	background-color: @@@navmenu_background_color@@@;
+	background-image: @@@navmenu_background_image@@@;
+}
+
+/* Device Detection Information - only shown when debugging */
+
+.footertable + .footertable {
+    margin: 0;
+}
+
+
+.footertable {
+  margin: 20px 0 0 0;
+  width: 100%;
+}
+.footertable th,
+.footertable td {
+  color: @@@navmenu_text_color@@@;
+}
+
+.footertable th {
+  width: 55px;
 }
 
 /* Forms */
@@ -157,6 +550,7 @@ select {
 	width: 92%;
 }
 
+
 #searchformcontainer h3 {
 	margin: 0 0 0.2em 0;
 }
@@ -168,11 +562,17 @@ select {
 .forminput {
 	height: 18px;
 	font-size: 88.24%; 
-	padding: 6px 0 6px 6px;
+	padding: 6px 6px 6px 24px;
 	-webkit-appearance:textfield;
 	-webkit-border-radius: 8px;
 	border-radius: 8px;
-	background: white url(/common/images/search-button.png) no-repeat right;
+	background: white url(/common/images/action-search.png) no-repeat 3px;
+}
+@media only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+  .forminput {
+	  background: white url(/common/images/action-search@2x.png) no-repeat 3px;
+	  background-size: 26px 19px;
+  }
 }
 
 *:first-child+html .forminput {
@@ -185,10 +585,13 @@ select {
 }
 
 .inputcombo .forminput {
-	height: 24px;
+	height: 34px;
 	line-height: 24px;
 	vertical-align: top;
-	width: 98%;
+	width: 100%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .inputcombo .hiddensubmit {
@@ -209,13 +612,27 @@ select {
 }
 
 .emphasized .forminput {
-	padding: 6px 0 6px 6px;
-	height: 18px;
+	padding: 5px 5px 5px 24px;
+	height: 34px;
+	line-height: 18px;
 }
 
 .emphasized .combobutton {
 	width: 38px;
 	height: 38px;
+}
+
+/* Content titles e.g., news and video */
+
+h1.slugline {
+	font-size: 167%;
+	margin-bottom: 0.5em;
+}
+
+.byline {
+	font-size: 70.59%;
+	line-height: 1.5em;
+	padding-bottom: 0.67em;
 }
 
 #navbar #searchformcontainer {
@@ -233,13 +650,15 @@ select {
   padding: 0;
   height: 34px;
 }
-#navbar .inputcombo .forminput {
+#navmenu .inputcombo .forminput {
   border-width: 1px;
-	height: 20px;
-	line-height: 20px;
-	font-size: 90%%;
-	width: 90%;
+	height: 28px;
+	width: 100%;
+	margin: 0;
+	line-height: 28px;
+	font-size: 90%;
 	float: right;
+	border-color: @@@search_border_color@@@;	
 }
 
 #navbar .nonfocal,
@@ -264,13 +683,17 @@ select {
   padding-right: .25em;
   line-height: 26px;
 }
+.formlist .formelement input[type=radio],
+.formlist .formelement input[type=checkbox] {
+  width: auto;
+}
 .formlist .formelement select {
   width: 20em;
   line-height: 26px;
 }
 
 .formbuttons {
-	margin: 16px 0 8px 0;
+	margin: 16px 0 (mouseover);
 	text-align: center;
 }
 
@@ -343,135 +766,6 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 	-webkit-border-radius: 12px;
 }
 
-.required {
-	font-weight: bold;
-	color: #900;
-}
-
-/* Top navigation/titlebar */
-
-#navbar {
-	height: 50px;
-	margin: 0;
-	line-height: 48px;
-	overflow: hidden;
-	position: relative;
-}
-
-.breadcrumbs {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-	height: 100%;
-}
-
-.breadcrumbs a {
-	display: inline-block;
-	height: 100%;
-	line-height: 50px;
-	vertical-align: top;
-  margin-left: -4px; /* overlap by the width of the drillup art */
-  padding: 0 22px 0 4px; 
-  background-image: url(/common/images/drillup-r.png);
-	background-repeat: no-repeat;
-	background-position: right top;
-	text-decoration: none;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-*:first-child+html .breadcrumbs a {
-	/* The return of IE CSS hacks makes me mad */
-  margin-left: -5px; 	/* +3px vs normal */
-	padding-right: 16px;
-}
-
-a.homelink {
-    background-image: none;
-    margin-left: 0;
-    margin-right: -5px;
-    padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
-    width: 74px;
-}
-
-.breadcrumbs a.homelink img {
-    padding: 0;
-}
-
-a.module img {
-	padding: 10px 2px 8px 4px;
-}
-
-.homepage .moduleicon {
-    padding: 10px 7px 8px 6px;
-    vertical-align: top; /* for firefox */
-}
-
-*:first-child+html .homepage .moduleicon {
-	/* The return of IE CSS hacks makes me mad */
-	padding-left: 3px;
-	float: left;
-}
-
-.crumb1 {
-	max-width: 250px;
-}
-
-.crumb2a  {
-	max-width: 250px;
-}
-
-.crumb2b  {
-	max-width: 250px;
-}
-
-.crumb3a {
-	max-width: 200px;
-}
-
-.crumb3b {
-	max-width: 200px;
-}
-
-.crumb3c {
-	max-width: 250px;
-}
-.crumb3c + .crumb3c {
-	display: none;
-}
-
-.pagetitle {
-	display: inline-block;
-	font-weight: bold;
-	margin-left: -4px;
-	padding-left: 4px;
-	vertical-align: top;
-	line-height: 50px;
-	height: 50px;
-}
-
-*:first-child+html .pagetitle {
-	/* The return of IE CSS hacks makes me cry */
-	margin-left: -3px;	
-}
-
-.homepage .pagetitle {
-	display: inline;
-	max-width: 210px;
-	margin-left: -8px;	
-}
-
-.help {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	width: 52px;
-}
-
-#navbar.helpon {
-    padding-right: 46px;
-}
-
 /* Springboards */
 
 .springboard {
@@ -489,6 +783,10 @@ a.module img {
 	float: left;
 	text-align: center;		
 	vertical-align: top;
+	font-size: 76.5%;	/* Font size of text label below icon */
+	line-height: 1.1em;
+	width: 77px;
+	height: 98px;
 }
 
 .springboard a {
@@ -499,15 +797,15 @@ a.module img {
 }
 
 .springboard a img {
-	height: 50px;
-	width: 50px;
+	width: 60px;
+	height: 60px;
 	margin-bottom: 1px;
 }
 
 .springboard .separator {
 	display: block;
 	width: 100%;
-	height: 18px;
+	height: 10px;
 	clear:both;
 	margin: 0;
 	padding: 0;
@@ -528,12 +826,27 @@ a.module img {
 	background-repeat: no-repeat;
 }
 
+.springboard .secured {
+	/* Overlay image to indicate that a module is password-protected */
+	/* Adjust size to fit /common/images/secured.png, and adjust position to fit springboard icon size */
+	top: 45px;
+	right: 4px;
+	width: 18px;
+	height: 22px;
+}
+
+.springboard .utility .secured {
+	/* Adjust position to fit springboard icon size for utility-class module icons */
+	top: 26px;
+	right: 12px;
+}
+
 /* Navigation and results listings */
 
 .nav {	   
 	padding: 0;	   
 	margin: 9px 12px; 
-	border: 1px solid #ccc;
+	border: 1px solid @@@focal_border_color@@@;
 	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
 	position: relative;
@@ -541,7 +854,7 @@ a.module img {
 
 .nav li {	
 	list-style-type: none;	
-	border-top: 1px solid #ccc;
+	border-top: 1px solid @@@focal_border_color@@@;
 	padding: 11px;
 	position: relative;
 }
@@ -622,7 +935,7 @@ ul.focal li {
 	list-style-type: none;
 	padding: 11px;
 	position: relative;
-	border-top: 1px solid #ccc; 
+	border-top: 1px solid @@@focal_border_color@@@;
 }
 
 ul.focal li:first-child {
@@ -632,22 +945,16 @@ ul.focal li:first-child {
 .tabbody .nav {
 	margin: 0 -8px;
 	border: none;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
-	border-bottom-right-radius: 8px;
-	border-bottom-left-radius: 8px;
 }
 
 .tabbody .results {
 	margin: 8px 4px 0 4px;
 	border-width: 1px 0 0 0;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
 }
 
 .tabbody .nested {
 	margin: 0px;
-	border: 1px solid #ccc;
+	border: 1px solid @@@focal_border_color@@@;
 }
 
 .tabbody .nested li {
@@ -657,14 +964,14 @@ ul.focal li:first-child {
 .results {	   
 	padding: 0;	   
 	margin: 10px 0; 
-	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
+	border-top: 1px solid @@@focal_border_color@@@;
+	border-bottom: 1px solid @@@focal_border_color@@@;
 	position: relative;
 }
 
 .results li {	
 	list-style-type: none;		
-	border-top: 1px solid #ccc;
+	border-top: 1px solid @@@focal_border_color@@@;
 	padding: 10px;
 	position: relative;
 }
@@ -683,11 +990,6 @@ ul.focal li:first-child {
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	-webkit-border-radius: 5px;	
-}
-
-.results a:visited {
-	color: #333;
 }
 
 .results li ul {
@@ -730,14 +1032,14 @@ ul.focal li:first-child {
 .secondary {
 	margin: 10px; 
 	padding: 0;	   
-	border: 1px solid #ccc;
+	border: 1px solid @@@focal_border_color@@@;
 	-webkit-border-radius: 8px;	
 	border-radius: 8px;	
 }
 
 .secondary li {
 	list-style-type: none;		
-	border-top: 1px solid #ccc;
+	border-top: 1px solid @@@focal_border_color@@@;
 	position: relative;
 	padding: 9px;
 }
@@ -755,12 +1057,7 @@ ul.focal li:first-child {
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	color: #333;
 	-webkit-border-radius: 5px;	
-}
-
-.secondary a:visited {
-	color: #333;
 }
 
 .bottomnav {
@@ -869,12 +1166,23 @@ a.sidenav-next {
 	margin: 10px; 
 	font-weight:normal;
 	line-height: 1.33em;
-	border: 1px solid #ccc;
+	border: 1px solid @@@focal_border_color@@@;
 	-webkit-border-radius: 9px;	
+	-moz-border-radius: 9px;	
+	-o-border-radius: 9px;	
+	border-radius: 9px;	
 }
 
 .nonfocal {
 	margin: 12px;
+}
+
+.listhead {
+  margin-bottom: 0.25em;
+}
+
+.listhead h3 {
+  margin-bottom: 0.25em;
 }
 
 .nonfocal form {
@@ -941,7 +1249,7 @@ a.sidenav-next {
 .email .value {
     -webkit-hyphens: none;
     -moz-hyphens: none;
-    hyphens: noen;
+    hyphens: none;
 }
 
 .longlabel {
@@ -1028,6 +1336,22 @@ p.foundat {
 	background-position: right; 
 	padding-right: 38px;
 	padding-left: 0;
+}
+
+a.add {  
+	background-image: url(/common/images/action-add.png); 
+	padding-right: 68px;
+	min-height: 30px;
+}
+
+a.delete {  
+	background-image: url(/common/images/action-delete.png); 
+	padding-right: 40px;
+}
+
+a.remove {  
+	background-image: url(/common/images/action-remove.png); 
+	padding-right: 40px;
 }
 
 a.arrow {  
@@ -1175,6 +1499,8 @@ h2.icon {
 	margin-right: 4px;
 	-webkit-border-top-right-radius: 6px;	
 	-webkit-border-top-left-radius: 6px;	
+	-moz-border-top-right-radius: 6px;	
+	-moz-border-top-left-radius: 6px;	
 	border-top-right-radius: 6px;	
 	border-top-left-radius: 6px;	
 	text-align: center;
@@ -1199,29 +1525,41 @@ h2.icon {
 	display: block;
 	text-decoration: none;
 	min-width: 25px;
-	padding: 8px 10px 10px 10px;
+	padding: 8px 12px 10px 12px;
 }
 
-#tabs.smalltabs li {
-	font-size: 88.26%;
-	margin-right: 3px;
+/* Only make smalltabs smaller on narrower devices */
+@media only screen and (max-width: 960px) {
+  #tabs.smalltabs li {
+    margin-right: 3px;
+  }
+  
+  #tabs.smalltabs li a {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
 }
-
-#tabs.smalltabs li a {
-	padding-right: 7px;
-	padding-left: 7px;
+@media only screen and (max-width: 800px) {
+  #tabs.smalltabs li {
+    font-size: 94%;
+    margin-right: 3px;
+  }
+  
+  #tabs.smalltabs li a {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
 }
 
 #tabscontainer {
-	padding: 0 12px;
+	padding: 6px 12px 0 12px;
 }
 
 #tabbodies {
 	margin: -12px -12px 0 -12px;
 	clear: both;
 	border-top: 1px solid #bbb;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
+	border-bottom: none;
 }
 
 .shaded #tabbodies {
@@ -1230,8 +1568,8 @@ h2.icon {
 
 .tabbody {
 	position: relative;
-	min-height: 230px;
-	padding: 8px;
+	min-height: 400px;
+	padding: 12px;
 }
 
 .tabbody h3 {
@@ -1247,55 +1585,65 @@ h2.icon {
 	margin-top: 2px;
 }
 
-.tabstrip ,
-#tabstrip {
+.tabstrip {
 	list-style-type: none;
-	height: 32px;
-	-webkit-border-radius: 10px;	
+	height: 36px;
+	-webkit-border-radius: 7px;	
+	-moz-border-radius: 7px;	
+	border-radius: 7px;	
 	margin: 0;
 	padding: 0;
 	left: 0;
 	overflow: hidden;
+	font-size: 88.24%;
 }
 
-.tabstrip li ,
-#tabstrip li {
+.tabstrip li  {
 	float: left;
 	margin: 0;
 	text-align: center;
-	height: 33px;
+	height: 34px;
 }
 
-.tabstrip a ,
-#tabstrip a {
+.tabstrip a, .tabstrip a:visited {
 	display: block;
-	height: 32px;
+	height: 34px;
 	line-height: 32px;
 	text-decoration: none;
-	color: #fff;
-	background: url(/common/images/tabstrip.jpg) repeat-x;
-	-webkit-background-origin: padding-box; 
-	-webkit-background-clip: content-box; 
-	border-right: 1px solid #999;
-	-webkit-border-radius: 1px;	
-	border-radius: 1px;	
+	background-color: transparent;
+	border: 1px solid @@@focal_border_color@@@;
+	border-right: none
 }	
 
-.tabstrip li.active a ,
-#tabstrip li.active a {
-	background-image: url(/common/images/tabstrip-active.jpg);
+.tabstrip li:last-child a {
+    border-right: 1px solid #999;;
 }
 
-.tabstrip li:first-child a ,
-#tabstrip li:first-child a {
-	-webkit-border-bottom-left-radius: 10px;	
-	-webkit-border-top-left-radius: 10px;	
+.focal .tabstrip a, .tabbody .tabstrip a {
+	color: #505050;
 }
 
-.tabstrip li:last-child a ,
-#tabstrip li:last-child a {
-	-webkit-border-bottom-right-radius: 10px;	
-	-webkit-border-top-right-radius: 10px;	
+.tabstrip li.active a {
+	background-color: #444;
+	color: #fff;
+}
+
+.tabstrip li:first-child a {
+	-webkit-border-bottom-left-radius: 6px;	
+	-webkit-border-top-left-radius: 6px;	
+	-moz-border-bottom-left-radius: 6px;	
+	-moz-border-top-left-radius: 6px;	
+	border-bottom-left-radius: 6px;	
+	border-top-left-radius: 6px;	
+}
+
+.tabstrip li:last-child a {
+	-webkit-border-bottom-right-radius: 6px;	
+	-webkit-border-top-right-radius: 6px;	
+	-moz-border-bottom-right-radius: 6px;	
+	-moz-border-top-right-radius: 6px;	
+	border-bottom-right-radius: 6px;	
+	border-top-right-radius: 6px;	
 }
 
 .twotabs li {
@@ -1382,6 +1730,8 @@ h2.icon {
 	color: #000;
 	opacity: 0.8;
 	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
 	text-align: center;
 	display: table-cell;
 	vertical-align: middle;
@@ -1393,25 +1743,6 @@ h2.icon {
 	left: 50%;
 	margin-left: -13px;
 	margin-top: 16px;
-}
-
-.devicedetection {
-  border: none;
-  margin: 1.5em .5em;
-  width: auto;
-}
-.devicedetection th,
-.devicedetection td {
-  font-size: 65.71%;
-  line-height: 1.2em;
-  padding: 0 .25em;
-  margin: 0;
-  text-align: left;
-}
-.devicedetection th {
-  font-weight: bold;
-  text-align: right;
-  white-space: nowrap;
 }
 
 #share {
@@ -1445,6 +1776,7 @@ h2.icon {
 	width: 220px;
 	margin-left: -130px;
 	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
 	border-radius: 10px;
 	padding: 10px 20px;
 	background: #eee; /* Non-CSS3 browsers */
@@ -1500,125 +1832,10 @@ html, body, #nonfooternav {
   position: relative;
 }
 
-#navbar {
-  margin: 0;
-  position: relative;
-}
-
-#wrapper {
-	position: absolute;	/* On older OS versions "position" and "z-index" must be defined (absolute | relative), */
-	top: 50px;
-	left: 0;
-	z-index: 1;			/* it seems that recent webkit is less picky and works anyway. */
-	width: 100%;
-    overflow: hidden;
-}
-
-#container {
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-#containerinset {
-  overflow: hidden;
-  height: 100%;
-}
-
-#footernav {
-  height: 75px;
-  width: 100%;
-  background: transparent url(/common/images/footernav-bg.png) repeat-x left top;
-  overflow: hidden;
-  position: absolute;
-  bottom: 0;
-  white-space: nowrap;
-  text-align: left;
-  z-index: 1000;
-}
-#navsliderwrapper {
-  height: 75px;
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  white-space: nowrap;
-  text-align: left;
-}
-#navslider {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: auto;
-  overflow: visible;
-}
-
-#footernav .module {
-  float: left;
-  width: 83px;
-  height: 75px;
-  background: transparent url(/common/images/footernav-spacer.png) no-repeat left top;
-  padding-left: 2px;
-}
-#footernav .module:first-child {
-  background: none;
-  width: 87px;
-}
-
-#footernav a {
-  display: block;
-  width: 100%;
-  height: 100%;
-	text-decoration: none;
-  font-size: 79%;
-  line-height: normal;
-  text-align: center;
-  white-space: normal;
-}
-#footernav .module:first-child a {
-  margin-left: 0;
-}
-
-#footernav .selected a {
-  background: none;
-}
-
-#footernav a img {
-	height: 45px;
-	width: 45px;
-  margin-top: 5px;
-}
-#footernav a div {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 0 4px;
-}
-
-#slideleft,
-#slideright {
-  position: absolute;
-  bottom: 0;
-  width: 60px;
-  height: 74px;
-}
-
-#slideleft {
-  left: -4px;
-  background: transparent url(/common/images/footernav-slideleft.png) no-repeat left 50%;
-}
-
-#slideright {
-  right: -4px;
-  background: transparent url(/common/images/footernav-slideright.png) no-repeat right 50%;
-}
-
 .results .listSelected {
  	/* Suppress corner radius for tablet-specific split-view styles, e.g., News and Video */
-    -moz-border-radius: 0;
     -webkit-border-radius: 0;
+    -moz-border-radius: 0;
    border-radius: 0px;
 }
 
@@ -1748,8 +1965,9 @@ background: url(/common/images/bookmark.png) no-repeat -44px -38px;
 div.single-section-search {
     overflow: hidden;
 }
-/* Tablet version of section-switcher + search control (e.g., News and Video) */
 
+
+/* Tablet version of section-switcher + search control (e.g., News and Video) */
 
 table.section-search {
   width: 100%;
@@ -1769,22 +1987,21 @@ table.section-search fieldset {
 
 table.section-search tr td {
   padding: 1em .5em 0 0;
-  height: 40px;
-  line-height: 40px;
+  height: 36px;
+  line-height: 36px;
 }
 
 table.section-search tr #categoryformcontainer {
-  width: 19em;
-  padding-left: .5em;
+  width: 330px;
+  padding-left: 10px;
 }
 
 table.section-search #categoryformcontainer label {
-  padding-right: .25em;
+  padding-right: 5px;
   font-size: 89%;
 }
 table.section-search #categoryformcontainer select {
-  width: auto;
-  min-width: 250px;
+  width: 260px;
 }
 
 table.section-search tr #searchformcontainer form,
@@ -1793,15 +2010,9 @@ table.section-search #searchformcontainer fieldset {
   width: 100%;
   position: relative;
 }
-table.section-search #searchformcontainer fieldset .forminput {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 89%;
-}
 
 table.section-search form {
-	margin: -8px 0 0 0;
+	margin: -6px 0 0 0;
 	padding: 0;
 }
 
@@ -1809,6 +2020,10 @@ table.section-search form {
 	width: 62px;
     text-align: right;
 	font-size: 89%;
+}
+
+.portlet-container .nonfocal {
+	margin: 10px;
 }
 
 /* stories panes */
@@ -1821,15 +2036,19 @@ table.section-search form {
   height: 100%;
   overflow: hidden;
 }
-.pane-stories > * {
-  margin: 12px;
+.pane-story {
   display: none;
   list-style-type: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 38px;
+  right: 0;
   overflow: hidden;
 }
 
-.pane-stories > a.current {
-  display: list-item;
+.pane-story.current {
+  display: block;
 }
 
 .pane-stories a,
@@ -1838,24 +2057,59 @@ table.section-search form {
   text-decoration: none;
 }
 
+.pane-story-caption {
+  overflow: hidden;
+  position: absolute;
+  height: 100%;
+  background-color: #fff;
+  padding: 0 10px;
+  overflow: hidden;
+}
+.pane-story-caption .ellipsis {
+  height: 100%;
+  overflow: hidden;
+}
+.pane-stories .title {
+  font-size: 110%;
+  line-height: 1.2em;
+  font-weight: normal;
+  padding: 0;
+  margin: 10px 0 3px 0;
+}
 .pane-stories .thumbnail {
-  float: left;
-  margin: 0 12px 6px 0;
-  height: 6.5em;
-  width: 6.5em;
-  line-height: 6.5em;
-  line-height: 6.5em;
+  float: right;
+  margin: 0 0 6px 8px;
+  height: 5em;
+  width: 5em;
   overflow: hidden;
 }
 .pane-stories .thumbnail img {
   width: 100%;
   vertical-align: middle;
 }
-
-.pane-stories .title {
-  font-size: 110%;
-  font-weight: bold;
-  padding-bottom: 6px;
+.portlet-full-bleed .portlet-content .pane-story-image-none,
+.portlet-full-bleed .portlet-content .pane-story-image-small {
+  margin-top: 30px;
+}
+.pane-story-image-large {
+  margin: 0;
+}
+.pane-story-image-large .pane-story-image {
+  height: 70%;
+  width: 100%;
+  background-color: #000;
+  text-align: center;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% auto;
+  position: relative;
+}  
+#videoPaneStoriesId .pane-story-image-large .pane-story-image {
+  background-size: 125% auto;
+}  
+.pane-story-image-large .pane-story-caption {
+  height: 30%;
 }
 
 .pane-stories-pager {
@@ -1863,22 +2117,22 @@ table.section-search form {
   left: 0;
   bottom: 0;
   width: 100%;
-  text-align: right;
-  height: 45px;
+  text-align: center;
+  height: 42px;
+  line-height: 42px;
 }
 
 .pane-stories-pager-dots {
-  display: block;
-  margin-right: 108px;
+  display: inline-block;
   text-align: center;
   overflow: hidden;
-  height: 38px;
+  height: 42px;
   white-space: nowrap;
 }
 
 .pane-stories-pager-dots > * {
   display: inline-block;
-  height: 38px;
+  height: 42px;
   width: 12px;
   margin: 0 0 0 12px;
   background: transparent url(/common/images/page-dot.png) no-repeat left center;
@@ -1892,17 +2146,22 @@ table.section-search form {
 
 .pane-stories-pager-prev,
 .pane-stories-pager-next {
+  display: inline-block;
+  position: relative;
+  height: 42px;
+  width: 48px;
+  overflow: hidden;
   cursor: pointer;
-  position: absolute;
-  top: 0;
-  right: 61px;
-  height: 38px;
-  width: 47px;
-  background: transparent url(/common/images/page-prev.png) no-repeat left top;
 }
-.pane-stories-pager-next {
-  background-image: url(/common/images/page-next.png);
-  right: 7px;
+.pane-stories-pager-prev img,
+.pane-stories-pager-next img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -12px;
 }
 .pane-stories-pager-prev.disabled,
 .pane-stories-pager-next.disabled {
@@ -1910,138 +2169,320 @@ table.section-search form {
 }
 
 
-
 /* Tablet split view */
 
 .splitview-header {
     overflow: hidden;
 }
-
-.splitview ul.results {
-    margin: 0;
+.splitview {
+    display: -webkit-box;
+    display: -moz-box;
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    position: relative;
+    width: 100%; /* -moz-box requires this */
+}
+.splitview .splitview-listwrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+/*    border-top: 1px solid;    */
+    width: 342px;
+    height: 100%;
+    border-right: 1px solid;
+    -ms-overflow-x: hidden;
+    -ms-overflow-y: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.splitview .splitview-listwrapper .splitview-list {
+    width: 342px;
+    height: auto;
+    overflow: hidden;
+}
+.splitview .splitview-detailwrapper {
+    position: absolute;
+    top: 0;
+    left: 343px; /* width of listwrapper + 1px for border */
+    bottom: 0;
+    right: 0;
+/*    border-top: 1px solid;  */
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    background-color: white;
+    -ms-overflow-x: hidden;
+    -ms-overflow-y: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.splitview .splitview-detailwrapper .splitview-detail {
+  overflow: hidden;
 }
 
-.splitview ul.results li {
-    height: 105px;
-	margin: 0;
+/* Tablet stories split view */
+
+.splitview-stories, .splitview-courses {
+    border-top: 1px solid #666;
+}
+
+.splitview-stories .splitview-listwrapper ul.results {
+    color: @@@tertiary_text_color@@@;
+    margin: 0;
+    padding: 0;
+    border-top: none;
+}
+.splitview-stories .splitview-listwrapper ul.results li {
+    height: auto;
+    margin: 0;
     padding: 1px;
     overflow: hidden;
     position: relative;
-}
-.splitview ul.results li a {
-    overflow: hidden;
-    position: relative;
-    margin: 0;
-    padding: 9px;
-    height: 87px;
-}
-.splitview ul.results .ellipsis {
-    overflow: hidden;
-    margin: 0;
-    margin: 4px 20px 4px 0;
-    font-size: 82.35%;
-    line-height: 19px;
-    height: 87px;
-}
-
-.splitview ul.results .title {
-    padding: 0 0 2px 0;
-    font-size: 16px;
-    line-height: 19px;
-}
-
-.splitview ul.results li .thumbnail {
-    float:left;
-    margin: -3px 9px -3px -3px;
-    width: 93px;
-    height: 93px;
-}
-
-.splitview .listcontainer {
-    position: relative;
-    width: 342px;
-    border: 1px solid;
-    border-left: none;
-    border-bottom: none;
-}
-
-.splitview .results li.pagerlink a {
-  font-weight: bold;
-  background-image: none;
-  font-size: 90%;
-  height: auto;
-}
-
-.splitview-detailwrapper {
-    position: relative;
-}
-
-.portrait .splitview .listcontainer {
-    width: auto;
-    height: 107px;
-    white-space: nowrap;
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #999;
     border-right: none;
+    border-left: none;
 }
-
-.portrait .splitview ul.results {
-    white-space: nowrap;
-    position: absolute;
-    overflow: visible;
-    width: auto;
-    height: 107px;
+.splitview-stories .splitview-listwrapper ul.results li a {
+    overflow: hidden;
+    position: relative;
     margin: 0;
-    top: 0;
-    left: 0;
+    padding: 0;
+    height: auto;
+}
+.splitview-stories .splitview-listwrapper ul.results .ellipsis {
+    overflow: hidden;
+    margin: 8px;
+    padding-right: 14px;
+    line-height: 1.2em;
+    height: 80px;
+    width: auto;
 }
 
-.portrait .splitview ul.results li {
+.splitview-stories .splitview-listwrapper ul.results .ellipsis, 
+.splitview-stories .splitview-listwrapper ul.results .smallprint {
+   /* Description/dek within the master pane in the split view */
+   color: @@@secondary_text_color@@@;
+}
+
+.splitview-stories .splitview-listwrapper ul.results .title {
+    color: @@@primary_text_color@@@;
+    padding: 0 0 2px 0;
+    line-height: 1.2em;
+}
+
+.splitview-stories .splitview-listwrapper ul.results li .thumbnail {
+    float:left;
+    margin: 5px 10px 5px 5px;
+    width: 88px;
+    height: 88px;
+}
+.splitview-stories .splitview-listwrapper ul.results li.pagerlink {
+	font-weight: bold;
+	height: auto;
+}
+
+.splitview-stories .splitview-listwrapper ul.results li.pagerlink a {
+	height: auto;
+	padding: 12px 20px 12px 10px;
+}
+
+.splitview-stories .splitview-listwrapper .listSelected {
+	/* Selected item in the master pane in the split view */
+	background-color: #333;
+}
+.splitview-stories .splitview-listwrapper ul.results .listSelected .ellipsis, 
+.splitview-stories .splitview-listwrapper ul.results .listSelected .smallprint {
+   /* Description/dek within the selected item in the master pane in the split view */
+   color: #aaa;
+}
+.splitview-stories ul.results .listSelected .title {
+    /* Title within the selected item in the master pane in the split view */
+	color: #ddd;
+}
+
+/* Narrower screens e.g., tablets in portrait orientation 
+ * portrait class is added manually because we don't do this on desktop 
+ * and otherwise we would have to cancel out all these styles */
+
+.splitview-stories.portrait .splitview-listwrapper {
+    width: 100%;
+    height: 120px;
+    border-right: none;
+    -ms-overflow-x: auto;
+    -ms-overflow-y: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.splitview-stories.portrait .splitview-listwrapper .splitview-list {
+    width: auto;
+    height: 120px;
+}
+
+.splitview-stories.portrait .splitview-listwrapper ul.results {
+    white-space: nowrap;
+    width: auto; /* manually sized by javascript */
+    
+    /* 
+     * NOTE! this element needs to be at least 1px shorter than the
+     * container size to prevent iOS5 Safari from allowing vertical
+     * scrolling in addition to the desired horizontal scrolling.
+     * There is a bug in horizontal iOS5 touch scrolling which causes
+     * strange behavior when an element is 100% height and its
+     * container is overflow-x:auto and overflow-y:hidden.  We set
+     * overflow:visible so that this hack does not clip children.
+     */
+    height: 118px; 
+    overflow: visible;
+}
+.splitview-stories.portrait .splitview-listwrapper ul.results li {
     white-space: normal;
     width: 200px;
     display: block;
     float: left;
+    height: 118px;
+    overflow: hidden;
     border: none;
     padding: 0;
     border-right: 1px dotted;
 }
 
-.portrait .splitview ul.results .thumbnail {
+.splitview-stories.portrait .splitview-listwrapper ul.results .thumbnail {
     display: none;
 }
 
-.portrait .splitview ul.results li a {
+.splitview-stories.portrait .splitview-listwrapper ul.results li a {
     background-image: none;
+    height: 118px;
 }
 
-.portrait .splitview ul.results .ellipsis {
-    margin: 4px;
+.splitview-stories.portrait .splitview-listwrapper ul.results .ellipsis {
+    margin: 8px;
+    height: 102px; /* height of ul.results li a minus 2x margin of .ellipsis */
 }
 
-.portrait .splitview ul.results li.pagerlink {
-	height: auto;
-	width: auto;
-	text-align: center;
-	padding: 36px 9px;
+.splitview-stories.portrait .splitview-listwrapper ul.results li.pagerlink a {
+    line-height: 102px;	/* Same as height of .ellipsis */
+    height: 102px;	/* Same as line-height */
+    margin: 8px;
+    padding: 0;
+    text-align: center;
+}
+.splitview-stories.portrait .splitview-detailwrapper {
+    top: 119px;
+    left: 0px;
 }
 
-.landscape .splitview {
-    -webkit-box-orient: horizontal;
-    -moz-box-orient: horizontal;
-    display: -webkit-box;
-    display: -moz-box;
-    height: 400px;
-    position: relative;
-}
 
-.landscape .splitview-detailwrapper {
-    border-top: 1px solid;
-    -webkit-box-flex:1;
-    -moz-box-flex:1;
-}
+@media only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+  /* Pixel-doubled versions to take advantage of Retina Displays and XHDPI displays */
+  
+  
+  /* Bookmark button */
+  
+  #bookmark {
+    background-image: url(/common/images/bookmark@2x.png);
+    background-size: 88px 76px;
+  }
 
-.landscape .splitview ul.results li.pagerlink {
-	height: auto;
-	padding: 12px 6px;
-}
 
+  /* Paging arrows */
+  
+  .sidenav2 a {
+    background-image: url(/common/images/sidenav-arrows@2x.png);
+    background-size: 48px 58px;
+  }
+
+
+  /* Login-related buttons */
+  
+  .loginbuttons li.facebook {
+    background-image: url(/common/images/button-facebook.png);
+  }
+  
+  .loginbuttons li.google {
+    background-image: url(/common/images/button-google.png);
+  }
+  
+  .loginbuttons li.oauth {
+    background-image: url(/common/images/button-oauth.png);
+  }
+  
+  .loginbuttons li.openid {
+    background-image: url(/common/images/button-openid.png);
+  }
+  
+  .loginbuttons li.twitter {
+    background-image: url(/common/images/button-twitter.png);
+  }
+  
+  .loginbuttons li.windows {
+    background-image: url(/common/images/button-windows.png);
+  }
+  
+  
+  /* Pixel-doubled action arrows */
+  
+  .nav a, .results a, .secondary a, a.arrow {  
+    background-image: url(/common/images/action-arrow@2x.png); 
+    background-size: 14px 17px;
+  }
+  
+  a.add {  
+    background-image: url(/common/images/action-add@2x.png); 
+    background-size: 50px 38px;
+  }
+  
+  a.delete {  
+    background-image: url(/common/images/action-delete@2x.png); 
+    background-size: 26px 20px;
+  }
+
+  a.remove {  
+    background-image: url(/common/images/action-remove@2x.png); 
+    background-size: 26px 20px;
+  }
+
+  a.phone {  
+    background-image: url(/common/images/action-phone@2x.png); 
+    background-size: 26px 19px;
+  }
+  
+  a.email {  
+    background-image: url(/common/images/action-email@2x.png); 
+    background-size: 26px 19px;
+  }
+  
+  a.map {  
+    background-image: url(/common/images/action-map@2x.png); 
+    background-size: 26px 19px;
+  }
+  
+  a.people {  
+    background-image: url(/common/images/action-people@2x.png); 
+    background-size: 19px 19px;
+  }
+  
+  a.external {
+    background-image: url(/common/images/action-external.png); 
+    background-size: 26px 19px;
+  }
+  
+  a.placemark {
+      background-image: url(/common/images/action-placemark@2x.png);
+    background-size: 16px 19px;
+  }
+
+
+
+  /* Portlet paging images */
+  .pane-stories-pager-dots > * {
+    background-image: url(/common/images/page-dot@2x.png);
+    background-size: 12px 12px;
+  }
+  .pane-stories-pager-dots .current {
+    background-image: url(/common/images/page-dot-current@2x.png);
+    background-size: 12px 12px;
+  }
+
+
+}

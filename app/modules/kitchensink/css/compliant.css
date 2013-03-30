@@ -1,0 +1,21 @@
+.somebuttons {
+  width: 50%;
+  float: right;
+  margin-top: 0px;
+}
+
+#bookmarkContainer {
+  float: none;
+}
+
+div#bookmark {
+  float: none;
+  position: absolute;
+  right: 60px;
+}
+
+div#share {
+  float: none;
+  position: absolute;
+  right: 10px;
+}

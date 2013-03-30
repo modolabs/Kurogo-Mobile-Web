@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -40,9 +40,15 @@ abstract class DataRetriever {
     protected $requestInit = false; //whether initRequest has been called or not
     protected $lastResponse;
     protected $showWarnings = true; // if false then data retrievers should properly suppress error messages
+    protected $lastResponseTime;
+    protected $lastParseTime;
     protected $parser;
 
     abstract protected function retrieveResponse();
+    
+    public function canSearch() {
+    	return $this instanceOf SearchDataRetriever;
+    }
     
     public function setDataModel(DataModel $dataModel) {
     	$this->dataModel = $dataModel;
@@ -155,6 +161,9 @@ abstract class DataRetriever {
             if (!$response->getResponseError()) {
                 $this->cacheResponse($cacheKey, $cacheGroup, $response);
             }
+            $this->lastResponseTime = $response->getTimeElapsed();
+        } else {
+            $this->lastResponseTime = null;
         }
         
         $response->setRetriever($this);
@@ -223,9 +232,16 @@ abstract class DataRetriever {
     }
     
     protected function init($args) {
+        //get global options from the site data_retriever section
+        $args = array_merge(Kurogo::getOptionalSiteSection('data_retriever'), $args);
+
         $this->initArgs = $args;
         if (isset($args['DEBUG_MODE'])) {
             $this->setDebugMode($args['DEBUG_MODE']);
+        }
+
+        if (isset($args['DEFAULT_CACHE_LIFETIME'])) {       
+            $this->DEFAULT_CACHE_LIFETIME = $args['DEFAULT_CACHE_LIFETIME'];        
         }
         
         if (isset($args['OPTIONS']) && is_array($args['OPTIONS'])) {
@@ -319,7 +335,10 @@ abstract class DataRetriever {
         if (!$parser) {
             $parser = $this->parser();
         }
+        $startTime = microtime(true);
         $parsedData = $parser->parseData($data);
+        $endTime = microtime(true);
+        $this->lastParseTime = $endTime - $startTime;
         return $parsedData;
     }
 
@@ -333,7 +352,10 @@ abstract class DataRetriever {
         if (!$parser) {
             $parser = $this->parser();
         }
+        $startTime = microtime(true);
         $parsedData = $parser->parseFile($file);
+        $endTime = microtime(true);
+        $this->lastParseTime = $endTime - $startTime;
         return $parsedData;
     }
 
@@ -347,7 +369,11 @@ abstract class DataRetriever {
         if (!$parser) {
             $parser = $this->parser();
         }
+        $startTime = microtime(true);
         $parsedData = $parser->parseResponse($response);
+        $endTime = microtime(true);
+        $this->lastParseTime = $endTime - $startTime;
+        Kurogo::log(LOG_INFO, sprintf("%s took %.2f seconds to parse", get_class($parser), $this->lastParseTime), 'data_parser');
         return $parsedData;
     }
     

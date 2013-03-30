@@ -1,4 +1,4 @@
-#mapimage {
+.mapimage {
     border: 1px solid #999;
     margin: -1px;
     overflow: hidden;
@@ -20,11 +20,15 @@
     left: 75%;
 }
 
+.map-tabbody {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
 /* used on static maps in detail page */
 #mapscrollers {
     position: absolute;
-    top: 0px;
-    left: 0px;
     width: 100%;
     z-index: 10;
 }

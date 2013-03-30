@@ -18,6 +18,9 @@
       {/block}
     {/if}
     <div class="header-text">
+	  <div class="action-buttons">
+	    {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+	  </div>
       {if isset($headerSections['HEADER_TITLE'])}
       {$item = reset($headerSections['HEADER_TITLE'])}
       {block name="headerTitle"}
@@ -38,9 +41,6 @@
         {/foreach}
       {/if}
     </div>
-  </div>
-  <div class="{block name="bookmarksClass"}nonfocal{/block}">
-    {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
   </div>
 {/if}
 

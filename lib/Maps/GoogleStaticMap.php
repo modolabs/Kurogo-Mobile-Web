@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -13,8 +13,6 @@ require_once 'Polyline.php';
 
 // http://code.google.com/apis/maps/documentation/staticmaps
 class GoogleStaticMap extends StaticMapImageController {
-
-    protected $baseURL = 'http://maps.google.com/maps/api/staticmap';
 
     protected $maxZoomLevel = 21;
     protected $minZoomLevel = 0;
@@ -86,20 +84,6 @@ class GoogleStaticMap extends StaticMapImageController {
         }
     }
 
-    ///////////////// query functions /////////////
-
-    public function getHorizontalRange()
-    {
-        // at zoom level 0 the whole earth is shown, i.e. 360 degrees
-        return 360 / pow(2, $this->zoomLevel);
-    }
-
-    public function getVerticalRange()
-    {
-        // this should be 180 at zoom level 0, though may vary with latitude
-        return 180 / pow(2, $this->zoomLevel);
-    }
-
     ////////////// overlays ///////////////
 
     protected function addPolygon(Placemark $placemark)
@@ -167,6 +151,7 @@ class GoogleStaticMap extends StaticMapImageController {
         }
         $polyline = Polyline::encodeFromArray($pointArr);
 
+        $styleArgs = array();
         $style = $placemark->getStyle();
         if ($style) {
             $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR);
@@ -424,7 +409,6 @@ class GoogleStaticMap extends StaticMapImageController {
         $query = http_build_query($params);
         // remove brackets
         $query = preg_replace('/%5B\d+%5D/', '', $query);
-
         return signURLForGoogle($this->baseURL . '?' . $query);
     }
 
@@ -438,6 +422,7 @@ class GoogleStaticMap extends StaticMapImageController {
     }
     
     public function __construct() {
+        $this->baseURL = HTTP_PROTOCOL .'://maps.google.com/maps/api/staticmap';
         $this->enableAllLayers();
     }
 }

@@ -1,27 +1,3 @@
-#navbar {
-	height: 50px;
-	line-height: 49px;
-}
-#navbar .moduleicon {
-  padding-top: 5px;
-  padding-left: 7px;
-}
-#navbar .pagetitle {
-  height: 50px;
-  line-height: 50px;
-  vertical-align: top;
-  margin-left: .25em;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-#containerinset {
-  border: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-}
-
 h1.roomfornew {
 	text-align: left;
 }
@@ -69,179 +45,169 @@ form {
 	margin: 0 0 -7px 0;
 }
 
-.blocks {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
+.banner-notice {
+    height: 42px;
+}
+.portlets {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 5px;
+}
+.portlets-below-banner {
+    top: 43px;
 }
 
-.block {
-  width: 30%;
-  height: 50%;
-  overflow: hidden;
-  position: absolute;
+.portlet {
+    position: relative;
+    width: 33.33333%;
+    float: left;
+    height: 50%;
 }
-
-.blockborder {
-  margin: 10px;
-  -webkit-border-radius: 8px;
-  border: solid 1px #6b717c;
-  background-color: #f2f4f7;
-  overflow: hidden;
-  position: relative;
+.portlet-tall {
+    height: 100%;
 }
-.blockheader {
-  display: block;
-  margin: 1px;
-  padding: 0;
-  padding-left: 52px;
-  background: transparent url(/modules/home/images/pane-header-bg.png) repeat-x left top;
-  color: white;
-  font-size: 120%;
-  text-align: left;
-  text-decoration: none;
-  -webkit-border-radius: 6px;
-  min-height: 41px;
-  line-height: 41px;
-  position: relative;
+.portlet-wide {
+    width: 66.66666%;
 }
-.blockheader:visited {
-  color: white;
+.portlet-right {
+    float: right;
 }
-.blockheader .icon {
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  width: 36px;
-  height: 36px;
-  margin-top: -18px;
-  background-color: transparent;
-  background-position: left top;
-  background-repeat: none;
-  background-size: 36px;
-  -o-background-size: 36px;
-  -moz-background-size: 36px;
-  -khtml-background-size: 36px;
-  -webkit-background-size: 36px;
+@media only screen and (max-width: 900px) {
+    /* Narrower screens e.g., tablets in portrait orientation */
+    .portlet {
+        height: 33.33333%;
+        width: 50%;
+    }
+    .portlet-tall {
+        height: 66.66666%;
+    }
+    .portlet-wide {
+        width: 100%;
+    }
 }
-
-.blockheader .nextlink {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  width: 18px;
-  height: 18px;
-  margin-top: -9px;
-  background: transparent url(/common/images/action-module.png) no-repeat left top;
+.portlet-container {
+    position: absolute;
+    overflow: hidden;
+    top: 5px;
+    left: 5px;
+    bottom: 5px;
+    right: 5px;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
 }
-
-.blockcontent {
-  overflow: hidden;
+.portlet-header,
+.portlet-full-bleed .portlet-content,
+.portlet-full-bleed .portlet-content-top-element {
+    -webkit-border-top-left-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+    -moz-border-top-left-radius: 4px;
+    -moz-border-top-right-radius: 4px;
+    -o-border-top-left-radius: 4px;
+    -o-border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
 }
-
-.blockcontent .loading {
-  background-image: url(/common/images/loading2.gif);
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  margin: 0;
-  padding: 0;
-  height: 100%;
+.portlet-content {
+    -webkit-border-bottom-left-radius: 4px;
+    -webkit-border-bottom-right-radius: 4px;
+    -moz-border-bottom-left-radius: 4px;
+    -moz-border-bottom-right-radius: 4px;
+    -o-border-bottom-left-radius: 4px;
+    -o-border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
-
-.blockcontent .results {
-  margin: 0;
-  background: transparent;
-  border: none;
+.portlet-header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #666;
+    background-color: rgba(0,0,0,0.5);
+    text-transform: uppercase;
+    font: 12px/1em Helvetica, Arial, sans-serif;
+    height: 30px;
+    line-height: 28px;
+    font-weight: bold;
+    color: #fff;
 }
-.blockcontent .results li {
-  border: none;
-  padding-top: 0;
+.portlet-header a,
+.portlet-header a:visited,
+.portlet-header span {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    padding: 2px 10px;
 }
-.blockcontent .results li:first-child {
-  padding-top: 10px;
+.portlet-header .portlet-icon {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    margin-top: -12px;
+    background-color: transparent;
 }
-.blockcontent .results a,
-.blockcontent .results a:visited {
-  background: none;
+.portlet-header .portlet-nextlink {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    margin-top: -9px;
+    background: transparent url(/common/images/action-arrow-white.png) no-repeat left top;
 }
-
-.portrait .large {
-  width: 60%;
-  height: 40%;
-  top: 0;
-  left: 0;
+@media only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+  /* Pixel-doubled versions to take advantage of Retina Displays and XHDPI displays */ 
+  .portlet-header .portlet-nextlink {
+      background-image: url(/common/images/action-arrow-white@2x.png);
+      background-size: 14px 17px;
+  }
 }
-.portrait .medium1 {
-  width: 60%;
-  height: 30%;
-  top: 40%;
-  left: 0;
+.portlet-content {
+    overflow: hidden;
+    position: absolute;
+    line-height: 1.33em;
+    top: 30px;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
-.portrait .medium2 {
-  width: 60%;
-  height: 30%;
-  top: 70%;
-  left: 0;
+.portlet-full-bleed .portlet-content {
+    top: 0;
 }
-.portrait .tall {
-  width: 40%;
-  height: 70%;
-  top: 0;
-  right: 0;
+.portlet-content .smallprint {
+	line-height: 1.25em;
 }
-.portrait .small {
-  width: 40%;
-  height: 30%;
-  top: 70%;
-  right: 0;
+.portlet-content .loading {
+    background-image: url(/common/images/loading2.gif);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
-.portrait .medium1 .blockborder,
-.portrait .medium2 .blockborder,
-.portrait .small .blockborder {
-  margin-top: 0;
+.portlet-content .results {
+    margin: 0;
+    background: transparent;
+    border: none;
 }
-.portrait .tall .blockborder,
-.portrait .small .blockborder {
-  margin-left: 0;
+.portlet-content .results li {
+    border: none;
+    padding-top: 0;
 }
-
-.landscape .large {
-  width: 30%;
-  height: 60%;
-  top: 0;
-  left: 0;
+.portlet-content .results li:first-child {
+    padding-top: 10px;
 }
-.landscape .medium1 {
-  width: 40%;
-  height: 60%;
-  top: 0;
-  left: 30%;
-}
-.landscape .medium2 {
-  width: 40%;
-  height: 40%;
-  top: 60%;
-  left: 30%;
-}
-.landscape .tall {
-  width: 30%;
-  height: 100%;
-  top: 0;
-  left: 70%;
-}
-.landscape .small {
-  width: 30%;
-  height: 40%;
-  top: 60%;
-  left: 0;
-}
-.landscape .small .blockborder,
-.landscape .medium2 .blockborder {
-  margin-top: 0;
-}
-.landscape .medium1 .blockborder,
-.landscape .medium2 .blockborder,
-.landscape .tall .blockborder {
-  margin-left: 0;
+.portlet-content .results a,
+.portlet-content .results a:visited {
+    background: none;
+    padding-right: 7px;
 }

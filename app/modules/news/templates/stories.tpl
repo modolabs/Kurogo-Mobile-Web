@@ -11,16 +11,16 @@
       <a href="{$story['url']}">
       {if $showImages}
         {if $story['img']}
-          <img class="thumbnail" src="{$story['img']}" />
+          <img class="thumbnail" src="{$story['img']}" alt="" />
         {else}
-          <img class="thumbnail" src="/modules/{$configModule}/images/news-placeholder{$imageExt}" />
+          <img class="thumbnail" src="/modules/{$configModule}/images/news-placeholder{$imageExt}" alt="" />
         {/if}
         {/if}
         <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
           <div class="title">{$story["title"]}</div>
-          {if $showAuthor}<div class="author">{$story['author']}</div>{/if}
+          <div class="smallprint">{if $showAuthor}<div class="author">{$story['author']}</div>{/if}
           {if $showPubDate}<div class="pubdate">{$story['pubDate']}</div>{/if}
-          {$story['subtitle']|strip_tags}
+          {$story['subtitle']|strip_tags}</div>
         </div>
       </a>
     </li>

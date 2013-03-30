@@ -1,7 +1,7 @@
 <?php 
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -13,9 +13,11 @@
 class KurogoSoapClient extends SoapClient 
 { 
     protected $returnHeaders = array();
-    protected $auth;
-    protected $cred;
-    protected $ssl_verify = true;
+    protected $initArgs = array();
+    protected $authType = 'basic';
+    protected $authUser;
+    protected $authPassword;
+    protected $useCurl = false;
 
 	protected function buildURL($parts, $include_resource=false) {
         $scheme = (isset($parts['scheme'])) ? $parts['scheme'] : 'http';
@@ -56,11 +58,16 @@ class KurogoSoapClient extends SoapClient
             $wsdl_data = $cache->read($cacheFile);
         } else {
             $ch = curl_init($wsdl); 
-            if (!$this->ssl_verify) {
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            foreach($this->initArgs as $key=>$value) {
+                if (preg_match("/CURLOPT_/", $key)) {
+                    curl_setopt($ch, constant($key), $value);
+                }
             }
-            curl_setopt($ch, CURLOPT_HTTPAUTH, $this->auth);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->cred);
+            
+            if ($this->authUser) {
+                curl_setopt($ch, CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($this->authType)));
+                curl_setopt($ch, CURLOPT_USERPWD, $this->authUser . ':' . $this->authPassword);
+            }
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             if (!$wsdl_data = curl_exec($ch)) {
@@ -88,65 +95,101 @@ class KurogoSoapClient extends SoapClient
         return $wsdl;
     }
     
-    function parseWSDL($wsdl_data) {
+    protected function setAuthUser($user) {
+        $this->authUser = $user;
+    }
+
+    protected function setAuthPassword($password) {
+        $this->authPassword = $password;
+    }
+
+    protected function setAuthType($authType) {
+        switch ($authType)
+        {
+            case 'basic':
+            case 'digest':
+            case 'ntlm':
+                $this->authType = $authType;
+                break;
+            default:
+                throw new KurogoConfigurationException("Invalid auth type $authType");
+        }
+    }
+    
+    protected function parseWSDL($wsdl_data) {
         $parser = DataParser::factory('WSDLParser', array());
         $wsdl = $parser->parseData($wsdl_data);
         return $wsdl;
     }
+    
+    public static function factory($args, $wsdl, $options) {
+        $options['initArgs'] = $args;
+        $client = new KurogoSoapClient($wsdl, $options);
+        return $client;
+    }
 	
-    function __construct($wsdl, $options) { 
+    public function __construct($wsdl, $options) { 
+        $args = $options['initArgs'];
+        unset($options['initArgs']);
+        $this->initArgs = $args;
 
-        // use auth
-        if (isset($options['auth'])) {
-            switch ($options['auth']) {
-                case CURLAUTH_BASIC:
-                case CURLAUTH_DIGEST:
-                case CURLAUTH_NTLM:
-                    $this->auth = $options['auth'];
-                    break;
-                default:
-                    throw new KurogoConfigurationException("Unhandled auth parameter " . $options['auth']);
-            }
-        
-            unset($options['auth']);
+        if (isset($args['USE_CURL'])) {
+        	$this->useCurl = (bool) $args['USE_CURL'];
         }
         
-        if (isset($options['ssl_verify'])) {
-            $this->ssl_verify = $options['ssl_verify'] ? true : false;
-            unset($options['ssl_verify']);
+        if (isset($args['AUTH_TYPE'])) {
+            $this->setAuthType($args['AUTH_TYPE']);            
+        }
+        
+        if (isset($args['AUTH_USER'])) {
+            $this->setAuthUser($args['AUTH_USER']);
+            $this->useCurl = true;
         }
 
-        if (isset($options['login']) && isset($options['password'])) {
-            $this->cred = $options['login'] .':' . $options['password'];
-        } elseif ($this->auth) {
-            //probably should deal with the fact that credentials haven't been included
+        if (isset($args['AUTH_PASSWORD'])) {
+            $this->setAuthPassword($args['AUTH_PASSWORD']);
+            $this->useCurl = true;
         }
-        
-        if ($this->auth && $this->cred) {
+
+        if (strlen($this->authUser) && strlen($this->authPassword)) {
             $wsdl = $this->retrieveWSDL($wsdl);
         }
-        
+
         parent::__construct($wsdl, $options); 
     }
 
-	public function __doRequest($request, $location, $action, $version, $one_way=0) {
+    // icky function to deal with addresses returned by the server that
+    // are not properly encoded (sharepoint sites that contain spaces may
+    // return urls that contain unencoded spaces in the soap:address tag)
+    protected function getRequestLocation($location) {
+        return str_replace(' ', '%20', $location);
+    }
 
+    public function __doRequest($request, $location, $action, $version, $one_way=0) {
+        $location = $this->getRequestLocation($location);
         //use curl if there is auth
-		if ($this->auth) {
+        if ($this->useCurl) {
             $headers = array(
                 'Content-Type: text/xml; charset=' . Kurogo::getCharset()
             );
 
             $ch = curl_init($location); 
-            if (!$this->ssl_verify) {
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            foreach($this->initArgs as $key=>$value) {
+                if (preg_match("/CURLOPT_/", $key)) {
+                    curl_setopt($ch, constant($key), $value);
+                }
             }
-            curl_setopt($ch, CURLOPT_HTTPAUTH, $this->auth);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->cred);
+            
+            if ($this->authUser) {
+                curl_setopt($ch, CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($this->authType)));
+                curl_setopt($ch, CURLOPT_USERPWD, $this->authUser . ':' . $this->authPassword);
+            }
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
     		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            //curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+
             $result = curl_exec($ch);
             Kurogo::log(LOG_WARNING, "SOAP result: $result, $location", 'soap'); 
             return $result;

@@ -42,6 +42,7 @@
             <tr>
               <td class="formlabel">{"SEARCH"|getLocalizedString}</td>
               <td class="inputfield">
+                <input type="hidden" name="section" value="{$currentSection.value}" />
                 <input class="newsinput search-field" type="text" id="search_terms" 
                 name="filter" value="{$searchTerms|escape}" 
                 onKeyPress="return submitenter(this, event);"/>

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -61,6 +61,13 @@ abstract class ShellModule extends Module {
     }
 
     /**
+     * The module must be run securely (https)
+     */
+    protected function unsecureModule() {
+        return false;
+    }
+
+    /**
      * The user cannot access this module
      */
     protected function unauthorizedAccess() {
@@ -90,24 +97,6 @@ abstract class ShellModule extends Module {
         );
         $this->error($string);
         $this->stop();
-    }
-
-    protected function getShellConfig($name, $opts=0) {
-        $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
-        $config = ModuleConfigFile::factory($this->configModule, "shell-$name", $opts, $this);
-        return $config;
-    }
-
-    protected function getShellConfigData($name) {
-        $config = $this->getShellConfig($name);
-        return $config->getSectionVars(Config::EXPAND_VALUE);
-    }
-
-    protected function loadSiteConfigFile($name, $opts=0) {
-        $config = ConfigFile::factory($name, 'site', $opts);
-        Kurogo::siteConfig()->addConfig($config);
-
-        return $config->getSectionVars(true);
     }
 
     public static function getAllModules() {
@@ -239,6 +228,35 @@ abstract class ShellModule extends Module {
 		}
 		$this->out(count($controllers) . " feeds took " . sprintf("%.2f", $time) . " seconds.");
     }
+
+    //
+    // Messaging support
+    //
+
+    public function messagingEnabled() {
+        // if module doesn't specify messaging parameter, use site value
+        $siteConfig = Kurogo::getOptionalSiteSection('notifications');
+        $siteEnabled = Kurogo::arrayVal($siteConfig, 'ENABLED_BY_DEFAULT', false);
+        return $this->getOptionalModuleVar('messaging', $siteEnabled, null, 'module');
+    }
+
+    /*
+     * Return tags for all different types of messages sent by this module 
+     * that are not user-dependent.  e.g. "urgent", "casual"
+     */
+    public function getStaticNotificationContexts() {
+        return array();
+    }
+
+    /*
+     * Return relevant updates for non-user-dependent message types
+     * since the specified time.
+     * Format: array(array('title' => 'Message Title', 'body' => 'Details'))
+     */
+    public function getUpdatesForStaticContext($context, $platform, $lastCheckTime) {
+        return array();
+    }
+
 }
 
 

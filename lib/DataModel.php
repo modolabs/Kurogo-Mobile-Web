@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -136,7 +136,7 @@ class DataModel {
      * method, but instead override init() to provide initialization behavior
      * @param string $controllerClass the classname to instantiate
      * @param array $args an associative array of arguments that get passed to init()
-     * @return DataController a data controller object
+     * @return DataModel a data model object
      */
     public static function factory($controllerClass, $args=array()) {
         $args = is_array($args) ? $args : array();
@@ -154,8 +154,8 @@ class DataModel {
 
         $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
 
-        //get global options from the site data_controller section
-        $args = array_merge(Kurogo::getOptionalSiteSection('data_controller'), $args);
+        //get global options from the site data_model section
+        $args = array_merge(Kurogo::getOptionalSiteSection('data_model'), $args);
         $controller->init($args);
 
         return $controller;

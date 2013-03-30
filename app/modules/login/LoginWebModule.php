@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -33,7 +33,7 @@ class LoginWebModule extends WebModule {
         return Kurogo::getSiteVar('AUTHENTICATION_ENABLED') && parent::isEnabled();
     }
 
-    protected function extractModuleArray($args) {
+    protected function extractModuleArray($args, $flatten = false) {
         $return = array();
         if (isset($args['id'])) {
             $return['id'] = $args['id'];
@@ -44,7 +44,13 @@ class LoginWebModule extends WebModule {
         }
 
         if (isset($args['args'])) {
-            $return['args'] = $args['args'];
+            if ($flatten && is_array($args['args'])) {
+                foreach ($args['args'] as $arg=>$value) {
+                    $return['args[' . $arg . ']'] = $value;
+                }
+            } else {
+                $return['args'] = $args['args'];
+            }
         }
         
         return $return;
@@ -60,7 +66,36 @@ class LoginWebModule extends WebModule {
             $this->nativeApp = (bool) self::argVal($_COOKIE, self::NATIVE_APP_COOKIE, false);
         }
     }
+    
+    protected function loginSuccessful() {
+    
+        $authorityIndex = $this->getArg('authority');
+        $urlArray = $this->extractModuleArray($this->args);
 
+        if ($this->nativeApp) {
+            $this->assign('showMessage', true);
+            $this->assign('message', $this->getLocalizedString("LOGIN_SUCCESSFUL"));
+            $this->assign('redirectURL', KurogoWebBridge::getInternalLink($this->configModule, 'loginComplete', array()));
+        } elseif ($urlArray) {
+            $this->redirectToArray($urlArray, Kurogo::REDIRECT_SEE_OTHER);
+        } else {
+            $this->redirectToModule($this->getHomeModuleID(),'',array('login'=>$authorityIndex), Kurogo::REDIRECT_SEE_OTHER);
+        }
+    }
+    
+    protected function logoutSuccessful() {
+        $authorityIndex = $this->getArg('authority');
+        //if they are still logged in return to the login page, otherwise go home.
+        if ($this->isLoggedIn()) {
+            $this->redirectTo('index', array('logout'=>$authorityIndex));
+        } elseif ($this->nativeApp) {
+            $this->assign('message', $this->getLocalizedString("LOGOUT_SUCCESSFUL"));
+            $this->assign('redirectURL', KurogoWebBridge::getInternalLink($this->configModule, 'logoutComplete', array()));
+        } else {
+            $this->redirectToModule($this->getHomeModuleID(),'',array('logout'=>$authorityIndex));
+        }
+    }    
+    
   protected function initializeForPage() {
     $this->assign('nativeApp', $this->nativeApp);
     
@@ -78,6 +113,13 @@ class LoginWebModule extends WebModule {
     
     //return URL
     $urlArray = $this->extractModuleArray($this->args);
+
+    $allowSaveUsername = Kurogo::getOptionalSiteVar('AUTHENTICATION_SAVE_USERNAME');
+    if ($allowSaveUsername) {
+        $saveUsername = $this->getArg('saveUsername', 0);
+    } else {
+        $saveUsername = 0;
+    }
     
     //see if remain logged in is enabled by the administrator, then if the value has been passed (i.e. the user checked the "remember me" box)
     $allowRemainLoggedIn = Kurogo::getOptionalSiteVar('AUTHENTICATION_REMAIN_LOGGED_IN_TIME');
@@ -147,6 +189,7 @@ class LoginWebModule extends WebModule {
     //assign template variables
     $this->assign('authenticationAuthorities', $authenticationAuthorities);
     $this->assign('allowRemainLoggedIn', $allowRemainLoggedIn);
+    $this->assign('allowSaveUsername', $allowSaveUsername);
     if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
         $this->assign('FORGET_PASSWORD_URL', $this->buildBreadcrumbURL('forgotpassword', array()));
         $this->assign('FORGET_PASSWORD_TEXT', $this->getOptionalModuleVar('FORGET_PASSWORD_TEXT', $this->getLocalizedString('FORGET_PASSWORD_TEXT')));
@@ -201,18 +244,8 @@ class LoginWebModule extends WebModule {
             if ($result) { 
                 $this->setLogData($user, $user->getFullName());
                 $this->logView();
+                $this->logoutSuccessful();
 
-                //if they are still logged in return to the login page, otherwise go home.
-                if ($this->isLoggedIn()) {
-                    $this->redirectTo('index', array('logout'=>$authorityIndex));
-                } elseif ($this->nativeApp) {
-                	$this->assign('message', $this->getLocalizedString("LOGOUT_SUCCESSFUL"));
-//					$this->assign('buttonURL', $this->buildURL('logoutComplete'));
-//					$this->assign('buttonTitle', $this->getLocalizedString('LOGOUT_DISMISS'));
-					$this->assign('redirectURL', KurogoWebBridge::getInternalLink($this->configModule, 'logoutComplete', array()));
-                } else {
-                    $this->redirectToModule($this->getHomeModuleID(),'',array('logout'=>$authorityIndex));
-                }
             } else {
                 //there was an error logging out
                 $this->assign('message', $this->getLocalizedString("ERROR_SIGN_OUT"));
@@ -239,8 +272,10 @@ class LoginWebModule extends WebModule {
             
             $session  = $this->getSession();
             $session->setRemainLoggedIn($remainLoggedIn);
+            $session->setSaveUsername($saveUsername);
 
             $authorityIndex = $this->getArg('authority', '');
+            $session->setAuthorityIndex($authorityIndex);
             if (!$authorityData = AuthenticationAuthority::getAuthenticationAuthorityData($authorityIndex)) {
                 //invalid authority
                 $this->redirectTo('index', $options);
@@ -253,6 +288,7 @@ class LoginWebModule extends WebModule {
 
             $this->assign('authority', $authorityIndex);
             $this->assign('remainLoggedIn', $remainLoggedIn);
+            $this->assign('saveUsername', $saveUsername);
             $this->assign('authorityTitle', $authorityData['TITLE']);
 
             //if they haven't submitted the form and it's a direct login show the form
@@ -262,7 +298,14 @@ class LoginWebModule extends WebModule {
                     $loginMessage = $this->getLocalizedString('LOGIN_DIRECT_MESSAGE', Kurogo::getSiteString('SITE_NAME'));
                 }
                 $this->assign('LOGIN_DIRECT_MESSAGE', $loginMessage);
-                $this->assign('urlArray', $urlArray);
+                $this->assign('urlArray', $this->extractModuleArray($urlArray, true));
+                $cookieSaveUName = $authorityIndex . "_username";
+                if (isset($_COOKIE[$cookieSaveUName]) && strlen($_COOKIE[$cookieSaveUName])) {
+                    $loginUser = $_COOKIE[$cookieSaveUName];
+                }else {
+                    $loginUser = "";
+                }
+                $this->assign('loginUser', $loginUser);
                 break;
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 //indirect logins handling the login process themselves. Send a return url so the indirect authority can come back here
@@ -284,17 +327,8 @@ class LoginWebModule extends WebModule {
                     $user = $this->getUser($authority);
                     $this->setLogData($user, $user->getFullName());
                     $this->logView();
-                    if ($this->nativeApp) {
-                    	$this->assign('showMessage', true);
-						$this->assign('message', $this->getLocalizedString("LOGIN_SUCCESSFUL"));
-						$this->assign('redirectURL', KurogoWebBridge::getInternalLink($this->configModule, 'loginComplete', array()));
-						break 2;
-                    } elseif ($urlArray) {
-                        $this->redirectToArray($urlArray, Kurogo::REDIRECT_SEE_OTHER);
-                    } else {
-                        $this->redirectToModule($this->getHomeModuleID(),'',array('login'=>$authorityIndex), Kurogo::REDIRECT_SEE_OTHER);
-                    }
-                    break;
+                    $this->loginSuccessful();
+                    break 2;
 
                 case AUTH_OAUTH_VERIFY:
                     // authorities that require a manual oauth verification key 
@@ -305,7 +339,23 @@ class LoginWebModule extends WebModule {
                 default:
                     //there was a problem.
                     if ($authorityData['USER_LOGIN']=='FORM') {
-                        $this->assign('message', $this->getLocalizedString('ERROR_LOGIN_DIRECT'));
+                        switch ($result)
+                        {
+                            case AUTH_USER_NOT_FOUND:
+                                $message = $this->getLocalizedString('ERROR_LOGIN_DIRECT_NOT_FOUND');
+                                break;                            
+                            case AUTH_USER_DISABLED:
+                                $message = $this->getLocalizedString('ERROR_LOGIN_DIRECT_DISABLED');
+                                break;                            
+                            case AUTH_ERROR:
+                            case AUTH_FAILED:
+                            default:
+                                $message = $this->getLocalizedString('ERROR_LOGIN_DIRECT');
+                                break;
+                        }
+                        
+                        $this->assign('urlArray', $this->extractModuleArray($urlArray, true));
+                        $this->assign('message', $message);
                         break 2;
                     } else {
                         $this->redirectTo('index', array_merge(

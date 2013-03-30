@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -97,7 +97,13 @@ class KurogoLog {
         }
         
         $compactTrace = self::compactTrace($backTrace);
-        $request = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        if (isset($_SERVER['REQUEST_URI'])) {
+            $request = $_SERVER['REQUEST_URI'];
+        } elseif (defined('KUROGO_SHELL')) {
+            $request = json_encode(Kurogo::getArrayForRequest());
+        } else {
+            $request = null;
+        }
         
 		$content = sprintf(
 			"%s\t%s:%s\t%s\t%s\t%s",
@@ -137,13 +143,16 @@ class KurogoLog {
         if ($file) {
             $dir = dirname($file);
             if (!file_exists($dir)) {
-                if (!mkdir($dir, 0755, true)) {
+                if (!@mkdir($dir, 0755, true)) {
                     return false;
                 }
             }
-            $handle = fopen($file, 'a+');
-            fwrite($handle, $data);
-            fclose($handle);
+            if ($handle = @fopen($file, 'a+')) {
+                fwrite($handle, $data);
+                fclose($handle);
+            } else {
+                error_log("Unable to write to kurogo log file $file");
+            }
         }
     }
     

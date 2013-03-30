@@ -6,9 +6,63 @@
 	width: 100%;
 	padding: 0;
 }
+#homelogo img {
+  max-width: 90%;
+  height: auto;
+}
 h1.roomfornew {
 	text-align: left;
 }
+#homelogo.hero {
+	margin: 0;
+	background-color: #333;
+	line-height: 0;
+}
+#homelogo.hero img {
+	width: 100%;
+	max-width: 480px;
+	height: auto;
+}
+
+/* List-style home */
+#homemodules {
+  margin: 20px 0;
+}
+#homemodules li.icon {
+  padding: 0;
+  min-height: 0;
+}
+#homemodules li.icon a {
+  margin: 3px;
+  padding: 2px 26px 2px 3px;
+  min-height: 45px;
+  line-height: 44px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 106.67%;
+}
+#homemodules li.icon img {
+  width: 45px;
+  height: 45px;
+  position: relative;
+  float: left;
+  top: 0;
+  left: 0;
+  margin-right: 5px;
+}
+#homemodules ul.secondary li.icon a {
+  min-height: 34px;
+  line-height: 33px;
+  font-size: 100%;
+}
+#homemodules ul.secondary li.icon img {
+  width: 30px;
+  height: 30px;
+  margin: 2px 9px 2px 10px;
+}
+
+
 #new {
 	position: absolute;
 	top: -13px;
@@ -67,4 +121,74 @@ form {
 #download img {
     width: 32px;
     height: 26px;
+}
+
+.userContextList {
+    margin: 0;
+    padding: 0 12px;
+    text-align: center;
+}
+
+.userContextListDescription {
+    font-size: 12px;
+    color: @@@nonfocal_text_color@@@;
+}
+
+.userContextList select {
+    width: 100%;
+    font-size: 0.93rem;
+}
+
+.userContextList ul {
+    list-style-type: none;
+    margin: 5px 0;
+    padding: 0;
+    font-size: 13px;
+}
+
+.userContextList ul li {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.userContextList a, .userContextList a:visited {
+  display: block;
+  padding: 0.5em;
+  background-color: rgba(255,255,255,0.07);
+  border: solid @@@focal_border_color@@@;
+  border-width: 1px 1px 1px 0;
+  text-align: center;
+  text-decoration: none;
+  color: @@@nonfocal_text_color@@@;
+}
+
+.userContextList ul li:first-child a {
+  -webkit-border-top-left-radius: 6px;
+  -moz-border-top-left-radius: 6px;
+  -border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -moz-border-bottom-left-radius: 6px;
+  -border-bottom-left-radius: 6px;
+  border-left-width: 1px;
+}
+
+.userContextList ul li:last-child a {
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-top-right-radius: 6px;
+  -border-top-right-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  -moz-border-bottom-right-radius: 6px;
+  -border-bottom-right-radius: 6px;
+}
+
+.userContextList li.contextSelected a {
+    text-decoration: none;
+    color: #fff;
+    background-color: @@@focal_link_color@@@;
+    background-color: rgba(0,0,0,0.75);
+    -webkit-box-shadow: inset 0 2px 5px #000;
+    box-shadow: inset 0 2px 5px #000;
+    -webkit-text-shadow: 0 1px 1px #000;
+    text-shadow: 0 1px 1px #000;
 }

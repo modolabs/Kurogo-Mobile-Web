@@ -1,11 +1,13 @@
 body.PhotosModule {
-	background-color: #202020;
+  background-color: @@@focal_background_color@@@;
+  min-width: 500px;
+  min-height: 500px;
 }
 
 .gallery {
 	overflow:hidden;
-	width: 936px;
-	margin: 50px auto;
+	width: 624px;
+	margin: 40px auto;
 }
 
 .gallery div {
@@ -14,7 +16,6 @@ body.PhotosModule {
 	margin: 3px;
 	overflow: hidden;
 	float: left;
-	background-color: #000
 }
 
 .gallery img {
@@ -27,7 +28,7 @@ body.PhotosModule {
 }
 
 .sidenav2 a, .sidenav2 a:visited, .sidenavlabel {
-    color: #808080
+    color: @@@focal_link_color@@@;
 }
 
 .sidenav2 a {
@@ -36,18 +37,24 @@ body.PhotosModule {
 
 
 
+@media only screen and (min-width: 800px) {
+/* rewrap to 4-wide in wide portrait orientation */
+    .gallery {
+        width: 624px;
+    }
+}
 
-@media only screen and (max-width: 980px) {
+@media only screen and (min-width: 980px) {
 /* rewrap to 5-wide in wide portrait orientation */
     .gallery {
         width: 780px;
     }
 }
 
-@media only screen and (max-width: 800px) {
-/* rewrap to 4-wide in portrait orientation */
+@media only screen and (min-width: 1024px) {
+/* rewrap to 6-wide in wide portrait orientation */
     .gallery {
-        width: 624px;
+        width: 938px;
     }
 }
 

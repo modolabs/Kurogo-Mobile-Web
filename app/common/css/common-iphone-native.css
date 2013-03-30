@@ -1,0 +1,32 @@
+/* Styling to make lists look more like iOS5+ native lists */
+
+.nav {
+  box-shadow: 0px 1px 0px rgba(255,255,255,0.7), inset 0px 1px 0 rgba(0,0,0,0.1);
+}
+.nav a {
+  margin: -11px -9px;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  padding-top: 10px; 
+  padding-left: 9px; 
+  padding-bottom: 11px; 
+  border-top: 1px solid rgba(255,255,255,0.7);
+}
+.nav li:first-child, .nav li:first-child a {
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+.nav li:last-child, .nav li:last-child a {
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+.results a {
+  margin: -10px;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  padding-top: 7px; 
+  padding-left: 8px; 
+  padding-bottom: 9px; 
+  border-top: 1px solid rgba(255,255,255,0.7);
+}

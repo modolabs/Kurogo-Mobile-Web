@@ -19,7 +19,9 @@
 {/if}
 
 {block name="contactslist"}
+{if $contacts}
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$contacts secondary=true accessKey=false subTitleNewline=$contactsSubTitleNewline}
+{/if}
 {/block}
 
 {include file="findInclude:common/templates/footer.tpl"}

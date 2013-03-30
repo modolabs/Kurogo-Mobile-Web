@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -15,15 +15,17 @@ class AthleticsAPIModule extends APIModule
 {
     protected $id = 'athletics';
     protected $vmin = 1;
-    protected $vmax = 1;
+    protected $vmax = 3;
     protected $imageExt = ".png";
 
     protected static $defaultEventModel = 'AthleticEventsDataModel';
-    protected static $defaultNewsModel = 'NewsDataModel';
+    protected static $defaultNewsModel = 'AthleticNewsDataModel';
     
     protected $maxPerPage = 10;
     protected $feeds;
     protected $navFeeds;
+    
+    protected $fieldConfig;
 
     protected function cleanContent($content) {
         //deal with pre tags. strip out pre tags and add <br> for newlines
@@ -39,14 +41,41 @@ class AthleticsAPIModule extends APIModule
     
         return $content;
     }
+
+    protected function loadFeedData() {
+        $feeds = parent::loadFeedData();
+        foreach ($feeds as $sport=>&$sportData) {
+            $localizedKey = sprintf("%s_BOOKMARK", strtoupper($sportData['GENDER']));
+            $sportData['GENDER_TITLE'] = $this->getLocalizedString($localizedKey, $sportData['TITLE']);
+        }
+
+        return $feeds;
+    }
     
     public function  initializeForCommand() {
 
         $this->feeds = $this->loadFeedData();
         $this->navFeeds = $this->getModuleSections('page-index');
-        $responseVersion = $this->requestedVersion < 2 ? 1 : 2;
+        $responseVersion = in_array($this->requestedVersion, array(1,2,3)) ? $this->requestedVersion : 1;
         
         switch ($this->command) {
+            case 'frontpage':
+                // for native apps, returns whether Top News tab contains News and/or All Sports Schedule
+
+                $response = array();
+
+                if ($newsFeedData = $this->getNavData('topnews')) {
+                    $response[] = array('id' => 'topnews', 'title' => $newsFeedData['TITLE']);
+                }
+
+                if ($scheduleFeedData = $this->getNavData('allschedule')) {
+                    $response[] = array('id' => 'allschedule', 'title' => $scheduleFeedData['TITLE']);
+                }
+                
+                $this->setResponse($response);
+                $this->setResponseVersion($responseVersion);
+
+            break;
             case 'genders':
                 $genders = array();
                 $response = array();
@@ -63,7 +92,7 @@ class AthleticsAPIModule extends APIModule
                     }
                 }
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
                 break;
             case 'sports':
                 // sports
@@ -74,10 +103,10 @@ class AthleticsAPIModule extends APIModule
 
                     $sports = array();
                     foreach ($sportsConfig as $key => $sportData) {
-                        $image = FULL_URL_BASE . "modules/{$this->configModule}/images/" .
+                        $image = FULL_URL_BASE . "modules/{$this->id}/images/" .
                             (isset($sportData['ICON']) ? $sportData['ICON'] : strtolower($sportData['TITLE'])) .
                             $this->imageExt;
-                        $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'icon' => $image);
+                        $sports[] = array('key'=>$key, 'title' => $sportData['TITLE'], 'gendertitle'=> $sportData['GENDER_TITLE'], 'icon' => $image);
                     }
 
                     $response = array(
@@ -89,7 +118,7 @@ class AthleticsAPIModule extends APIModule
                 }
                 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
                 
                 break;
 
@@ -126,14 +155,13 @@ class AthleticsAPIModule extends APIModule
                 );
 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
                 
                 break;
 
             case 'schedule':
                 // schedule
-                $sport = $this->getArg('sport');
-                $sportData = $this->getSportData($sport);
+                $sport = $this->getArg('sport', 'allschedule'); // COULD BE ALLSCHEDULE
                 
                 $count  = 0;
                 if ($scheduleFeed = $this->getScheduleFeed($sport)) {
@@ -155,7 +183,7 @@ class AthleticsAPIModule extends APIModule
                 );
                     
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
                 
                 break;
 
@@ -170,6 +198,7 @@ class AthleticsAPIModule extends APIModule
                 $newsFeed->setStart($start);
                 $newsFeed->setLimit($this->maxPerPage);
 
+				$this->setLogData($searchTerms);
                 $items = $newsFeed->search($searchTerms);
                 $totalItems = $newsFeed->getTotalItems();
 
@@ -184,7 +213,7 @@ class AthleticsAPIModule extends APIModule
                 );
 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
                 break;
 
             default:
@@ -193,31 +222,13 @@ class AthleticsAPIModule extends APIModule
         }
     }
     
-    protected function getImageForStory($story) {
-        if ($image = $story->getImage()) {
-            return array(
-                'src'    => $image->getURL(),
-                'width'  => $image->getWidth(),
-                'height' => $image->getHeight()
-            );
-        } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
-            return array(
-                'src'    => $image->getAttrib('URL'),
-                'width'  => $image->getAttrib('WIDTH'),
-                'height' => $image->getAttrib('HEIGHT'),
-            );
-        }
-        
-        return null;
-    }
-    
     protected function formatStory($story, $mode) {
         
         $item = array(
             'GUID'        => $story->getGUID(),
             'link'        => $story->getLink(),
-            'title'       => strip_tags($story->getTitle()),
-            'description' => $story->getDescription(),
+            'title'       => Sanitizer::htmlStripTags2UTF8($story->getTitle()),
+            'description' => Sanitizer::htmlStripTags2UTF8($story->getDescription()),
             'pubDate'     => $story->getPubTimestamp()
         );
 
@@ -230,9 +241,25 @@ class AthleticsAPIModule extends APIModule
             $item['hasBody'] = FALSE;
         }
 
-        $image = $this->getImageForStory($story);
-        if ($image && $image['src']) {
-            $item['image'] = $image;
+       $thumbnail = $story->getThumbnail();
+       if($thumbnail && $thumbnail->getURL()) {
+         $key = $this->requestedVersion < 3 ? 'image' : 'thumbnail';
+         $item[$key] = array(
+           'src'    => $thumbnail->getURL(),
+           'width'  => $thumbnail->getWidth(),
+           'height' => $thumbnail->getHeight()
+         );
+       }
+       
+       if ($this->requestedVersion >= 3) {
+           $image = $story->getImage();
+           if($image && $image->getURL()) {
+               $item['image'] = array(
+                    'src'    => $image->getURL(),
+                    'width'  => $image->getWidth(),
+                    'height' => $image->getHeight()
+               );
+           }
         }
         $item['author'] = $story->getAuthor() ? $story->getAuthor() : '';
         
@@ -273,9 +300,11 @@ class AthleticsAPIModule extends APIModule
             }
         }
         $result['locationLabel'] = '';
-        
-        $fieldConfig = $this->getAPIConfigData('schedule-detail');
-        foreach ($fieldConfig as $field => $fieldInfo) {
+ 
+        if (!$this->fieldConfig) {
+            $this->fieldConfig = $this->getModuleSections('api-schedule-detail');
+        }
+        foreach ($this->fieldConfig as $field => $fieldInfo) {
             if (in_array($field, $standardAttributes) || !isset($allFieldValue[$field]) || !$allFieldValue[$field]) {
                 continue;
             }
@@ -364,11 +393,27 @@ class AthleticsAPIModule extends APIModule
         return null;
     }
     
-    //copy from athleticsWebModule
-    protected function getScheduleFeed($sport) {
+    public function loadScheduleData() {
+        $scheduleFeeds = $this->getModuleSections('schedule');
+        $default = $this->getOptionalModuleSection('schedule','module');
+        foreach ($scheduleFeeds as $index=>&$feedData) {
+            $feedData = array_merge($default, $feedData);
+        }
+        return $scheduleFeeds;
+    }
     
-        if ($feedData = $this->getOptionalModuleSection($sport, 'schedule')) {
-            $dataModel = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : 'AthleticEventsDataModel';
+    protected function getScheduleFeed($sport) {
+        if ($sport=='allschedule'){ 
+            $scheduleData = $this->getNavData('allschedule');
+            $dataModel = Kurogo::arrayVal($scheduleData, 'MODEL_CLASS', self::$defaultEventModel);
+            $scheduleFeed = AthleticEventsDataModel::factory($dataModel, $scheduleData);
+            return $scheduleFeed;
+
+        } else {
+            $scheduleData = $this->loadScheduleData();
+        }
+        if ($feedData = Kurogo::arrayVal($scheduleData, $sport)) {
+            $dataModel = Kurogo::arrayVal($feedData, 'MODEL_CLASS', self::$defaultEventModel);
             $this->scheduleFeed = AthleticEventsDataModel::factory($dataModel, $feedData);
             return $this->scheduleFeed;
         }

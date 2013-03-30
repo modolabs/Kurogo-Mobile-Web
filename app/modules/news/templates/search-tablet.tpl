@@ -7,13 +7,12 @@
 {/block}
 
 {block name="stories"}
-  <div id="tabletNews" class="splitview">
-    <div id="stories" class="listcontainer">
-      {include file="findInclude:modules/news/templates/stories.tpl"}
-    </div>
-    <div id="storyDetailWrapper" class="splitview-detailwrapper">
-      <div id="storyDetail">
-      </div><!-- storyDetail -->
-    </div><!-- storyDetailWrapper -->
-  </div><!-- tabletNews -->
+  {capture name="splitviewList" assign="splitviewList"}
+    {include file="findInclude:modules/news/templates/stories.tpl"}
+  {/capture}
+  {$splitview = array()}
+  {$splitview['id'] = "tabletNews"}
+  {$splitview['class'] = "splitview-stories"}
+  {$splitview['list'] = $splitviewList}
+  {include file="findInclude:common/templates/splitview.tpl" splitview=$splitview}
 {/block}

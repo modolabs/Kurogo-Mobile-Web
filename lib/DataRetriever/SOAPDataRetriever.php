@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -49,15 +49,14 @@ class SOAPDataRetriever extends DataRetriever {
 	protected function getSoapClient() {
 		if (!$this->soapClient) {
 		    try {
-		        $this->soapClient = new KurogoSoapClient($this->wsdl(), $this->soapOptions);
+		        $this->soapClient = KurogoSoapClient::factory($this->initArgs, $this->wsdl(), $this->soapOptions);
 		        
                 if ($this->soapHeaders) {
                     $this->soapClient->__setSoapHeaders($this->soapHeaders);
                 }
                         
 		    } catch (SoapFault $fault) {
-		        Kurogo::log(LOG_WARNING, "Error creating SOAP Client: " . $fault->getMessage(), 'soap_retriever');
-		        throw new KurogoDataException("Error creating SOAP Client");
+		        throw new KurogoDataException("Error creating SOAP Client " . $fault->getMessage());
 		    }
 		}
 		return $this->soapClient;
@@ -97,10 +96,6 @@ class SOAPDataRetriever extends DataRetriever {
             }
             
             $this->setParameters($args['PARAMETERS']);
-        }
-        
-        if (isset($args['SSL_VERIFY'])) {
-            $this->setSoapOption('ssl_verify', $args['SSL_VERIFY']);
         }
     }
 
@@ -197,6 +192,10 @@ class SOAPDataRetriever extends DataRetriever {
         try {
             $data = $soapClient->__soapCall($method, $parameters, $options, $headers, $outputHeaders);
         } catch (SoapFault $fault) {
+			$response->setContext('soapRequestHeaders', $soapClient->__getLastRequestHeaders());
+			$response->setContext('soapRequest', $soapClient->__getLastRequest());
+			$response->setContext('soapResponse', $soapClient->__getLastResponse());
+			$response->setContext('soapResponseHeaders', $soapClient->__getLastResponseHeaders());
             throw new KurogoDataException($fault->getMessage(), $fault->getCode());
         }
         $response->setEndTime(microtime(true));
@@ -205,7 +204,10 @@ class SOAPDataRetriever extends DataRetriever {
             $lastResponseHeaders = array();
         }
         
-        $response = $this->initResponse();
+        $response->setContext('soapRequestHeaders', $soapClient->__getLastRequestHeaders());
+        $response->setContext('soapRequest', $soapClient->__getLastRequest());
+        $response->setContext('soapResponse', $soapClient->__getLastResponse());
+        $response->setContext('soapResponseHeaders', $soapClient->__getLastResponseHeaders());
 
         if ($file = $this->saveToFile()) {
             $filePath = $this->cache->getFullPath($file);

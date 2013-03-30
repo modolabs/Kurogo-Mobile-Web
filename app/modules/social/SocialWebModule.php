@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -13,6 +13,7 @@ class SocialWebModule extends WebModule
 {
     protected $id = 'social';
     protected $feeds = array();
+    protected $maxPerPane = 5;
     protected function initialize() {
         $feeds = $this->loadFeedData();
 
@@ -60,7 +61,9 @@ class SocialWebModule extends WebModule
         $link = array(
             'url'     =>$url,
             'body'    =>$post->getBody(),
+            'title'    =>$post->getBody(),
             'created' =>$this->elapsedTime($post->getCreated()->format('U')),
+            'subtitle'=>$this->elapsedTime($post->getCreated()->format('U')),
             'sort'    =>$post->getCreated()->format('U'),
             'class'   =>$post->getServiceName()
         );
@@ -113,6 +116,7 @@ class SocialWebModule extends WebModule
                 $this->assign('firstPostTitleTruncate', 200);
                 $this->assign('needToAuth',$needToAuth);
                 $this->assign('posts',$posts);
+                $this->assign('serviceLinks', $this->getOptionalModuleSection('services'));
                 break;
                 
             case 'detail':
@@ -179,6 +183,39 @@ class SocialWebModule extends WebModule
                 
                 
                 break;
+            case 'pane':
+                if ($this->ajaxContentLoad) {
+                    $items = array();
+                    $needToAuth = array();
+                    $posts = array();
+                    $sort = array();
+                
+                    foreach ($this->feeds as $feed=>$controller) {                                
+                        if ($controller->canRetrieve()) {
+                            $items = $controller->getPosts();
+                            foreach ($items as $post) {
+                                $item = $this->linkForItem($post, array('feed'=>$feed));
+                                $sort[] = $item['sort'];
+                                $posts[] = $item;
+                            }
+
+                        } else {
+                            $needToAuth[] = array(
+                                'title'=>$controller->getTitle(),
+                                'url'=>$this->buildBreadcrumbURL('auth',array('feed'=>$feed, 'returnPage'=>'index'))
+                            );
+                        }
+                    }
+                
+                    // @TODO sort by whatever 
+                    array_multisort($sort, SORT_DESC, $posts);
+                    $posts = array_slice($posts, 0, $this->maxPerPane);
+                    $this->assign('stories',$posts);
+                }
+                $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                $this->addInternalJavascript('/common/javascript/lib/paneStories.js');
+                break;
+            
         }
     }
 }

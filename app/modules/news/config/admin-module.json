@@ -34,7 +34,7 @@
             "SHOW_BODY_THUMBNAIL":{"labelKey":"NEWS_ADMIN_FEEDS_SHOW_BODY_THUMBNAIL_TITLE", "descriptionKey":"NEWS_ADMIN_FEEDS_SHOW_BODY_THUMBNAIL_DESCRIPTION", "type":"checkbox","fieldgroup":"advanced","default":1},
             "HTML_ESCAPED_CDATA":{"labelKey":"NEWS_ADMIN_FEEDS_HTML_ESCAPED_CDATA_TITLE", "descriptionKey":"NEWS_ADMIN_FEEDS_HTML_ESCAPED_CDATA_DESCRIPTION", "type":"checkbox","fieldgroup":"advanced"}
         },
-        "sectionindex":"numeric",
+        "sectionindex":"string",
         "sectionsmethod":"loadFeedData",
         "sectionvalidatemethod":["NewsWebModule","validateFeed"],
         "sectionaddnew":true,

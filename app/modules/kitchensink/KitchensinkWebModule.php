@@ -1,13 +1,15 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
  * is missing, please contact sales@modolabs.com.
  *
  */
+
+includePackage('DateTime');
 
 class KitchensinkWebModule extends WebModule {
     protected $id = 'kitchensink';
@@ -23,7 +25,7 @@ class KitchensinkWebModule extends WebModule {
             'classes'   => 'class',
         );
         
-        $configs = $this->loadPageConfigFile($page, false);
+        $configs = $this->loadPageConfigArea($page, false);
         foreach ($configs as $config) {
             if (!isset($config['titles'])) { continue; }
             
@@ -77,16 +79,31 @@ class KitchensinkWebModule extends WebModule {
                         'title' => 'Detail',
                         'url'   => $this->buildBreadcrumbURL('detail', array()),
                     ),
-                );
-                if ($this->browser == 'native') {
-                    $links[] = array(
-                        'title' => 'AppQ Dialogs',
-                        'url'   => $this->buildBreadcrumbURL('dialogs', array()),
-                    );
-                    $links[] = array(
-                        'title' => 'Truncation Form Post',
+                    array(
+                        'title' => 'Geolocation',
+                        'url'   => $this->buildBreadcrumbURL('location', array()),
+                    ),
+                    array(
+                        'title' => 'HTML Truncation Form',
                         'url'   => $this->buildBreadcrumbURL('truncate', array()),
+                    ),
+               );
+                if ($this->browser == 'native') {
+                    $appQLinks = array(
+                        array(
+                            'title' => 'Dialogs',
+                            'url'   => $this->buildBreadcrumbURL('dialogs', array()),
+                        ),
+                        array(
+                            'title' => 'Refresh Button',
+                            'url'   => $this->buildBreadcrumbURL('refresh', array()),
+                        ),
+                        array(
+                            'title' => 'Auto Refresh',
+                            'url'   => $this->buildBreadcrumbURL('autorefresh', array()),
+                        ),
                     );
+                    $this->assign('appQLinks', $appQLinks);
                 }
                 $this->assign('links', $links);
                 break;
@@ -95,7 +112,7 @@ class KitchensinkWebModule extends WebModule {
                 break;
                 
             case 'search':
-                $formFields = $this->loadPageConfigFile($this->page, false);
+                $formFields = $this->loadPageConfigArea($this->page, false);
                 foreach ($formFields as $i => $formField) {
                     if (isset($formField['option_keys'])) {
                         $options = array();
@@ -128,6 +145,10 @@ class KitchensinkWebModule extends WebModule {
                 $this->assign('lists', $this->getListsForPage($this->page));
                 break;
                 
+            case 'pane':
+                $this->assign('lists', $this->getListsForPage($this->page));
+                break;
+                
             case 'articles':
                 $this->setWebBridgePageRefresh(true);
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
@@ -136,7 +157,7 @@ class KitchensinkWebModule extends WebModule {
                 break;
                 
             case 'detail':
-                $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');
+                $detailConfig = $this->loadPageConfigArea('detail', 'detailConfig');
                 
                 if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
                     $this->assign('shareTitle', $this->getLocalizedString('SHARE_THIS_ITEM'));
@@ -153,7 +174,7 @@ class KitchensinkWebModule extends WebModule {
             case 'dialogs':
                 $buttons = array();
                 
-                $configs = $this->loadPageConfigFile($this->page, false);
+                $configs = $this->loadPageConfigArea($this->page, false);
                 foreach ($configs as $config) {
                     if (!isset($config['title'], 
                                $config['description'], 
@@ -173,6 +194,22 @@ class KitchensinkWebModule extends WebModule {
                 $this->assign('buttons', $buttons);
                 break;
                 
+            case 'location':
+               $links = array(
+                    array(
+                        'title' => 'Watch Position Map Test',
+                        'url'   => $this->buildBreadcrumbURL('location_full', array()),
+                    ),
+                );
+                $this->assign('links', $links);
+                break;
+                
+            case 'location_full':
+                $this->addExternalJavascript('http://maps.googleapis.com/maps/api/js?sensor=true');
+                $this->addOnLoad('initMap();');
+                $this->addInlineJavascript('var locationMarkerURL = "'.FULL_URL_PREFIX.'common/images/map-location.png";');
+                break;
+                
             case 'truncate':
                 $this->assign('action', $this->buildBreadcrumbURL('truncated', array()));
                 break;
@@ -186,6 +223,22 @@ class KitchensinkWebModule extends WebModule {
                     $html = Sanitizer::sanitizeAndTruncateHTML($html, $truncated, $length, $margin, $minLineLength);
                 }
                 $this->assign('html', $html);
+                break;
+                
+            case 'autorefresh':
+                $links = array(
+                    array(
+                        'title' => 'Detail',
+                        'url'   => $this->buildBreadcrumbURL('detail', array()),
+                    ),
+                );
+                $this->assign('links', $links);
+                // fallthrough
+                
+            case 'refresh':
+                $now = new DateTime();
+                $this->assign('lastUpdated', 
+                    DateFormatter::formatDate($now, DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE));
                 break;
         }
     }

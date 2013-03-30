@@ -1,27 +1,40 @@
-{capture name="banner" assign="banner"}
-  <div id="navbar">
-    <img src="/modules/{$configModule}/images/home.png" width="40" height="40" alt="" class="moduleicon" />
-    <span class="pagetitle">
-      {$strings.SITE_NAME}
-    </span>        
-    {include file="findInclude:common/templates/search.tpl" inNavbar=true placeholder="Search "|cat:$strings.SITE_NAME}
-  </div>
-{/capture}
+{block name="homeHeader"}
+  {include file="findInclude:common/templates/header.tpl" scalable=false}
+{/block}
 
-{include file="findInclude:common/templates/header.tpl" customHeader=$banner scalable=false}
-
-<div class="blocks" id="fillscreen">
-  {foreach $modulePanes as $blockName => $blockConfig}
-    <div class="block {$blockName} {$blockConfig['id']}">
-      <div class="blockborder">
-        <a href="{$blockConfig['url']}" class="blockheader">
-          <div class="icon" style="background-image: url(/common/images/title-{$blockConfig['id']}.png);"></div>
-          {$blockConfig['title']}
-          <div class="nextlink"></div>
+{block name="userContextList"}{/block}
+{block name="banner-notice"}
+  {if $bannerNotice}
+    <div class="banner-notice">
+      {if $bannerURL}
+        <a href="{$bannerURL}" class="banner-message">
+      {else}
+        <span class="banner-message">
+      {/if}
+        <img class="banner-icon" src="/common/images/alert@2x.png" alt="" />
+        {$bannerNotice['title']}
+      {if $bannerURL}
         </a>
-        <div id="{$blockConfig['elementId']}" class="blockcontent"><div class="loading"></div></div>
+      {else}
+        </span>
+      {/if}
+    </div>
+  {/if}
+{/block}
+
+<div class="portlets{if $bannerNotice} portlets-below-banner{/if}" id="home-portlets">
+  {foreach $modulePanes as $portlet}
+    <div class="portlet portlet-module-{$portlet['moduleId']}{if $portlet['classes']} {$portlet['classes']}{/if}">
+      <div class="portlet-container">
+        <div class="portlet-header">
+          <a href="{$portlet['url']}">
+            {$portlet['title']}
+            <div class="portlet-nextlink"></div>
+          </a>
+        </div>
+        <div id="{$portlet['elementId']}" class="portlet-content"><div class="loading"></div></div>
       </div>
-    </div> 
+    </div>
   {/foreach}
 </div>
 

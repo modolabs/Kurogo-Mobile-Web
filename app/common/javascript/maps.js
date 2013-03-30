@@ -1,5 +1,5 @@
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -11,6 +11,8 @@
 
 function KGOMapLoader(attribs) {
     attribs = attribs || {};
+
+    this.provider = null;
 
     this.initLat = ("lat" in attribs) ? attribs["lat"] : 0;
     this.initLon = ("lon" in attribs) ? attribs["lon"] : 0;
@@ -55,7 +57,6 @@ KGOMapLoader.prototype.showDefaultCallout = function() {
 KGOMapLoader.prototype.showCalloutForPlacemark = function(placemarkId) {}
 KGOMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {}
 KGOMapLoader.prototype.clearMarkers = function() {}
-KGOMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {}
 
 // base map
 KGOMapLoader.prototype.resizeMapOnContainerResize = function() {}
@@ -130,6 +131,8 @@ KGOMapLoader.prototype.generateInfoWindowContent = function(attribs) {
 
 function KGOGoogleMapLoader(attribs) {
     KGOMapLoader.call(this, attribs);
+
+    this.provider = 'google';
 
     var that = this;
     var currentInfoWindow = null;
@@ -304,7 +307,7 @@ KGOGoogleMapLoader.prototype.generateInfoWindow = function(attribs, needsSetPosi
             alignBottom: true,
             pixelOffset: new google.maps.Size(-90, -35),
             closeBoxMargin: "4px 2px 2px 2px",
-            closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif",
+            closeBoxURL: document.location.protocol +"//www.google.com/intl/en_us/mapfiles/close.gif",
             infoBoxClearance: new google.maps.Size(1, 1),
             pane: "floatPane",
             enableEventPropagation: false
@@ -347,19 +350,6 @@ KGOGoogleMapLoader.prototype.clearMarkers = function() {
     this.closeCurrentInfoWindow();
 }
 
-KGOGoogleMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {
-    // TODO: think up a better default than this
-    if (!"title" in attribs) {
-        attribs["title"] = lat + ", " + lon;
-    }
-    attribs["position"] = new google.maps.LatLng(lat, lon);
-    attribs["map"] = map;
-    this.addPlacemark(
-        id,
-        new google.maps.Marker(attribs),
-        attribs);
-}
-
 // base map
 
 KGOGoogleMapLoader.prototype.resizeMapOnContainerResize = function() {
@@ -374,9 +364,33 @@ KGOGoogleMapLoader.prototype.resizeMapOnContainerResize = function() {
 
 // top left bottom right
 KGOGoogleMapLoader.prototype.setMapBounds = function(minLat, minLon, maxLat, maxLon) {
+    var dx = 0;
+    var dy = 0;
+
+    var hRange = maxLon - minLon;
+    var vRange = maxLat - minLat;
+
+    var maxVRange = 180 / Math.pow(2, this.minZoomLevel);
+    var maxHRange = maxVRange * 2;
+
+    var minVRange = 180 / Math.pow(2, this.maxZoomLevel);
+    var minHRange = minVRange * 2;
+
+    if (hRange > maxHRange) {
+        dx = (hRange - maxHRange) / 2;
+    } else if (hRange < minHRange) {
+        dx = (hRange - minHRange) / 2;
+    }
+
+    if (vRange > maxVRange) {
+        dy = (vRange - maxVRange) / 2;
+    } else if (vRange < minVRange) {
+        dy = (vRange - minVRange) / 2;
+    }
+
     var bounds = new google.maps.LatLngBounds();
-    bounds.extend(new google.maps.LatLng(minLat, minLon));
-    bounds.extend(new google.maps.LatLng(maxLat, maxLon));
+    bounds.extend(new google.maps.LatLng(minLat + dy, minLon + dx));
+    bounds.extend(new google.maps.LatLng(maxLat - dy, maxLon - dx));
     map.fitBounds(bounds);
 }
 
@@ -385,30 +399,40 @@ KGOGoogleMapLoader.prototype.setMapBounds = function(minLat, minLon, maxLat, max
 function KGOEsriMapLoader(attribs) {
     KGOMapLoader.call(this, attribs);
 
+    this.provider = 'esri';
+
     if ("wkid" in attribs) {
         this.projection = attribs['wkid'];
-        this.spatialRef = new esri.SpatialReference({ wkid: this.projection });
     } else {
-        this.spatialRef = new esri.SpatialReference({ wkid: 4326 });
+        this.projection = 4326;
     }
     this.userLocationMarkerOnMap = false;
 
     var that = this;
     this.loadMap = function() {
+        var baseLayer;
+
+        that.spatialRef = new esri.SpatialReference({ wkid: that.projection });
         that.center = new esri.geometry.Point(that.initLon, that.initLat, that.spatialRef);
+
         map = new esri.Map(that.mapElement, {
             'logo' : false,
             'slider': false,
             'resizeDelay' : 300
         });
 
-        var basemap = new esri.layers.ArcGISTiledMapServiceLayer(attribs["baseURL"]);
-
-        map.addLayer(basemap);
+        if (attribs["baseURL"].length > 0) {
+            baseLayer = new esri.layers.ArcGISTiledMapServiceLayer(attribs["baseURL"]);
+            map.addLayer(baseLayer);
+        }
 
         if ("layers" in attribs) {
             for (var i = 0; i < attribs["layers"].length; i++) {
-                map.addLayer(new esri.layers.ArcGISDynamicMapServiceLayer(attribs["layers"][i], 1.0));
+                var mapLayer = new esri.layers.ArcGISDynamicMapServiceLayer(attribs["layers"][i], 1.0);
+                if (typeof baseLayer == 'undefined') {
+                    baseLayer = mapLayer;
+                }
+                map.addLayer(mapLayer);
             }
         }
 
@@ -422,27 +446,48 @@ function KGOEsriMapLoader(attribs) {
         var zoominButton = document.createElement('a');
         zoominButton.id = "zoomin";
         zoominButton.onclick = function() {
+            var currentZoom = Math.round(that.getZoomWrapper());
+            if (currentZoom >= that.maxZoomLevel) {
+                return;
+            }
             var zoomLevel = map.getLevel();
+            var targetZoomLevel;
+            if (zoomLevel == -1) {
+                targetZoomLevel = 0.5;
+            } else {
+                targetZoomLevel = zoomLevel + 1;
+            }
             var x = (map.extent.xmin + map.extent.xmax) / 2;
             var y = (map.extent.ymin + map.extent.ymax) / 2;
-            map.centerAndZoom(new esri.geometry.Point(x, y, that.spatialRef), zoomLevel + 1);
+
+            map.centerAndZoom(new esri.geometry.Point(x, y, that.spatialRef), targetZoomLevel);
         }
         controlDiv.appendChild(zoominButton);
 
         var zoomoutButton = document.createElement('a');
         zoomoutButton.id = "zoomout";
         zoomoutButton.onclick = function() {
+            var currentZoom = Math.round(that.getZoomWrapper());
+            if (currentZoom <= that.minZoomLevel) {
+                return;
+            }
             var zoomLevel = map.getLevel();
+            var targetZoomLevel;
+            if (zoomLevel == -1) {
+                targetZoomLevel = 2;
+            } else {
+                targetZoomLevel = zoomLevel - 1;
+            }
             var x = (map.extent.xmin + map.extent.xmax) / 2;
             var y = (map.extent.ymin + map.extent.ymax) / 2;
-            map.centerAndZoom(new esri.geometry.Point(x, y, that.spatialRef), zoomLevel - 1);
+            map.centerAndZoom(new esri.geometry.Point(x, y, that.spatialRef), targetZoomLevel);
         }
         controlDiv.appendChild(zoomoutButton);
 
         var recenterButton = document.createElement('a');
         recenterButton.id = "recenter";
         recenterButton.onclick = function() {
-            map.centerAndZoom(that.center, that.initZoom);
+            that.centerAndZoomWrapper(that.center, that.initZoom);
         }
         controlDiv.appendChild(recenterButton);
 
@@ -464,6 +509,15 @@ function KGOEsriMapLoader(attribs) {
 
         // put all dojo.connect actions here
 
+        dojo.connect(map, "onZoomEnd", function(evt) {
+            var currentZoom = that.getZoomWrapper();
+            if (currentZoom >= that.maxZoomLevel) {
+                map.disableDoubleClickZoom();
+            } else {
+                map.enableDoubleClickZoom();
+            }
+        });
+
         dojo.connect(map, "onClick", function(evt) {
             if (map.infoWindow.isShowing) {
                 if (evt.screenPoint.x < map.infoWindow.coords.x
@@ -476,11 +530,54 @@ function KGOEsriMapLoader(attribs) {
             }
         });
 
-        dojo.connect(map, "onLoad", plotFeatures);
+        dojo.connect(map, "onLoad", function() {
+            plotFeatures();
+
+            var unitsPerMeter = 1;
+            var dpi = 96;
+
+            if ("tileInfo" in baseLayer) {
+                dpi = baseLayer.tileInfo.dpi;
+            } else {
+                dpi = baseLayer.dpi;
+            }
+
+            if (baseLayer.units == esri.Units.FEET) {
+                unitsPerMeter = 3.28084;
+            }
+
+            that.maxScaleConstant = 559082264 * unitsPerMeter;
+            that.unitsPerPixel = dpi / 2.54 * 100 * unitsPerMeter;
+        });
     }
 }
 
 KGOEsriMapLoader.prototype = new KGOMapLoader();
+
+// http://robblakemore.wordpress.com/2009/10/07/extending-the-arcgis-server-javascript-api-to-include-scale-information/
+KGOEsriMapLoader.prototype.getScaleFromExtent = function(extent) {
+    var scale = (extent.xmax - extent.xmin) * this.unitsPerMeter / map.width;
+    return scale;
+}
+
+KGOEsriMapLoader.prototype.getZoomWrapper = function() {
+    var scale = map.getScale();
+    if (scale > 0) {
+        currentZoom = Math.log(559082264 / scale) / Math.log(2);
+    }
+    return currentZoom;
+}
+
+KGOEsriMapLoader.prototype.centerAndZoomWrapper = function(center, zoomLevel) {
+    if (map.getZoom() == -1) {
+        // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
+        var scale = 559082264 / Math.pow(2, zoomLevel);
+        map.setScale(scale);
+        map.centerAt(center);
+    } else {
+        map.centerAndZoom(center, zoomLevel);
+    }
+}
 
 // annotations
 KGOEsriMapLoader.prototype.showCalloutForPlacemark = function(placemark) {
@@ -510,20 +607,7 @@ KGOEsriMapLoader.prototype.addPlacemark = function(id, placemark, attribs) {
 
 KGOEsriMapLoader.prototype.clearMarkers = function() {
     map.graphics.clear();
-}
-
-KGOEsriMapLoader.prototype.createMarker = function(id, lat, lon, attribs) {
-    this.addPlacemark(
-        id,
-        new esri.Graphic(
-            new esri.geometry.Point(lon, lat, this.spatialRef),
-            new esri.symbol.SimpleMarkerSymbol( // add some styling because the default is a large empty black circle
-                esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE,
-                12,
-                new esri.symbol.SimpleLineSymbol(),
-                new dojo.Color([180, 0, 0]))),
-        attribs
-    );
+    this.placemarks = [];
 }
 
 // base map
@@ -539,9 +623,38 @@ KGOEsriMapLoader.prototype.resizeMapOnContainerResize = function() {
 }
 
 KGOEsriMapLoader.prototype.setMapBounds = function(minLat, minLon, maxLat, maxLon) {
-    var extent = esri.geometry.Extent(minLon, minLat, maxLon, maxLat, this.spatialRef);
+    // acceptable meters per pixel
+    var minMPP = this.maxScaleConstant / Math.pow(2, this.maxZoomLevel) / this.unitsPerMeter;
+    var maxMPP = this.maxScaleConstant / Math.pow(2, this.minZoomLevel) / this.unitsPerMeter;
+
+    var extentWidth = maxLon - minLon;
+    var extentHeight = maxLat - minLat;
+
+    var minWidth = map.width * minMPP;
+    var minHeight = map.height * minMPP;
+
+    var maxWidth = map.width * maxMPP;
+    var maxHeight = map.height * maxMPP;
+
+    var dx = 0;
+    var dy = 0;
+
+    if (extentWidth < minWidth) {
+        dx = (extentWidth - minWidth) / 2;
+    } else if (extentWidth > maxWidth) {
+        dx = (extentWidth - maxWidth) / 2;
+    }
+
+    if (extentHeight < minHeight) {
+        dy = (extentHeight - minHeight) / 2;
+    } else if (extentHeight > maxHeight) {
+        dy = (extentHeight - maxHeight) / 2;
+    }
+
+    var extent = new esri.geometry.Extent(minLon + dx, minLat + dy, maxLon - dx, maxLat - dy, this.spatialRef);
     extent = extent.expand(1.2);
-    map.setExtent(extent, true);
+
+    map.setExtent(extent);
 }
 
 // user location

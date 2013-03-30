@@ -1,0 +1,242 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body {
+	margin: 0 20px;
+	background-color: @@@body_background_color@@@;
+	background-image: @@@body_background_image@@@;
+	background-position: @@@body_background_position@@@;
+	background-repeat: @@@body_background_repeat@@@;
+	font: 14px/1.4em @@@primary_font_family@@@;
+	color: @@@primary_text_color@@@;
+}
+
+img {
+	border: 0;
+}
+
+a, a:visited {
+	color: @@@focal_link_color@@@;
+}
+
+a:hover {
+	color: @@@focal_link_hover_color@@@;
+}
+
+p {
+	padding: 0;
+	margin: 0 0 15px;
+}
+
+#container {
+	width: 1000px;
+	margin: 0 auto;
+}
+
+#utility_nav {
+	vertical-align: top;
+	height: 24px;
+	text-align: right;
+	padding: 5px 20px 0 0;
+	font-size: 12px;
+	line-height: 24px;
+	top: 0;
+	right: 0;
+	position: absolute;
+	color: @@@nonfocal_text_color@@@;
+}
+
+#utility_nav a img {
+	width: 16px;
+	height: 16px;
+	position: relative;
+	top: 3px;
+	margin: 0;
+}
+
+#utility_nav a, #utility_nav a:visited {
+	color: @@@nonfocal_link_color@@@;
+	text-decoration: none;
+	padding: 0 3px;
+}
+
+#utility_nav .share {
+  padding-left: 3px;
+}
+
+#utility_nav a:hover {
+	text-decoration: underline;
+}
+
+#header {
+  margin-top: 15px;
+	height: 300px;
+	width: 1000px;
+	overflow: hidden;
+	position: relative;
+	background: url(/modules/info/images/phone_images.png) no-repeat 570px bottom; 
+}
+
+#devices {
+    width: 510px;
+    height: 300px;
+    text-align: center;
+}
+
+#introduction {
+  position: absolute;
+  top: 40px;
+  left: 510px;
+	width: 420px;
+	height: 230px;
+	padding: 0 40px;
+	text-align: center;
+	color: @@@nonfocal_text_color@@@;
+	color: @@@intro_text_color@@@;
+}
+
+#logo img {
+	max-width: 420px;
+	margin: 15px 0;
+}
+
+#introduction h1 {
+	padding: 10px 0;
+	font-size: 36px;
+	margin: 0;
+	line-height: 1.33;
+}
+
+#introduction p {
+	font-size: 18px;
+	line-height: 1.33;
+}
+#content {
+	min-height: 400px;
+	background-color: @@@focal_background_color@@@;
+	padding: 35px 40px 25px;
+	border: solid 2px @@@focal_border_color@@@;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	-o-border-radius 8px;
+	border-radius: 8px;
+}
+
+.leftcol {
+	width: 400px;
+	float: left;
+}
+
+.rightcol {
+	width: 410px;
+	float: right;
+	padding-left: 40px;
+	border-left: solid 1px @@@focal_border_color@@@;
+}
+
+#content h2 {
+	font-family: @@@heading_font_family@@@;
+	color: @@@primary_heading_color@@@;
+	font-size: 24px;
+	font-weight: normal;
+	line-height: 1.33em;
+	margin: 0 0 10px;
+	padding: 0;
+}
+
+a#feedback, a#feedback:visited {
+  text-decoration: none !important;
+  background-color: @@@focal_link_color@@@;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -o-border-radius 8px; 
+  border-radius: 8px;
+  color: white;
+  display: inline-block;
+  padding: 12px;
+  margin: 8px 0 16px 0;
+  width: 400px;
+}
+
+a#feedback strong {
+	font-size: 16px;
+}
+a#feedback .address {
+  text-decoration: underline;
+}
+
+a.roundbox:hover {
+	background-color: #336699;
+}
+
+
+table#download {
+	font-size: 14px;
+}
+
+table#download td {
+	padding: 0 12px 12px 0;
+}
+
+table#features td {
+	vertical-align: top;
+	padding: 0 10px 10px 0;
+}
+
+table#features td h2 {
+	color: @@@primary_heading_color@@@;
+	font-family: @@@primary_font_family@@@;
+	font-weight: bold;
+	font-size: 16px;
+	line-height: 1.2;
+	margin: 4px 0 4px 0;
+}
+
+.moduleicon {
+	width: 60px;
+	height: 60px;
+}
+
+.clr {
+	clear: both;
+}
+
+#footer {
+	font-size: 11px;
+	padding: 5px 0 15px;
+}
+
+#footer a, #footer a:visited {
+	text-decoration: none;
+}
+
+#footer a:hover {
+	text-decoration: underline;
+}
+
+#footer, #footer a, #footer a:visited {
+  color: @@@nonfocal_text_color@@@;
+}
+
+a#preview, a#preview:visited {
+  background-color: @@@focal_link_color@@@;
+  border-bottom-left-radius: 8px 8px;
+  border-bottom-left-radius: 8px 8px;
+  border-bottom-right-radius: 8px 8px;
+  border-bottom-right-radius: 8px 8px;
+  border-top-left-radius: 8px 8px;
+  border-top-left-radius: 8px 8px;
+  border-top-right-radius: 8px 8px;
+  border-top-right-radius: 8px 8px;
+  color: white;
+  display: inline-block;
+  line-height: 18px;
+  padding: 11px;
+  margin-bottom: 24px;
+  text-decoration: none !important;
+}
+
+a#preview:hover {
+	background-color: @@@focal_link_hover_color@@@;
+}
+

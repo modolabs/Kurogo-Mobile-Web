@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -41,7 +41,7 @@ abstract class ItemListDataModel extends DataModel {
     }
     
     public function search($searchTerms) {
-        if ($this->retriever instanceOf SearchDataRetriever) {
+        if ($this->retriever->canSearch()) {
             $items = $this->retriever->search($searchTerms, $response);
             if ($totalItems = $response->getContext('totalItems')) {
                 $this->setTotalItems($totalItems);
@@ -143,7 +143,7 @@ abstract class ItemListDataModel extends DataModel {
         $limit = is_null($limit) ? null : intval($limit);
         
         if (!is_array($items)) {
-            throw new KurogoDataException("Items list is not an array");
+            return array();
         }
         
         if ($start>0 || !is_null($limit)) {

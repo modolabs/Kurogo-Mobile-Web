@@ -1,26 +1,6 @@
 {if !$webBridgeAjaxContentLoad && !$ajaxContentLoad}
-  {if $moduleDebug && count($moduleDebugStrings)}
-    <p class="legend nonfocal">
-      {foreach $moduleDebugStrings as $string}
-        <br/>{$string}
-      {/foreach}
-    </p>  
-  {/if}
   
-  {capture name="footerHTML" assign="footerHTML"}
-    {if $strings.COPYRIGHT_LINK}
-      <a href="{$strings.COPYRIGHT_LINK}" class="copyright">
-    {/if}
-        {$strings.COPYRIGHT_NOTICE}
-    {if $strings.COPYRIGHT_LINK}
-      </a>
-    {/if}
-   <br />
-   {block name="footerKurogo"}{$footerKurogo}{/block}
-  {/capture}
-
-  
-  {block name="footerNavLinks"}
+  {block name="kgoFooterLinks"}
     {if !$hideFooterLinks}
       <div id="footerlinks">
         <a href="#top">{$footerBackToTop}</a> | <a href="{$homeLink}">{$homeLinkText}</a>
@@ -28,65 +8,63 @@
     {/if}
   {/block}
 
-  {block name="loginHTML"}
-    {if $showLogin}
-	<div class="loginstatus">
-		<ul class="nav secondary loginbuttons">
-		<li{if $footerLoginClass} class="{$footerLoginClass}"{/if}><a href="{$footerLoginLink}">{$footerLoginText}</a></li>
-		</ul>
-	</div>
-	{/if}
+  {block name="kgoFooterLogin"}
+    {include file="findInclude:common/templates/page/login.tpl"}
+  {/block}
+  
+  {block name="kgoFooterFontSizeSelection"}{/block}
+  
+  {block name="kgoFooterCredits"}
+    <div id="footer">
+      {include file="findInclude:common/templates/page/credits.tpl"}
+    </div>
   {/block}
 
-  {block name="footer"}
-    {if isset($customFooter)}
-      {$customFooter|default:''}
-    {else}
-      <div id="footer">
-        {$footerHTML}
-      </div>
-    {/if}
+  {block name="kgoFooterDeviceDetection"}
+    {include file="findInclude:common/templates/page/deviceDetection.tpl"}
   {/block}
 
-  {block name="deviceDetection"}
-    {if $configModule == $homeModuleID && $showDeviceDetection}
-      <table class="devicedetection">
-        <tr><th>Pagetype:</th><td>{$pagetype}</td></tr>
-        <tr><th>Platform:</th><td>{$platform}</td></tr>
-        <tr><th>Platform:</th><td>{$browser}</td></tr>
-        <tr><th>User Agent:</th><td>{$smarty.server.HTTP_USER_AGENT}</td></tr>
-      </table>
-    {/if}
+  {block name="kgoFooterModuleDebug"}
+    {include file="findInclude:common/templates/page/moduleDebug.tpl"}
   {/block}
 
-  {block name="footerJavascript"}
-    {foreach $inlineJavascriptFooterBlocks as $script}
-      <script type="text/javascript">
-        {$script} 
-      </script>
-    {/foreach}
+  {capture name="kgoFooterJavascript" assign="kgoFooterJavascript"}
+    {block name="kgoFooterJavascriptBlocks"}
+      {foreach $inlineJavascriptFooterBlocks as $script}
+        <script type="text/javascript">
+          {$script} 
+        </script>
+      {/foreach}
+    {/block}
     
-    {if strlen($GOOGLE_ANALYTICS_ID)}
-      <script type="text/javascript">
-        (function() {ldelim}
-          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        {rdelim})();
-      </script>
-    {/if}
+    {block name="kgoFooterJavascriptAnalytics"}
+      {if strlen($GOOGLE_ANALYTICS_ID)}
+        <script type="text/javascript">
+          (function() {ldelim}
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          {rdelim})();
+        </script>
+      {/if}
+    {/block}
+  {/capture}
+  
+  {block name="kgoFooterJavascript"}
+    {$kgoFooterJavascript}
   {/block}
-{block name="containerEnd"}
-</div>
-</div> <!--nonfooternav -->
-{/block}
-
-{block name="belowContent"}
-{/block}
-</body>
-</html>
+  
+  {block name="kgoFooterContainerEnd"}
+    </div> <!--container -->
+  </div> <!--nonfooternav -->
+  {/block}
+  
+  {block name="kgoFooterBelowContent"}
+  {/block}
+  </body>
+  </html>
 {else}
-  {block name="ajaxContentFooter"}
+  {block name="kgoFooterAJAXContent"}
     <script type="text/javascript">
       {foreach $inlineJavascriptFooterBlocks as $script}
         {$script}

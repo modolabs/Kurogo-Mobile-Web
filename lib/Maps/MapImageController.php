@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -16,11 +16,12 @@ abstract class MapImageController
     protected $baseURL = null;
     
     protected $center = null; // array('lat' => 0.0, 'lon' => 0.0), or address
-    protected $bufferBox;
+    protected $bbox;
 
     protected $zoomLevel = 14;
     protected $minZoomLevel = 2;
     protected $maxZoomLevel = 25;
+    protected $zoomBias = 0; // number to add/subtract from what gets heuristically calculated
 
     // adjust map viewport when placemark is added
     protected $resizeOnAddPlacemark = true;
@@ -98,7 +99,15 @@ abstract class MapImageController
             $this->maxZoomLevel = $params['MAXIMUM_ZOOM_LEVEL'];
         }
 
-        $this->bufferBox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
+        if ($this->maxZoomLevel < $this->minZoomLevel) {
+            throw new KurogoConfigurationException('MAXIMUM_ZOOM_LEVEL must be greater than or equal to MINIMUM_ZOOM_LEVEL');
+        }
+
+        if (isset($params['ZOOM_BIAS'])) {
+            $this->zoomBias = $params['ZOOM_BIAS'];
+        }
+
+        $this->bbox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
 
         $this->initOptions = $params;
     }
@@ -215,36 +224,62 @@ abstract class MapImageController
 
     protected function adjustBufferForPoint($point)
     {
-        if ($point['lat'] > $this->bufferBox['ymax']) {
-            $this->bufferBox['ymax'] = $point['lat'];
+        if ($point['lat'] > $this->bbox['ymax']) {
+            $this->bbox['ymax'] = $point['lat'];
         }
-        if ($point['lat'] < $this->bufferBox['ymin']) {
-            $this->bufferBox['ymin'] = $point['lat'];
+        if ($point['lat'] < $this->bbox['ymin']) {
+            $this->bbox['ymin'] = $point['lat'];
         }
-        if ($point['lon'] > $this->bufferBox['xmax']) {
-            $this->bufferBox['xmax'] = $point['lon'];
+        if ($point['lon'] > $this->bbox['xmax']) {
+            $this->bbox['xmax'] = $point['lon'];
         }
-        if ($point['lon'] < $this->bufferBox['xmin']) {
-            $this->bufferBox['xmin'] = $point['lon'];
+        if ($point['lon'] < $this->bbox['xmin']) {
+            $this->bbox['xmin'] = $point['lon'];
         }
+    }
+
+    // using ceiling makes the map more zoomed out, floor makes it zoomed in
+    protected function useCeilingForZoom() {
+        return false;
+    }
+
+    protected function getZoomBias() {
+        return $this->zoomBias;
+    }
+
+    protected function globeWidth() { // earth circumference in geo or projected units
+        return 360;
+    }
+
+    protected function globeHeight() { // meridian length in geo or projected units
+        return 180;
     }
 
     public function prepareForOutput()
     {
-        $vRange = $this->bufferBox['ymax'] - $this->bufferBox['ymin'];
-        $hRange = $this->bufferBox['xmax'] - $this->bufferBox['xmin'];
+        $vRange = $this->bbox['ymax'] - $this->bbox['ymin'];
+        $hRange = $this->bbox['xmax'] - $this->bbox['xmin'];
         if ($vRange >= 0 && $hRange >= 0) {
             $this->setCenter(array(
-                'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
-                'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
+                'lat' => ($this->bbox['ymin'] + $this->bbox['ymax']) / 2,
+                'lon' => ($this->bbox['xmin'] + $this->bbox['xmax']) / 2,
                 ));
             if ($vRange > 0 && $hRange > 0) {
-                $vZoom = ceil(log(180 / $vRange, 2));
-                $hZoom = ceil(log(360 / $hRange, 2));
-                $zoom = min($vZoom, $hZoom);
-                if ($zoom < $this->maxZoomLevel) {
-                    $this->setZoomLevel($zoom);
+                if ($this->useCeilingForZoom()) {
+                    $vZoom = ceil(log($this->globeHeight() / $vRange, 2));
+                    $hZoom = ceil(log($this->globeWidth() / $hRange, 2));
+                } else {
+                    $vZoom = floor(log($this->globeHeight() / $vRange, 2));
+                    $hZoom = floor(log($this->globeWidth() / $hRange, 2));
                 }
+                $zoom = min($vZoom, $hZoom) + $this->getZoomBias();
+                if ($zoom > $this->maxZoomLevel) {
+                    $zoom = $this->maxZoomLevel;
+                }
+                if ($zoom < $this->minZoomLevel) {
+                    $zoom = $this->minZoomLevel;
+                }
+                $this->setZoomLevel($zoom);
             }
         }
     }
@@ -299,8 +334,7 @@ abstract class MapImageController
         return in_array($layer, $this->getAvailableLayers());
     }
 
-    public function setCenter($center)
-    {
+    public function setCenter($center) {
         // subclasses need to watch out for projected points
         if (is_array($center) && isset($center['lat'], $center['lon'])) {
             $this->center = $center;

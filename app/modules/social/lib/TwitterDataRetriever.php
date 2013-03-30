@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright © 2010 - 2012 Modo Labs Inc. All rights reserved.
+ * Copyright © 2010 - 2013 Modo Labs Inc. All rights reserved.
  *
  * The license governing the contents of this file is located in the LICENSE
  * file located at the root directory of this distribution. If the LICENSE file
@@ -17,6 +17,8 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
     protected $OAuthProviderClass='TwitterOAuthProvider';
     protected $cacheGroup='Twitter';
     protected $user;
+    protected $requiresExpect = false;
+    protected $apiVersion = '1.1';
     
     public function getServiceName() {
         return 'twitter';
@@ -27,19 +29,20 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
     }
     
     public function getPosts() {
-        $this->setBaseURL('http://api.twitter.com/1/statuses/user_timeline.json');
+        $this->setBaseURL('https://api.twitter.com/' . $this->apiVersion . '/statuses/user_timeline.json');
         $this->addFilter('screen_name', $this->user);
         $this->addFilter('trim_user', 1);
         return $this->getData();
     }
 
     public function getUser($userID) {
-        $this->setBaseURL("http://api.twitter.com/1/users/show/$userID.json");
+        $this->setBaseURL("https://api.twitter.com/" . $this->apiVersion . "/users/show/$userID.json");
         return $this->getData();
     }
 
     public function getItem($id, &$response=null) {
-        $this->setBaseURL("http://api.twitter.com/1/statuses/show/$id.json");
+        $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+        $this->setBaseURL("https://api.twitter.com/" . $this->apiVersion . "/statuses/show/$id.json");
         return $this->getData();
     }
     
@@ -56,12 +59,40 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
         $this->user = $user;
     }
     
+    protected function setAPIVersion($apiVersion) {
+        switch ($apiVersion)
+        {
+            case '1':
+            case '1.1':
+                $this->apiVersion = $apiVersion;
+                break;
+            default:
+                throw new KurogoConfigurationException("Invalid API Version $apiVersion");
+        }        
+        
+    }
+    
     public function init($args) {
         parent::init($args);
+
+        if (isset($args['API_VERSION'])) {
+            $this->setAPIVersion($args['API_VERSION']);
+        }
+        
         if (isset($args['ACCOUNT'])) {
             $this->setUser($args['ACCOUNT']);
         }
         
+        if ($this->apiVersion == 1.1) {
+            $this->requiresToken = true;
+            if (!$this->token) {
+                throw new KurogoConfigurationException("Twitter API 1.1 requires OAuth token parameter");
+            }
+
+            if (!$this->tokenSecret) {
+                throw new KurogoConfigurationException("Twitter API 1.1 requires OAuth tokenSecret parameter");
+            }
+        }
     }
 
     public function cacheKey()
@@ -105,8 +136,6 @@ class TwitterDataParser extends DataParser
                         if (isset($entry['retweet_count'])) {
                             $post = $this->parsePost($entry);
                             $return[] = $post;
-                        } else {
-                            Debug::die_here($entry);
                         }
                     }
                     return $return;
