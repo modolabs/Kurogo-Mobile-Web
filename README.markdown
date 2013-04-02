@@ -24,12 +24,12 @@ to early generation smart phones, to modern devices and tablets. It currently in
 
 ## Documentation
 
-Please see [http://kurogo.org/docs] for Documentation
+Please see http://kurogo.org/docs/mw for Documentation
 
 ## Example Site
 
 This version of Kurogo no longer includes a site in the repository
 
-Please download the ZIP archive at [http://kurogo.org/downloads] for a complete setup including example site. 
+Please download the ZIP archive at http://kurogo.org/downloads for a complete setup including example site. 
 
 
