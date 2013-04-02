@@ -16,21 +16,20 @@ to early generation smart phones, to modern devices and tablets. It currently in
 * Social
 * Emergency
 * Links
+* Dining
 * Statistics
 * About
 * HTML Content
 * Administration Console
 
-## Quick Setup and Requirements
+## Documentation
 
-Kurogo is a PHP application. It is currently qualified for use with
+Please see [http://kurogo.org/docs] for Documentation
 
-* Apache 2.x
-    * mod_rewrite, and .htaccess support (AllowOverride)
-* IIS 7.5
-   * URL Rewrite Module 2.0
-* PHP 5.3 or higher with the following extensions
-    * zlib, xml, dom, json, pdo, mbstring, LDAP, curl
+## Example Site
 
-To install, simply copy the files to your webserver, and set the document root to the www
-folder. For more detailed setup information, please see the Developer's guide on kurogo.org/docs
+This version of Kurogo no longer includes a site in the repository
+
+Please download the ZIP archive at [http://kurogo.org/downloads] for a complete setup including example site. 
+
+
