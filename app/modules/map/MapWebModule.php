@@ -26,6 +26,7 @@ class MapWebModule extends WebModule {
     protected $selectedPlacemarks;
     protected $redirectSearch = true; // whether or not to redirect to detail page if there is one search result
     protected $mapImageElementId = 'mapimage'; // set in initialize()
+    protected $canGenerateNativeWebTemplates = false;
 
     ////// inherited and conventional module functions
     

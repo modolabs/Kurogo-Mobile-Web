@@ -91,6 +91,9 @@ abstract class WebModule extends Module {
   protected $refreshTime = 0;
   protected $cacheMaxAge = 0;
   
+  protected $canGenerateNativeWebTemplates = true;
+  protected $shouldGenerateNativeWebTemplates = false;
+
   protected $autoPhoneNumberDetection = true;
   protected $canBeAddedToHomeScreen = true;
   protected $canBeRemoved = true;
@@ -961,6 +964,33 @@ abstract class WebModule extends Module {
                 $hidable = !in_array($moduleID, $modulesThatCannotBeHidden);
                 $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '' : '';
                 $linkTarget = Kurogo::arrayVal($navData, 'linkTarget');
+
+                if (isset($navData['pagetype'])) {
+                    if (!is_array($navData['pagetype'])) {
+                        $navData['pagetype'] = array($navData['pagetype']);
+                    }
+                    if (!in_array($this->getPageType(), $navData['pagetype'])) {
+                        continue;
+                    }
+                }
+
+                if (isset($navData['browser'])) {
+                    if (!is_array($navData['browser'])) {
+                        $navData['browser'] = array($navData['browser']);
+                    }
+                    if (!in_array($this->getBrowser(), $navData['browser'])) {
+                        continue;
+                    }
+                }
+                
+                if (isset($navData['platform'])) {
+                    if (!is_array($navData['platform'])) {
+                        $navData['platform'] = array($navData['platform']);
+                    }
+                    if (!in_array($this->getPlatform(), $navData['platform'])) {
+                        continue;
+                    }
+                }
                 
                 // customize is implemented as a page on the home module
                 if ($moduleID == 'customize') {
@@ -1692,7 +1722,7 @@ abstract class WebModule extends Module {
     private function assignLocalizedStrings() {
         $this->assign('footerKurogo', $this->getLocalizedString('FOOTER_KUROGO'));
         $this->assign('footerBackToTop', $this->getLocalizedString('FOOTER_BACK_TO_TOP'));
-        $this->assign('homeLinkText', $this->getLocalizedString('HOME_LINK', Kurogo::getSiteString('SITE_NAME')));
+        $this->assign('homeLinkText', $this->getLocalizedString('HOME_LINK', Kurogo::getOptionalSiteString('SITE_NAME')));
         $this->assign('moduleHomeLinkText', $this->getLocalizedString('HOME_LINK', $this->getModuleName()));
     }
     
@@ -1753,8 +1783,13 @@ abstract class WebModule extends Module {
         $title = 'Error!';
         $message = '';
         try {
+             
             if (!Kurogo::isLocalhost()) {
                 throw new KurogoException("{$this->page} command can only be run from localhost");
+            }
+
+            if (!$this->canGenerateNativeWebTemplates()||!$this->shouldGenerateNativeWebTemplates()) {
+                throw new KurogoException("This module cannot generate native web templates");
             }
             
             $platforms = array_filter(array_map('trim', explode(',', $this->getArg('platform', ''))));
@@ -2154,6 +2189,44 @@ abstract class WebModule extends Module {
             return $userContextList;
             
         }
+    }
+    
+    protected function assignSites() {
+    
+        $sites = Kurogo::sharedInstance()->getSites();
+        if (count($sites)>1) {
+            $currentSite = Kurogo::sharedInstance()->getSite();
+            $siteLinks = array();
+            foreach ($sites as $site) {
+                if ($site->isEnabled()) {
+                    $siteLinks[] = array(
+                        'name'  => $site->getName(),
+                        'title' => $site->getTitle(),
+                        'active'=> $site->getName() == $currentSite->getName(),
+                        'url'   => $site->getURL(),       
+                    );
+                }
+            }
+        
+            if ($this->pagetype == 'tablet') {
+                $this->assign('siteLinksDescription', Kurogo::getSiteString('SITE_LINKS_DESCRIPTION_TABLET'));
+                $siteLinksStyle =Kurogo::getSiteVar('SITES_LIST_STYLE_TABLET', 'sites');
+            } else {
+                $this->assign('siteLinksDescription', Kurogo::getSiteString('SITE_LINKS_DESCRIPTION_COMPLIANT'));
+                $siteLinksStyle = Kurogo::getSiteVar('SITES_LIST_STYLE_COMPLIANT', 'sites');
+            }
+
+            $this->assign('siteLinks', $siteLinks);
+            $this->assign('siteLinksStyle', $siteLinksStyle);
+        }
+    }
+
+    public function canGenerateNativeWebTemplates(){
+        return $this->canGenerateNativeWebTemplates;
+    }
+    
+    public function shouldGenerateNativeWebTemplates(){
+        return $this->getOptionalModuleVar('GENERATE_NATIVE_WEB_TEMPLATES', $this->shouldGenerateNativeWebTemplates);
     }
     
 }

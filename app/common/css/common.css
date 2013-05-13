@@ -403,8 +403,17 @@ h1.slugline, h2.itemtitle {
 	overflow: hidden;
 }
 
+.kgo-videoplayer.kgo-videoplayer-kaltura .kgo-videoplayer-container {
+	padding:0;
+	height:auto;
+}
+
+.kgo-videoplayer-container video {
+	width:100%;
+}
+
 .kgo-videoplayer-container iframe,  
-.kgo-videoplayer-container object,  
+.kgo-videoplayer-container object, 
 .kgo-videoplayer-container embed {
 	position: absolute;
 	top: 0;

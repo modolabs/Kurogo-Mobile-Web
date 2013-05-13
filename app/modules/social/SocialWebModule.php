@@ -14,6 +14,7 @@ class SocialWebModule extends WebModule
     protected $id = 'social';
     protected $feeds = array();
     protected $maxPerPane = 5;
+    protected $shouldGenerateNativeWebTemplates = true;
     protected function initialize() {
         $feeds = $this->loadFeedData();
 
@@ -23,25 +24,25 @@ class SocialWebModule extends WebModule
             }
             $feeds = array($feed=>$feeds[$feed]);
         }
-        
+
         foreach ($feeds as $feed=>$feedData) {
             $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : 'SocialDataModel';
             $this->feeds[$feed] = SocialDataModel::factory($modelClass, $feedData);
         }
 
     }
-    
+
     public function linkForItem(KurogoObject $post, $data=null) {
         $options = array(
             'id'=>$post->getID()
         );
-        
+
         foreach (array('feed','filter') as $field) {
             if (isset($data[$field])) {
                 $options[$field] = $data[$field];
             }
         }
-        
+
         $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
         $noBreadcrumbs = isset($data['noBreadcrumbs']) ? $data['noBreadcrumbs'] : false;
 
@@ -57,7 +58,7 @@ class SocialWebModule extends WebModule
             $subtitle = $this->feeds[$data['feed']]->getTitle() .' ' . $subtitle;
             $author = $this->feeds[$data['feed']]->getUser($post->getAuthor());
         }
-        
+
         $link = array(
             'url'     =>$url,
             'body'    =>$post->getBody(),
@@ -67,18 +68,19 @@ class SocialWebModule extends WebModule
             'sort'    =>$post->getCreated()->format('U'),
             'class'   =>$post->getServiceName()
         );
-        
+
         if ($author) {
             $link['author'] = $author->getName();
             $link['img'] = $author->getImageURL();
         }
-        
+
         return $link;
-        
+
     }
 
+
     protected function initializeForPage() {
-        
+
         switch ($this->page)
         {
             case 'index':
@@ -87,8 +89,8 @@ class SocialWebModule extends WebModule
                 $needToAuth = array();
                 $posts = array();
                 $sort = array();
-                
-                foreach ($this->feeds as $feed=>$controller) {                                
+
+                foreach ($this->feeds as $feed=>$controller) {
                     if ($controller->canRetrieve()) {
                         $items = $controller->getPosts();
                         foreach ($items as $post) {
@@ -104,10 +106,10 @@ class SocialWebModule extends WebModule
                         );
                     }
                 }
-                
-                // @TODO sort by whatever 
+
+                // @TODO sort by whatever
                 array_multisort($sort, SORT_DESC, $posts);
-                
+
 
                 $firstPost = array_shift($posts);
                 $this->assign('firstPost', $firstPost);
@@ -118,7 +120,7 @@ class SocialWebModule extends WebModule
                 $this->assign('posts',$posts);
                 $this->assign('serviceLinks', $this->getOptionalModuleSection('services'));
                 break;
-                
+
             case 'detail':
                 $id = $this->getArg('id');
                 if (count($this->feeds)!=1) {
@@ -129,7 +131,10 @@ class SocialWebModule extends WebModule
                     throw new Exception("Cannot find item $id");
                 }
                 $this->assign('postDate', $post->getCreated()->format('l F j, Y g:i a'));
-                $this->assign('postBody', nl2br($post->linkify($post->getBody())));
+
+                $postBody = $post->getDetailBody();
+                
+                $this->assign('postBody', nl2br($postBody));
                 $this->assign('postLinks', $post->getLinks());
                 $this->assign('postImages', $post->getImages());
                 if ($author = $controller->getUser($post->getAuthor())) {
@@ -137,6 +142,9 @@ class SocialWebModule extends WebModule
                     $this->assign('authorURL', $author->getProfileURL());
                     $this->assign('authorImageURL', $author->getImageURL());
                 }
+                $this->assign('postURL', $post->getURL());
+
+                $this->assign('service', $post->getServiceName());
                 break;
             case 'auth':
                 if (!Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
@@ -154,12 +162,12 @@ class SocialWebModule extends WebModule
                             'feed'=>$feed,
                             'returnPage'=>$returnPage
                             )),
-                        'startOver'=>$this->getArg('startOver')                        
+                        'startOver'=>$this->getArg('startOver')
                 );
 
                 $result = $controller->auth($options);
-                switch ($result) 
-                { 
+                switch ($result)
+                {
                     case AUTH_FAILED:
                         $this->assign('message', 'There was an error with your authorization');
                         break;
@@ -180,8 +188,8 @@ class SocialWebModule extends WebModule
                     default:
                         Debug::die_here($result);
                 }
-                
-                
+
+
                 break;
             case 'pane':
                 if ($this->ajaxContentLoad) {
@@ -189,8 +197,8 @@ class SocialWebModule extends WebModule
                     $needToAuth = array();
                     $posts = array();
                     $sort = array();
-                
-                    foreach ($this->feeds as $feed=>$controller) {                                
+
+                    foreach ($this->feeds as $feed=>$controller) {
                         if ($controller->canRetrieve()) {
                             $items = $controller->getPosts();
                             foreach ($items as $post) {
@@ -206,8 +214,8 @@ class SocialWebModule extends WebModule
                             );
                         }
                     }
-                
-                    // @TODO sort by whatever 
+
+                    // @TODO sort by whatever
                     array_multisort($sort, SORT_DESC, $posts);
                     $posts = array_slice($posts, 0, $this->maxPerPane);
                     $this->assign('stories',$posts);
@@ -215,7 +223,7 @@ class SocialWebModule extends WebModule
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                 $this->addInternalJavascript('/common/javascript/lib/paneStories.js');
                 break;
-            
+
         }
     }
 }

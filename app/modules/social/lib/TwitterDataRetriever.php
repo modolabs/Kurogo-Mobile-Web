@@ -19,15 +19,15 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
     protected $user;
     protected $requiresExpect = false;
     protected $apiVersion = '1.1';
-    
+
     public function getServiceName() {
         return 'twitter';
     }
-    
+
     public function getAccount() {
         return $this->user;
     }
-    
+
     public function getPosts() {
         $this->setBaseURL('https://api.twitter.com/' . $this->apiVersion . '/statuses/user_timeline.json');
         $this->addFilter('screen_name', $this->user);
@@ -45,7 +45,7 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
         $this->setBaseURL("https://api.twitter.com/" . $this->apiVersion . "/statuses/show/$id.json");
         return $this->getData();
     }
-    
+
     public function canRetrieve() {
         return true;
     }
@@ -53,12 +53,12 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
     public function canPost() {
         return false;
     }
-    
+
     protected function setUser($user) {
         /* @TODO Validate User string */
         $this->user = $user;
     }
-    
+
     protected function setAPIVersion($apiVersion) {
         switch ($apiVersion)
         {
@@ -68,21 +68,21 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
                 break;
             default:
                 throw new KurogoConfigurationException("Invalid API Version $apiVersion");
-        }        
-        
+        }
+
     }
-    
+
     public function init($args) {
         parent::init($args);
 
         if (isset($args['API_VERSION'])) {
             $this->setAPIVersion($args['API_VERSION']);
         }
-        
+
         if (isset($args['ACCOUNT'])) {
             $this->setUser($args['ACCOUNT']);
         }
-        
+
         if ($this->apiVersion == 1.1) {
             $this->requiresToken = true;
             if (!$this->token) {
@@ -103,20 +103,22 @@ class TwitterDataRetriever extends OAuthDataRetriever implements SocialDataRetri
 
 class TwitterDataParser extends DataParser
 {
+
     private function parsePost($entry) {
         $post = new TwitterPost();
         $post->setID($entry['id_str']);
         $post->setAuthor($entry['user']['id_str']);
         $post->setCreated(new DateTime($entry['created_at']));
         $post->setBody($entry['text']);
-        $post->setParentID($entry['in_reply_to_status_id']);        
+        $post->setParentID($entry['in_reply_to_status_id']);
+        $post->setURL("https://twitter.com/".$entry['user']['id']."/status/".$entry['id']);
         return $post;
     }
 
     private function parseUser($entry) {
         $user = new TwitterUser();
         $user->setUserID($entry['id_str']);
-        $user->setName('@'.$entry['screen_name']);
+        $user->setName($entry['name'].' (@'.$entry['screen_name'].')');
         $user->setImageURL(ImageLoader::cacheImage(IS_SECURE ? $entry['profile_image_url_https'] : $entry['profile_image_url'], array()));
         return $user;
     }
@@ -125,8 +127,8 @@ class TwitterDataParser extends DataParser
         $data = $response->getResponse();
         return $this->parseData($data);
     }
-        
-    public function parseData($data) 
+
+    public function parseData($data)
     {
         if ($data = json_decode($data, true)) {
             if (is_array($data)) {
@@ -146,7 +148,7 @@ class TwitterDataParser extends DataParser
                 }
             }
         }
-        
+
         return array();
     }
 }
@@ -181,8 +183,38 @@ class TwitterPost extends SocialMediaPost
         return $links;
     }
 
+    public function getDetailBody(){
+      $body = parent::getDetailBody();
+      return $this->tweet2TweetWithLinks($body);
+    }
+
     public function linkify($post)
     {
         return parent::linkify($post);
+    }
+
+
+    private function tweet2TweetWithLinks($body){
+
+        //convert user mentions to links
+        $results = array();
+        preg_match_all('/(^|\s)(@\w+)/',$body,$results);
+
+        foreach($results[2] as $key => $value){
+            $screenName = substr($value, 1);
+            $link = "<a href='https://twitter.com/".$screenName."' >".$value."</a>";
+            $body = str_replace($value,$link,$body);
+        }
+
+        //convert hashtags to links
+        $results = array();
+        preg_match_all('/(^|\s)(#\w+)/',$body,$results);
+
+        foreach($results[2] as $key => $value){
+            $hashtag = substr($value, 1);
+            $link = "<a href='https://twitter.com/search?q=".$hashtag."&src=hash' >".$value."</a>";
+            $body = str_replace($value,$link,$body);
+        }
+        return $body;
     }
 }

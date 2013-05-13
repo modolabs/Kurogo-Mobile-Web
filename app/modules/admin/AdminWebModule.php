@@ -22,6 +22,7 @@ class AdminWebModule extends WebModule {
     protected $id = 'admin';
     protected $canBeRemoved = false;
     protected $canAllowRobots = false;
+    protected $canGenerateNativeWebTemplates = false;
 
   protected function includeCommonCSS() {
     return $this->pagetype != 'tablet';

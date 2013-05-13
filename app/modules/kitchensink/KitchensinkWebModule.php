@@ -13,6 +13,7 @@ includePackage('DateTime');
 
 class KitchensinkWebModule extends WebModule {
     protected $id = 'kitchensink';
+    protected $shouldGenerateNativeWebTemplates = true;
     
     protected function getListsForPage($page) {
         $lists = array();
@@ -87,7 +88,11 @@ class KitchensinkWebModule extends WebModule {
                         'title' => 'HTML Truncation Form',
                         'url'   => $this->buildBreadcrumbURL('truncate', array()),
                     ),
-               );
+                    array(
+                        'title' => 'Javascript API Call Test',
+                        'url'   => $this->buildBreadcrumbURL('apicall', array()),
+                    ),
+                );
                 if ($this->browser == 'native') {
                     $appQLinks = array(
                         array(
@@ -111,6 +116,9 @@ class KitchensinkWebModule extends WebModule {
             case 'text':
                 break;
                 
+            case 'apicall':
+                break;
+
             case 'search':
                 $formFields = $this->loadPageConfigArea($this->page, false);
                 foreach ($formFields as $i => $formField) {

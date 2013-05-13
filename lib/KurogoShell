@@ -6,7 +6,7 @@ APP=`pwd`
 phpPath=`which php`
 
 if [ -n "$phpPath" ]; then
-    ${phpPath} -q ${LIB}KurogoShellDispatcher.php -working "${APP}" "$@"
+    "${phpPath}" -q ${LIB}KurogoShellDispatcher.php -working "${APP}" "$@"
     return=$?
     if [ ${return} -gt 0 ]; then
         if [ ${return} -eq 1 ]; then

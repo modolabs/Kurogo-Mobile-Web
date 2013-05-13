@@ -476,6 +476,7 @@ class MapAPIModule extends APIModule
             case 'detail':
 
                 $suppress = $this->getOptionalModuleVar('suppress', array(), 'details', 'page-detail');
+                $tabKeys = $this->getOptionalModuleVar('tabkeys', array(), 'tabs', 'page-detail');
 
                 $controller = $this->getDataModel();
                 $placemarkId = $this->getArg('id', null);
@@ -486,11 +487,14 @@ class MapAPIModule extends APIModule
                     $fields = $placemark->getFields();
                     $geometry = $placemark->getGeometry();
 
+                    $tabs = $this->getTabsForTabKeys($tabKeys, $this->command);
+
                     $response = array(
-                        'id'       => $placemarkId,
-                        'title'    => $placemark->getTitle(),
-                        'subtitle' => $placemark->getSubtitle(),
-                        'address'  => $placemark->getAddress(),
+                        'sections'      => $tabs,
+                        'id'            => $placemarkId,
+                        'title'         => $placemark->getTitle(),
+                        'subtitle'      => $placemark->getSubtitle(),
+                        'address'       => $placemark->getAddress(),
                     );
 
                     if ($this->requestedVersion >= 2) {

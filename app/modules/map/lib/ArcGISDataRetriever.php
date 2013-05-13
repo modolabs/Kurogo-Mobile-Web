@@ -50,7 +50,8 @@ class ArcGISDataRetriever extends URLDataRetriever
                     'text'           => '%',
                     'inSR'           => $this->parser->getProjection(),
                     'spatialRel'     => 'esriSpatialRelIntersects',
-                    'where'          => '',
+                    'where'          => '1=1',
+                    'orderByFields'  => $this->parser->getDisplayFieldForFolder($this->selectedLayer), // Use display name as default sorting field
                     'returnGeometry' => 'true',
                     'outSR'          => '',
                     'outFields'      => implode(',', $fields),
@@ -65,9 +66,15 @@ class ArcGISDataRetriever extends URLDataRetriever
                     $params['geometryType'] = 'esriGeometryEnvelope';
                 }
 
+                // If we have order fields, assume they are separated by commas
                 if ($this->orderByFields) {
-                    $params['where']          = 'OBJECTID>0';
-                	$params['orderByFields']  = $this->orderByFields;
+                    $orderFields = array_map('trim', explode(',', $this->orderByFields));
+                    // take intersection of configured sort fields and existing fields in layer
+                    $validFields = array_intersect($orderFields, $fields);
+                    // If we have at least one valid field, update the orderByFields to use the valid field(s)
+                    if (!empty($validFields)) {
+                        $params['orderByFields']  = implode(',', $validFields);
+                    }
                 }
                 return $params;
 

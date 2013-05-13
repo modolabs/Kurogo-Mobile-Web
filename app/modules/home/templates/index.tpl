@@ -56,5 +56,10 @@
 {include file="findInclude:common/templates/page/navigation/userContextList.tpl" navContainerID="homemodules"}
 {/if}
 {/block}
+{block name="siteLinks"}
+{if $siteLinks}
+{include file="findInclude:common/templates/page/navigation/siteLinks.tpl"}
+{/if}
+{/block}
 
 {include file="findInclude:common/templates/footer.tpl"}

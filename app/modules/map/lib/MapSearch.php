@@ -163,7 +163,7 @@ class MapSearch extends DataRetriever {
         ksort($resultsByDistance);
 
         if ($maxItems && count($resultsByDistance) > $maxItems) {
-            array_splice($resultsByDistance, $maxItems);
+            array_splice($resultsByDistance, $maxItems + 1);
         }
 
         return array_values($resultsByDistance);

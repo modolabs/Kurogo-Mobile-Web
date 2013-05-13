@@ -209,6 +209,24 @@ table.section-search tr td {
 	height: auto
 }
 
+.formlist .formelement {
+  margin-bottom: 0.75em;
+}
+
+.formlist .formelement input[type=text],
+.formlist .formelement input[type=number],
+.formlist .formelement input[type=phone],
+.formlist .formelement input[type=date] {
+  border: 1px solid @@@focal_border_color@@@;
+  -webkit-appearance: none;
+  border-radius: 4px;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+  line-height: 1.2em;
+  height: auto
+}
+
+
 h1.slugline {
 	font-size: 175%;
 }

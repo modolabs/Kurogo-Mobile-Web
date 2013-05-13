@@ -37,7 +37,7 @@ class DataCache
         return $cache;
     }
     
-    protected function createCacheFolderIfNeeded() {
+    public function createCacheFolderIfNeeded() {
         $cacheFolder = $this->getCacheFolder($this->cacheGroup);
         if (!is_dir($cacheFolder)) {
             if (!@mkdir($cacheFolder, 0700, true)) {
@@ -195,9 +195,11 @@ class DataCache
         if ($this->cacheLifetime == 0) {
             return false;
         }
-        
-        if ($memoryCache = $this->getMemoryCache()) {
-            $memoryCache->set($this->getMemoryCacheKey($key), $data, $this->cacheLifetime);
+
+        if (strlen($this->cacheGroup) === 0) {
+            if ($memoryCache = $this->getMemoryCache()) {
+                $memoryCache->set($this->getMemoryCacheKey($key), $data, $this->cacheLifetime);
+            }
         }
         
         return $this->setValueToDisk($key, $data);

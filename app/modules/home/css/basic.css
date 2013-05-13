@@ -1,3 +1,11 @@
+#homelogo {
+  margin: 0;
+  padding: 10px 5px;
+}
+#search {
+  margin: 0;
+  padding-bottom: 10px;
+}
 #download {
 	text-align: left;
 	clear: both;
@@ -29,6 +37,7 @@ a.banner-message:hover {
   height: 28px; 
   width: 28px; 
 }
+.siteLinks ul,
 .userContextList ul {
 	background-color: @@@subfocal_background_color@@@;
 	border-color: @@@focal_border_color@@@;
@@ -39,6 +48,7 @@ a.banner-message:hover {
 	line-height: 1.6em;
 }
 
+.siteLinks ul li, 
 .userContextList ul li {
     margin: 0;
     padding: 0;

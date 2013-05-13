@@ -11,6 +11,7 @@
 
 class DownloadWebModule extends WebModule {
     protected $id = 'download';
+    protected $canGenerateNativeWebTemplates = false;
     
     protected function initializeForPage() {
         $this->assign('deviceName',   Kurogo::getOptionalSiteVar($this->platform, null, 'deviceNames'));

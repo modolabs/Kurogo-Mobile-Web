@@ -59,6 +59,59 @@ class AthleticsAPIModule extends APIModule
         $responseVersion = in_array($this->requestedVersion, array(1,2,3)) ? $this->requestedVersion : 1;
         
         switch ($this->command) {
+            case 'index':
+                // the index command returns all tabs that are seen in the Athletics module index page.
+                // this command deprecates both the 'frontpage' and 'genders' commands as it includes any tabs those commands return
+                $bookmarksEnabled = $this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1);
+                $tabkeys = $this->getOptionalModuleSection('index', 'pages');
+
+                if (isset($tabkeys['tab_bookmarks'])) {
+                    // BOOKMARKS_ENABLED configuration should take precedence over the configured tab
+                    // configuring bookmark tabKey allows for reordering of bookmark tab
+                    if (!$bookmarksEnabled) {
+                        // if we have the tab but we don't have bookmarks enabled, remove the tab
+                        unset($tabkeys['tab_bookmarks']);
+                    }
+                } else {
+                    if ($bookmarksEnabled) {
+                        // if bookmarks are enabled but the key is not in the array, append it
+                        $tabkeys['tab_bookmarks'] = 'Bookmarks';
+                    }
+                }
+
+                // need to add dummy tabkey allschedule so it is accounted for
+                if (isset($tabkeys['tab_topnews'])) {
+                    // if we have topnews, put tab_allschedule just after it in array
+                    $index = array_search('tab_topnews', array_keys($tabkeys));
+                    $tail = array_splice($tabkeys, $index+1);
+                    $head = array_merge($tabkeys, array('tab_allschedule'=>'WNBWRBRWB'));   // this value should not be used, feed title will be used if configured.
+                    $tabkeys = array_merge($head, $tail);
+
+                } else {
+                    // if we don't have topnews, put tab_allschedule first
+                    $allScheduleKey = array('tab_allschedule'=>"WNBWRBRWB");
+                    $tabkeys = array_merge($allScheduleKey, $tabkeys);
+                }
+
+                $tabs = array();
+                $prefix = 'tab_';
+                foreach($tabkeys as $key => $title) {
+                    if (substr($key, 0, strlen($prefix)) == $prefix) {
+                        // strip the 'tab_' prefix
+                        $key = substr($key, strlen($prefix), strlen($key));
+                    }
+                    if ($data = $this->getNavData($key)) {
+                        $tabs[] = array('id' => $key,
+                                    'title' => $data['TITLE']);
+                    }
+                }
+
+                $response = array('sections' => $tabs);
+
+                $this->setResponseVersion($responseVersion);
+                $this->setResponse($response);
+
+            break;
             case 'frontpage':
                 // for native apps, returns whether Top News tab contains News and/or All Sports Schedule
 
@@ -339,7 +392,6 @@ class AthleticsAPIModule extends APIModule
     protected function getNavData($tab) {
     
         $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
-        
         if (!$data) {
             $vars = $this->getOptionalModuleSection("index", "pages");
             $key = "tab_" . $tab;

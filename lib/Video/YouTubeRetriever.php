@@ -13,6 +13,7 @@
  {
     protected $DEFAULT_PARSER_CLASS='YouTubeDataParser';
     protected $orderBy;
+    protected $DEFAULT_PLAYLIST_SEARCH_RESULTS_LIMIT = 50;
     
  	private function setStandardFilters() {
  		if ($playlist = $this->getOption('playlist')) {
@@ -35,6 +36,9 @@
     
     public function canSearch() {
  		if ($this->getOption('playlist')) {
+            //when declaring a playlist search, set max results to 50, to be filtered through on our end. 
+            //temporary fix determined by staff
+            $this->addFilter('max-results',$this->DEFAULT_PLAYLIST_SEARCH_RESULTS_LIMIT);
  			return false;
  		}
     	

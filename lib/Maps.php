@@ -237,7 +237,6 @@ class MapsAdmin
         return array(
             'GoogleStaticMap'=>'Google',
             'ArcGISStaticMap'=>'ArcGIS',
-            'WMSStaticMap'=>'WMS'
         );
     }
     

@@ -21,6 +21,12 @@ class KurogoAPIModule extends APIModule
         $module->init($command, $args);
         return $module;
     }
+
+    protected function getPlatformConfig() {
+        $config = Kurogo::getOptionalSiteSection('apps');
+        $config['CLEAR_WEB_CACHES_ON_SUSPEND'] = (bool)Kurogo::arrayVal($config, 'CLEAR_WEB_CACHES_ON_SUSPEND', false);
+        return $config;
+    }
  
     //always allow access
     protected function getAccessControlLists($type) {
@@ -101,6 +107,7 @@ class KurogoAPIModule extends APIModule
                 }
                 
                 $response = array(
+                    'config'=> $this->getPlatformConfig(),
                     'timezone'=>Kurogo::getSiteVar('LOCAL_TIMEZONE'),
                     'site'=>Kurogo::getSiteString('SITE_NAME'),
                     'organization'=>Kurogo::getSiteString('ORGANIZATION_NAME'),

@@ -15,6 +15,7 @@ class DiningWebModule extends WebModule {
   protected $id = 'dining';
   
   protected $DEFAULT_LOCATION_MODEL_CLASS = 'LocationsDataModel';
+  protected $shouldGenerateNativeWebTemplates = true;
   
   protected $SHOW_HOURS_STATUS = true;
   protected $SHOW_EVENT_DETAILS = true;

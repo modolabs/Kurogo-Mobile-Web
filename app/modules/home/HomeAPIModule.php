@@ -76,6 +76,46 @@ class HomeAPIModule extends APIModule
                 
                 foreach ($navModules as $moduleID=>$moduleData) {
                     if ($module = Kurogo::arrayVal($allmodules, $moduleID)) {
+                    
+                        if (isset($moduleData['minAPIClientVersion'])) {
+                            if (version_compare($this->clientVersion, $moduleData['minAPIClientVersion'], 'lt')) {
+                                continue;
+                            }
+                        }
+
+                        if (isset($moduleData['maxAPIClientVersion'])) {
+                            if (version_compare($this->clientVersion, $moduleData['maxAPIClientVersion'], 'gt')) {
+                                continue;
+                            }
+                        }
+
+                        if (isset($moduleData['pagetype'])) {
+                            if (!is_array($moduleData['pagetype'])) {
+                                $moduleData['pagetype'] = array($moduleData['pagetype']);
+                            }
+                            if (!in_array($this->clientPagetype, $moduleData['pagetype'])) {
+                                continue;
+                            }
+                        }
+
+                        if (isset($moduleData['browser'])) {
+                            if (!is_array($moduleData['browser'])) {
+                                $moduleData['browser'] = array($moduleData['browser']);
+                            }
+                            if (!in_array($this->clientBrowser, $moduleData['browser'])) {
+                                continue;
+                            }
+                        }
+                
+                        if (isset($moduleData['platform'])) {
+                            if (!is_array($moduleData['platform'])) {
+                                $moduleData['platform'] = array($moduleData['platform']);
+                            }
+                            if (!in_array($this->clientPlatform, $moduleData['platform'])) {
+                                continue;
+                            }
+                        }
+                    
                         $title = Kurogo::arrayVal($moduleData,'title', $module->getModuleVar('title'));
                         $type = Kurogo::arrayVal($moduleData, 'type', 'primary');
                         $visible = Kurogo::arrayVal($moduleData, 'visible', 1);

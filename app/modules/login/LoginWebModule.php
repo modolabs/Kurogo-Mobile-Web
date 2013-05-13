@@ -22,6 +22,7 @@ class LoginWebModule extends WebModule {
     protected $id = 'login';
     protected $defaultAllowRobots = false; // Require sites to intentionally turn this on
     protected $nativeApp = false;
+    protected $canGenerateNativeWebTemplates = false;
     const NATIVE_APP_COOKIE = '_kgoLoginNativeApp';
     
     // ensure that the login module always has access 

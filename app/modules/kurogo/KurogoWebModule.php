@@ -16,6 +16,7 @@ class KurogoWebModule extends WebModule
     protected $canBeRemoved = false;
     protected $canBeDisabled = false;
     protected $canAllowRobots = false;
+    protected $canGenerateNativeWebTemplates = false;
 
     protected function getError($code) {
         static $errors = array(
@@ -97,6 +98,7 @@ class KurogoWebModule extends WebModule
     $error = $this->getError($code);
 
     if (isset($error['status'])) {
+      header("HTTP/1.0 " . $error['status']);
       header('Status: '.$error['status']);
     }
 

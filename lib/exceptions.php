@@ -278,6 +278,7 @@ function exceptionHandlerForProductionAPI(Exception $exception) {
 }
 
 function exceptionHandlerForAPI(Exception $exception) {
+    header("HTTP/1.1 500 Internal Server Error");
     $bt = $exception->getTrace();
     array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
     Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);

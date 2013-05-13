@@ -319,6 +319,19 @@ class AdminAPIModule extends APIModule
                         }
                     }
 
+                    if (isset($subsectionData['showIfMethod'])) {
+                        if (is_array($subsectionData['showIfMethod'])) {
+                            $show = call_user_func($subsectionData);
+                        } else {
+                            $show = $type->$subsectionData['showIfMethod']();
+                        }
+                        
+                        if (!$show) {
+                            unset($sectionData['sections'][$subsection]);
+                            continue;
+                        }
+                    }
+
                     if (isset($subsectionData['showIfModuleVar'])) {
                         if ($type->getOptionalModuleVar($subsectionData['showIfModuleVar'][0], '') != $subsectionData['showIfModuleVar'][1]) {
                             unset($sectionData['sections'][$subsection]);

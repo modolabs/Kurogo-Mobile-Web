@@ -62,6 +62,30 @@ class LoginAPIModule extends APIModule
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
+        
+           case 'authorities':
+                $authorities = array();
+                foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authorityIndex=>$authorityData) {
+                    $USER_LOGIN = $this->argVal($authorityData, 'USER_LOGIN', 'NONE');
+                    // trap the exception if the authority is invalid (usually due to misconfiguration)
+                    try {
+                        $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
+                        $authorities[] = array(
+                            'authority'=>$authority->getAuthorityIndex(),
+                            'authorityTitle'=>$authority->getAuthorityTitle(),
+                            'login'=>$USER_LOGIN,
+                        );
+                    } catch (KurogoConfigurationException $e) {
+                    }
+                }
+
+                $response = array(
+                    'authorities'=>$authorities,
+                );
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+            
+                break;
                 
            case 'session':
                 $session = $this->getSession();
@@ -80,6 +104,7 @@ class LoginAPIModule extends APIModule
 							'authority'=>$authority->getAuthorityIndex(),
 							'authorityTitle'=>$authority->getAuthorityTitle(),
 							'userID'=>$user->getUserID(),
+							'email'=>$user->getEmail(),
 							'name'=>$user->getFullName(),
 							'sessiondata'=>$user->getSessionData()
                 		);

@@ -618,6 +618,19 @@ abstract class Module
                 }
             }
 
+            if (isset($sectionData['showIfMethod'])) {
+                if (is_array($sectionData['showIfMethod'])) {
+                    $show = call_user_func($sectionData);
+                } else {
+                    $show = $this->$sectionData['showIfMethod']();
+                }
+                
+                if (!$show) {
+                    unset($sectionData['sections'][$subsection]);
+                    continue;
+                }
+            }
+
             if (isset($sectionData['showIfModuleVar'])) {
                 if ($this->getOptionalModuleVar($sectionData['showIfModuleVar'][0], '') != $sectionData['showIfModuleVar'][1]) {
                     continue;

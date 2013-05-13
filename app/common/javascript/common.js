@@ -352,7 +352,7 @@ if (typeof makeAPICall === 'undefined' && typeof jQuery === 'undefined') {
         for (var param in data) {
             urlParts.push(param + "=" + data[param]);
         }
-        url = URL_BASE + API_URL_PREFIX + '/' + module + '/' + command + '?' + urlParts.join('&');
+        url = FULL_URL_BASE + API_URL_PREFIX + '/' + module + '/' + command + '?' + urlParts.join('&');
         var handleError = function(errorObj) {}
     
         var httpRequest = new XMLHttpRequest();
@@ -634,6 +634,11 @@ function _getStringForArgs(args) {
     }
     return argString;    
 }
+
+function redirectToURL(url) {
+    window.location = url;
+}
+
 
 function redirectTo(page, args) {
     window.location = "./" + page + _getStringForArgs(args);

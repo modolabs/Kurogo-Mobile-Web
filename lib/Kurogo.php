@@ -12,7 +12,7 @@
 //
 // Constants which cannot be set by config file
 //
-define('KUROGO_VERSION', '1.8.3');
+define('KUROGO_VERSION', '1.8.6');
 
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
 define('ROOT_BASE_DIR', realpath(dirname(__FILE__).'/../..'));
@@ -613,7 +613,7 @@ class Kurogo
             return false;
         }
 
-        $key = SITE_NAME . '-' . $key;
+        $key = SITES_KEY .'-' . SITE_NAME . '-' . $key;
         if ($cacher = Kurogo::sharedInstance()->cacher()) {
             $logValue = is_scalar($value) ? $value : gettype($value);
             Kurogo::log(LOG_DEBUG, "Setting $key to $logValue", 'cache');
@@ -748,6 +748,7 @@ class Kurogo
         }
         
         define('SITES_DIR',          $sitesDir);
+        define('SITES_KEY',          md5(SITES_DIR));
 
         //
         // Initialize Site

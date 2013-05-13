@@ -22,7 +22,7 @@ class NewsAPIModule extends APIModule {
         $responseVersion = $this->requestedVersion == 2 ? 2 : 1;
         switch($this->command) {
             case 'stories':
-                $categoryID = $this->getArg('categoryID');
+                $categoryID = $this->getArg(array('feed', 'categoryID'));
                 $start = $this->getArg('start');
                 $limit = $this->getArg('limit');
                 $mode = $this->getArg('mode');
@@ -51,10 +51,12 @@ class NewsAPIModule extends APIModule {
                 foreach ($feeds as $index => $feedData) {
                     $response[] = array('id' => strval($index),
                     					'title' => strip_tags($feedData['TITLE']),
+                                        'show_link_display_text' => (isset($feedData['SHOW_LINK']) && $feedData['SHOW_LINK'] == true) ? $this->getLocalizedString('READ_MORE') : "",
                                         'show_images'=>isset($feedData['SHOW_IMAGES']) ? (bool) $feedData['SHOW_IMAGES'] : true,
                                         'show_pubdate'=>isset($feedData['SHOW_PUBDATE']) ? (bool) $feedData['SHOW_PUBDATE'] : false,
                                         'show_author' => isset($feedData['SHOW_AUTHOR']) ? (bool) $feedData['SHOW_AUTHOR'] : false,
-                                        'show_link' => isset($feedData['SHOW_LINK']) ? (bool) $feedData['SHOW_LINK'] : false,
+                                        'show_body_pubdate' => isset($feedData['SHOW_BODY_PUBDATE']) ? (bool) $feedData['SHOW_BODY_PUBDATE'] : true,
+                                        'show_body_author' => isset($feedData['SHOW_BODY_AUTHOR']) ? (bool) $feedData['SHOW_BODY_AUTHOR'] : true,
                                         'show_body_thumbnail' => isset($feedData['SHOW_BODY_THUMBNAIL']) ? (bool) $feedData['SHOW_BODY_THUMBNAIL'] : true,
                                         'show_body_image' => isset($feedData['SHOW_BODY_IMAGE']) ? (bool) $feedData['SHOW_BODY_IMAGE'] : true,
                     					);
@@ -65,8 +67,8 @@ class NewsAPIModule extends APIModule {
                 break;
 
             case 'search':
-                $categoryID = $this->getArg('categoryID');
-                $searchTerms = $this->getArg('q');
+                $categoryID = $this->getArg(array('feed', 'categoryID'));
+                $searchTerms = $this->getArg(array('filter', 'q'));
                 $feed = $this->getFeed($categoryID);
 	            $this->setLogData($searchTerms);
                 $items = $feed->search($searchTerms);

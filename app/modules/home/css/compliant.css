@@ -123,22 +123,26 @@ form {
     height: 26px;
 }
 
+.siteLinks,
 .userContextList {
     margin: 0;
     padding: 0 12px;
     text-align: center;
 }
 
+.siteLinksDescription,
 .userContextListDescription {
     font-size: 12px;
     color: @@@nonfocal_text_color@@@;
 }
 
+.siteLinks select,
 .userContextList select {
     width: 100%;
     font-size: 0.93rem;
 }
 
+.siteLinks ul,
 .userContextList ul {
     list-style-type: none;
     margin: 5px 0;
@@ -146,12 +150,14 @@ form {
     font-size: 13px;
 }
 
+.siteLinks ul li,
 .userContextList ul li {
     display: inline-block;
     margin: 0;
     padding: 0;
 }
 
+.siteLinks a, .siteLinks a:visited,
 .userContextList a, .userContextList a:visited {
   display: block;
   padding: 0.5em;
@@ -163,6 +169,7 @@ form {
   color: @@@nonfocal_text_color@@@;
 }
 
+.siteLinks ul li:first-child a,
 .userContextList ul li:first-child a {
   -webkit-border-top-left-radius: 6px;
   -moz-border-top-left-radius: 6px;
@@ -173,6 +180,7 @@ form {
   border-left-width: 1px;
 }
 
+.siteLinks ul li:last-child a,
 .userContextList ul li:last-child a {
   -webkit-border-top-right-radius: 6px;
   -moz-border-top-right-radius: 6px;
@@ -182,6 +190,7 @@ form {
   -border-bottom-right-radius: 6px;
 }
 
+.siteLinks li.siteSelected a, 
 .userContextList li.contextSelected a {
     text-decoration: none;
     color: #fff;

@@ -13,6 +13,7 @@
 {block name="kgoFooterAJAXContent"}
   <script type="text/javascript">
     var URL_BASE='{$smarty.const.URL_BASE}';
+    var FULL_URL_BASE='{$smarty.const.FULL_URL_BASE}';
     var API_URL_PREFIX='{$smarty.const.API_URL_PREFIX}';
     var KUROGO_PAGETYPE='{$pagetype}';
     var KUROGO_PLATFORM='{$platform}';

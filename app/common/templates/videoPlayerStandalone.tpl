@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html>
 <head>
   <style type="text/css" media="screen">
-    html,body,div,iframe,object,embed {
+    html,body,div,iframe,object,video,embed {
       width: 100% !important;
       height: 100% !important;
       margin: 0 !important;

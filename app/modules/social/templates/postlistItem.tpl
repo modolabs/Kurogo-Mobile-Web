@@ -26,7 +26,7 @@
       {$item['title']}
     {/if}
     {if $item['subtitle']}
-      {if $subTitleNewline|default:true}<div{else}&nbsp;<span{/if} class="smallprint">
+      {if $subTitleNewline|default:true}<div{else}&nbsp;<span{/if} class="smallprint service-detail">
         {$item['subtitle']}
       {if $subTitleNewline|default:true}</div>{else}</span>{/if}
     {/if}

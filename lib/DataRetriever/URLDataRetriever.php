@@ -468,6 +468,7 @@ class URLDataRetriever extends DataRetriever {
 			$this->setCurlOption(CURLOPT_URL, $this->requestURL);
 			if ($file = $this->saveToFile()) {
 				$data = $this->cache->getFullPath($file);
+				$this->cache->createCacheFolderIfNeeded();
 				$this->setCurlOption(CURLOPT_FILE, $data);
 				$result = curl_exec($this->curl);
 			} else {
@@ -476,6 +477,7 @@ class URLDataRetriever extends DataRetriever {
 		} else {
 			if ($file = $this->saveToFile()) {
 				$data = $this->cache->getFullPath($file);
+				$this->cache->createCacheFolderIfNeeded();
 				$result = file_put_contents($data, file_get_contents($this->requestURL, false, $this->streamContext));
 			} else {
 				$data = file_get_contents($this->requestURL, false, $this->streamContext);

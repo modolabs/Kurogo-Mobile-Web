@@ -7,6 +7,12 @@
 .feedlinks a.youtube {
   background-image: url(/common/images/button-youtube-24.png);
 }
+.feedlinks a.linkedin {
+  background-image: url(/common/images/button-linkedin-24.png);
+}
+.feedlinks a.instagram {
+  background-image: url(/common/images/button-instagram-24.png);
+}
 
 .featured.twitter .author, .results li.twitter .author
 {

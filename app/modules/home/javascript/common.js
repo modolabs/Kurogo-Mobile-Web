@@ -32,3 +32,36 @@ function runFederatedSearch(federatedSearchModules) {
         }
     }
 }
+
+function addFormNotEmptyValidator() {
+    var forms = document.getElementsByTagName("form");
+    /*
+     * for all forms which can be submitted:
+     * require at least one text input to be non-empty 
+     * note we currently assume no <textarea>'s are used in the form
+     */
+    for (var j = 0; j < forms.length; j++){
+        var form_var = forms[j];
+        form_var.onsubmit = function() {
+            var inputs = this.getElementsByTagName("input");
+            for(var i = 0; i < inputs.length; i++) {
+                if (inputs[i].type == "text") {
+                    if (inputs[i].value.trim().length > 0) {
+                        return true;
+                    }     
+                }
+            }
+        return false;
+        }
+    }
+
+
+    //below could be used if we want separate responses
+   /* if (typeof kgoBridge != "undefined" && "alertDialog" in kgoBridge) {
+   *     kgoBridge.alertDialog("", "Search query is empty.", "OK");
+   * } else {
+   *     alert("Search query is empty.");
+   * }
+   */
+    
+}

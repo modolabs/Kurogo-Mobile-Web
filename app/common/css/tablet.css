@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-	-webkit-text-size-adjust: none; 
+	-webkit-text-size-adjust: none;
 }
 
 h1, h2, h3 {
@@ -39,7 +39,7 @@ table {
 }
 
 th, td {
-	padding: 4px 6px 5px 2px; 
+	padding: 4px 6px 5px 2px;
 	line-height: 1em;
 	vertical-align: top;
 }
@@ -55,7 +55,7 @@ ol, ul {
 	padding-left: 1.2em;
 }
 
-dl {	
+dl {
 	width: 100%;
 	padding: 0;
 	margin: 0;
@@ -97,7 +97,7 @@ strong {
 }
 
 .kgo-has-navbar #wrapper {
-  top: 44px;  
+  top: 44px;
 }
 
 #container-wrapper {
@@ -148,7 +148,7 @@ strong {
 
 #footerlinks {
 	clear: both;
-	margin: 3em 6px 2em 6px; 
+	margin: 3em 6px 2em 6px;
 	font-size: 70.589%;
 }
 
@@ -166,7 +166,7 @@ strong {
 }
 
 .detailhtml {
-  margin: 9px 12px;  
+  margin: 9px 12px;
 }
 
 .tabbody .detailhtml {
@@ -241,7 +241,7 @@ strong {
 
 .homepage .pagetitle {
 	display: inline;
-	margin-left: 0;	
+	margin-left: 0;
 }
 
 img.moduleicon {
@@ -253,7 +253,7 @@ img.moduleicon {
     padding-right: 5px;
 }
 
-.help { 
+.help {
     position: absolute;
     top: 0px;
     right: 0;
@@ -358,19 +358,19 @@ a.module img, .homepage .moduleicon {
     color: @@@navbar_text_color@@@;
 }
 
+#siteLinks,
 #userContextList {
     margin: 0 0;
 }
 
+.siteLinksDescription,
 .userContextListDescription {
     margin: 5px 0 3px 0;
 }
 
+#siteLinks select,
 #userContextList select {
   margin: 3px 0 5px 0;
-}
-
-#userContextList select {
 }
 
 /* Navigation Menu */
@@ -387,9 +387,9 @@ a.module img, .homepage .moduleicon {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  -webkit-box-shadow: 1px 0 12px #000;  
-  -moz-box-shadow: 1px 0 12px #000;  
-  box-shadow: 1px 0 12px #000;  
+  -webkit-box-shadow: 1px 0 12px #000;
+  -moz-box-shadow: 1px 0 12px #000;
+  box-shadow: 1px 0 12px #000;
   z-index: 1000;
   background-color: @@@navmenu_background_color@@@;
   background-image: @@@navmenu_background_image@@@;
@@ -421,7 +421,7 @@ a.module img, .homepage .moduleicon {
   padding: 1px;
 }
 #navmenu .navmenu-items .navmenu-module a {
-  display: block;  
+  display: block;
   position: relative;
   color: @@@navmenu_link_color@@@;
   text-decoration: none;
@@ -472,9 +472,9 @@ a.module img, .homepage .moduleicon {
 #navmenu #footer {
   text-align: left;
 }
-#navmenu #footerlinks a, 
-#navmenu #footerlinks a:visited, 
-#navmenu .copyright a, 
+#navmenu #footerlinks a,
+#navmenu #footerlinks a:visited,
+#navmenu .copyright a,
 #navmenu .copyright a:visited {
   display: block;
 }
@@ -522,7 +522,7 @@ a.module img, .homepage .moduleicon {
 
 /* Forms */
 
-form {	
+form {
 	margin: 18px 0 12px 0;
 	padding: 0;
 	border: none;
@@ -561,7 +561,7 @@ select {
 
 .forminput {
 	height: 18px;
-	font-size: 88.24%; 
+	font-size: 88.24%;
 	padding: 6px 6px 6px 24px;
 	-webkit-appearance:textfield;
 	-webkit-border-radius: 8px;
@@ -577,7 +577,7 @@ select {
 
 *:first-child+html .forminput {
 	/* The return of IE CSS hacks makes me mad */
-	width: 90%;	
+	width: 90%;
 }
 
 .inputcombo {
@@ -658,7 +658,7 @@ h1.slugline {
 	line-height: 28px;
 	font-size: 90%;
 	float: right;
-	border-color: @@@search_border_color@@@;	
+	border-color: @@@search_border_color@@@;
 }
 
 #navbar .nonfocal,
@@ -668,28 +668,82 @@ h1.slugline {
 }
 
 .formlist .formelement {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
   text-align: center;
-  margin-bottom: .5em;
+  margin-bottom: .75em;
 }
 .formlist .formelement label {
   text-align: right;
-  margin-right: .5em;
-  display: inline-block;
-  width: 6.5em;
+  display: table-cell;
+  width: 35%;
+  line-height: 1.25em;
+  max-width: 10em;
+  padding: 0 0.5em 0 0;
+  vertical-align: middle;
 }
-.formlist .formelement input {
-  width: 19.5em;
+.formlist .form-boolean label {
+  text-align: left;
+  width: auto;
+  padding: 0.4em 0 0.4em 35%;
+}
+.formlist .formelement {
+  text-align: left;
+}
+.formlist .formelement input,
+.formlist .formelement select,
+.formlist .formelement textarea {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 90%;
   padding-left: .25em;
   padding-right: .25em;
-  line-height: 26px;
+  line-height: 1.2em;
+}
+@media only screen and (min-width: 50em) {
+  .formlist .formelement label {
+		width: 30%;	/* On wider screens, the form-field labels can be narrower */
+	}
+  .formlist .formelement input,
+  .formlist .formelement select,
+  .formlist .formelement textarea {
+    width: 90%;
+  }
+  .formlist .form-boolean label {
+    padding-left: 30%;
+  }
+}
+@media only screen and (min-width: 60em) {
+  .formlist .formelement label {
+		width: 25%;	/* On wider screens, the form-field labels can be narrower */
+	}
+  .formlist .formelement input,
+  .formlist .formelement select,
+  .formlist .formelement textarea {
+    width: 85%;
+  }
+  .formlist .form-boolean label {
+    padding-left: 25%;
+  }
+}
+.formlist .formelement input[type=text],
+.formlist .formelement input[type=number],
+.formlist .formelement input[type=phone],
+.formlist .formelement input[type=date] {
+  border: 1px solid @@@focal_border_color@@@;
+  -webkit-appearance: none;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+  line-height: 1.2em;
+  height: 2.2em;
 }
 .formlist .formelement input[type=radio],
 .formlist .formelement input[type=checkbox] {
   width: auto;
-}
-.formlist .formelement select {
-  width: 20em;
-  line-height: 26px;
 }
 
 .formbuttons {
@@ -781,7 +835,7 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 	padding: 0;
 	border: 0;
 	float: left;
-	text-align: center;		
+	text-align: center;
 	vertical-align: top;
 	font-size: 76.5%;	/* Font size of text label below icon */
 	line-height: 1.1em;
@@ -843,24 +897,24 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 
 /* Navigation and results listings */
 
-.nav {	   
-	padding: 0;	   
-	margin: 9px 12px; 
+.nav {
+	padding: 0;
+	margin: 9px 12px;
 	border: 1px solid @@@focal_border_color@@@;
-	-webkit-border-radius: 9px;	
-	border-radius: 9px;	
+	-webkit-border-radius: 9px;
+	border-radius: 9px;
 	position: relative;
 }
 
-.nav li {	
-	list-style-type: none;	
+.nav li {
+	list-style-type: none;
 	border-top: 1px solid @@@focal_border_color@@@;
 	padding: 11px;
 	position: relative;
 }
 
 .nav li:first-child {
-	border-top:0; 
+	border-top:0;
 }
 
 .nav li div.smallprint {
@@ -870,30 +924,30 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 .nav span.nolink, .results span.nolink {
 	display: block;
 	padding: 8px;
-	margin: -8px;	 
+	margin: -8px;
 	background-repeat: no-repeat;
-	background-position: right; 
+	background-position: right;
 	line-height: 1.2em;
 	text-decoration: none;
 }
 
 .nav span.nolink {
-	-webkit-border-radius: 5px;	
-	border-radius: 5px;	
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .nav a  {
 	display: block;
 	position: relative;
 	padding: 8px 24px 10px 8px;
-	margin: -8px;	 
-	background-image: url(/common/images/action-arrow.png); 
+	margin: -8px;
+	background-image: url(/common/images/action-arrow.png);
 	background-repeat: no-repeat;
-	background-position: right; 
+	background-position: right;
 	line-height: 1.2em;
 	text-decoration: none;
-	-webkit-border-radius: 5px;	
-	border-radius: 5px;	
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .nav li.icon {
@@ -923,7 +977,7 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 
 .focal .nav {
 	margin: 10px -13px;
-	-webkit-border-radius: 0px;	
+	-webkit-border-radius: 0px;
 }
 
 ul.focal {
@@ -939,7 +993,7 @@ ul.focal li {
 }
 
 ul.focal li:first-child {
-	border-top:0; 
+	border-top:0;
 }
 
 .tabbody .nav {
@@ -961,33 +1015,33 @@ ul.focal li:first-child {
 	padding: 10px;
 }
 
-.results {	   
-	padding: 0;	   
-	margin: 10px 0; 
+.results {
+	padding: 0;
+	margin: 10px 0;
 	border-top: 1px solid @@@focal_border_color@@@;
 	border-bottom: 1px solid @@@focal_border_color@@@;
 	position: relative;
 }
 
-.results li {	
-	list-style-type: none;		
+.results li {
+	list-style-type: none;
 	border-top: 1px solid @@@focal_border_color@@@;
 	padding: 10px;
 	position: relative;
 }
 
 .results li:first-child {
-	border-top:0; 
+	border-top:0;
 }
 
 .results a  {
 	display: block;
 	position: relative;
 	padding: 9px 25px 9px 7px;
-	margin: -7px;	 
-	background-image: url(/common/images/action-arrow.png); 
+	margin: -7px;
+	background-image: url(/common/images/action-arrow.png);
 	background-repeat: no-repeat;
-	background-position: right; 
+	background-position: right;
 	line-height: 1.2em;
 	text-decoration: none;
 }
@@ -1030,15 +1084,15 @@ ul.focal li:first-child {
 }
 
 .secondary {
-	margin: 10px; 
-	padding: 0;	   
+	margin: 10px;
+	padding: 0;
 	border: 1px solid @@@focal_border_color@@@;
-	-webkit-border-radius: 8px;	
-	border-radius: 8px;	
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
 }
 
 .secondary li {
-	list-style-type: none;		
+	list-style-type: none;
 	border-top: 1px solid @@@focal_border_color@@@;
 	position: relative;
 	padding: 9px;
@@ -1051,13 +1105,13 @@ ul.focal li:first-child {
 .secondary a {
 	display: block;
 	padding: 8px 25px 8px 7px;
-	margin: -6px;	 
-	background-image: url(/common/images/action-arrow.png); 
+	margin: -6px;
+	background-image: url(/common/images/action-arrow.png);
 	background-repeat: no-repeat;
-	background-position: right; 
+	background-position: right;
 	line-height: 1.2em;
 	text-decoration: none;
-	-webkit-border-radius: 5px;	
+	-webkit-border-radius: 5px;
 }
 
 .bottomnav {
@@ -1160,17 +1214,17 @@ a.sidenav-next {
 
 /* Specific content formatting */
 
-.focal {   
+.focal {
 	position: relative;
-	padding: 12px;	   
-	margin: 10px; 
+	padding: 12px;
+	margin: 10px;
 	font-weight:normal;
 	line-height: 1.33em;
 	border: 1px solid @@@focal_border_color@@@;
-	-webkit-border-radius: 9px;	
-	-moz-border-radius: 9px;	
-	-o-border-radius: 9px;	
-	border-radius: 9px;	
+	-webkit-border-radius: 9px;
+	-moz-border-radius: 9px;
+	-o-border-radius: 9px;
+	border-radius: 9px;
 }
 
 .nonfocal {
@@ -1333,69 +1387,69 @@ p.foundat {
 
 .actionlink {
 	background-repeat: no-repeat;
-	background-position: right; 
+	background-position: right;
 	padding-right: 38px;
 	padding-left: 0;
 }
 
-a.add {  
-	background-image: url(/common/images/action-add.png); 
+a.add {
+	background-image: url(/common/images/action-add.png);
 	padding-right: 68px;
 	min-height: 30px;
 }
 
-a.delete {  
-	background-image: url(/common/images/action-delete.png); 
+a.delete {
+	background-image: url(/common/images/action-delete.png);
 	padding-right: 40px;
 }
 
-a.remove {  
-	background-image: url(/common/images/action-remove.png); 
+a.remove {
+	background-image: url(/common/images/action-remove.png);
 	padding-right: 40px;
 }
 
-a.arrow {  
-	background-image: url(/common/images/action-arrow.png); 
+a.arrow {
+	background-image: url(/common/images/action-arrow.png);
 	padding-right: 25px;
 }
 
-a.phone {  
-	background-image: url(/common/images/action-phone.png); 
+a.phone {
+	background-image: url(/common/images/action-phone.png);
 	padding-right: 36px;
 }
 
-a.email {  
-	background-image: url(/common/images/action-email.png); 
+a.email {
+	background-image: url(/common/images/action-email.png);
 	padding-right: 38px;
 }
 
-a.map {  
-	background-image: url(/common/images/action-map.png); 
+a.map {
+	background-image: url(/common/images/action-map.png);
 	padding-right: 38px;
 }
 
-a.search {  
-	background-image: url(/common/images/action-search.png); 
+a.search {
+	background-image: url(/common/images/action-search.png);
 	padding-right: 36px;
 }
 
-a.people {  
-	background-image: url(/common/images/action-people.png); 
+a.people {
+	background-image: url(/common/images/action-people.png);
 	padding-right: 36px;
 }
 
-a.external {  
-	background-image: url(/common/images/action-external.png); 
+a.external {
+	background-image: url(/common/images/action-external.png);
 	padding-right: 34px;
 }
 
-a.secure {  
-	background-image: url(/common/images/action-secure.png); 
+a.secure {
+	background-image: url(/common/images/action-secure.png);
 	padding-right: 34px;
 }
 
-a.pdf {  
-	background-image: url(/common/images/action-pdf.png); 
+a.pdf {
+	background-image: url(/common/images/action-pdf.png);
 	padding-right: 34px;
 }
 
@@ -1497,12 +1551,12 @@ h2.icon {
 	float: left;
 	margin-bottom: -1px;
 	margin-right: 4px;
-	-webkit-border-top-right-radius: 6px;	
-	-webkit-border-top-left-radius: 6px;	
-	-moz-border-top-right-radius: 6px;	
-	-moz-border-top-left-radius: 6px;	
-	border-top-right-radius: 6px;	
-	border-top-left-radius: 6px;	
+	-webkit-border-top-right-radius: 6px;
+	-webkit-border-top-left-radius: 6px;
+	-moz-border-top-right-radius: 6px;
+	-moz-border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-top-left-radius: 6px;
 	text-align: center;
 }
 
@@ -1520,7 +1574,7 @@ h2.icon {
 	background-image: url(/common/images/badge.png);
 	background-repeat: no-repeat;
 }
- 
+
 #tabs li a {
 	display: block;
 	text-decoration: none;
@@ -1533,7 +1587,7 @@ h2.icon {
   #tabs.smalltabs li {
     margin-right: 3px;
   }
-  
+
   #tabs.smalltabs li a {
     padding-right: 10px;
     padding-left: 10px;
@@ -1544,7 +1598,7 @@ h2.icon {
     font-size: 94%;
     margin-right: 3px;
   }
-  
+
   #tabs.smalltabs li a {
     padding-right: 8px;
     padding-left: 8px;
@@ -1588,9 +1642,9 @@ h2.icon {
 .tabstrip {
 	list-style-type: none;
 	height: 36px;
-	-webkit-border-radius: 7px;	
-	-moz-border-radius: 7px;	
-	border-radius: 7px;	
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
 	margin: 0;
 	padding: 0;
 	left: 0;
@@ -1613,7 +1667,7 @@ h2.icon {
 	background-color: transparent;
 	border: 1px solid @@@focal_border_color@@@;
 	border-right: none
-}	
+}
 
 .tabstrip li:last-child a {
     border-right: 1px solid #999;;
@@ -1629,21 +1683,21 @@ h2.icon {
 }
 
 .tabstrip li:first-child a {
-	-webkit-border-bottom-left-radius: 6px;	
-	-webkit-border-top-left-radius: 6px;	
-	-moz-border-bottom-left-radius: 6px;	
-	-moz-border-top-left-radius: 6px;	
-	border-bottom-left-radius: 6px;	
-	border-top-left-radius: 6px;	
+	-webkit-border-bottom-left-radius: 6px;
+	-webkit-border-top-left-radius: 6px;
+	-moz-border-bottom-left-radius: 6px;
+	-moz-border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-top-left-radius: 6px;
 }
 
 .tabstrip li:last-child a {
-	-webkit-border-bottom-right-radius: 6px;	
-	-webkit-border-top-right-radius: 6px;	
-	-moz-border-bottom-right-radius: 6px;	
-	-moz-border-top-right-radius: 6px;	
-	border-bottom-right-radius: 6px;	
-	border-top-right-radius: 6px;	
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-top-right-radius: 6px;
+	-moz-border-bottom-right-radius: 6px;
+	-moz-border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	border-top-right-radius: 6px;
 }
 
 .twotabs li {
@@ -1780,7 +1834,7 @@ h2.icon {
 	border-radius: 10px;
 	padding: 10px 20px;
 	background: #eee; /* Non-CSS3 browsers */
-	/* This doesn't work with the Palm Pre: 
+	/* This doesn't work with the Palm Pre:
 	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
 	background: -moz-linear-gradient(top,  #f9f9f9,  #d0d0d0); /* Firefox 3.6+ */
 	-moz-box-shadow: 0px 3px 7px #333;
@@ -1814,8 +1868,8 @@ h2.icon {
 .ellipsis a[xmlns] {
 	display: inline !important;
 	padding: 0 !important;
-	margin: 0 !important;	 
-	background: none !important; 
+	margin: 0 !important;
+	background: none !important;
 	line-height: inherit !important;
 	text-decoration: none !important;
 	font-size: inherit !important;
@@ -2104,10 +2158,10 @@ table.section-search form {
   background-position: center center;
   background-size: 100% auto;
   position: relative;
-}  
+}
 #videoPaneStoriesId .pane-story-image-large .pane-story-image {
   background-size: 125% auto;
-}  
+}
 .pane-story-image-large .pane-story-caption {
   height: 30%;
 }
@@ -2258,7 +2312,7 @@ table.section-search form {
     width: auto;
 }
 
-.splitview-stories .splitview-listwrapper ul.results .ellipsis, 
+.splitview-stories .splitview-listwrapper ul.results .ellipsis,
 .splitview-stories .splitview-listwrapper ul.results .smallprint {
    /* Description/dek within the master pane in the split view */
    color: @@@secondary_text_color@@@;
@@ -2290,7 +2344,7 @@ table.section-search form {
 	/* Selected item in the master pane in the split view */
 	background-color: #333;
 }
-.splitview-stories .splitview-listwrapper ul.results .listSelected .ellipsis, 
+.splitview-stories .splitview-listwrapper ul.results .listSelected .ellipsis,
 .splitview-stories .splitview-listwrapper ul.results .listSelected .smallprint {
    /* Description/dek within the selected item in the master pane in the split view */
    color: #aaa;
@@ -2300,8 +2354,8 @@ table.section-search form {
 	color: #ddd;
 }
 
-/* Narrower screens e.g., tablets in portrait orientation 
- * portrait class is added manually because we don't do this on desktop 
+/* Narrower screens e.g., tablets in portrait orientation
+ * portrait class is added manually because we don't do this on desktop
  * and otherwise we would have to cancel out all these styles */
 
 .splitview-stories.portrait .splitview-listwrapper {
@@ -2321,8 +2375,8 @@ table.section-search form {
 .splitview-stories.portrait .splitview-listwrapper ul.results {
     white-space: nowrap;
     width: auto; /* manually sized by javascript */
-    
-    /* 
+
+    /*
      * NOTE! this element needs to be at least 1px shorter than the
      * container size to prevent iOS5 Safari from allowing vertical
      * scrolling in addition to the desired horizontal scrolling.
@@ -2331,7 +2385,7 @@ table.section-search form {
      * container is overflow-x:auto and overflow-y:hidden.  We set
      * overflow:visible so that this hack does not clip children.
      */
-    height: 118px; 
+    height: 118px;
     overflow: visible;
 }
 .splitview-stories.portrait .splitview-listwrapper ul.results li {
@@ -2375,10 +2429,10 @@ table.section-search form {
 
 @media only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
   /* Pixel-doubled versions to take advantage of Retina Displays and XHDPI displays */
-  
-  
+
+
   /* Bookmark button */
-  
+
   #bookmark {
     background-image: url(/common/images/bookmark@2x.png);
     background-size: 88px 76px;
@@ -2386,7 +2440,7 @@ table.section-search form {
 
 
   /* Paging arrows */
-  
+
   .sidenav2 a {
     background-image: url(/common/images/sidenav-arrows@2x.png);
     background-size: 48px 58px;
@@ -2394,79 +2448,79 @@ table.section-search form {
 
 
   /* Login-related buttons */
-  
+
   .loginbuttons li.facebook {
     background-image: url(/common/images/button-facebook.png);
   }
-  
+
   .loginbuttons li.google {
     background-image: url(/common/images/button-google.png);
   }
-  
+
   .loginbuttons li.oauth {
     background-image: url(/common/images/button-oauth.png);
   }
-  
+
   .loginbuttons li.openid {
     background-image: url(/common/images/button-openid.png);
   }
-  
+
   .loginbuttons li.twitter {
     background-image: url(/common/images/button-twitter.png);
   }
-  
+
   .loginbuttons li.windows {
     background-image: url(/common/images/button-windows.png);
   }
-  
-  
+
+
   /* Pixel-doubled action arrows */
-  
-  .nav a, .results a, .secondary a, a.arrow {  
-    background-image: url(/common/images/action-arrow@2x.png); 
+
+  .nav a, .results a, .secondary a, a.arrow {
+    background-image: url(/common/images/action-arrow@2x.png);
     background-size: 14px 17px;
   }
-  
-  a.add {  
-    background-image: url(/common/images/action-add@2x.png); 
+
+  a.add {
+    background-image: url(/common/images/action-add@2x.png);
     background-size: 50px 38px;
   }
-  
-  a.delete {  
-    background-image: url(/common/images/action-delete@2x.png); 
+
+  a.delete {
+    background-image: url(/common/images/action-delete@2x.png);
     background-size: 26px 20px;
   }
 
-  a.remove {  
-    background-image: url(/common/images/action-remove@2x.png); 
+  a.remove {
+    background-image: url(/common/images/action-remove@2x.png);
     background-size: 26px 20px;
   }
 
-  a.phone {  
-    background-image: url(/common/images/action-phone@2x.png); 
+  a.phone {
+    background-image: url(/common/images/action-phone@2x.png);
     background-size: 26px 19px;
   }
-  
-  a.email {  
-    background-image: url(/common/images/action-email@2x.png); 
+
+  a.email {
+    background-image: url(/common/images/action-email@2x.png);
     background-size: 26px 19px;
   }
-  
-  a.map {  
-    background-image: url(/common/images/action-map@2x.png); 
+
+  a.map {
+    background-image: url(/common/images/action-map@2x.png);
     background-size: 26px 19px;
   }
-  
-  a.people {  
-    background-image: url(/common/images/action-people@2x.png); 
+
+  a.people {
+    background-image: url(/common/images/action-people@2x.png);
     background-size: 19px 19px;
   }
-  
+
   a.external {
-    background-image: url(/common/images/action-external.png); 
+    background-image: url(/common/images/action-external.png);
     background-size: 26px 19px;
   }
-  
+
   a.placemark {
       background-image: url(/common/images/action-placemark@2x.png);
     background-size: 16px 19px;
@@ -2484,5 +2538,16 @@ table.section-search form {
     background-size: 12px 12px;
   }
 
+}
 
+.nav span.nolink a,
+.results span.nolink a,
+.secondary span.nolink a {
+/* Suppress action accessory icon and block formatting for nested links in nav and results lists */
+    display: inline;
+    padding: 0;
+    margin: 0;
+    background-image: none;
+    -webkit-border-radius: 0;
+    border-radius: 0;
 }

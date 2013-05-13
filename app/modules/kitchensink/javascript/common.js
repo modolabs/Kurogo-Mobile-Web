@@ -181,3 +181,9 @@ function showAlert(title, message) {
         alert(title+": "+message);
     }
 }
+
+function testMakeAPICall() {
+    makeAPICall('GET', 'kitchensink', 'test', [], function(response) {
+        showAlert('Got Response: ', JSON.stringify(response));
+    });
+}

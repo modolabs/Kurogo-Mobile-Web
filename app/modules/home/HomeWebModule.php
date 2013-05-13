@@ -168,7 +168,7 @@ class HomeWebModule extends WebModule {
                 break;
                   
             case 'index':
-                $this->setPageTitle($this->getOptionalModuleVar('pageTitle', Kurogo::getSiteString('SITE_NAME'), 'index', 'pages'));
+                $this->setPageTitle($this->getOptionalModuleVar('pageTitle', Kurogo::getOptionalSiteString('SITE_NAME'), 'index', 'pages'));
                 if ($this->pagetype == 'tablet') {
                     $modulePanes = $this->getTabletModulePanes();
                     
@@ -222,7 +222,7 @@ class HomeWebModule extends WebModule {
                 
                 if ($this->getOptionalModuleVar('SHOW_FEDERATED_SEARCH', true)) {
                     $this->assign('showFederatedSearch', true);
-                    $this->assign('placeholder', $this->getLocalizedString("SEARCH_PLACEHOLDER", Kurogo::getSiteString('SITE_NAME')));
+                    $this->assign('placeholder', $this->getLocalizedString("SEARCH_PLACEHOLDER", Kurogo::getOptionalSiteString('SITE_NAME')));
                 }
                 
                 if ($this->getPlatform()=='iphone' && $this->getOptionalModuleVar('ADD_TO_HOME', false)) {
@@ -233,6 +233,7 @@ class HomeWebModule extends WebModule {
                 
                 
                 $this->assignUserContexts($this->getOptionalModuleVar('ALLOW_CUSTOMIZE', true));                
+                $this->assignSites();
                 $this->assign('SHOW_DOWNLOAD_TEXT', Kurogo::getOptionalSiteVar('downloadText', '', $this->platform, 'apps')); 
                 
                 $homeModuleID = $this->getHomeModuleID();
@@ -244,10 +245,19 @@ class HomeWebModule extends WebModule {
                 }
                 $this->assign('downloadImgPrefix', $downloadImgPrefix);
                 $this->assign('displayType', $this->getModuleVar('display_type'));
+                $this->addOnLoad('addFormNotEmptyValidator()');
                 break;
             
             case 'search':
                 $searchTerms = $this->getArg('filter');
+
+                //return home if a blank search was provided.
+                //client side form validation is in place, but this will work
+                //for basic devices, as well as those which have javascript disabled.
+                if(trim($searchTerms)==""){
+                    $this->redirectTo('index', array());
+                    return;
+                }
                 $useAjax = ($this->pagetype != 'basic');
                 
                 $searchModules = array();
@@ -294,6 +304,7 @@ class HomeWebModule extends WebModule {
                 $this->assign('federatedSearchModules', $searchModules);
                 $this->assign('searchTerms',            $searchTerms);
                 $this->setLogData($searchTerms);
+                $this->addOnLoad('addFormNotEmptyValidator()');
                 break;
             case 'modules':
                 $configModule = $this->getArg('configModule', $this->configModule);
@@ -303,7 +314,7 @@ class HomeWebModule extends WebModule {
 
                 if ($configModule == $this->configModule && $this->getOptionalModuleVar('SHOW_FEDERATED_SEARCH', true)) {
                     $this->assign('showFederatedSearch', true);
-                    $this->assign('placeholder', $this->getLocalizedString("SEARCH_PLACEHOLDER", Kurogo::getSiteString('SITE_NAME')));
+                    $this->assign('placeholder', $this->getLocalizedString("SEARCH_PLACEHOLDER", Kurogo::getOptionalSiteString('SITE_NAME')));
                 }
                 $this->assignUserContexts($this->getOptionalModuleVar('ALLOW_CUSTOMIZE', true));
                 

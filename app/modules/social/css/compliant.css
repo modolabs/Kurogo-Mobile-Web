@@ -1,4 +1,3 @@
-
 .feedlinks {
   font-size: 82.35%;
 }
@@ -18,7 +17,6 @@
   margin-right: 10px;
   background-repeat: no-repeat;
   background-position: 0px 0px;
-  background-size: 24px 24px;
   text-decoration: none;
   line-height: 26px;
   color: #333;
@@ -31,13 +29,39 @@
 }
 
 .feedlinks a.twitter {
-  background-image: url(/common/images/button-twitter.png);
+  background-image: url(/common/images/button-twitter-24.png);
 }
 .feedlinks a.facebook {
-  background-image: url(/common/images/button-facebook.png);
+  background-image: url(/common/images/button-facebook-24.png);
 }
 .feedlinks a.youtube {
-  background-image: url(/common/images/button-youtube.png);
+  background-image: url(/common/images/button-youtube-24.png);
+}
+.feedlinks a.linkedin {
+  background-image: url(/common/images/button-linkedin-24.png);
+}
+.feedlinks a.instagram {
+  background-image: url(/common/images/button-instagram-24.png);
+}
+@media only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 1.5) {
+  .feedlinks a {
+    background-size: 24px 24px;
+  }
+  .feedlinks a.twitter {
+    background-image: url(/common/images/button-twitter.png);
+  }
+  .feedlinks a.facebook {
+    background-image: url(/common/images/button-facebook.png);
+  }
+  .feedlinks a.youtube {
+    background-image: url(/common/images/button-youtube.png);
+  }
+  .feedlinks a.linkedin {
+    background-image: url(/common/images/button-linkedin.png);
+  }
+  .feedlinks a.instagram {
+    background-image: url(/common/images/button-instagram.png);
+  }
 }
 
 .featured a    {
@@ -46,6 +70,17 @@
     position: relative;
     padding-left: 60px;
     text-decoration: none;
+    font-size: 113%;
+    line-height: 1.33em;
+}
+
+.featured a,
+.featured a:visited {
+    color: @@@primary_text_color@@@;
+}
+
+.featured .service-detail {
+    font-size: 72.9%
 }
 
 .featured a img    {
@@ -62,12 +97,6 @@
 
 }
 
-.featured .message {
-	font-family: Georgia, serif;
-	font-size: 120%;
-	line-height: 1.2em;
-}
-
 .featured.twitter .author,
 .results .twitter .author,
 .featured.facebook .author,
@@ -76,7 +105,7 @@
     padding-left: 20px;
     background-repeat: no-repeat;
     background-size: 16px 16px;
-    background-position: 0px -1px;
+    background-position: 0px 0;
     display: inline-block;
 }
 
@@ -90,67 +119,18 @@
     background-image: url(/common/images/button-facebook-24.png);
 }
 
-.actionbuttons {
-    margin: 10px -1% 10px -1%;
-}	
-.actionbutton {
-    margin: 0 .7%;
-    width: 31%;
-    float: left;
-}
-.actionbutton a {
-    display: block;
-    padding: 4px 4px 3px 6px;
-    background: #f6f6f6;
-    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,.15)), to(rgba(128,128,128,0.15)));
-    border: 1px solid #eee;
-    border: 1px solid rgba(0,0,0,0.12);
-    border-top-color: #f3f3f3;
-    border-bottom-color: #e9e9e9;
-    border-top-color: rgba(0,0,0,0.08);
-    border-bottom-color: rgba(0,0,0,0.22);
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    -o-border-radius: 6px;
-    border-radius: 6px;
-    color: #444;
-    font-size: 70%;
-    line-height: 20px;
-    text-transform: uppercase;
-    text-decoration: none;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-.actionbutton a:active, .actionbutton a.pressedaction {
-    background: #aaa;
-    background: rgba(0,0,0,0.33);
-    background: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.18)), to(rgba(0,0,0,0.12)));
-    border-color: rgba(0,0,0,0.65);
-    border-top-color: rgba(0,0,0,0.75);
-    border-bottom-color: rgba(0,0,0,0.5);
-    color: #000;
-    box-shadow: inset 0 1px 3px #000;
+.results li.icon {
+    min-height: 40px;
 }
 
-.social-avatar {
-	width: 32px;
-	height: 32px;
-	float: left;
-	margin-right: 4px;
-	position: relative;
-	top: -2px;
+.results li.icon a {
+    padding-left: 42px;
 }
 
-.postbody a, .byline a {
-	text-decoration: none;
-}	
-
-.byline {
-	min-height: 0;
-	padding: 0.5em 0 0.5em 0;
-	border-bottom: none;
-	margin-bottom: 0;
+.results li.icon img {
+    width: 32px;
+    height: 32px;
 }
-
 
 div#nonfooternav div#navbar {
     margin-bottom: 0px;
@@ -193,9 +173,8 @@ div.focal.author img {
 
 .featured a div.smallprint {
     padding-top: 10px;
-    
 }
 
-.byline {
-	border-bottom: none;
+.service-detail {
+    line-height: 18px;
 }

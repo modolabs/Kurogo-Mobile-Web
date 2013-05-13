@@ -18,6 +18,7 @@ class KurogoSite
     protected $urlBase='/';
     protected $urlBaseAuto=true;
     protected $host;
+    protected $hosts=array();
     protected $default = false;
     protected $enabled = true;
     protected $configStore;
@@ -55,10 +56,19 @@ class KurogoSite
         }
 
         if (isset($config['host'])) {
-            if (!preg_match("!^([a-z0-9.-]+)(:\d+)?$!i", $config['host'])) {
+            if (is_array($config['host'])) {
+                foreach ($config['host'] as $host) {
+                    if (self::isValidHostName($host)) {
+                        $this->hosts[] = $host;
+                    }
+                }
+                
+            } elseif (self::isValidHostName($config['host'])) {
+                $this->host = $config['host'];
+                $this->hosts[] = $config['host'];
+            }  else {
                 throw new KurogoConfigurationException('Invalid host "' . $config['host'] . '"');
             }
-            $this->host = $config['host'];
         }
 
         if (isset($config['title'])) {
@@ -104,6 +114,10 @@ class KurogoSite
         return $this->configMode;
     }
 
+    public static function isValidHostName($host) {
+        return preg_match("!^([a-z0-9.-]+)(:\d+)?$!i", $host);
+    }
+
     public static function isValidSiteName($name) {
         return preg_match("/^[a-z][a-z0-9_-]*$/i", $name);
     }
@@ -119,6 +133,8 @@ class KurogoSite
     public function getHost() {
         if(!empty($this->host)) {
             return $this->host;
+        } elseif (count($this->hosts)>0) {
+            return current($this->hosts);
         } else {
             return SERVER_HOST;
         }
@@ -253,8 +269,11 @@ class KurogoSite
         if ($urlBase == $path) {
             $score+=2;
         }
-        
-        if ($this->host == $host) {
+
+        if (in_array($host, $this->hosts)) {
+            if (empty($this->host)) {
+                $this->host = $host;
+            }
             $score+=3;
         }
 

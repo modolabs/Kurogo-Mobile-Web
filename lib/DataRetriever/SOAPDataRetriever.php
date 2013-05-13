@@ -31,6 +31,7 @@ class SOAPDataRetriever extends DataRetriever {
     protected $uri;
     protected $action;
     protected $saveToFile = false;
+    protected $throwExceptionOnFault = true;
     
     protected $soapHeaders = array();
     
@@ -189,27 +190,30 @@ class SOAPDataRetriever extends DataRetriever {
 
         $response = $this->initResponse();
         $response->setStartTime(microtime(true));
+        $fault = null;
+        
         try {
             $data = $soapClient->__soapCall($method, $parameters, $options, $headers, $outputHeaders);
         } catch (SoapFault $fault) {
-			$response->setContext('soapRequestHeaders', $soapClient->__getLastRequestHeaders());
-			$response->setContext('soapRequest', $soapClient->__getLastRequest());
-			$response->setContext('soapResponse', $soapClient->__getLastResponse());
-			$response->setContext('soapResponseHeaders', $soapClient->__getLastResponseHeaders());
-            throw new KurogoDataException($fault->getMessage(), $fault->getCode());
+            $data = null;
+			$response->setContext('soapFault', $fault);
+			$response->setResponseError($fault->getMessage());
+			if ($this->throwExceptionOnFault) {
+                $response->setContext('soapRequestHeaders', $soapClient->__getLastRequestHeaders());
+                $response->setContext('soapRequest', $soapClient->__getLastRequest());
+                $response->setContext('soapResponse', $soapClient->__getLastResponse());
+                $response->setContext('soapResponseHeaders', $soapClient->__getLastResponseHeaders());
+                throw new KurogoDataException($fault->getMessage(), $fault->getCode());
+            }
         }
         $response->setEndTime(microtime(true));
 
-        if (!$lastResponseHeaders = $soapClient->__getLastResponseHeaders()) {
-            $lastResponseHeaders = array();
-        }
-        
         $response->setContext('soapRequestHeaders', $soapClient->__getLastRequestHeaders());
         $response->setContext('soapRequest', $soapClient->__getLastRequest());
         $response->setContext('soapResponse', $soapClient->__getLastResponse());
         $response->setContext('soapResponseHeaders', $soapClient->__getLastResponseHeaders());
 
-        if ($file = $this->saveToFile()) {
+        if ( !$fault && ($file = $this->saveToFile())) {
             $filePath = $this->cache->getFullPath($file);
             file_put_contents($filePath, $data);
             $data = $filePath;

@@ -41,8 +41,14 @@ class EmergencyAPIModule extends APIModule {
                         }
                       $noEmergencyNoticeController = EmergencyNoticeDataModel::factory($modelClass, $noEmergencyConfig);
                       $emergencyNotice = $noEmergencyNoticeController->getFeaturedEmergencyNotice();
+                    } else if(!isset($emergencyNotice)) {
+                        // if there is not a no emergency feed, there may be a no emergency string
+                        if ($noEmergencyString = $this->getOptionalModuleVar('NO_EMERGENCY', null, 'strings')) {
+                            $emergencyNotice['text'] = $noEmergencyString;
+                            $emergencyNotice['unixtime'] = time();
+                        }
                     }
-                    
+
                     $noticeEnabled = true;
                 } else {
                     // Config section 'notice' not set, there is not notice

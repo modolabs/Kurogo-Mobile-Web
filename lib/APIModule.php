@@ -50,6 +50,46 @@ abstract class APIModule extends Module
         $navModules = Kurogo::getSiteSections('navigation', Config::APPLY_CONTEXTS_NAVIGATION);
         foreach ($navModules as $moduleID=>$moduleData) {
             $type = Kurogo::arrayVal($moduleData, 'type', 'primary');
+
+            if (isset($moduleData['minAPIClientVersion'])) {
+                if (version_compare($this->clientVersion, $moduleData['minAPIClientVersion'], 'lt')) {
+                    continue;
+                }
+            }
+
+            if (isset($moduleData['maxAPIClientVersion'])) {
+                if (version_compare($this->clientVersion, $moduleData['maxAPIClientVersion'], 'gt')) {
+                    continue;
+                }
+            }
+
+            if (isset($moduleData['pagetype'])) {
+                if (!is_array($moduleData['pagetype'])) {
+                    $moduleData['pagetype'] = array($moduleData['pagetype']);
+                }
+                if (!in_array($this->clientPagetype, $moduleData['pagetype'])) {
+                    continue;
+                }
+            }
+
+            if (isset($moduleData['browser'])) {
+                if (!is_array($moduleData['browser'])) {
+                    $moduleData['browser'] = array($moduleData['browser']);
+                }
+                if (!in_array($this->clientBrowser, $moduleData['browser'])) {
+                    continue;
+                }
+            }
+    
+            if (isset($moduleData['platform'])) {
+                if (!is_array($moduleData['platform'])) {
+                    $moduleData['platform'] = array($moduleData['platform']);
+                }
+                if (!in_array($this->clientPlatform, $moduleData['platform'])) {
+                    continue;
+                }
+            }
+            
             $moduleNavData[$type][$moduleID] = $moduleData;
         }
         
@@ -80,6 +120,7 @@ abstract class APIModule extends Module
      * The module is disabled. 
      */
     protected function moduleDisabled() {
+        header("HTTP/1.1 500 Internal Server Error");
         $error = new KurogoError(2, 'Module Disabled', 'This module has been disabled');
         $this->throwError($error);
     }
@@ -121,6 +162,7 @@ abstract class APIModule extends Module
      * The user cannot access this module
      */
     protected function unauthorizedAccess() {
+        header("HTTP/1.1 403 Forbidden");
         $error = new KurogoError(4, 'Unauthorized', 'You are not permitted to use the '.$this->getModuleVar('title', 'module').' module');
         $this->throwError($error);
     }
@@ -129,6 +171,7 @@ abstract class APIModule extends Module
      * An unrecognized command was requested
      */
     protected function invalidCommand() {
+        header("HTTP/1.1 500 Internal Server Error");
         $error = new KurogoError(5, 'Invalid Command', "The $this->id module does not understand $this->command");
         $this->throwError($error);
     }
@@ -137,6 +180,7 @@ abstract class APIModule extends Module
      * The module was unable to load the version requested
      */
     protected function noVersionAvailable() {
+        header("HTTP/1.1 500 Internal Server Error");
         $error = new KurogoError(6, 'No version available', "A command matching the specified version could not be processed");
         $this->throwError($error);
     }
@@ -204,17 +248,24 @@ abstract class APIModule extends Module
     }
 
     public static function getAllModules() {
-        $configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
+        $dirs = array(
+            SITE_CONFIG_DIR,
+            SHARED_CONFIG_DIR,
+        );
+        
         $modules = array();
+        foreach ($dirs as $dir) {
+            $configFiles = glob($dir . "/*/module.ini");
     
-        foreach ($configFiles as $file) {
-            if (preg_match("#" . preg_quote(SITE_CONFIG_DIR,"#") . "/([^/]+)/module.ini$#", $file, $bits)) {
-                $id = $bits[1];
-                try {
-                    if ($module = APIModule::factory($id)) {
-                       $modules[$id] = $module;
+            foreach ($configFiles as $file) {
+                if (preg_match("#" . preg_quote($dir,"#") . "/([^/]+)/module.ini$#", $file, $bits)) {
+                    $id = $bits[1];
+                    try {
+                        if ($module = APIModule::factory($id)) {
+                           $modules[$id] = $module;
+                        }
+                    } catch (KurogoException $e) {
                     }
-                } catch (KurogoException $e) {
                 }
             }
         }
@@ -286,7 +337,6 @@ abstract class APIModule extends Module
     protected function init($command='', $args=array()) {
         set_error_handler(array($this, 'warningHandler'), E_WARNING | E_NOTICE | E_STRICT);
         
-        parent::init();
         $this->setArgs($args);
         $this->setRequestedVersion($this->getArg('v', null), $this->getArg('vmin', null));
         $this->setClientVersion($this->getArg('clientv', null));
@@ -295,6 +345,7 @@ abstract class APIModule extends Module
             $this->setContext($context);
         }
         $this->setCommand($command);
+        parent::init();
     }
   
    /**
@@ -350,6 +401,33 @@ abstract class APIModule extends Module
       */
     protected function getNativePagelist() {
         return array();
+    }
+
+    protected function getTabsForTabKeys($tabKeys, $page) {
+        // method similar to WebModule's enableTabs()
+        // first checks for configured title in pages.ini for $page
+        // if not found will simply uppercase the first letter of the key in $tabKeys
+        $tabs = array();
+
+        $section = $this->getModuleSection($page, "pages");
+        foreach ($tabKeys as $key) {
+            $pagesKey = "tab_".$key;
+            if (isset($section[$pagesKey])) {
+                // first reads tab titles if configured in pages.ini $page section
+                $tabs[] = array(
+                        'id'    => $key,
+                        'title' => $section[$pagesKey],
+                    );
+            } else {
+                // if no configured title in pages.ini, will simply uppercase the first letter in the key
+                $tabs[] = array(
+                        'id'    => $key,
+                        'title' => ucwords($key)
+                    );
+            }
+        }
+
+        return $tabs;
     }
 }
 

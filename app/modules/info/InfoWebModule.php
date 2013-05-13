@@ -12,6 +12,7 @@
 class InfoWebModule extends WebModule {
   protected $id = 'info';
     protected $includeCommonCSS = false;
+    protected $canGenerateNativeWebTemplates = false;
 
   protected function initializeForPage() {
   	//get links from module.ini [links]

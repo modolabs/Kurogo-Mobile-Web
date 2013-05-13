@@ -192,8 +192,10 @@ class DataObjectDetailsController
         foreach ($groupData['fields'] as $field=>$fieldData) {
 
              if ($fieldobject = $this->getObject($groupobject, $fieldData)) {
+             
+                $_field = Kurogo::arrayVal($fieldData, 'field', $field);
                 
-                $value = $this->getObjectField($fieldobject, $field);
+                $value = $this->getObjectField($fieldobject, $_field);
 
                 //if we got an array and there is a delimiter option then implode the answers
                 if (is_array($value) && isset($fieldData['delimiter'])) {

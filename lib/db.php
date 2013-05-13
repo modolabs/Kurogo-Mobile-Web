@@ -46,7 +46,8 @@ class db {
      */
     public function __construct($config=null) {
         if (!is_array($config) || empty($config)) {
-			$config = Kurogo::getSiteSection('database');
+            $config = Kurogo::getSiteSection('database');
+            $config = array_merge($config, array_intersect_key($_SERVER, $config));
         }
     
         $this->init($config);

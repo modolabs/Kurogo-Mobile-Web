@@ -89,7 +89,7 @@ class NewsWebModule extends WebModule {
 
   protected function feedURL($feedIndex, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('index', array(
-      'section' => $feedIndex
+      'feed' => $feedIndex
     ), $addBreadcrumb);
   }
 
@@ -174,10 +174,10 @@ class NewsWebModule extends WebModule {
         
         if ($storyID = $story->getGUID()) {
             $options = array(
-                'storyID'=>$storyID
+                'id'=>$storyID
             );    
             
-            foreach (array('section','start','filter') as $field) {
+            foreach (array('feed','start','filter') as $field) {
                 if (isset($data[$field])) {
                     $options[$field] = $data[$field];
                 }
@@ -208,7 +208,7 @@ class NewsWebModule extends WebModule {
             return;
         }
         
-        $this->feedIndex = $this->getArg('section');
+        $this->feedIndex = $this->getArg(array('feed', 'section'));
         if (!isset($this->feeds[$this->feedIndex])) {
             $this->feedIndex = key($this->feeds);
         }
@@ -241,7 +241,7 @@ class NewsWebModule extends WebModule {
           $this->feed->setOption('search', $searchTerms);
         }
 
-        $storyID   = $this->getArg('storyID', false);
+        $storyID   = $this->getArg(array('id', 'storyID'), false);
         $storyPage = $this->getArg('storyPage', '0');
         $story     = $this->feed->getItem($storyID);
         $ajax      = $this->getArg('ajax', false);
@@ -343,7 +343,7 @@ class NewsWebModule extends WebModule {
 
             $options = array(
                 'filter' => $searchTerms,
-                'section' => $this->feedIndex
+                'feed' => $this->feedIndex
             );
 
             foreach ($items as $story) {
@@ -367,7 +367,7 @@ class NewsWebModule extends WebModule {
           }
           
           $extraArgs = array(
-              'section' => $this->feedIndex
+              'feed' => $this->feedIndex
           );
 
           $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
@@ -398,7 +398,7 @@ class NewsWebModule extends WebModule {
             $stories = array();
             $options = array(
                 'noBreadcrumbs'=>true,
-                'section' => $this->feedIndex
+                'feed' => $this->feedIndex
             );
     
             foreach ($items as $story) {
@@ -440,7 +440,7 @@ class NewsWebModule extends WebModule {
         }
 
         $options = array(
-            'section' => $this->feedIndex
+            'feed' => $this->feedIndex
         );
         
         $stories = array();

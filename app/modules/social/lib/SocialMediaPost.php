@@ -67,6 +67,10 @@ abstract class SocialMediaPost extends KurogoDataObject
         return $this->body;
     }
 
+    public function getDetailBody(){
+      return $this->linkify($this->getBody());
+    }
+
     public function setBody($body) {
         $this->body = $body;
     }
@@ -74,7 +78,7 @@ abstract class SocialMediaPost extends KurogoDataObject
     public function getCreated() {
         return $this->created;
     }
-
+    
     public function setCreated(DateTime $created) {
         $this->created = $created;
     }

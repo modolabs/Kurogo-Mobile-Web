@@ -15,6 +15,7 @@
   */
 class UrlWebModule extends WebModule {
   protected $id = 'url';
+    protected $canGenerateNativeWebTemplates = false;
   
   protected function initializeForPage() {
      if ($url = $this->getModuleVar('url')) {

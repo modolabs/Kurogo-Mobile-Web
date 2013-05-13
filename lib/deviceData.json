@@ -382,6 +382,35 @@
             ]
         },
         {
+            "groupName": "blackberry10",
+            "description": "Blackberry 10",
+            "classification": {
+                "3": {
+                    "pagetype": "compliant",
+                    "platform": "blackberry10",
+                    "supports_certificate": false
+                },
+                "2": {
+                    "pagetype": "compliant",
+                    "platform": "blackberry10",
+                    "supports_certificate": false
+                },
+                "1": {
+                    "pagetype": "webkit",
+                    "platform": "blackberry",
+                    "supports_certificate": false
+                }
+            },
+            "match": [
+                {
+                    "regex": "BB10.*Mobile Safari",
+                    "options": {
+                        "CASE_INSENSITIVE": false
+                    }
+                }
+            ]
+        },
+        {
             "groupName": "Palm Pre",
             "description": "Palm Pre",
             "classification": {

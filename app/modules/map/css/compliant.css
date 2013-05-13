@@ -69,10 +69,19 @@ body.fullscreen #navbar {
 	display: block;
 	position: absolute;
 	width: 40px;
-	height: 34px;
+	height: 36px;
 	margin-top: 8px;
 	background-image: url(/modules/map/images/buttons.png);
 	background-repeat: no-repeat;
+}
+
+@media only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5) {
+  /* Pixel-doubled versions to take advantage of Retina Displays and XHDPI displays */
+  #mapzoom a {
+    background-image: url(/modules/map/images/buttons@2x.png);
+    background-size: 240px 36px;
+  }
+  
 }
 
 /* copying the fullscreen style for now */

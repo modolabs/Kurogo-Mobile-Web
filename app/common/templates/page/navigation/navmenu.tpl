@@ -21,6 +21,10 @@
           {if $userContextList}
           {include file="findInclude:common/templates/page/navigation/userContextList.tpl" navContainerID="navmenu"}
           {/if}
+          {if $siteLinks}
+          {include file="findInclude:common/templates/page/navigation/siteLinks.tpl"}
+          {/if}
+
           {include file="findInclude:common/templates/page/credits.tpl"}
           {include file="findInclude:common/templates/page/deviceDetection.tpl"}
           {include file="findInclude:common/templates/page/moduleDebug.tpl"}

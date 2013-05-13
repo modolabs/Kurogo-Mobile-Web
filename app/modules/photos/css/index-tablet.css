@@ -42,9 +42,25 @@
 .flickr {
 	background-image: url(/common/images/button-flickr-16.png);
 }
-
 .picasa {
 	background-image: url(/common/images/button-picasa-16.png);
+}
+.instagram {
+	background-image: url(/common/images/button-instagram-16.png);
+}
+@media only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 1.5) {
+  .serviceicon {
+    background-size: 16px 16px;
+  }
+  .flickr {
+    background-image: url(/common/images/button-flickr.png);
+  }
+  .picasa {
+    background-image: url(/common/images/button-picasa.png);
+  }
+  .instagram {
+    background-image: url(/common/images/button-instagram.png);
+  }
 }
 
 

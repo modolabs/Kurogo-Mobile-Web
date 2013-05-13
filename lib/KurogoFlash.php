@@ -11,6 +11,7 @@
 
 class KurogoFlash{
 
+    const CONFIRM = 'confirm';
     const NOTICE = 'notice';
     const ALERT = 'alert';
 
@@ -42,6 +43,10 @@ class KurogoFlash{
         # save message to session
         $this->flashes[$key][] = $value;
         $_SESSION[$this->key][$key] = $this->flashes[$key];
+    }
+
+    public static function confirm($value){
+        return KurogoFlash::sharedInstance()->addMessage(KurogoFlash::CONFIRM, $value);
     }
 
     public static function notice($value){

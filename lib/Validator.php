@@ -37,14 +37,35 @@ class Validator
         return preg_match($pattern, $value);
     }
 
-    /* this is currently only valid for US phone numbers */
     public static function isValidPhone($value, &$bits=null)
     {
+        // Validates phone numbers that contain +, -, ., (, ) characters only (digits too)
+        //      any other delimeters will return false
+        //      + symbol can only be in first position specifying international phone numbers
+        // after stripping delimeters, phone numbers must be 7-15 digits in length and, if international, contain a 1-3 digit country code
+
+
         if (!is_scalar($value)) {
             return false;
         }
-        $pattern = '/^\(?(\d\d\d)?[-).\s]*(\d\d\d)[-.\s]?(\d\d\d\d)$/';
-        return preg_match($pattern, $value, $bits);
+
+        // Pattern match for incorrect delimeters. return false if any match is found
+        if (preg_match('/[^\s\-\.\+\(\)0-9]/', $value)) {
+            return false; // value is using invalid delimeters
+        }
+
+        // be sure + symbol does not appear anywhere other than the 0 index
+        if( strpos($value, '+', 1)) {
+            return false; // value contains '+' symbol in invalid position
+        }
+        
+        $phone = preg_replace('/[^0-9\+]/', '', $value); // strip any unwanted characters from value in order to validate raw digits
+
+        $pattern = '/^(\+\d{1,3})?\d{7,15}$/';
+        // pattern matches international or domestic phone numbers
+        // country code needs '+' prefix and contains 1-3 digits. phone number must contain between 7 and 15 digits
+    
+        return preg_match($pattern, $phone, $bits);
     }
 
     public static function isValidURL($value)
