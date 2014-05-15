@@ -132,8 +132,15 @@ class FacebookDataParser extends DataParser
             $post->setBody($entry['message']);
         }
         
-        if (isset($entry['likes'])) {
-            $post->setLikeCount($entry['likes']['count']);
+        if (isset($entry['likes'])) {   
+            if(empty($entry['likes']['count'])) {
+                $amount_likes = count($entry['likes']['data']);
+            }
+            else {
+                $amount_likes = $entry['likes']['count'];
+            }
+            
+            $post->setLikeCount($amount_likes);
         }
         
         switch ($entry['type'])
